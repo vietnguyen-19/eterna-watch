@@ -1,98 +1,87 @@
-<div class="app-menu navbar-menu">
-    <!-- LOGO -->
-    <div class="navbar-brand-box">
-        <!-- Dark Logo-->
-        <a href="index.html" class="logo logo-dark">
-            <span class="logo-sm">
-                <img src="{{ asset('theme/admin/assets/images/logo-sm.png') }}" alt=""
-                    height="22">
-            </span>
-            <span class="logo-lg">
-                <img src="{{ asset('theme/admin/assets/images/logo-dark.png') }}" alt=""
-                    height="17">
-            </span>
-        </a>
-        <!-- Light Logo-->
-        <a href="index.html" class="logo logo-light">
-            <span class="logo-sm">
-                <img src="{{ asset('theme/admin/assets/images/logo-sm.png') }}" alt=""
-                    height="22">
-            </span>
-            <span class="logo-lg">
-                <img src="{{ asset('theme/admin/assets/images/logo-light.png') }}" alt=""
-                    height="17">
-            </span>
-        </a>
-        <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
-            id="vertical-hover">
-            <i class="ri-record-circle-line"></i>
-        </button>
-    </div>
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+        <img src="{{ asset('theme/admin/dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
+        <span class="brand-text font-weight-light"><b>ETERNA WATCH</b></span>
+    </a>
 
-    <div id="scrollbar">
-        <div class="container-fluid">
-
-            <div id="two-column-menu">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="{{ asset('theme/admin/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
             </div>
-            <ul class="navbar-nav" id="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
+            <div class="info">
+                <a href="#" class="d-block">Alexander Pierce</a>
+            </div>
+        </div>
+
+        <!-- SidebarSearch Form -->
+        
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                        </p>
                     </a>
-                </li> <!-- end Dashboard Menu -->
+                </li>
+                
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarApps">
-                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Quản lý danh mục</span>
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-pie"></i>
+                        <p>
+                            Quản lý danh mục
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarApps">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Danh sách </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Thêm mới </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="pages/charts/chartjs.html" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/charts/flot.html" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarPro" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarPro">
-                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Quản lý sản phẩm</span>
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-pie"></i>
+                        <p>
+                            Quản lý sản phẩm
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarPro">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Danh sách </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Thêm mới </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>          
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarApp" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarApps">
-                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Quản lý Permission</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebarApp">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.permissions.index') }}" class="nav-link" data-key="t-chat"> Danh sách </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.permissions.create') }}" class="nav-link" data-key="t-chat"> Thêm mới </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="pages/charts/chartjs.html" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="pages/charts/flot.html" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
-        </div>
-        <!-- Sidebar -->
+        </nav>
+        <!-- /.sidebar-menu -->
     </div>
-
-    <div class="sidebar-background"></div>
-</div>
+    <!-- /.sidebar -->
+</aside>
