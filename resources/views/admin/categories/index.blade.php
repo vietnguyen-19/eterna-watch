@@ -1,133 +1,150 @@
 @extends('admin.layouts.master')
 @section('content')
-    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 class="mb-sm-0">Danh mục</h4>
-
-        <div class="page-title-right">
-            <ol class="breadcrumb m-0">
-                <li class="breadcrumb-item"><a href="javascript: void(0);">Danh sách danh mục</a></li>
-                <li class="breadcrumb-item active">Danh mục</li>
-            </ol>
-        </div>
-
-    </div>
-    <div class="col-lg-12">
-        <div class="card" id="customerList">
-            <div class="card-header border-bottom-dashed">
-
-                <div class="row g-4 align-items-center">
-                    <div class="col-sm">
-                        <div>
-                            <h5 class="card-title mb-0">Danh sách danh mục</h5>
-                        </div>
-                    </div>
-                    <div class="col-sm-auto">
-                        <div class="d-flex flex-wrap align-items-start gap-2">
-                            <a href="" class="btn btn-success add-btn"><i
-                                    class="ri-add-line align-bottom me-1"></i>Thêm danh mục</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <!-- Success Alert -->
-
-                <div>
+    <section class="content pt-3">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
                     @if (session('thongbao'))
-                        <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                            role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-
-                        </div>
-                        @php
-                            session()->forget('thongbao');
-                        @endphp
-                    @endif
-                    <div class="table-responsive table-card mb-1 mt-2">
-                        <table class="table align-middle" id="danhmucTable">
-                            <thead class="table-light text-muted">
-                                <tr>
-                                    <th scope="col" style="width: 50px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                        </div>
-                                    </th>
-
-                                    <th class="sort" data-sort="id">ID</th>
-                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
-                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
-                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
-                                    <th class="sort" data-sort="action">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="list form-check-all">
-                              
-                            </tbody>
-                        </table>
-                        <div class="noresult" style="display: none">
-                            <div class="text-center">
-                                <lord-icon src="{{ asset('theme/velzon/https://cdn.lordicon.com/msoeawqm.json') }}"
-                                    trigger="loop" colors="primary:#121331,secondary:#08a88a"
-                                    style="width:75px;height:75px"></lord-icon>
-                                <h5 class="mt-2">Sorry! No Result Found</h5>
-                                <p class="text-muted mb-0">We've searched more than 150+ customer We did not find any
-                                    customer for you search.</p>
+                    <div id="thongbao-alert"
+                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                        role="alert">
+                        <i class="ri-notification-off-line label-icon"></i><strong>
+                            {{ session('thongbao.message') }}</strong>
+                        
+                    </div>
+                    @php
+                        session()->forget('thongbao');
+                    @endphp
+                @endif
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row g-4 align-items-center">
+                                <div class="col-sm">
+                                    <div>
+                                        <h5 class="card-title mb-0">Danh sách danh mục</h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto">
+                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                        <a href="{{ route('admin.categories.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm danh mục</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <button onclick="return confirm('Bạn chắc chắn muốn xóa chứ?')" type="submit" name="deleteSelected"
-                            class="btn btn-danger">
-                            Xóa nhiều
-                        </button>
-                        <div class="pagination-wrap hstack gap-2" style="display: flex;">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0">
-                                <li class="active"><a class="page" href="#" data-i="1" data-page="8">1</a>
-                                </li>
-                                <li><a class="page" href="#" data-i="2" data-page="8">2</a></li>
-                            </ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
+                       
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6"></div>
+                                    <div class="col-sm-12 col-md-6"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-bordered" aria-describedby="example2_info"
+                                            id="danhmucTable">
+                                            <thead class="text-muted">
+                                                <tr>
+                                                    <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
+                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
+                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="action">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="list form-check-all">
+                                                @foreach ($data as $item)
+                                                    <tr>
+
+                                                        <td class="id">{{ $item->id }}</td>
+                                                        <td class="ten_danh_muc">{{ $item->name }}</td>
+                                                        <td class="slug">
+                                                            {{ $item->parent ? $item->parent->name : 'Danh mục gốc' }}
+                                                        </td>
+
+                                                        <td class="trang_thai">
+                                                            {{ $item->status }}
+                                                        </td>
+
+
+                                                        <td>
+                                                            <ul class="list-inline hstack gap-2 mb-0">
+                                                                <!-- Edit Button -->
+                                                                <li class="list-inline-item edit" title="Edit">
+                                                                    <a href="{{ route('admin.categories.edit', $item->id) }}"
+                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
+                                                                        Sửa
+                                                                    </a>
+                                                                </li>
+                                                                <!-- Remove Button -->
+                                                                <li class="list-inline-item" title="Remove">
+                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
+                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
+                                                                        href="{{ route('admin.categories.destroy', $item->id) }}">
+                                                                        Xóa
+                                                                    </a>
+                                                                </li>
+
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <thead class="text-muted">
+                                                <tr>
+                                                    <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
+                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
+                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="action">Action</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <!-- /.card-body -->
                     </div>
                 </div>
             </div>
-
         </div>
-
-    </div>
-@endsection
-@section('script-lib')
-    <script src="{{ asset('theme/velzon/theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
-    <script src="{{ asset('theme/velzon/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
-    <script src="{{ asset('theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
-    <script src="{{ asset('theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
-
-    <!--ecommerce-customer init js -->
-    <script src="{{ asset('theme/velzon/assets/js/pages/ecommerce-customer-list.init.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-
-    <!-- Sweet Alerts js -->
-
-
-    <!-- Sweet alert init js-->
-    <script src="{{ asset('theme/velzon/assets/js/pages/sweetalerts.init.js') }}"></script>
-
-    <script src="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </section>
 @endsection
 @section('script')
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#danhmucTable').DataTable({
+                "paging": true, // Bật phân trang
+                "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
+                "searching": true, // Bật ô tìm kiếm
+                "ordering": true, // Bật sắp xếp cột
+                "info": true, // Hiển thị thông tin tổng số dòng
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Trang đầu",
+                        "last": "Trang cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
+                    }
+                }
+            });
+        });
+    </script>
+
     <script>
         // Tự động đóng thông báo sau 5 giây (5000ms)
         setTimeout(function() {
@@ -139,49 +156,7 @@
             }
         }, 5000); // 5000ms = 5 giây
     </script>
-    <script>
-        document.getElementById('deleteForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var form = event.target;
-
-            // Tạo một form giả lập để gửi yêu cầu DELETE
-            var deleteForm = document.createElement('form');
-            deleteForm.action = form.action;
-            deleteForm.method = 'POST';
-
-            // Thêm token CSRF
-            var csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            deleteForm.appendChild(csrfToken);
-
-            // Thêm trường để giả lập DELETE
-            var deleteMethod = document.createElement('input');
-            deleteMethod.type = 'hidden';
-            deleteMethod.name = '_method';
-            deleteMethod.value = 'DELETE';
-            deleteForm.appendChild(deleteMethod);
-
-            // Thêm các checkbox được chọn vào form mới
-            var checkboxes = form.querySelectorAll('input[name="ids[]"]:checked');
-            checkboxes.forEach(function(checkbox) {
-                var hiddenCheckbox = document.createElement('input');
-                hiddenCheckbox.type = 'hidden';
-                hiddenCheckbox.name = 'ids[]';
-                hiddenCheckbox.value = checkbox.value;
-                deleteForm.appendChild(hiddenCheckbox);
-            });
-
-            document.body.appendChild(deleteForm);
-            deleteForm.submit();
-        });
-    </script>
 @endsection
-
 @section('style')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-
-    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
-        type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 @endsection

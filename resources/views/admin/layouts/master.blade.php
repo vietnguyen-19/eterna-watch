@@ -1,155 +1,114 @@
-<!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
-    data-sidebar-image="none" data-preloader="disable">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Dashboard</title>
+    @yield('style')
 
-    <meta charset="utf-8" />
-    <title>Dashboard | Velzon - Admin & Dashboard Template</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-    <meta content="Themesbrand" name="author" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('theme/admin/assets/images/favicon.ico ') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('theme/admin/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/jqvmap/jqvmap.min.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/dist/css/adminlte.min.css') }}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/daterangepicker/daterangepicker.css') }}">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{ asset('theme/admin/plugins/summernote/summernote-bs4.min.css') }}">
+    <!-- Bootstrap CSS -->
+   
 
-    <!-- jsvectormap css -->
-    <link href="{{ asset('theme/admin/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet"
-        type="text/css" />
-
-    <!--Swiper slider css-->
-    <link href="{{ asset('theme/admin/assets/libs/swiper/swiper-bundle.min.css') }}" rel="stylesheet" type="text/css" />
-
-    <!-- Layout config Js -->
-    <script src="{{ asset('theme/admin/assets/js/layout.js') }}"></script>
-    <!-- Bootstrap Css -->
-    <link href="{{ asset('theme/admin/assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="{{ asset('theme/admin/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="{{ asset('theme/admin/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- custom Css-->
-    <link href="{{ asset('theme/admin/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Bootstrap JS (để xử lý dismiss alert) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
-<body>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
 
-    <!-- Begin page -->
-    <div id="layout-wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="{{ asset('theme/admin/dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
+                height="60" width="60">
+        </div>
 
+        <!-- Navbar -->
         @include('admin.layouts.header')
+        <!-- /.navbar -->
 
-        <!-- removeNotificationModal -->
-        <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                            id="NotificationModalbtn-close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mt-2 text-center">
-                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                                colors="primary:#f7b84b,secondary:#f06548"
-                                style="width:100px;height:100px"></lord-icon>
-                            <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                                <h4>Are you sure ?</h4>
-                                <p class="text-muted mx-4 mb-0">Are you sure you want to remove this Notification ?</p>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                            <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn w-sm btn-danger" id="delete-notification">Yes, Delete
-                                It!</button>
-                        </div>
-                    </div>
-
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        <!-- ========== App Menu ========== -->
+        <!-- Main Sidebar Container -->
         @include('admin.layouts.sidebar')
 
-        
-        <!-- Left Sidebar End -->
-        <!-- Vertical Overlay-->
-        <div class="vertical-overlay"></div>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+           
+            <!-- /.content-header -->
 
-        <!-- ============================================================== -->
-        <!-- Start right Content here -->
-        <!-- ============================================================== -->
-        <div class="main-content">
-
-            <div class="page-content">
-                <div class="container-fluid">
-
-                    <div class="row">
-                        <div class="col">
-                            @yield('content')
-                           
-                        </div> <!-- end col -->
-                    </div>
-
-                </div>
-                <!-- container-fluid -->
-            </div>
-            <!-- End Page-content -->
-
-            @include('admin.layouts.footer')
+            <!-- Main content -->
+            @yield('content')
+            <!-- /.content -->
         </div>
-        <!-- end main content-->
+        <!-- /.content-wrapper -->
+        @include('admin.layouts.footer')
 
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
     </div>
-    <!-- END layout-wrapper -->
-
-
-
-    <!--start back-to-top-->
-    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
-        <i class="ri-arrow-up-line"></i>
-    </button>
-    <!--end back-to-top-->
-
-    <!--preloader-->
-    <div id="preloader">
-        <div id="status">
-            <div class="spinner-border text-primary avatar-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="customizer-setting d-none d-md-block">
-        <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas"
-            data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
-            <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
-        </div>
-    </div>
-
-    <!-- Theme Settings -->
-    <!-- JAVASCRIPT -->
-    <script src="{{ asset('theme/admin/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/libs/node-waves/waves.min.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/libs/feather-icons/feather.min.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/js/plugins.js') }}"></script>
-
-    <!-- apexcharts -->
-    <script src="{{ asset('theme/admin/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
-
-    <!-- Vector map-->
-    <script src="{{ asset('theme/admin/assets/libs/jsvectormap/js/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('theme/admin/assets/libs/jsvectormap/maps/world-merc.js') }}"></script>
-
-    <!--Swiper slider js-->
-    <script src="{{ asset('theme/admin/assets/libs/swiper/swiper-bundle.min.js') }}"></script>
-
-    <!-- Dashboard init -->
-    <script src="{{ asset('theme/admin/assets/js/pages/dashboard-ecommerce.init.js') }}"></script>
-
-    <!-- App js -->
-    <script src="{{ asset('theme/admin/assets/js/app.js') }}"></script>
+    <!-- ./wrapper -->
+  
+    <!-- jQuery -->
+    <script src="{{ asset('theme/admin/plugins/jquery/jquery.min.js') }}"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="{{ asset('theme/admin/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('theme/admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- ChartJS -->
+    <script src="{{ asset('theme/admin/plugins/chart.js/Chart.min.js') }}"></script>
+    <!-- Sparkline -->
+    <script src="{{ asset('theme/admin/plugins/sparklines/sparkline.js') }}"></script>
+    <!-- JQVMap -->
+    <script src="{{ asset('theme/admin/plugins/jqvmap/jquery.vmap.min.js') }}"></script>
+    <script src="{{ asset('theme/admin/plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="{{ asset('theme/admin/plugins/jquery-knob/jquery.knob.min.js') }}"></script>
+    <!-- daterangepicker -->
+    <script src="{{ asset('theme/admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('theme/admin/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('theme/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}">
+    </script>
+    <!-- Summernote -->
+    <script src="{{ asset('theme/admin/plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- overlayScrollbars -->
+    <script src="{{ asset('theme/admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ asset('theme/admin/dist/js/adminlte.js') }}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{{ asset('theme/admin/dist/js/demo.js') }}"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <script src="{{ asset('theme/admin/dist/js/pages/dashboard.js') }}"></script>
     @yield('script')
 </body>
 
