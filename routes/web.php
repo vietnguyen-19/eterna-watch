@@ -18,8 +18,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin/dashboard');
     })->name('admin.dashboard');
-    // Danh mục
 
+    // Danh mục
     Route::prefix('categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
         Route::get('create', [CategoryController::class, 'create'])->name('admin.categories.create');
