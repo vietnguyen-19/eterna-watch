@@ -14,7 +14,8 @@ class PermissionController extends Controller
     {
         $permissions = DB::table('permissions')
             ->latest('id')
-            ->limit(10)->get();
+            ->limit(10)
+            ->get();
         return view('admin.permission.index', compact('permissions'));
     }
 
