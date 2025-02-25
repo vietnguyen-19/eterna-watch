@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PermissionStogeRequest;
+use App\Http\Requests\StoreRequest;
 use App\Models\Permission;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 
 class PermissionController extends Controller
 {
@@ -15,40 +18,57 @@ class PermissionController extends Controller
         $permissions = DB::table('permissions')
             ->latest('id')
             ->limit(10)
-            ->get();
+            ->paginate(8);
+            
         return view('admin.permission.index', compact('permissions'));
     }
 
-    public function create(){
-        return view('admin.permission.create');
+    public function show($id)
+    {
+        //Lấy show  theo id 
+        $permission = DB::table('permissions')->find($id);
+        if ($permission == null) {
+            return redirect(404);
+        }
+        return view('admin.permission.show', compact('permission'));
     }
 
-    public function store(Request $request){
+    public function create(){
+        $permission = Permission::all();
+        return view('admin.permission.create', compact('permission'));
+    }
+
+    public function store(PermissionStogeRequest $request){
         $permission = new Permission();
         $permission->name = $request->input('name');
         $permission->save();
-        return redirect()->route('admin.permission.index');
+        return redirect()
+            ->route('admin.permissions.index')
+            ->with('message', 'Thêm dữ liệu thành công');
     }
 
+    
     public function edit($id)
     {
-        $permission = Permission::find($id);
-        return view('permissions.edit', compact('permission'));
+         //Lấy show  theo id 
+         $permission = DB::table('permissions')
+            ->where('id', $id)
+            ->first(); 
+         return view('admin.permission.edit', compact('permission'));
     }
 
-    public function update(Request $request, $id)
+    public function update(PermissionStogeRequest $request, $id)
     {
         $permission = Permission::find($id);
         $permission->name = $request->input('name');
         $permission->save();
-        return redirect()->route('permissions.index');
+        return redirect()->route('admin.permissions.index');
     }
 
     public function destroy($id)
     {
-        $permission = Permission::find($id);
-        $permission->delete();
-        return redirect()->route('permissions.index');
+        DB::table('permissions')->delete($id);
+        return redirect()->route('admin.permissions.index');
     }
 
 
