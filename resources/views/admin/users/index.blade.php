@@ -6,11 +6,12 @@
                 <div class="col-lg-12">
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
-            
+
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Danh sách <b> {{$role->name=='employee' ? 'Nhân viên' : 'Khách hàng'}}</b></h5>
+                                        <h5 class="card-title mb-0">Danh sách <b>
+                                                {{ $role->name == 'employee' ? 'Nhân viên' : 'Khách hàng' }}</b></h5>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
@@ -22,14 +23,14 @@
                             </div>
                         </div>
                         <div class="card-body">
-            
+
                             <div>
                                 @if (session('thongbao'))
                                     <div id="thongbao-alert"
                                         class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
                                         role="alert">
                                         <i class="ri-notification-off-line label-icon"></i><strong>
-                                            {{ session('thongbao.message') }}</strong>           
+                                            {{ session('thongbao.message') }}</strong>
                                     </div>
                                 @endif
                                 <div class="table-responsive table-card mb-1 mt-2">
@@ -50,32 +51,40 @@
                                                     <td class="id">{{ $user->id }}</td>
                                                     <td class="name">
                                                         <div class="d-flex align-items-center">
-                                                            <img src="{{ Storage::url($user->avatar ?? 'avatar/default.jpeg') }}" alt="User Avatar"
-                                                                class="rounded-circle me-2 mr-2" width="40" height="40">
+                                                            <img src="{{ Storage::url($user->avatar ?? 'avatar/default.jpeg') }}"
+                                                                alt="User Avatar" class="rounded-circle me-2 mr-2"
+                                                                width="40" height="40">
                                                             {{ $user->name }}
                                                         </div>
                                                     </td>
                                                     <td class="align-middle">{{ $user->email }}</td>
                                                     <td class="align-middle">{{ $user->phone ?? 'Chưa có' }}</td>
                                                     <td class="align-middle">{{ $user->status }}</td>
-                                                   
-                                                   
+
+
                                                     <td class="align-middle">
                                                         <ul class="list-inline hstack gap-2 mb-0">
                                                             <!-- Edit Button -->
                                                             <li class="list-inline-item edit" title="Chỉnh sửa">
                                                                 <a href="{{ route('admin.users.edit', $user->id) }}"
                                                                     class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                   Sửa
+                                                                    Sửa
                                                                 </a>
                                                             </li>
                                                             <!-- Remove Button -->
                                                             <li class="list-inline-item" title="Xóa">
-                                                                <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?')"
-                                                                    href="{{ route('admin.users.destroy', $user->id) }}">
-                                                                  Xóa
-                                                                </a>
+                                                                <form
+                                                                    action="{{ route('admin.users.destroy', $user->id) }}"
+                                                                    method="POST" style="display: inline-block;"
+                                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
+                                                                        Xóa
+                                                                    </button>
+                                                                </form>
+
                                                             </li>
                                                         </ul>
                                                     </td>
@@ -93,14 +102,14 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-            
+
                                 </div>
-            
+
                             </div>
                         </div>
-            
+
                     </div>
-            
+
                 </div>
             </div>
         </div>
@@ -152,5 +161,3 @@
 @section('style')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 @endsection
-
-

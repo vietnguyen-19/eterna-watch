@@ -39,7 +39,7 @@ Route::prefix('admin')->group(function () {
         Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show');
         Route::get('{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
         Route::put('{id}/update', [UserController::class, 'update'])->name('admin.users.update');
-        Route::get('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
      // permission

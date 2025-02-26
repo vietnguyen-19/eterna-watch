@@ -126,4 +126,17 @@ class UserController extends Controller
             ]
         ]);
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);  
+        $user->addresses()->delete();
+        $user->delete();
+
+        return redirect()->route('admin.users.index', $user->role_id)->with([
+            'thongbao' => [
+                'type' => 'success',
+                'message' => 'Người dùng đã được xóa thành công.',
+            ]
+        ]);
+    }
 }
