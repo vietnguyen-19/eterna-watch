@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +30,16 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); 
+        Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
+        Route::post('store', [UserController::class, 'store'])->name('admin.users.store');
+        Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show');
+        Route::get('{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('{id}/update', [UserController::class, 'update'])->name('admin.users.update');
+        Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
      // permission

@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Banner>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AttributeValue>
  */
-class BannerFactory extends Factory
+class AttributeValueFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +18,8 @@ class BannerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'attribute_id' => Attribute::inRandomOrder()->first()->id,
+            'value_name' => $this->faker->word,
         ];
     }
 }

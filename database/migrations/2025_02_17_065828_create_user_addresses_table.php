@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('user_addresses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('city');
-            $table->string('district');
-            $table->string('ward');
-            $table->text('specific_address');
+            $table->string('country')->default('Vietnam'); // Quốc gia, mặc định là Việt Nam
+            $table->string('city')->nullable();
+            $table->string('district')->nullable();
+            $table->string('ward')->nullable();
+            $table->string('specific_address'); // Địa chỉ chi tiết
+            $table->boolean('is_default')->default(false); // Đánh dấu địa chỉ mặc định
             $table->timestamps();
-
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
