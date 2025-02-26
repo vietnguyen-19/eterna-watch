@@ -10,26 +10,38 @@ class Product extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'sku',
-        'price',
-        'sale_price',
-        'stock',
+        'price_default',
         'short_description',
         'full_description',
-        'weight',
-        'dimensions',
+        'avatar',
         'category_id',
         'brand_id',
-        'status'
+        'status',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
+   
 
     public function brand()
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function attributes()
+    {
+        return $this->belongsToMany(
+            Attribute::class,
+            'product_has_attributes',   // Tên bảng trung gian
+            'product_id',               // Khóa ngoại trong bảng trung gian tham chiếu Product
+            'attribute_id'              // Khóa ngoại trong bảng trung gian tham chiếu Attribute
+        );
+    }
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+    
 }
