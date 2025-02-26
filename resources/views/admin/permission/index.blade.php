@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="card-body">
-                
+
 
                 <div>
                     @if (session('thongbao'))
@@ -57,26 +57,45 @@
                                         </div>
                                     </th>
 
-                                    <th class="sort" data-sort="id">ID</th>    
-                                    <th class="sort" data-sort="id">Name</th>                                    
+                                    <th class="sort" data-sort="id">ID</th>
+                                    <th class="sort" data-sort="id">Name</th>
                                     <th class="sort" data-sort="action">Action</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody class="list form-check-all">
                                 @foreach ($permissions as $permission)
-                                <tr>
-                                    <th scope="col" style="width: 50px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="checkAll" value="option">
-                                        </div>
-                                    </th>
-                                    <td>{{$permission->id}}</td>
-                                    <td>{{$permission->name}}</td>
-                                    <td><button class="btn btn-danger">Xóa </button></td>
-                                </tr>
+                                    <tr>
+                                        <th scope="col" style="width: 50px;">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkAll"
+                                                    value="option">
+                                            </div>
+                                        </th>
+                                        <td>{{ $permission->id }}</td>
+                                        <td>{{ $permission->name }}</td>
+                                        <td>
+                                            <div>
+                                                <a href="{{ route('admin.permissions.edit', $permission->id) }}" class="btn btn-primary">Sửa</a>
+                                                <form action="{{ route('admin.permissions.destroy', $permission->id) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger"
+                                                        onclick="return confirm('Bạn có chắc chắn xóa không?')">Xóa</button>
+                                                </form>
+                                                <a class="btn btn-info"
+                                                    href="{{ route('admin.permissions.show', $permission->id) }}">
+                                                    Chi tiết
+                                                </a>
+                                            </div>
+
+
+                                        </td>
+
+                                    </tr>
                                 @endforeach
-                                
+
                             </tbody>
                         </table>
                         <div class="noresult" style="display: none">
@@ -95,8 +114,9 @@
                             class="btn btn-danger">
                             Xóa nhiều
                         </button>
+
                         <div class="pagination-wrap hstack gap-2" style="display: flex;">
-                            <a class="page-item pagination-prev disabled" href="#">
+                            {{-- <a class="page-item pagination-prev disabled" href="#">
                                 Previous
                             </a>
                             <ul class="pagination listjs-pagination mb-0">
@@ -106,7 +126,8 @@
                             </ul>
                             <a class="page-item pagination-next" href="#">
                                 Next
-                            </a>
+                            </a> --}}
+                            {{ $permissions->links() }}
                         </div>
                     </div>
                 </div>
