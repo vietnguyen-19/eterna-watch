@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BannerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +34,7 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::prefix('users')->group(function () {
-        Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); 
+        Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
         Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
         Route::post('store', [UserController::class, 'store'])->name('admin.users.store');
         Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show');
@@ -42,22 +43,33 @@ Route::prefix('admin')->group(function () {
         Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
-     // permission
-     Route::prefix('permissions')->group(function () {
-        Route::get('/',                 [PermissionController::class, 'index'])    
+    // permission
+    Route::prefix('permissions')->group(function () {
+        Route::get('/',                 [PermissionController::class, 'index'])
             ->name('admin.permissions.index');
-        Route::get('/create',           [PermissionController::class, 'create'])    
+        Route::get('/create',           [PermissionController::class, 'create'])
             ->name('admin.permissions.create');
-        Route::post('create',           [PermissionController::class,  'store'])    
+        Route::post('create',           [PermissionController::class,  'store'])
             ->name('admin.permissions.store');
-        Route::get('show/{id}',         [PermissionController::class,  'show'])    
+        Route::get('show/{id}',         [PermissionController::class,  'show'])
             ->name('admin.permissions.show');
-        Route::get('/edit/{id}',        [PermissionController::class,  'edit'])    
+        Route::get('/edit/{id}',        [PermissionController::class,  'edit'])
             ->name('admin.permissions.edit');
-        Route::put('/edit/{id}',        [PermissionController::class,  'update'])   
+        Route::put('/edit/{id}',        [PermissionController::class,  'update'])
             ->name('admin.permissions.update');
-        Route::delete('/destroy/{id}',  [PermissionController::class,  'destroy'])  
+        Route::delete('/destroy/{id}',  [PermissionController::class,  'destroy'])
             ->name('admin.permissions.destroy');
     });
+
+// Banner
+Route::prefix('banners')->group(function () {
+    Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
+    Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
+    Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
+    Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
+    Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
+    Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
+    Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+});
 
 });
