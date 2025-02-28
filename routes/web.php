@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
@@ -33,7 +35,7 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::prefix('users')->group(function () {
-        Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); 
+        Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
         Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
         Route::post('store', [UserController::class, 'store'])->name('admin.users.store');
         Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show');
@@ -42,15 +44,35 @@ Route::prefix('admin')->group(function () {
         Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
-     // permission
-     Route::prefix('permissions')->group(function () {
-        Route::get('/', [PermissionController::class, 'index'])     ->name('admin.permissions.index');
-        Route::get('create',          [PermissionController::class, 'create'])    ->name('admin.permissions.create');
-        Route::post('store',         [PermissionController::class,  'store'])    ->name('admin.permissions.store');
-        Route::post('show/{id}',     [PermissionController::class,  'show'])    ->name('admin.permissions.show');
-        Route::get('{id}/edit',      [PermissionController::class,  'edit'])     ->name('admin.permissions.edit');
-        Route::put('{id}/update',    [PermissionController::class,  'update'])   ->name('admin.permissions.update');
-        Route::get('/{id}/destroy',  [PermissionController::class,  'destroy'])  ->name('admin.permissions.destroy');
+    Route::prefix('attributes')->group(function () {
+        Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
+        Route::get('create', [AttributeController::class, 'create'])->name('admin.attributes.create');
+        Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
+        Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
+        Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
+        Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
+        Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
     });
 
+    Route::prefix('attribute_values')->group(function () {
+        Route::get('/{id}', [AttributeValueController::class, 'index'])->name('admin.attribute_values.index');
+        Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('admin.attribute_values.create');
+        Route::post('store', [AttributeValueController::class, 'store'])->name('admin.attribute_values.store');
+        Route::get('show/{id}', [AttributeValueController::class, 'show'])->name('admin.attribute_values.show');
+        Route::get('{id}/edit', [AttributeValueController::class, 'edit'])->name('admin.attribute_values.edit');
+        Route::put('{id}/update', [AttributeValueController::class, 'update'])->name('admin.attribute_values.update');
+        Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('admin.attribute_values.destroy');
+    });
+
+   
+    // permission
+    Route::prefix('permissions')->group(function () {
+        Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');
+        Route::get('create',          [PermissionController::class, 'create'])->name('admin.permissions.create');
+        Route::post('store',         [PermissionController::class,  'store'])->name('admin.permissions.store');
+        Route::post('show/{id}',     [PermissionController::class,  'show'])->name('admin.permissions.show');
+        Route::get('{id}/edit',      [PermissionController::class,  'edit'])->name('admin.permissions.edit');
+        Route::put('{id}/update',    [PermissionController::class,  'update'])->name('admin.permissions.update');
+        Route::get('/{id}/destroy',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
+    });
 });
