@@ -1,8 +1,7 @@
 @extends('admin.layouts.master')
 @section('content')
-    <section class="content">
+    <section class="content pt-3">
         <div class="container-fluid">
-            <!-- Small boxes (Stat box) -->
             <div class="row">
                 <div class="col-lg-3 col-6">
                     <!-- small box -->

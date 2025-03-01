@@ -2,12 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Brand>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RolePermission>
  */
-class BrandFactory extends Factory
+class RolePermissionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +19,8 @@ class BrandFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company,
-            'parent_id' => null, // Hoặc logic sinh ngẫu nhiên parent_id
+            'role_id' => Role::factory(),
+            'permission_id' => Permission::factory(),
         ];
     }
 }
