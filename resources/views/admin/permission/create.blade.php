@@ -7,24 +7,28 @@
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
                         <h4 class="card-title mb-0 flex-grow-1">Thêm mới</h4>
-    
+
                     </div><!-- end card header -->
                     <div class="card-body">
                         <div class="live-preview">
                             <div class="mb-3">
-    
+
                                 <div class="mb-3">
                                     <div>
-                                        <label  class="form-label">Name: </label>
-                                        <input type="text" name="name" class="form-control" value="{{ old('name')}}"  placeholder="Tên">
+                                        <label class="form-label">Name: </label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ old('name') }}" placeholder="Tên">
                                     </div>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
-    
+
                                 </div>
                                 <div class="mb-3">
                                     <div>
-                                        <label  class="form-label"></label>
+                                        <label class="form-label"></label>
                                         <button type="submit" class="btn btn-primary waves-effect waves-light">Thêm
                                             mới</button>
                                         <th>
@@ -119,5 +123,6 @@
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 
-    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
+        type="text/css" />
 @endsection
