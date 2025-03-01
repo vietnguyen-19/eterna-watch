@@ -1,11 +1,15 @@
 <?php
 
+
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
@@ -33,6 +38,20 @@ Route::prefix('admin')->group(function () {
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
+
+//test git
+});
+Route::prefix('admin')->group(function () {
+    Route::resource('brands', BrandController::class)->names([
+        'index' => 'admin.brands.index',
+        'create' => 'admin.brands.create',
+        'store' => 'admin.brands.store',
+        'show' => 'admin.brands.show',
+        'edit' => 'admin.brands.edit',
+        'update' => 'admin.brands.update',
+        'destroy' => 'admin.brands.destroy',
+    ]);
+
 
     Route::prefix('users')->group(function () {
         Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
@@ -77,4 +96,5 @@ Route::prefix('admin')->group(function () {
         Route::put('{id}/update',    [PermissionController::class,  'update'])->name('admin.permissions.update');
         Route::get('/{id}/destroy',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
     });
+
 });
