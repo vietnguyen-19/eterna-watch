@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,11 +25,16 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'phone' => $this->faker->unique()->phoneNumber,
+            'password' => bcrypt('password'), // Mật khẩu mặc định
+            'gender' => $this->faker->randomElement(['male', 'female', 'other']),
+            'avatar' => 'avatar/avatar' . rand(1,15) . '.jpeg',
+            'note' => $this->faker->paragraph,
+            'role_id' => rand(2,3), // Tạo role mẫu cho người dùng
+            'status' => $this->faker->randomElement(['active', 'inactive', 'banned']),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
         ];
     }
 
