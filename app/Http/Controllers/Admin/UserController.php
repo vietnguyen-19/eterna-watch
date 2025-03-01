@@ -131,7 +131,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);  
         $user->addresses()->delete();
         $user->delete();
-
         return redirect()->route('admin.users.index', $user->role_id)->with([
             'thongbao' => [
                 'type' => 'success',
