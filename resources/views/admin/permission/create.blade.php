@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 @section('content')
     <div class="w-60">
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="{{ route('admin.permissions.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="col-lg-12">
                 <div class="card">
