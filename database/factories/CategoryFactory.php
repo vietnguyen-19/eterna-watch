@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->word,
+            'parent_id' => $this->faker->optional()->randomElement(Category::pluck('id')->toArray()),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }
