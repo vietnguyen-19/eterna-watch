@@ -1,10 +1,14 @@
 <?php
 
+
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BannerController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
@@ -34,6 +39,20 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
 
+    //test git
+});
+Route::prefix('admin')->group(function () {
+    Route::resource('brands', BrandController::class)->names([
+        'index' => 'admin.brands.index',
+        'create' => 'admin.brands.create',
+        'store' => 'admin.brands.store',
+        'show' => 'admin.brands.show',
+        'edit' => 'admin.brands.edit',
+        'update' => 'admin.brands.update',
+        'destroy' => 'admin.brands.destroy',
+    ]);
+
+
     Route::prefix('users')->group(function () {
         Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
         Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
@@ -45,6 +64,7 @@ Route::prefix('admin')->group(function () {
     });
 
 
+
     Route::prefix('attributes')->group(function () {
         Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
         Route::get('create', [AttributeController::class, 'create'])->name('admin.attributes.create');
@@ -53,7 +73,6 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
-
     });
 
     Route::prefix('attribute_values')->group(function () {
@@ -66,15 +85,26 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('admin.attribute_values.destroy');
     });
 
-   
+
     // permission
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');
         Route::get('create',          [PermissionController::class, 'create'])->name('admin.permissions.create');
-        Route::post('store',         [PermissionController::class,  'store'])->name('admin.permissions.store');
-        Route::post('show/{id}',     [PermissionController::class,  'show'])->name('admin.permissions.show');
-        Route::get('{id}/edit',      [PermissionController::class,  'edit'])->name('admin.permissions.edit');
-        Route::put('{id}/update',    [PermissionController::class,  'update'])->name('admin.permissions.update');
-        Route::get('/{id}/destroy',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
+        Route::post('/store',         [PermissionController::class,  'store'])->name('admin.permissions.store');
+        Route::get('show/{id}',     [PermissionController::class,  'show'])->name('admin.permissions.show');
+        Route::get('/edit/{id}',      [PermissionController::class,  'edit'])->name('admin.permissions.edit');
+        Route::put('/update/{id}',    [PermissionController::class,  'update'])->name('admin.permissions.update');
+        Route::delete('/destroy/{id}',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
+    });
+
+    // Banner
+    Route::prefix('banners')->group(function () {
+        Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
+        Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
+        Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
+        Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
+        Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
+        Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
+        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
 });
