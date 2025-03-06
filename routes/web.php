@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +54,7 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+       
     });
 
     Route::prefix('attribute_values')->group(function () {
@@ -60,11 +63,28 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeValueController::class, 'store'])->name('admin.attribute_values.store');
         Route::get('show/{id}', [AttributeValueController::class, 'show'])->name('admin.attribute_values.show');
         Route::get('{id}/edit', [AttributeValueController::class, 'edit'])->name('admin.attribute_values.edit');
-        Route::put('{id}/update', [AttributeValueController::class, 'update'])->name('admin.attribute_values.update');
+        Route::put('update/{id}', [AttributeValueController::class, 'update'])->name('admin.attribute_values.update');
         Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('admin.attribute_values.destroy');
     });
 
-   
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
+        Route::get('create', [ProductController::class, 'create'])->name('admin.products.create');
+        Route::get('/get-values/{id}', [AttributeController::class, 'getAttributeValues'])->name('admin.products.get-values');
+        Route::post('store', [ProductController::class, 'store'])->name('admin.products.store');
+        Route::get('show/{id}', [ProductController::class, 'show'])->name('admin.products.show');
+        Route::get('{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+        Route::put('{id}/update', [ProductController::class, 'update'])->name('admin.products.update');
+        Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+    });
+    Route::prefix('productvariants')->group(function () {
+        Route::get('/', [ProductVariantController::class, 'index'])->name('admin.productvariants.index');
+        Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('admin.productvariants.create');
+        Route::post('store', [ProductVariantController::class, 'store'])->name('admin.productvariants.store');
+        Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('admin.productvariants.edit');
+        Route::put('{id}/update', [ProductVariantController::class, 'update'])->name('admin.productvariants.update');
+        Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('admin.productvariants.destroy');
+    });
     // permission
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');

@@ -21,6 +21,7 @@ class ProductFactory extends Factory
         return [
             'name' => $this->faker->word,
             'avatar' => 'avatar/avatar' . rand(1,15) . '.jpeg',
+            'price_default'=> 500000,
             'short_description' => $this->faker->sentence,
             'full_description' => $this->faker->paragraph,
             'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),

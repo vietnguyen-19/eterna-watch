@@ -42,30 +42,24 @@ class AttributeValueController extends Controller
             ]
         ]);
     }
-    public function update(Request $request, $idValue)
+    public function update(Request $request, $id)
     {
-        $attributeValue = AttributeValue::findOrFail($idValue);
-        $validatedData = $request->validate([
-            'attribute_id' => 'required|integer|exists:attributes,id',
-            'value_name' => [
-                'required',
-                'string',
-                'max:255',
-                // Kiểm tra không trùng với các giá trị đã có, trừ chính nó
-                Rule::unique('attribute_values', 'value_name')
-                    ->where('attribute_id', $request->attribute_id)
-                    ->ignore($idValue),
-            ],
-            'note' => 'nullable|string',
+       
+        $request->validate([
+            'id' => 'required',
+            'value_name' => 'required|max:255',
+            'note' => 'nullable|max:255',
         ]);
-        $attributeValue->update($validatedData);
-        return redirect()->route('admin.attribute_values.index', $attributeValue->attribute_id)->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Giá trị thuộc tính đã được cập nhật thành công.',
-            ]
+    
+        $attributeValue = AttributeValue::findOrFail($id);
+        $attributeValue->update([
+            'value_name' => $request->value_name,
+            'note' => $request->note,
         ]);
+    
+        return response()->json(['success' => true]);
     }
+
     public function edit($id)
     {
         $attributeValue = AttributeValue::with('attribute')->findOrFail($id);
