@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 @section('content')
     <div class="w-60">
-        <form action="{{ route('admin.permissions.update', $permission->id)}}" method="post" >
+        <form action="{{ route('admin.permissions.update', $permission->id) }}" method="post">
             @csrf
             @method('PUT')
             <div class="col-lg-12">
@@ -14,17 +14,24 @@
                             <div class="mb-3">
                                 <div class="mb-3">
                                     <div>
-                                        <label  class="form-label">Name: </label>
-                                        <input type="text" name="name" class="form-control" value="{{ $permission->name }} " >
+                                        <label class="form-label">Name: </label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ $permission->name }} ">
+                                        @error('name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
+
                                 </div>
-                                <div class="mb-3">     </div>
+                                <div class="mb-3"> </div>
                                 <div class="mb-3">
                                     <div>
-                                        <label  class="form-label"></label>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light">Cập nhập</button>
+                                        <label class="form-label"></label>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light">Cập
+                                            nhập</button>
                                         <th>
-                                            <a class="btn btn-info" href="{{ route('admin.permissions.index') }}"> Quay lại</a>
+                                            <a class="btn btn-info" href="{{ route('admin.permissions.index') }}"> Quay
+                                                lại</a>
                                         </th>
                                     </div>
                                 </div>
@@ -113,5 +120,6 @@
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 
-    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
+        type="text/css" />
 @endsection
