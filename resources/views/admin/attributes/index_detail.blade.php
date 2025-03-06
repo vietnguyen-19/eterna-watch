@@ -3,8 +3,8 @@
     <section class="content pt-3">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
-                    @if (session('thongbao'))
+                @if (session('thongbao'))
+                    <div class="col-12">
                         <div id="thongbao-alert"
                             class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
                             role="alert">
@@ -12,7 +12,59 @@
                                 {{ session('thongbao.message') }}</strong>
 
                         </div>
-                    @endif
+                    </div>
+                @endif
+                <div class="col-4">
+                    <form action="{{ route('admin.attribute_values.store') }}" autocomplete="off" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row g-4 align-items-center">
+                                    <div class="col-sm">
+                                        <div>
+                                            <h5 class="card-title mb-0">Thêm mới giá trị thuộc tính
+                                                <b>{{ $attribute->attribute_name }}</b>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="body row">
+
+                                    <input type="hidden" name="attribute_id" value="{{ $attribute->id }}">
+                                    <div class="mb-3 col-12">
+                                        <label for="value_name" class="form-label">Gía trị thuộc tính</label>
+                                        <input value="{{ old('value_name') }}" name="value_name" type="text"
+                                            id="value_name" class="form-control" placeholder="Enter name">
+                                        @error('value_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3 col-12">
+                                        <label for="note" class="form-label">Ghi chú</label>
+                                        <input value="{{ old('note') }}" name="note" type="text" id="note"
+                                            class="form-control" placeholder="Enter name">
+                                        @error('note')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="hstack gap-2 justify-content-left">
+                                    <button type="submit" class="btn btn-success" id="add-btn">Thêm giá trị </button>
+                                    <a class="btn btn-secondary" href="{{ route('admin.attributes.index') }}"
+                                        class="btn btn-light">Trở về</a>
+                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-8">
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
@@ -20,16 +72,6 @@
                                     <div>
                                         <h5 class="card-title mb-0">Thuộc tính | <b>{{ $attribute->attribute_name }}</b>
                                         </h5>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.attributes.index') }}"
-                                            class="btn btn-info add-btn mr-2"><i
-                                                class="ri-add-line align-bottom me-1"></i>Danh sách thuộc tính</a>
-                                        <a href="{{ route('admin.attribute_values.create', $attribute->id) }}"
-                                            class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm giá trị thuộc tính</a>
                                     </div>
                                 </div>
                             </div>
@@ -66,10 +108,13 @@
                                                             <ul class="list-inline hstack gap-2 mb-0">
                                                                 <!-- Edit Button -->
                                                                 <li class="list-inline-item edit" title="Edit">
-                                                                    <a href="{{ route('admin.attribute_values.edit', $item->id) }}"
-                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                        Sửa
-                                                                    </a>
+                                                                    <button
+                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm open-edit-modal"
+                                                                        data-id="{{ $item->id }}"
+                                                                        data-value-name="{{ $item->value_name }}"
+                                                                        data-note="{{ $item->note }}">
+                                                                        <i class="nav-icon fa-solid fa-pen-nib"></i>
+                                                                    </button>
                                                                 </li>
                                                                 <!-- Remove Button -->
                                                                 <li class="list-inline-item" title="Remove">
@@ -81,10 +126,9 @@
                                                                         @method('DELETE')
                                                                         <button type="submit"
                                                                             class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
-                                                                            Xóa
+                                                                            <i class="nav-icon fa-solid fa-trash"></i>
                                                                         </button>
                                                                     </form>
-
                                                                 </li>
 
                                                             </ul>
@@ -111,7 +155,43 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Chỉnh sửa giá trị thuộc tính</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            @csrf
+                            <input type="hidden" name="id" id="edit_id">
+                            <div class="mb-3 col-12">
+                                <label for="edit_value_name" class="form-label">Giá trị thuộc tính</label>
+                                <input name="value_name" type="text" id="edit_value_name" class="form-control"
+                                    placeholder="Nhập giá trị">
+                                <div class="text-danger" id="error_value_name"></div>
+                            </div>
+                            <div class="mb-3 col-12">
+                                <label for="edit_note" class="form-label">Ghi chú</label>
+                                <input name="note" type="text" id="edit_note" class="form-control"
+                                    placeholder="Nhập ghi chú">
+                                <div class="text-danger" id="error_note"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </section>
+@endsection
+@section('style')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- FontAwesome 5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 @endsection
 @section('script')
     <!-- jQuery -->
@@ -141,7 +221,58 @@
             }
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $(".open-edit-modal").click(function() {
+                var id = $(this).data("id");
+                var valueName = $(this).data("value-name");
+                var note = $(this).data("note");
 
+                // Đổ dữ liệu vào modal
+                $("#edit_id").val(id);
+                $("#edit_value_name").val(valueName);
+                $("#edit_note").val(note);
+
+                // Hiển thị modal
+                $("#editModal").modal("show");
+            });
+
+
+            $("#editForm").submit(function(e) {
+                e.preventDefault(); // Ngăn form reload
+
+                var id = $("#edit_id").val();
+                var valueName = $("#edit_value_name").val();
+                var note = $("#edit_note").val();
+
+                $.ajax({
+                    url: "/admin/attribute_values/update/" + id, // URL xử lý cập nhật
+                    type: "PUT", // Laravel yêu cầu PUT cho cập nhật
+                    data: {
+                        _token: $('input[name="_token"]').val(), // CSRF Token
+                        value_name: valueName,
+                        note: note,
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Cập nhật thành công!");
+                            $("#editModal").modal("hide");
+                            location.reload(); // Reload trang để cập nhật dữ liệu
+                        } else {
+                            alert("Có lỗi xảy ra, vui lòng thử lại.");
+                        }
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        $("#error_value_name").text(errors?.value_name ? errors.value_name[0] :
+                            "");
+                        $("#error_note").text(errors?.note ? errors.note[0] : "");
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         // Tự động đóng thông báo sau 5 giây (5000ms)
         setTimeout(function() {
@@ -153,7 +284,4 @@
             }
         }, 5000); // 5000ms = 5 giây
     </script>
-@endsection
-@section('style')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 @endsection
