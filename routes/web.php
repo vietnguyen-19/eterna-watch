@@ -46,6 +46,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
+
     Route::prefix('attributes')->group(function () {
         Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
         Route::get('create', [AttributeController::class, 'create'])->name('admin.attributes.create');
@@ -54,7 +55,6 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
-       
     });
 
     Route::prefix('attribute_values')->group(function () {
