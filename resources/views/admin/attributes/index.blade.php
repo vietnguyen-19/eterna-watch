@@ -3,18 +3,43 @@
     <section class="content pt-3">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
+                <div class="col-4">
+                    <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row g-4 align-items-center">
+                                    <div class="col-sm">
+                                        <h5 class="card-title mb-0"><b>Thêm mới thuộc tính</b></h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <label for="attribute_name" class="form-label">Tên thuộc tính</label>
+                                <input value="{{ old('attribute_name') }}" name="attribute_name" type="text"
+                                    id="attribute_name" class="form-control" placeholder="Enter name">
+                                @error('attribute_name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="hstack gap-2 justify-content-left">
+                                    <button type="submit" class="btn btn-success" id="add-btn">Thêm thuộc tính</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-8">
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Danh sách thuộc tính</h5>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <button class="btn btn-success add-btn" data-bs-toggle="modal"
-                                        data-bs-target="#addAttributeModal">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thêm thuộc tính mới
-                                    </button>
+                                    <h5 class="card-title mb-0"><b>Danh sách thuộc tính</b></h5>
                                 </div>
                             </div>
                         </div>
@@ -25,6 +50,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Tên thuộc tính</th>
+                                        <th>Giá trị thuộc tính</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -34,14 +60,27 @@
                                             <td class="align-middle">{{ $item->id }}</td>
                                             <td class="align-middle">{{ $item->attribute_name }}</td>
                                             <td class="align-middle">
-                                                <a href="{{ route('admin.attribute_values.index', $item->id) }}"
-                                                    class="btn btn-info btn-sm">Giá trị thuộc tính</a>
-                                                <button class="btn btn-warning btn-sm edit-btn"
-                                                    data-id="{{ $item->id }}"
-                                                    data-name="{{ $item->attribute_name }}">Sửa</button>
-                                                <button class="btn btn-danger btn-sm delete-btn"
-                                                    data-id="{{ $item->id }}">Xóa</button>
+                                                @foreach ($item->attributeValues as $attributeValue)
+                                                    <span class="badge bg-primary">{{ $attributeValue->value_name }}</span>
+                                                @endforeach
                                             </td>
+
+                                            <td class="align-middle">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a title="Chi tiết" href="{{ route('admin.attribute_values.index', $item->id) }}"
+                                                        class="btn btn-info">
+                                                        <i class="nav-icon fa-solid fa-circle-info"></i>
+                                                    </a>
+                                                    <button title="Sửa" class="btn btn-warning edit-btn" data-id="{{ $item->id }}"
+                                                        data-name="{{ $item->attribute_name }}">
+                                                        <i class="nav-icon fa-solid fa-pen-nib"></i>
+                                                    </button>
+                                                    <button title="Xóa" class="btn btn-danger delete-btn" data-id="{{ $item->id }}">
+                                                        <i class="nav-icon fa-solid fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -52,29 +91,6 @@
             </div>
         </div>
     </section>
-
-    <div class="modal fade" id="addAttributeModal" tabindex="-1" aria-labelledby="addAttributeModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addAttributeModalLabel">Thêm thuộc tính mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addAttributeForm">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="attribute_name" class="form-label">Tên thuộc tính</label>
-                            <input type="text" class="form-control" id="attribute_name" name="attribute_name" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="editAttributeModal" tabindex="-1" aria-labelledby="editAttributeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -260,5 +276,4 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap JS (Yêu cầu Popper.js) -->
-    
 @endsection

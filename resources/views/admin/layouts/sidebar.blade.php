@@ -62,7 +62,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
-                            Quản lý danh mục
+                            Danh mục
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -84,11 +84,40 @@
                         </li>
                     </ul>
                 </li>
+
+                 <!-- quản lý banner -->
+                 <li class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-layer-group"></i>
+                        <p>
+                            Quản lý Banner
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.banners.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.banners.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.banners.create') }}"
+                                class="nav-link {{ Request::routeIs('admin.banners.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item {{ Request::is('admin/users*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-user"></i>
                         <p>
-                            Quản lý tài khoản
+                            Tài khoản
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -118,20 +147,20 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-clock"></i>
                         <p>
-                            Quản lý sản phẩm
+                            Sản phẩm
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#"
+                            <a href="{{ route('admin.products.index')}}"
                                 class="nav-link {{ Request::routeIs('admin.products.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#"
+                            <a href="{{ route('admin.products.create')}}"
                                 class="nav-link {{ Request::routeIs('admin.attribute.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Thêm mới sản phẩm</p>
@@ -169,6 +198,59 @@
                         </li>
                     </ul>
                 </li>
+
+                {{-- permissoin --}}
+                <li class="nav-item {{ Request::is('admin/permissions*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-layer-group"></i>
+                        <p>
+                            Quản lý Permission
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.permissions.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.permissions.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.permissions.create') }}"
+                                class="nav-link {{ Request::routeIs('admin.permissions.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                {{-- <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-pie"></i>
+                        <p>
+                            Quản lý Permission
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.permissions.index') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.permissions.create') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
