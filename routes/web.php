@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\CategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +25,10 @@ use App\Http\Controllers\Admin\CategoryController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('admin/dashboard');
+        return view('admin.dashboard');
     })->name('admin.dashboard');
-    // Danh mục
 
+    // 📌 Danh mục (Category)
     Route::prefix('categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
         Route::get('create', [CategoryController::class, 'create'])->name('admin.categories.create');
@@ -36,23 +36,14 @@ Route::prefix('admin')->group(function () {
         Route::get('show/{id}', [CategoryController::class, 'show'])->name('admin.categories.show');
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
-        Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+        Route::delete('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy'); // 🛠 Sửa từ GET thành DELETE
     });
 
-//test git
-});
-Route::prefix('admin')->group(function () {
-    Route::resource('brands', BrandController::class)->names([
-        'index' => 'admin.brands.index',
-        'create' => 'admin.brands.create',
-        'store' => 'admin.brands.store',
-        'show' => 'admin.brands.show',
-        'edit' => 'admin.brands.edit',
-        'update' => 'admin.brands.update',
-        'destroy' => 'admin.brands.destroy',
-    ]);
+    // 📌 Thương hiệu (Brand) - Dùng resource route
+    Route::resource('brands', BrandController::class)->names('admin.brands');
 
 
+    // 📌 Quản lý người dùng (User)
     Route::prefix('users')->group(function () {
         Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
         Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
@@ -63,18 +54,18 @@ Route::prefix('admin')->group(function () {
         Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 
-
+    // 📌 Thuộc tính sản phẩm (Attribute)
     Route::prefix('attributes')->group(function () {
         Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
         Route::get('create', [AttributeController::class, 'create'])->name('admin.attributes.create');
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
-        Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
+        Route::put('{id}/update', [AttributeController::class, 'update'])->name('admin.attributes.update'); // 🛠 Đổi từ POST sang PUT
         Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
-
     });
 
+    // 📌 Giá trị thuộc tính (Attribute Values)
     Route::prefix('attribute_values')->group(function () {
         Route::get('/{id}', [AttributeValueController::class, 'index'])->name('admin.attribute_values.index');
         Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('admin.attribute_values.create');
@@ -85,16 +76,14 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('admin.attribute_values.destroy');
     });
 
-   
-    // permission
+    // 📌 Quyền (Permission)
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');
-        Route::get('create',          [PermissionController::class, 'create'])->name('admin.permissions.create');
-        Route::post('store',         [PermissionController::class,  'store'])->name('admin.permissions.store');
-        Route::post('show/{id}',     [PermissionController::class,  'show'])->name('admin.permissions.show');
-        Route::get('{id}/edit',      [PermissionController::class,  'edit'])->name('admin.permissions.edit');
-        Route::put('{id}/update',    [PermissionController::class,  'update'])->name('admin.permissions.update');
-        Route::get('/{id}/destroy',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
+        Route::get('create', [PermissionController::class, 'create'])->name('admin.permissions.create');
+        Route::post('store', [PermissionController::class, 'store'])->name('admin.permissions.store');
+        Route::get('show/{id}', [PermissionController::class, 'show'])->name('admin.permissions.show'); // 🛠 Sửa từ POST sang GET
+        Route::get('{id}/edit', [PermissionController::class, 'edit'])->name('admin.permissions.edit');
+        Route::put('{id}/update', [PermissionController::class, 'update'])->name('admin.permissions.update');
+        Route::delete('{id}/destroy', [PermissionController::class, 'destroy'])->name('admin.permissions.destroy'); // 🛠 Đổi từ GET sang DELETE
     });
-
 });

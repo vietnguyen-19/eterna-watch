@@ -3,19 +3,20 @@
 @section('content')
     <div class="container">
         <h2 class="mt-3 mb-4">Danh sách Thương hiệu</h2>
-
-        {{-- Hiển thị thông báo --}}
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ trim(session('success')) }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {!! trim(htmlspecialchars(session('success'))) !!}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
+
 
         {{-- Ô tìm kiếm --}}
         <form method="GET" action="{{ route('admin.brands.index') }}" class="mb-3">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm thương hiệu..." value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm thương hiệu..."
+                       value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
             </div>
         </form>
@@ -55,8 +56,8 @@
         </table>
 
         {{-- Hiển thị phân trang --}}
-        {{-- <div class="d-flex justify-content-center">
-            {{ $brands->links() }}
-        </div> --}}
+        <div class="d-flex justify-content-center">
+            {{ $brands->appends(['search' => request('search')])->links('pagination::bootstrap-5') }}
+        </div>
     </div>
 @endsection
