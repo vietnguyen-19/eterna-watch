@@ -32,7 +32,9 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('theme/admin/plugins/summernote/summernote-bs4.min.css') }}">
     <!-- Bootstrap CSS -->
-   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+
 
     <!-- Bootstrap JS (để xử lý dismiss alert) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
@@ -58,7 +60,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
-           
+
             <!-- /.content-header -->
 
             <!-- Main content -->
@@ -75,7 +77,7 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
-  
+
     <!-- jQuery -->
     <script src="{{ asset('theme/admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
