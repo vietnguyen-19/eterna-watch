@@ -63,14 +63,14 @@ class RoleController extends Controller
     {
         
         $request->validate([
-            'name' => 'required|string|max:225|unique:roles,name' . $role->id,
+            'name' => 'required|string|max:225|unique:roles,name,' . $role->id,
         ]);
 
         try{
             $role -> name = $request->input('name');
             $role -> save();
-
-            return redirect()->router('admin.roles.index')->with('success','Role đã được cập nhật!');
+            $roleId = $role->id;
+            return redirect()->route('roles.index')->with('success','Role đã được cập nhật!');
         } catch (\Exception $e){
             //xử lis lỗi nếu có
             return redirect()->back()->with('error','đã có lỗi xảy ra');
