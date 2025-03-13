@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-
+use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -127,4 +127,5 @@ Route::prefix('admin')->group(function () {
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
         Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
+    Route::resource('roles', RoleController::class);
 });
