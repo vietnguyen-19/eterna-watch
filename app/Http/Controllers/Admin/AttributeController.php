@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
@@ -64,5 +65,10 @@ class AttributeController extends Controller
         } else {
             return response()->json(['status' => 'error', 'message' => 'Không tìm thấy thuộc tính!']);
         }
+    }
+    public function getAttributeValues($id)
+    {
+        $values = AttributeValue::where('attribute_id', $id)->get();
+        return response()->json($values);
     }
 }
