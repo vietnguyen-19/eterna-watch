@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-
+use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('admin/dashboard');
+        return view('admin.dashboard');
     })->name('admin.dashboard');
 
     // Danh mục
@@ -73,10 +73,12 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
+
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
-        Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+        Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
     });
 
+    // 📌 Giá trị thuộc tính (Attribute Values)
     Route::prefix('attribute_values')->group(function () {
         Route::get('/{id}', [AttributeValueController::class, 'index'])->name('admin.attribute_values.index');
         Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('admin.attribute_values.create');
@@ -125,6 +127,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
         Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+        Route::get('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
+
+    Route::resource('roles', RoleController::class);
 });
+
