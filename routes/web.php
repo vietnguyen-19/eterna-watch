@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('admin/dashboard');
+        return view('admin.dashboard');
     })->name('admin.dashboard');
 
     // Danh mục
@@ -73,10 +73,11 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
-        Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
+        Route::put('{id}/update', [AttributeController::class, 'update'])->name('admin.attributes.update'); // 🛠 Đổi từ POST sang PUT
         Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
     });
 
+    // 📌 Giá trị thuộc tính (Attribute Values)
     Route::prefix('attribute_values')->group(function () {
         Route::get('/{id}', [AttributeValueController::class, 'index'])->name('admin.attribute_values.index');
         Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('admin.attribute_values.create');
@@ -127,5 +128,7 @@ Route::prefix('admin')->group(function () {
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
         Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
+
     Route::resource('roles', RoleController::class);
 });
+
