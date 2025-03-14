@@ -17,6 +17,7 @@ class Product extends Model
         'category_id',
         'brand_id',
         'status',
+        'view_count'
     ];
 
     public function category()
@@ -42,6 +43,10 @@ class Product extends Model
     public function variants()
     {
         return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'entity');
     }
     
 }
