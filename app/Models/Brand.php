@@ -18,8 +18,20 @@ class Brand extends Model
         return $this->belongsTo(Brand::class, 'parent_id');
     }
 
+    // Quan hệ với thương hiệu con
     public function children()
     {
         return $this->hasMany(Brand::class, 'parent_id');
+    }
+
+    // Lấy tất cả sản phẩm thuộc thương hiệu cha + con
+    public function allProducts()
+    {
+        return Product::whereIn('brand_id', function ($query) {
+            $query->select('id')
+                ->from('brands')
+                ->where('id', $this->id)
+                ->orWhere('parent_id', $this->id);
+        });
     }
 }
