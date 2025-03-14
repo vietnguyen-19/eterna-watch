@@ -17,8 +17,8 @@ class VariantAttributeFactory extends Factory
     public function definition()
     {
         return [
-            'variant_id' => ProductVariant::inRandomOrder()->first()->id,
-            'attribute_value_id' => AttributeValue::inRandomOrder()->first()->id,
+            'variant_id' => ProductVariant::inRandomOrder()->first()->id ?? ProductVariant::factory(),
+            'attribute_value_id' => AttributeValue::inRandomOrder()->first()->id ?? AttributeValue::factory(),
         ];
     }
 }
