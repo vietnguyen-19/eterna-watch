@@ -100,4 +100,8 @@ Route::prefix('account')->group(function () {
     Route::get('wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
     Route::get('address', [AccountController::class, 'address'])->name('account.address');
     Route::get('order_detail/{id}', [AccountController::class, 'orderDetail'])->name('account.order_detail');
+    Route::post('cancel/{id}', [AccountController::class, 'cancelOrder'])->name('account.cancel');
+    Route::delete('/wishlist/remove/{id}', [AccountController::class, 'removeFromWishlist'])->name('wishlist.remove');
+
 });
+

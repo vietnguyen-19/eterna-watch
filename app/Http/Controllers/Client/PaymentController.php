@@ -194,8 +194,6 @@ class PaymentController extends Controller
 
         return redirect($vnp_Url);
     }
-
-    // Xử lý callback từ VNPay
     public function vnPayCallback(Request $request)
     {
         $inputData = $request->all();
@@ -241,7 +239,6 @@ class PaymentController extends Controller
                 'changed_at' => now(),
             ]);
         }
-
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'payment',
@@ -254,9 +251,6 @@ class PaymentController extends Controller
         return redirect()->route('payment.complete', $order->id)
             ->with('message', 'Thanh toán thành công! Giỏ hàng đã được làm trống.');
     }
-
-
-    // Xử lý thanh toán tiền mặt
     public function payWithCash($order_id)
     {
         $order = Order::findOrFail($order_id);

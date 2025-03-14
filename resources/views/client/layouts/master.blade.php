@@ -97,9 +97,11 @@
             });
         });
     </script>
-    @yield('script')
+    
     <!-- External JavaScripts -->
     <script src="{{ asset('theme/client/js/plugins/jquery.min.js') }}"></script>
+
+    @yield('script')
     <script src="{{ asset('theme/client/js/plugins/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('theme/client/js/plugins/bootstrap-slider.min.js') }}"></script>
 

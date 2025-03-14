@@ -1,493 +1,89 @@
 @extends('client.layouts.master')
 @section('content')
-    <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
+    <div class="mb-4 mb-xl-5 pt-xl-1 pb-4"></div>
     <main style="padding-top: 90px;">
         <div class="mb-4 pb-4"></div>
-        <section class="my-account container">
-            <h2 class="page-title">Wishlist</h2>
+        <section class="my-account container py-5">
             <div class="row">
                 <div class="col-lg-3">
-                    <ul class="account-nav">
-                        <li><a href="./account_dashboard.html" class="menu-link menu-link_us-s">Dashboard</a></li>
-                        <li><a href="./account_orders.html" class="menu-link menu-link_us-s">Orders</a></li>
-                        <li><a href="./account_edit_address.html" class="menu-link menu-link_us-s">Addresses</a></li>
-                        <li><a href="./account_edit.html" class="menu-link menu-link_us-s">Account Details</a></li>
-                        <li><a href="./account_wishlist.html" class="menu-link menu-link_us-s menu-link_active">Wishlist</a>
-                        </li>
-                        <li><a href="./login_register.html" class="menu-link menu-link_us-s">Logout</a></li>
-                    </ul>
+                    <nav class="nav flex-column  account-sidebar sticky-sidebar">
+                        <a href="{{ route('account.dashboard') }}" class="nav-link text-dark fw-semibold ">Bảng điều
+                            khiển</a>
+                        <a href="{{ route('account.order') }}" class="nav-link text-dark">Đơn hàng</a>
+                        <a href="{{ route('account.address') }}" class="nav-link text-dark">Địa chỉ</a>
+                        <a href="{{ route('account.detail') }}" class="nav-link text-dark">Chi tiết tài khoản</a>
+                        <a href="{{ route('account.wishlist') }}" class="nav-link text-dark active">Danh sách yêu thích</a>
+
+                        <form action="{{ route('client.logout') }}" method="POST" class="w-100">
+                            @csrf
+                            <button type="submit" class="nav-link fw-semibold text-danger logout-btn">Đăng xuất</button>
+                        </form>
+                    </nav>
                 </div>
                 <div class="col-lg-9">
-                    <div class="page-content my-account__wishlist">
-                        <div class="products-grid row row-cols-2 row-cols-lg-3" id="products-grid">
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-910c4f8cf211073e26"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_5-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
+                    <div class="shopping-cart">
+                        <div class="cart-table__wrapper">
+                            <table class="cart-table">
+                                <thead>
+                                    <tr>
+                                        <th class="fw-bold">Sản phẩm</th>
+                                        <th></th>
+                                        <th class="fw-bold text-center">Giá</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach ($wishlist as $item)
+                                        <tr>
+                                            <td>
+                                                <div class="shopping-cart__product-item">
+                                                    <a href="{{ route('client.shop.show', $item->product->id) }}">
+                                                        <img style="border: 1px solid #c4bebe;width:88px"
+                                                            src="{{ Storage::url($item->product->avatar ?? 'avatar/default.jpeg') }}"
+                                                            alt="">
+                                                    </a>
                                                 </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_5.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_5-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_5.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
+                                            </td>
+                                            <td>
+                                                <div class="shopping-cart__product-item__detail">
+                                                    <h4><a href="{{ route('client.shop.show', $item->product->id) }}">
+                                                            <strong>{{ $item->product->name ?? 'Sản phẩm không tồn tại' }}</strong></a>
+                                                    </h4>
+                                                    <ul class="shopping-cart__product-item__options">
+                                                        <li>Danh
+                                                            mục:{{ $item->product->category->name ?? 'Không xác định' }}
+                                                        </li>
+                                                        <li>Thương
+                                                            hiệu:{{ $item->product->brand->name ?? 'Không xác định' }}</li>
+                                                    </ul>
                                                 </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-910c4f8cf211073e26"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button" aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-910c4f8cf211073e26"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span
+                                                    class="shopping-cart__product-price">{{ number_format($item->product->price_default, 0, ',', '.') }}đ</span>
+                                            </td>
 
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Colorful Jacket</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price">$29</span>
-                                        </div>
+                                            <td>
+                                            <td>
+                                                <a href="#" class="removed-cart" data-id="{{ $item->product->id }}">
+                                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
+                                                        <path
+                                                            d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
+                                                    </svg>
+                                                </a>
+                                            </td>
 
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-510d10519c106a4b434"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_6-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_6.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_6-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_6.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-510d10519c106a4b434"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button"
-                                                aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-510d10519c106a4b434"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Shirt In Botanical Cheetah Print</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price">$62</span>
-                                        </div>
-
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-752c54755f72f6410"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_7-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_7.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_7-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_7.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-752c54755f72f6410"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button"
-                                                aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-752c54755f72f6410"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Cotton Jersey T-Shirt</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price">$17</span>
-                                        </div>
-
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-4d31094ec46d6fed6"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_8-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_8.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_8-1.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_8.jpg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-4d31094ec46d6fed6"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button"
-                                                aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-4d31094ec46d6fed6"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Zessi Dresses</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price price-old">$129</span>
-                                            <span class="money price price-sale">$99</span>
-                                        </div>
-
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-4ea82e33da98499b"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_9-1.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_9.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_9-1.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_9.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-4ea82e33da98499b"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button"
-                                                aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-4ea82e33da98499b"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Cropped Faux Leather Jacket</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price">$29</span>
-                                        </div>
-
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="product-card-wrapper">
-                                <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-                                    <div class="pc__img-wrapper">
-                                        <div class="swiper-container background-img js-swiper-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events"
-                                            data-settings="{&quot;resizeObserver&quot;: true}">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-4566ac76252cb84b"
-                                                aria-live="polite"
-                                                style="transform: translate3d(-210px, 0px, 0px); transition-duration: 0ms;">
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-prev swiper-slide-duplicate-next"
-                                                    data-swiper-slide-index="1" role="group" aria-label="1 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_10-1.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                                <div class="swiper-slide swiper-slide-active" data-swiper-slide-index="0"
-                                                    role="group" aria-label="2 / 4" style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_10.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-next swiper-slide-duplicate-prev"
-                                                    data-swiper-slide-index="1" role="group" aria-label="3 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_10-1.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div><!-- /.pc__img-wrapper -->
-                                                <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active"
-                                                    data-swiper-slide-index="0" role="group" aria-label="4 / 4"
-                                                    style="width: 210px;">
-                                                    <img loading="lazy" src="../images/products/product_10.jpeg"
-                                                        width="330" height="400" alt="Cropped Faux leather Jacket"
-                                                        class="pc__img">
-                                                </div>
-                                            </div>
-                                            <span class="pc__img-prev" tabindex="0" role="button"
-                                                aria-label="Previous slide"
-                                                aria-controls="swiper-wrapper-4566ac76252cb84b"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_prev_sm"></use>
-                                                </svg></span>
-                                            <span class="pc__img-next" tabindex="0" role="button"
-                                                aria-label="Next slide"
-                                                aria-controls="swiper-wrapper-4566ac76252cb84b"><svg width="7"
-                                                    height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_next_sm"></use>
-                                                </svg></span>
-                                            <span class="swiper-notification" aria-live="assertive"
-                                                aria-atomic="true"></span>
-                                        </div>
-                                        <button class="btn-remove-from-wishlist">
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_close"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <p class="pc__category">Dresses</p>
-                                        <h6 class="pc__title">Calvin Shorts</h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price">$62</span>
-                                        </div>
-
-                                        <button
-                                            class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                                            title="Add To Wishlist">
-                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <use href="#icon_heart"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- /.products-grid row -->
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -496,6 +92,108 @@
     <div class="mb-5 pb-xl-5"></div>
 @endsection
 @section('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".removed-cart").forEach(button => {
+                button.addEventListener("click", function(e) {
+                    e.preventDefault();
+
+                    let productId = this.getAttribute("data-id");
+
+                    if (confirm(
+                            "Bạn có chắc chắn muốn xóa sản phẩm này khỏi danh sách yêu thích?")) {
+                        fetch(`/account/wishlist/remove/${productId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "X-CSRF-TOKEN": document.querySelector(
+                                        'meta[name="csrf-token"]').getAttribute("content"),
+                                    "Content-Type": "application/json",
+                                },
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert("Đã xóa sản phẩm khỏi danh sách yêu thích!");
+                                    location.reload();
+                                } else {
+                                    alert("Có lỗi xảy ra, vui lòng thử lại.");
+                                }
+                            });
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
 @section('style')
+<style>
+    .nav-link {
+        font-size: 16px;
+        padding: 12px 16px;
+        transition: background-color 0.3s ease, padding-left 0.3s ease;
+        background: rgb(255, 243, 243);
+    }
+
+    .nav-link:hover {
+        background: #f0f0f0;
+        padding-left: 20px;
+    }
+
+    .nav-link.active {
+        background: hsl(0, 87%, 94%);
+        font-weight: bold;
+        color: #d3401f !important;
+        border-left: 3px solid #fda3a3;
+    }
+
+    /* Hiệu ứng hover cho các liên kết */
+    .link-hover {
+        transition: color 0.3s ease-in-out;
+    }
+
+    .link-hover:hover {
+        color: #0d47a1 !important;
+        text-decoration: underline;
+    }
+
+    /* Bố cục nội dung đẹp hơn */
+    .content-box {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .logout-btn {
+        background: none;
+        border: none;
+        text-align: left;
+        width: 100%;
+        padding: 12px 16px;
+        transition: background-color 0.3s, padding-left 0.3s;
+        font-size: 16px;
+        color: #c61a18 !important;
+        background: rgb(255, 243, 243);
+    }
+
+    .logout-btn:hover {
+        background: #f5f5f5;
+        padding-left: 18px;
+    }
+
+    /* Responsive tối ưu */
+    @media (max-width: 768px) {
+        .container {
+            max-width: 100%;
+        }
+
+        .nav {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-box {
+            margin-top: 20px;
+        }
+    }
+</style>
 @endsection
