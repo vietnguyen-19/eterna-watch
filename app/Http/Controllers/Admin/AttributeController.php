@@ -29,11 +29,14 @@ class AttributeController extends Controller
         $attribute->attribute_name = $request->attribute_name;
         $attribute->save();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Thuộc tính đã được thêm thành công!',
-            'data' => $attribute
-        ]);
+        return redirect()->route('admin.attributes.index')
+            ->with('success', 'Thuộc tính đã được tạo thành công');
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Thuộc tính đã được thêm thành công!',
+        //     // 'data' => $attribute
+        // ]);
     }
 
 
@@ -61,9 +64,11 @@ class AttributeController extends Controller
         $attribute = Attribute::find($id);
         if ($attribute) {
             $attribute->delete();
-            return response()->json(['status' => 'success', 'message' => 'Xóa thuộc tính thành công!']);
+            // return response()->json(['status' => 'success', 'message' => 'Xóa thuộc tính thành công!']);
+            return redirect()->route('admin.attributes.index')->with('success', 'Xóa thuộc tính thành công!');
         } else {
-            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy thuộc tính!']);
+            // return response()->json(['status' => 'error', 'message' => 'Không tìm thấy thuộc tính!']);
+            return redirect()->route('admin.attributes.index')->with('success', 'Không tìm thấy thuộc tính!');
         }
     }
     public function getAttributeValues($id)
