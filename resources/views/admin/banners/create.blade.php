@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h4>Add New Banner</h4>
+            <h4>Thêm mới Banner</h4>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.banners.store') }}" method="POST">
@@ -20,7 +20,7 @@
                     <input type="text" name="redirect_link" class="form-control" placeholder="Enter redirect URL">
                 </div>
 
-                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>Thêm mới</button>
                 <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
             </form>
         </div>

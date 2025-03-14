@@ -4,7 +4,7 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Edit Banner</h2>
+                <h2 class="mb-0">Cập nhật Banner</h2>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.banners.update', $banner->id) }}" method="POST">
@@ -24,8 +24,8 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Back to List</a>
-                        <button type="submit" class="btn btn-success">Update</button>
+                        <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Quay lại trang danh sách</a>
+                        <button type="submit" class="btn btn-success">Cập nhật</button>
                     </div>
                 </form>
             </div>

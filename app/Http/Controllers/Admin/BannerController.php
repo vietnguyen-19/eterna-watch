@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use App\Http\Requests\BannerStoreRequest;
+use App\Http\Requests\BannerUpdateRequest;
 
 class BannerController extends Controller
 {
     public function index()
     {
-        $banners = Banner::all();
+        // Lấy danh sách banners và sắp xếp theo ID mới nhất
+        $banners = Banner::orderBy('id', 'desc')->get();
 
         return view('admin.banners.index', compact('banners'));
     }
-
 
 
     public function create()
@@ -22,17 +24,11 @@ class BannerController extends Controller
         return view('admin.banners.create');
     }
 
-    public function store(Request $request)
+    public function store(BannerStoreRequest $request)
     {
-        $request->validate([
-            'image_link' => 'required|string',
-            'redirect_link' => 'nullable|string',
-        ]);
+        Banner::create($request->validated());
 
-        Banner::create($request->all());
-
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
-
+        return redirect()->route('admin.banners.index')->with('success', 'Thêm mới thành công Banner');
     }
 
     public function edit($id)
@@ -41,37 +37,23 @@ class BannerController extends Controller
         return view('admin.banners.edit', compact('banner'));
     }
 
-    public function update(Request $request, $id)
+    public function update(BannerUpdateRequest $request, $id)
     {
-        // Lấy bản ghi banner
         $banner = Banner::findOrFail($id);
 
-        // Kiểm tra dữ liệu đầu vào
-        $request->validate([
-            'image_link' => 'required|string|url', // Đảm bảo đây là URL hợp lệ
-            'redirect_link' => 'nullable|string|url', // URL hoặc null
-        ]);
+        $banner->update($request->validated());
 
-        // Cập nhật dữ liệu
-        $banner->update([
-            'image_link' => $request->input('image_link'),
-            'redirect_link' => $request->input('redirect_link'),
-        ]);
-
-        // Quay lại danh sách với thông báo thành công
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
-
+        return redirect()->route('admin.banners.index')->with('success', 'Cập nhật thành công Banner');
     }
-
 
     public function destroy($id)
     {
         $banner = Banner::findOrFail($id);
         $banner->delete();
 
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
-
+        return redirect()->route('admin.banners.index')->with('success', 'Xóa thành công');
     }
+
     public function show($id)
     {
         $banner = Banner::findOrFail($id);

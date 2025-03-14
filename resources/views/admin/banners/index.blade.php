@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="mb-3">Banner List</h2>
-        <a href="{{ route('admin.banners.create') }}" class="btn btn-primary mb-3">Add New Banner</a>
+        <h2 class="mb-3">Danh sách Banner</h2>
+        <a href="{{ route('admin.banners.create') }}" class="btn btn-primary mb-3">Thêm mới Banner</a>
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
