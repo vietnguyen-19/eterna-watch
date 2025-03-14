@@ -19,14 +19,16 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
-            'avatar' => 'avatar/avatar' . rand(1,15) . '.jpeg',
-            'price_default'=> 500000,
+            'name' => $this->faker->company . ' ' . $this->faker->randomElement(['Classic', 'Sport', 'Luxury', 'Smart', 'Vintage']),
+            'avatar' => 'products/product' . rand(1, 36) . '.jpeg',
             'short_description' => $this->faker->sentence,
-            'full_description' => $this->faker->paragraph,
-            'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
-            'brand_id' => Brand::inRandomOrder()->first()->id ?? Brand::factory(),
+            'price_default' => rand(5,500) *10000,
+            'full_description' => $this->faker->paragraphs(3, true),
+            'category_id' => Category::whereNotNull('parent_id')->inRandomOrder()->first()->id ?? Category::factory(),
+            'brand_id' => Brand::whereNotNull('parent_id')->inRandomOrder()->first()->id ?? Brand::factory(),
             'status' => $this->faker->randomElement(['active', 'inactive', 'out_of_stock']),
+            'view_count' => rand(1,500) *10,
         ];
+        
     }
 }
