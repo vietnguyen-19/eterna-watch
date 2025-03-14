@@ -4,30 +4,27 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    @if (session('thongbao'))
-                    <div id="thongbao-alert"
-                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                        role="alert">
-                        <i class="ri-notification-off-line label-icon"></i><strong>
-                            {{ session('thongbao.message') }}</strong>
 
-                    </div>
-                    @php
-                        session()->forget('thongbao');
-                    @endphp
-                @endif
+                    @if(session('success'))
+                        <div id="thongbao-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="ri-notification-off-line label-icon"></i><strong>{!! trim(htmlspecialchars(session('success'))) !!}</strong>
+                        </div>
+                        @php
+                            session()->forget('success');
+                        @endphp
+                    @endif
+
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0">Danh sách thương hiệu</h5>
-                                    </div>
+                                    <h5 class="card-title mb-0">Danh sách Thương hiệu</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.brands.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm thương hiệu</a>
+                                        <a href="{{ route('admin.brands.create') }}" class="btn btn-success add-btn">
+                                            <i class="ri-add-line align-bottom me-1"></i>Thêm thương hiệu
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +134,6 @@
             });
         });
     </script>
-
     <script>
         // Tự động đóng thông báo sau 5 giây (5000ms)
         setTimeout(function() {

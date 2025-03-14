@@ -11,12 +11,28 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //hiển thị danh sách
-        $brands = Brand::all();
+        $search = $request->input('search');
+        
+        // Lọc theo tên thương hiệu
+        $query = Brand::query();
+        if ($search) {
+            $filteredBrands = $query->where('name', 'like', "%$search%")->get();
+            
+            // Nếu không tìm thấy, trả về tất cả thương hiệu và hiển thị thông báo
+            if ($filteredBrands->isEmpty()) {
+                return redirect()->route('admin.brands.index')
+                    ->with('success', "Không tìm thấy thương hiệu '$search'. Danh sách hiển thị tất cả.");
+            }
+        }
+
+        $brands = $query->paginate(10);
+
         return view('admin.brands.index', compact('brands'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -85,6 +101,6 @@ class BrandController extends Controller
     {
         $brand = Brand::findOrFail($id);
         $brand->delete();
-        return redirect()->route('admin.brands.index')->with('succes', 'Thương hiệu đã bị xóa');
+        return redirect()->route('admin.brands.index')->with('success', 'Thương hiệu đã bị xóa');
     }
 }
