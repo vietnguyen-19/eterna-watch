@@ -16,10 +16,11 @@
                     <li style="background-color: rgb(86, 86, 86); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <img src="{{ Storage::url('avatar/default.jpeg') }}" class="nav-icon rounded-circle me-2"
+                            <img src=" {{ asset('theme\admin\dist\img\avatar.png') }}" class="nav-icon rounded-circle me-2"
                                 alt="User Image" width="100%">
 
                             <p class="fw-semibold ml-2">Alexander Pierce</p>
+
                         </a>
                         <ul class="text-sm align-middle nav nav-treeview">
                             <li class="nav-item">
@@ -90,7 +91,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
-                            Quản lý Banner
+                            Banner
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -179,20 +180,20 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-pie"></i>
                         <p>
-                            Quản lý thương hiệu
-                            <i class="right fas fa-angle-left"></i>
+                            Thương hiệu
+                            <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.brands.index') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.brands.create') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Thêm mới</p>
                             </a>
                         </li>
@@ -204,7 +205,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
-                            Quản lý Permission
+                            Phân quyền
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>

@@ -36,7 +36,7 @@ class BrandController extends Controller
         //them du lieu
         $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:brand,id',
+            'parent_id' => 'nullable|exists:brands,id',
         ]);
         Brand::create($request->all());
         return redirect()->route('admin.brands.index')->with('success', 'Thương hiệu đã được thêm');

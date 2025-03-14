@@ -72,9 +72,5 @@ class BannerController extends Controller
         return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
 
     }
-    public function show($id)
-    {
-        $banner = Banner::findOrFail($id);
-        return view('admin.banners.show', compact('banner'));
-    }
+    
 }

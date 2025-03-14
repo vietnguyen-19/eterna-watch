@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-4">
-                    <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"
+                    <form action="{{ route('admin.attributes.store') }}" autocomplete="off" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="card">
@@ -69,15 +69,12 @@
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <a title="Chi tiết" href="{{ route('admin.attribute_values.index', $item->id) }}"
                                                         class="btn btn-info">
-                                                        <i class="nav-icon fa-solid fa-circle-info"></i>
+                                                        <i class="bi bi-eye"></i>Chi tiết
                                                     </a>
-                                                    <button title="Sửa" class="btn btn-warning edit-btn" data-id="{{ $item->id }}"
-                                                        data-name="{{ $item->attribute_name }}">
-                                                        <i class="nav-icon fa-solid fa-pen-nib"></i>
-                                                    </button>
-                                                    <button title="Xóa" class="btn btn-danger delete-btn" data-id="{{ $item->id }}">
-                                                        <i class="nav-icon fa-solid fa-trash"></i>
-                                                    </button>
+                                                    <a title="sửa" href="{{ route('admin.attributes.destroy', $item->id) }}"
+                                                        class="btn btn-danger">
+                                                        <i class="bi bi-trash"></i>Xóa
+                                                    </a>
                                                 </div>
                                             </td>
 
@@ -126,7 +123,7 @@
     <script>
         $('#attributeTable').DataTable({
             "paging": true,
-            "lengthMenu": [10, 20, 50],
+            "lengthMenu": [5, 10, 20, 50],
             "searching": true,
             "ordering": true,
             "info": true,
