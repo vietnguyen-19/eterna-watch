@@ -1,5 +1,6 @@
 @extends('admin.layouts.master')
 @section('content')
+
     <div class="col-lg-12">
         <div class="card" id="customerList">
             <div class="card-header border-bottom-dashed">
@@ -65,6 +66,7 @@
     </div>
 
     </div>
+
 @endsection
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>

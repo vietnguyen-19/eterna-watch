@@ -19,9 +19,10 @@ class ProductVariantFactory extends Factory
     {
         return [
             'product_id' => Product::inRandomOrder()->first()->id ?? Product::factory(),
-            'size' => $this->faker->randomElement(['S', 'M', 'L', 'XL']),
-            'color' => $this->faker->safeColorName(),
-            'strap' => $this->faker->randomElement(['Leather', 'Metal', 'Silicone', 'Nylon']),
+            'sku' => $this->faker->unique()->bothify('SKU-#####'),
+            'price' => $this->faker->randomFloat(2, 100, 1000),
+            'stock' => $this->faker->numberBetween(10, 100),
+            'image' => 'products/product' . rand(1,36) . '.jpeg',
         ];
     }
 }
