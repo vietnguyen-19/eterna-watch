@@ -22,8 +22,8 @@ class BannerUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'image_link' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Cho phép cập nhật mà không bắt buộc ảnh
-            'redirect_link' => 'nullable|string|url|max:250',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Không bắt buộc, nhưng nếu có phải là ảnh hợp lệ
+            'redirect_link' => 'nullable|url|max:250',
         ];
     }
 
@@ -35,10 +35,9 @@ class BannerUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'image_link.image' => 'File tải lên phải là ảnh.',
-            'image_link.mimes' => 'Ảnh phải có định dạng: jpeg, png, jpg, gif.',
-            'image_link.max' => 'Ảnh không được vượt quá 2MB.',
-
+            'image.image' => 'Tệp tải lên phải là một hình ảnh.',
+            'image.mimes' => 'Ảnh phải có định dạng: jpeg, png, jpg, gif.',
+            'image.max' => 'Ảnh không được lớn hơn 2MB.',
             'redirect_link.url' => 'Đường dẫn chuyển hướng phải là một URL hợp lệ.',
             'redirect_link.max' => 'Đường dẫn chuyển hướng không được dài quá 250 ký tự.',
         ];

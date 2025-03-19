@@ -2,7 +2,7 @@
 @section('content')
     <div class="container mt-4">
         <h2 class="mb-3">Danh sách Banner</h2>
-        <a href="{{ route('admin.banners.create') }}" class="btn btn-primary mb-3">Thêm mới Banner</a>
+
         <section class="content pt-3">
             <div class="container-fluid">
                 <div class="row">
@@ -51,9 +51,8 @@
                                                 <thead class="text-muted">
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Đường dẫn ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
-                                                        </th>
+                                                        <th class="sort" data-sort="image_link">Image link</th>
+                                                        <th class="sort" data-sort="redirect_link">Redirect link</th>
                                                         <th class="sort" data-sort="action">Action</th>
                                                     </tr>
                                                 </thead>
@@ -62,10 +61,17 @@
                                                         <tr>
 
                                                             <td class="id">{{ $banner->id }}</td>
-                                                            <td class="image_link"><a href="{{ $banner->image_link }}"
-                                                                    target="_blank" title="{{ $banner->image_link }}">
-                                                                    {{ Str::limit($banner->image_link, 30, '...') }}
-                                                                </a></td>
+                                                            <td class="image_link">
+                                                                @if ($banner->image_link)
+                                                                    <img src="{{ asset($banner->image_link) }}"
+                                                                        alt="Banner" width="100" height="60"
+                                                                        style="object-fit: cover; border-radius: 5px;">
+                                                                @else
+                                                                    <span class="text-muted">Không có ảnh</span>
+                                                                @endif
+                                                            </td>
+
+
                                                             <td class="redirect_link">
                                                                 @if ($banner->redirect_link)
                                                                     <a href="{{ $banner->redirect_link }}"
@@ -87,12 +93,15 @@
                                                                     </li>
                                                                     <!-- Remove Button -->
                                                                     <li class="list-inline-item delete" title="Remove">
-                                                                        <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                            onclick="return confirm('Bạn đã chắc chắn chưa?')"
-                                                                            href="{{ route('admin.banners.destroy', $banner->id) }}">
-                                                                            <i class="bi bi-trash"></i>Xóa
-                                                                        </a>
+                                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" onsubmit="return confirm('Bạn đã chắc chắn chưa?');">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit" class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
+                                                                                <i class="bi bi-trash"></i> Xóa
+                                                                            </button>
+                                                                        </form>
                                                                     </li>
+
 
                                                                 </ul>
                                                             </td>
@@ -102,8 +111,8 @@
                                                 <thead class="text-muted">
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Đường dẫn ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
+                                                        <th class="sort" data-sort="image_link">Image link</th>
+                                                        <th class="sort" data-sort="redirect_link">Redirect link
                                                         </th>
                                                         <th class="sort" data-sort="action">Action</th>
                                                     </tr>
