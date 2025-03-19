@@ -72,13 +72,6 @@
 
                                                         <td>
                                                             <ul class="list-inline hstack gap-2 mb-0">
-                                                                <!-- show Button -->
-                                                                <li class="list-inline-item show" title="show">
-                                                                    <a href="{{ route('admin.banners.show', $banner->id) }}"
-                                                                        class="btn btn-secondary btn-icon waves-effect waves-light btn-sm">
-                                                                        <i class="bi bi-eye"></i>Xem
-                                                                    </a>
-                                                                </li>
                                                                 <!-- Edit Button -->
                                                                 <li class="list-inline-item edit" title="Edit">
                                                                     <a href="{{ route('admin.banners.edit', $banner->id) }}"

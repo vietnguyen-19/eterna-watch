@@ -73,8 +73,9 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
-        Route::put('{id}/update', [AttributeController::class, 'update'])->name('admin.attributes.update'); // 🛠 Đổi từ POST sang PUT
-        Route::delete('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+
+        Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
+        Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
     });
 
     // 📌 Giá trị thuộc tính (Attribute Values)
@@ -126,7 +127,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
         Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+        Route::get('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
 
     Route::resource('roles', RoleController::class);
