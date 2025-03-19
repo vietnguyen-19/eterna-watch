@@ -56,13 +56,13 @@ Route::prefix('admin')->group(function () {
 
 
     Route::prefix('users')->group(function () {
-        Route::get('create', [UserController::class, 'create'])->name('admin.users.create');
-        Route::get('/{id}', [UserController::class, 'index'])->name('admin.users.index');
-        Route::post('store', [UserController::class, 'store'])->name('admin.users.store');
-        Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show');
-        Route::get('{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-        Route::put('{id}/update', [UserController::class, 'update'])->name('admin.users.update');
-        Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::get('/', [UserController::class, 'index'])->name('admin.users.index'); // Hiển thị tất cả người dùng
+        Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); // Form tạo mới người dùng
+        Route::post('store', [UserController::class, 'store'])->name('admin.users.store'); // Lưu người dùng mới
+        Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show'); // Xem thông tin người dùng
+        Route::get('{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit'); // Form chỉnh sửa người dùng
+        Route::put('{id}/update', [UserController::class, 'update'])->name('admin.users.update'); // Cập nhật thông tin người dùng
+        Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy'); // Xóa người dùng
     });
 
 
