@@ -74,9 +74,9 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
-
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+
     });
 
     // 📌 Giá trị thuộc tính (Attribute Values)
