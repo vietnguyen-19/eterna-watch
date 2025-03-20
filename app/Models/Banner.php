@@ -14,7 +14,6 @@ class Banner extends Model
         'redirect_link',
     ];
 
-
     protected $attributes = [
         'redirect_link' => '#', // Đặt link mặc định nếu không có
     ];
@@ -23,5 +22,7 @@ class Banner extends Model
     {
         return url($value);
     }
-    public $timestamps = false; // Tắt timestamps
+
+
+    public $timestamps = true;
 }

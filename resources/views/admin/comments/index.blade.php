@@ -5,30 +5,23 @@
             <div class="row">
                 <div class="col-12">
                     @if (session('thongbao'))
-                        <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                            role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
+                    <div id="thongbao-alert"
+                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                        role="alert">
+                        <i class="ri-notification-off-line label-icon"></i><strong>
+                            {{ session('thongbao.message') }}</strong>
 
-                        </div>
-                        @php
-                            session()->forget('thongbao');
-                        @endphp
-                    @endif
+                    </div>
+                    @php
+                        session()->forget('thongbao');
+                    @endphp
+                @endif
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Danh sách </h5>
-                                    </div>
-                                </div>
-                                <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.permissions.create') }}"
-                                            class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm permission</a>
+                                        <h5 class="card-title mb-0">Danh sách bình luận</h5>
                                     </div>
                                 </div>
                             </div>
@@ -48,44 +41,59 @@
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="id">Name</th>
+                                                    <th class="sort" data-sort="nguoi_binh_luan">Người bình luận</th>
+                                                    <th class="sort" data-sort="noi_dung">Nội dung</th>
+                                                    <th class="sort" data-sort="loai_noi_dung">Loại bình luận</th>
+                                                    <th class="sort" data-sort="date">Ngày bình luận</th>
                                                     <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($permissions as $permission)
+                                                @foreach ($data as $item)
                                                     <tr>
-                                                        
-                                                        <td>{{ $permission->id }}</td>
-                                                        <td>{{ $permission->name }}</td>
-                                                        <td>
-                                                            <div>
-                                                                <a href="{{ route('admin.permissions.edit', $permission->id) }}"
-                                                                    class="btn btn-primary">Sửa</a>
-                                                                <form
-                                                                    action="{{ route('admin.permissions.destroy', $permission->id) }}"
-                                                                    method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger"
-                                                                        onclick="return confirm('Bạn có chắc chắn xóa không?')">Xóa</button>
-                                                                </form>
-                                                                <a class="btn btn-info"
-                                                                    href="{{ route('admin.permissions.show', $permission->id) }}">
-                                                                    Chi tiết
-                                                                </a>
-                                                            </div>
 
+                                                        <td class="id">{{ $item->id }}</td>
+                                                        <td class="nguoi_binh_luan">{{ optional($item->user)->name ?? 'Ẩn danh' }}</td>
 
+                                                        <td class="noi_dung">
+                                                            {{ Str::limit($item->content, 50, '...') }}
                                                         </td>
 
+                                                        <td class="loai_noi_dung">
+                                                            {{ $item->entity_type }}
+                                                        </td>
+                                                        <td class="date">
+                                                            {{ $item->created_at->format('d/m/y - h:i') }}
+                                                        </td>
+                                                        <td>
+                                                            <ul class="list-inline hstack gap-2 mb-0">
+                                                                <!-- Edit Button -->
+                                                                <li class="list-inline-item edit" title="Edit">
+                                                                    <a href="{{ route('admin.comments.edit', $item->id) }}"
+                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
+                                                                        Sửa
+                                                                    </a>
+                                                                </li>
+                                                                <!-- Remove Button -->
+                                                                <li class="list-inline-item" title="Remove">
+                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
+                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
+                                                                        href="{{ route('admin.comments.destroy', $item->id) }}">
+                                                                        Xóa
+                                                                    </a>
+                                                                </li>
+
+                                                            </ul>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="id">Name</th>
+                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
+                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
+                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
                                                     <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
@@ -103,6 +111,7 @@
     </section>
 @endsection
 @section('script')
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
