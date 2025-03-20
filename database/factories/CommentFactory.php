@@ -31,7 +31,6 @@ class CommentFactory extends Factory
             'entity_type' => $entityType,
             'content' => $this->faker->paragraph,
             'rating' => $entityType === 'product' ? $this->faker->numberBetween(1, 5) : null,
-            'status' => $this->faker->randomElement(['pending', 'approved', 'rejected']),
             'parent_id' => $parentId,
         ];
     }
