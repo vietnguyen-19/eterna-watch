@@ -19,27 +19,32 @@ class UserController extends Controller
      */
     public function index(Request $request, $id = null)
     {
-       if($id){
-        $data = User::with('role')->where('role_id', $id)->latest('id')->get();
-        $role = Role::findOrFail($id);
-       } else {
-        $data = User::with('role')->latest('id')->get();
-        $role = null;
-       }
-       return view('admin.users.index',[
-        'data' => $data,
-        'role' => $role,
-       ]);
+        if ($id) {
+            // Sắp xếp theo created_at giảm dần để hiển thị dữ liệu mới nhất lên đầu
+            $data = User::with('role')->where('role_id', $id)->latest('created_at')->get();
+            $role = Role::findOrFail($id);
+        } else {
+            // Sắp xếp theo created_at giảm dần để hiển thị dữ liệu mới nhất lên đầu
+            $data = User::with('role')->latest('created_at')->get();
+            $role = null;
+        }
+
+        return view('admin.users.index', [
+            'data' => $data,
+            'role' => $role,
+        ]);
     }
+
+
 
     /**
      * Hiển thị form tạo mới người dùng.
      */
     public function create()
     {
-        $roles = Role::query()->get();
+        $roles = Role::all(); // Lấy tất cả vai trò
         return view('admin.users.create', [
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 
@@ -49,7 +54,6 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('addresses')->findOrFail($id);
-
         return view('admin.users.show', compact('user'));
     }
 
@@ -58,7 +62,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $roles = Role::get();
+        $roles = Role::all(); // Lấy tất cả vai trò
         $user = User::with('role')->findOrFail($id);
         $address = UserAddress::where('user_id', $id)->where('is_default', true)->first();
 
@@ -72,6 +76,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
+        // Lưu thông tin người dùng mới
         User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -80,7 +85,7 @@ class UserController extends Controller
             'gender' => $data['gender'] ?? null,
             'avatar' => 'avatar/default.jpeg',
             'note' => $data['note'] ?? null,
-            'role_id' => $data['role_id'],
+            'role_id' => $data['role_id'],  // Gán vai trò cho người dùng
             'status' => 'active',
         ]);
 
@@ -150,7 +155,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);  
+        $user = User::findOrFail($id);
         $user->addresses()->delete();  // Xóa tất cả địa chỉ của người dùng
         $user->delete();  // Xóa người dùng
 
