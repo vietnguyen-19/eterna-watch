@@ -247,7 +247,7 @@
                                             <div class="form-floating my-2">
                                                 <input type="text" class="form-control" id="street_address"
                                                     name="street_address"
-                                                    value="{{ Auth::check() ? old('street_address', Auth::user()->defaultAddress->street_address) : '' }}"
+                                                    value="{{ Auth::check() ? old('street_address', optional(Auth::user()->defaultAddress)->street_address) : '' }}"
                                                     placeholder="Địa chỉ">
                                                 <label for="street_address">Địa chỉ *</label>
                                             </div>
