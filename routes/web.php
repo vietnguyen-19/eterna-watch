@@ -125,10 +125,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
         Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
-        Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
         Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-        Route::get('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
     
      // Order
