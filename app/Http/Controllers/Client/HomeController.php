@@ -28,6 +28,8 @@ class HomeController extends Controller
             ->limit(8)
             ->get();
 
+        $settings = Setting::pluck('value', 'key_name')->toArray();
+
 
         return view('client.home', compact('bestSellingProducts', 'trendingProducts'));
     }

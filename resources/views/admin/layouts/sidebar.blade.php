@@ -227,6 +227,33 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Quản lý Role -->
+                <li class="nav-item {{ Request::is('admin/roles*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Request::is('admin/roles*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-users"></i>
+                        <p>
+                            Vai trò
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.index') }}" class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách vai trò</p>
+                            </a>
+                                                        
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.create') }}"
+                               class="nav-link {{ Request::routeIs('admin.roles.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm vai trò mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
 
 
                 {{-- Order --}}

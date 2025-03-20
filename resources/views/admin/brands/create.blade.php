@@ -33,7 +33,7 @@
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
-                            <label for="name" class="form-label">Tên danh mục</label>
+                            <label for="name" class="form-label">Tên thương hiệu</label>
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                                 value="{{ old('name') }}" required placeholder="Enter name">
                         </div>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-                        <button type="submit" class="btn btn-success" id="add-btn">Thêm danh mục</button>
+                        <button type="submit" class="btn btn-success" id="add-btn">Thêm thương hiệu</button>
                         <a href="{{ route('admin.brands.index') }}" class="btn btn-light">Đóng</a>
                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                     </div>
