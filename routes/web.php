@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -137,6 +138,17 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
     });
     
+
+    // Bình luận
+    Route::prefix('comments')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
+        // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
+        // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
+        Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
+        Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
+        Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
+        Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
+    });
 
     Route::resource('roles', RoleController::class);
 });
