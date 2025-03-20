@@ -256,29 +256,59 @@
                 
 
 
-                {{-- <li class="nav-item">
+                {{-- Order --}}
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+
+
+                {{-- Bình luận --}}
+                <li class="nav-item {{ Request::is('admin/comments*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-chart-pie"></i>
+                        <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
-                            Quản lý Permission
-                            <i class="right fas fa-angle-left"></i>
+                            Bình luận
+                            <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview">
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.permissions.index') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                            <a href="{{ route('admin.comments.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách</p>
                             </a>
                         </li>
+                    </ul>
+                </li>
+
+
+                {{-- <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-layer-group"></i>
+                        <p>
+                            Đơn hàng
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.permissions.create') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Thêm mới</p>
+                            <a href="{{ route('admin.orders.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.orders.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
                             </a>
                         </li>
+                        {{-- <li class="nav-item">
+                            <a href="{{ route('admin.orders.show') }}"
+                                class="nav-link {{ Request::routeIs('admin.permissions.show') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm mới</p>
+                            </a>
+                        </li> --}}
                     </ul>
-                </li> --}}
+                </li>
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
