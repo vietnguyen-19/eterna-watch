@@ -227,9 +227,62 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Quản lý Role -->
+                <li class="nav-item {{ Request::is('admin/roles*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Request::is('admin/roles*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-users"></i>
+                        <p>
+                            Vai trò
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.index') }}" class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách vai trò</p>
+                            </a>
+                                                        
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.create') }}"
+                               class="nav-link {{ Request::routeIs('admin.roles.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm vai trò mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+
 
                 {{-- Order --}}
                 <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+
+
+                {{-- Bình luận --}}
+                <li class="nav-item {{ Request::is('admin/comments*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-layer-group"></i>
+                        <p>
+                            Bình luận
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.comments.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                {{-- <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
@@ -255,7 +308,7 @@
                         </li> --}}
                     </ul>
                 </li>
-                
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

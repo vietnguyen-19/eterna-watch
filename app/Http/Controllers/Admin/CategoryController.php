@@ -49,7 +49,7 @@ class CategoryController extends Controller
         // Tìm danh mục theo ID
         $category = Category::findOrFail($id);
 
-        
+
         $category->update([
             'name' => $request->name ?? $category->name,
             'parent_id' => $request->parent_id ?? $category->parent_id,

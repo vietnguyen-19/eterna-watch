@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Post;
 use App\Models\Product;
+// use App\Models\User;
 
 class Comment extends Model
 {
@@ -17,7 +18,6 @@ class Comment extends Model
         'entity_type',
         'content',
         'rating',
-        'status',
         'parent_id',
     ];
 
@@ -45,9 +45,4 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'parent_id');
     }
 
-    // Phạm vi (Scope) lọc comment đã được duyệt
-    public function scopeApproved($query)
-    {
-        return $query->where('status', 'approved');
-    }
 }
