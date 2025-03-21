@@ -5,12 +5,14 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,9 +89,9 @@ Route::prefix('admin')->group(function () {
         Route::post('store', [AttributeController::class, 'store'])->name('admin.attributes.store');
         Route::get('show/{id}', [AttributeController::class, 'show'])->name('admin.attributes.show');
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
-
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+
     });
 
     // 📌 Giá trị thuộc tính (Attribute Values)
@@ -138,10 +140,28 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
         Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
-        Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
         Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-        Route::get('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+    });
+    
+     // Order
+     Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+        Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+    });
+    
+
+    // Bình luận
+    Route::prefix('comments')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
+        // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
+        // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
+        Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
+        Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
+        Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
+        Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
     });
 
     Route::resource('roles', RoleController::class);
