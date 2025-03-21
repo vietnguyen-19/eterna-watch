@@ -72,30 +72,45 @@ class UserController extends Controller
     /**
      * Lưu thông tin người dùng mới.
      */
-    public function store(UserStoreRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
-
-        // Lưu thông tin người dùng mới
-        User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'password' => Hash::make($data['password']),
-            'gender' => $data['gender'] ?? null,
-            'avatar' => 'avatar/default.jpeg',
-            'note' => $data['note'] ?? null,
-            'role_id' => $data['role_id'],  // Gán vai trò cho người dùng
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:15|unique:users,phone',
+            'password' => 'required|string|min:8',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+    
+        // Tạo người dùng mới
+        $user = User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'password' => Hash::make($request->input('password')),
+            'role_id' => $request->input('role_id'),
             'status' => 'active',
+            'note' => $request->input('note'),
         ]);
-
-        return redirect()->route('admin.users.index', $data['role_id'])->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Tài khoản đã được tạo thành công.',
-            ]
-        ]);
+    
+        // Nếu có địa chỉ, tạo địa chỉ mặc định cho người dùng
+        if ($request->has('address')) {
+            UserAddress::create([
+                'user_id' => $user->id,
+                'full_name' => $request->input('name'),
+                'phone_number' => $request->input('phone'),
+                'email' => $request->input('email'),
+                'street_address' => $request->input('address'),
+                'is_default' => true, // Địa chỉ mặc định
+            ]);
+        }
+    
+        // Chuyển hướng về danh sách người dùng với thông báo thành công
+        return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được tạo thành công');
     }
+    
+
 
     /**
      * Cập nhật thông tin người dùng.
