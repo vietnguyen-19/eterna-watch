@@ -73,43 +73,58 @@ class UserController extends Controller
      * Lưu thông tin người dùng mới.
      */
     public function store(Request $request)
-    {
-        // Xác thực dữ liệu đầu vào
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:15|unique:users,phone',
-            'password' => 'required|string|min:8',
-            'role_id' => 'required|exists:roles,id',
-        ]);
-    
-        // Tạo người dùng mới
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'password' => Hash::make($request->input('password')),
-            'role_id' => $request->input('role_id'),
-            'status' => 'active',
-            'note' => $request->input('note'),
-        ]);
-    
-        // Nếu có địa chỉ, tạo địa chỉ mặc định cho người dùng
-        if ($request->has('address')) {
-            UserAddress::create([
-                'user_id' => $user->id,
-                'full_name' => $request->input('name'),
-                'phone_number' => $request->input('phone'),
-                'email' => $request->input('email'),
-                'street_address' => $request->input('address'),
-                'is_default' => true, // Địa chỉ mặc định
-            ]);
+{
+    // Tạo người dùng mới
+    $user = User::create([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'phone' => $request->input('phone'),
+        'password' => Hash::make($request->input('password')), // Đảm bảo mật khẩu không null
+        'role_id' => $request->input('role_id'),
+        'status' => 'active',
+        'note' => $request->input('note'),
+    ]);
+
+    // Kiểm tra và lưu ảnh đại diện (avatar) nếu có
+    if ($request->hasFile('avatar')) {
+        $avatar = $request->file('avatar');
+        $fileName = time() . '.' . $avatar->getClientOriginalExtension();
+        $destinationPath = storage_path('app/public/avatars');
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
         }
-    
-        // Chuyển hướng về danh sách người dùng với thông báo thành công
-        return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được tạo thành công');
+        $avatar->move($destinationPath, $fileName);
+
+        // Cập nhật avatar của người dùng
+        $user->avatar = 'avatars/' . $fileName;
+        $user->save();
     }
+
+    // Luôn thêm mới địa chỉ mặc định
+    if ($request->filled('street_address')) {
+        UserAddress::create([
+            'user_id' => $user->id,
+            'full_name' => $request->input('name'), // Sử dụng 'name' cho 'full_name'
+            'phone_number' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'street_address' => $request->input('street_address'),
+            'ward' => $request->input('ward'),
+            'district' => $request->input('district'),
+            'city' => $request->input('city'),
+            'country' => $request->input('country') ?? 'Việt Nam', // Mặc định 'Việt Nam'
+            'is_default' => true,  // Đảm bảo địa chỉ này là mặc định
+            'note' => $request->input('address_note'),
+        ]);
+    }
+
+    // Chuyển hướng về danh sách người dùng với thông báo thành công
+    return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được tạo thành công');
+}
+
     
+
+
+
 
 
     /**

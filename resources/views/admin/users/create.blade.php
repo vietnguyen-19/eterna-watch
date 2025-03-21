@@ -9,7 +9,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header border-bottom-dashed">
-                            <h5 class="card-title mb-0"><b>Thêm mới tài khoản nhân viên</b></h5>
+                            <h5 class="card-title mb-0"><b>Thêm mới tài khoản người dùng</b></h5>
                         </div>
 
                         <div class="card-body">

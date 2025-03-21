@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
@@ -16,16 +15,14 @@ use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
+|---------------------------------------------------------------------------
 | Web Routes
-|--------------------------------------------------------------------------
-|
+|---------------------------------------------------------------------------
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
@@ -42,10 +39,8 @@ Route::prefix('admin')->group(function () {
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
-});
 
-//test git
-Route::prefix('admin')->group(function () {
+    // Brands
     Route::resource('brands', BrandController::class)->names([
         'index' => 'admin.brands.index',
         'create' => 'admin.brands.create',
@@ -56,7 +51,7 @@ Route::prefix('admin')->group(function () {
         'destroy' => 'admin.brands.destroy',
     ]);
 
-
+    // Users
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('admin.users.index'); // Hiển thị tất cả người dùng
         Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); // Form tạo mới người dùng
@@ -67,22 +62,10 @@ Route::prefix('admin')->group(function () {
         Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy'); // Xóa người dùng
     });
 
+    // Roles
+    Route::resource('roles', RoleController::class);
 
-    Route::prefix('admin')->group(function () {
-        Route::resource('roles', RoleController::class)->names([
-            'index' => 'admin.roles.index',
-            'create' => 'admin.roles.create',
-            'store' => 'admin.roles.store',
-            'show' => 'admin.roles.show',
-            'edit' => 'admin.roles.edit',
-            'update' => 'admin.roles.update',
-            'destroy' => 'admin.roles.destroy',
-        ]);
-    });
-    
-
-
-
+    // Attributes
     Route::prefix('attributes')->group(function () {
         Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
         Route::get('create', [AttributeController::class, 'create'])->name('admin.attributes.create');
@@ -91,10 +74,9 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
-
     });
 
-    // 📌 Giá trị thuộc tính (Attribute Values)
+    // Attribute Values
     Route::prefix('attribute_values')->group(function () {
         Route::get('/{id}', [AttributeValueController::class, 'index'])->name('admin.attribute_values.index');
         Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('admin.attribute_values.create');
@@ -105,6 +87,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('admin.attribute_values.destroy');
     });
 
+    // Products
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
         Route::get('create', [ProductController::class, 'create'])->name('admin.products.create');
@@ -115,6 +98,8 @@ Route::prefix('admin')->group(function () {
         Route::put('{id}/update', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     });
+
+    // Product Variants
     Route::prefix('productvariants')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('admin.productvariants.index');
         Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('admin.productvariants.create');
@@ -124,18 +109,18 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('admin.productvariants.destroy');
     });
 
-    // permission
+    // Permissions
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');
-        Route::get('create',          [PermissionController::class, 'create'])->name('admin.permissions.create');
-        Route::post('/store',         [PermissionController::class,  'store'])->name('admin.permissions.store');
-        Route::get('show/{id}',     [PermissionController::class,  'show'])->name('admin.permissions.show');
-        Route::get('/edit/{id}',      [PermissionController::class,  'edit'])->name('admin.permissions.edit');
-        Route::put('/update/{id}',    [PermissionController::class,  'update'])->name('admin.permissions.update');
-        Route::delete('/destroy/{id}',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
+        Route::get('create', [PermissionController::class, 'create'])->name('admin.permissions.create');
+        Route::post('/store', [PermissionController::class, 'store'])->name('admin.permissions.store');
+        Route::get('show/{id}', [PermissionController::class, 'show'])->name('admin.permissions.show');
+        Route::get('/edit/{id}', [PermissionController::class, 'edit'])->name('admin.permissions.edit');
+        Route::put('/update/{id}', [PermissionController::class, 'update'])->name('admin.permissions.update');
+        Route::delete('/destroy/{id}', [PermissionController::class, 'destroy'])->name('admin.permissions.destroy');
     });
 
-    // Banner
+    // Banners
     Route::prefix('banners')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
@@ -144,25 +129,20 @@ Route::prefix('admin')->group(function () {
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
         Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
-    
-     // Order
-     Route::prefix('orders')->group(function () {
+
+    // Orders
+    Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
         Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
         Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
     });
-    
 
-    // Bình luận
+    // Comments
     Route::prefix('comments')->group(function () {
         Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
-        // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
-        // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
         Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
         Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
         Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
         Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
     });
-
-    Route::resource('roles', RoleController::class);
 });
