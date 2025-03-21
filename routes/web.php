@@ -14,7 +14,9 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Admin\ArticleController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -170,12 +172,14 @@ Route::prefix('admin')->group(function () {
 });
 
 
-
 Route::prefix('admin/articles')->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->name('admin.articles.index'); // Danh sách bài viết
-    Route::get('create', [ArticleController::class, 'create'])->name('admin.articles.create'); // Form thêm
-    Route::post('store', [ArticleController::class, 'store'])->name('admin.articles.store'); // Lưu dữ liệu
-    Route::get('{id}/edit', [ArticleController::class, 'edit'])->name('admin.articles.edit'); // Form sửa
-    Route::put('{id}', [ArticleController::class, 'update'])->name('admin.articles.update'); // Cập nhật
-    Route::delete('{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy'); // Xóa
+    Route::get('/create', [ArticleController::class, 'create'])->name('admin.articles.create'); // Form thêm mới
+    Route::post('/store', [ArticleController::class, 'store'])->name('admin.articles.store'); // Xử lý lưu
+    Route::get('/{id}/edit', [ArticleController::class, 'edit'])->name('admin.articles.edit'); // Form sửa
+    Route::put('/{id}', [ArticleController::class, 'update'])->name('admin.articles.update'); // Xử lý cập nhật
+    Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy'); // Xóa
+    Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show'); // Chi tiết bài viết
 });
+
+
