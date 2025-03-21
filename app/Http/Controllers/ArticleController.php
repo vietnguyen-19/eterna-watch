@@ -31,7 +31,9 @@ class ArticleController extends Controller
             'author' => 'required|max:100',
         ]);
 
-        $imagePath = $request->file('image') ? $request->file('image')->store('articles', 'public') : null;
+        $imagePath = $request->hasFile('image')
+            ? $request->file('image')->store('articles', 'public')
+            : null;
 
         Article::create([
             'title' => $request->title,
@@ -40,7 +42,7 @@ class ArticleController extends Controller
             'author' => $request->author,
         ]);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Bài viết đã được thêm.');
+        return redirect()->route('admin.articles.index')->with('success', 'Bài viết đã được thêm thành công.');
     }
 
     // 4. Hiển thị form chỉnh sửa
@@ -62,19 +64,17 @@ class ArticleController extends Controller
 
         $article = Article::findOrFail($id);
 
+        $data = $request->only(['title', 'content', 'author']);
+
+        // Kiểm tra và cập nhật hình ảnh
         if ($request->hasFile('image')) {
             if ($article->image) {
                 Storage::disk('public')->delete($article->image);
             }
-            $imagePath = $request->file('image')->store('articles', 'public');
-            $article->image = $imagePath;
+            $data['image'] = $request->file('image')->store('articles', 'public');
         }
 
-        $article->update([
-            'title' => $request->title,
-            'content' => $request->content,
-            'author' => $request->author,
-        ]);
+        $article->update($data);
 
         return redirect()->route('admin.articles.index')->with('success', 'Cập nhật bài viết thành công.');
     }
@@ -83,10 +83,13 @@ class ArticleController extends Controller
     public function destroy($id)
     {
         $article = Article::findOrFail($id);
+
         if ($article->image) {
             Storage::disk('public')->delete($article->image);
         }
+
         $article->delete();
-        return redirect()->route('admin.articles.index')->with('success', 'Bài viết đã bị xóa.');
+
+        return redirect()->route('admin.articles.index')->with('success', 'Bài viết đã được xóa thành công.');
     }
 }
