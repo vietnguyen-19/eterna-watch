@@ -150,9 +150,10 @@ Route::prefix('admin')->group(function () {
      Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
         Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/{id}/update ', [OrderController::class, 'update'])->name('admin.orders.update');
         Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
     });
-    
+
 
     // Bình luận
     Route::prefix('comments')->group(function () {
