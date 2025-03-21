@@ -1,49 +1,15 @@
-@extends('admin.layouts.master')
-
 @section('content')
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h4>Add New Banner</h4>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('admin.banners.store') }}" method="POST">
-                @csrf
-
-                <div class="mb-3">
-                    <label class="form-label">Image Link</label>
-                    <input type="text" name="image_link" class="form-control" placeholder="Enter image URL" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Redirect Link</label>
-                    <input type="text" name="redirect_link" class="form-control" placeholder="Enter redirect URL">
-                </div>
-
-                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
-                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
-            </form>
-        </div>
-    </div>
-</div>
-@endsection
-
-{{-- @extends('admin.layouts.master')
-@section('content')
-    <div class="col-lg-12">
-        <div class="card" id="customerList">
+    <div class="col-lg-12 mt-3">
+        <div class="card" id="bannerList">
             <div class="card-header border-bottom-dashed">
-
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
-                            <h5 class="card-title mb-0">Thêm mới banner</h5>
+                            <h5 class="card-title mb-0">Thêm mới Banner</h5>
                         </div>
                     </div>
                 </div>
             </div>
-
-
 
             <form action="{{ route('admin.banners.store') }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
@@ -51,31 +17,50 @@
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
-                            <label for="name" class="form-label">Tên danh mục</label>
-                            <input value="{{ old('name') }}" name="name" type="text" id="name"
-                                class="form-control" placeholder="Enter name">
-                            @error('name')
+                            <label for="title" class="form-label">Tiêu đề Banner</label>
+                            <input value="{{ old('title') }}" name="title" type="text" id="title"
+                                class="form-control" placeholder="Nhập tiêu đề">
+                            @error('title')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3 col-12">
-                            <select name="parent_id" class="form-control">
-                                <option value="">Chọn danh mục cha</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('slug')
+                            <label for="link" class="form-label">Đường dẫn</label>
+                            <input value="{{ old('link') }}" name="link" type="text" id="link"
+                                class="form-control" placeholder="Nhập đường dẫn">
+                            @error('link')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
-
                         </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="type">Loại Banner</label>
+                            <select name="type" id="type" class="form-control" required>
+                                <option value="1">Banner Home</option>
+                                <option value="2">Slider Home</option>
+                                <option value="3">Banner New Product</option>
+                                <option value="4">Slider New Product</option>
+                            </select>
+                            @error('type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="order" class="form-label">Thứ tự hiển thị</label>
+                            <input value="{{ old('order', 0) }}" name="order" type="number" id="order"
+                                class="form-control" placeholder="Nhập thứ tự">
+                            @error('order')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="mb-3 col-12">
                             <label for="status">Trạng thái</label>
-                            <select name="status" class="form-control" required>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                            <select name="status" id="status" class="form-control" required>
+                                <option value="1" selected>Hiển thị</option>
+                                <option value="0">Ẩn</option>
                             </select>
                             @error('status')
                                 <div class="text-danger">{{ $message }}</div>
@@ -83,54 +68,18 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-                        <button type="submit" class="btn btn-success" id="add-btn">Thêm danh mục</button>
-                        <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
-                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                        <button type="submit" class="btn btn-success" id="add-btn">Thêm Banner</button>
+                        <a href="{{ route('admin.banners.index') }}" class="btn btn-light">Đóng</a>
                     </div>
                 </div>
             </form>
         </div>
-
-
     </div>
-
-    </div>
-@endsection
-@section('script-lib')
-    <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
-    <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js">
-    </script>
-    <script src="{{ asset('theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
-    <script src="{{ asset('theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
-
-    <!--ecommerce-customer init js -->
-    <script src="{{ asset('theme/velzon/assets/js/pages/ecommerce-customer-list.init.js') }}"></script>
-
-    <!-- Sweet Alerts js -->
-    <script src="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 @endsection
 @section('script')
-    <script>
-        document.getElementById('name').addEventListener('input', function() {
-            // Lấy giá trị từ ô nhập liệu Tên danh mục
-            var tenDanhMuc = this.value;
-
-            // Chuyển đổi Tên danh mục thành Slug
-            var slug = tenDanhMuc.toLowerCase()
-                .normalize('NFD') // Chuẩn hóa Unicode để xử lý các ký tự tiếng Việt
-                .replace(/[\u0300-\u036f]/g, '') // Xóa các dấu phụ
-                .replace(/[^a-z0-9\s-]/g, '') // Xóa các ký tự đặc biệt không phải chữ cái Latin hoặc số
-                .replace(/\s+/g, '-') // Thay thế khoảng trắng bằng dấu gạch ngang
-                .replace(/-+/g, '-'); // Loại bỏ các dấu gạch ngang thừa
-
-            // Gán giá trị Slug vào ô nhập liệu Slug
-            document.getElementById('slug').value = slug;
-        });
-    </script>
 @endsection
 @section('style')
-    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
-        type="text/css" />
-@endsection --}}
+@endsection

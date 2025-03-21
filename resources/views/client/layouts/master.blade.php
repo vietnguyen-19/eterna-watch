@@ -31,7 +31,7 @@
   <![endif]-->
 
     <!-- Document Title -->
-    <title>Home v19 | Uomo eCommerce HTML5 Template</title>
+    <title>Eterna Watch</title>
     <style>
         .dropdown-item.login:hover {
             color: rgb(168, 19, 19) !important;

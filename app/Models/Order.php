@@ -52,4 +52,23 @@ class Order extends Model
     {
         return $this->orderItems()->count();
     }
+    public function getDiscountAmount()
+    {
+        $orderTotal = $this->orderItems()->sum('total_price');
+        
+        if ($orderTotal <= 0) {
+            return 0; // Nếu không có sản phẩm nào, không có chiết khấu
+        }
+
+        if ($this->voucher->discount_type == 'percent') {
+            $discount = $orderTotal * ($this->voucher->discount_value / 100);
+        } else { // Trường hợp fixed
+            $discount = $this->voucher->discount_value;
+        }
+        return $discount; // Không vượt quá tổng tiền đơn hàng
+    }
+    public function getShippingFee()
+    {
+        return $this->shipment->shipping_method === 'fixed' ? 100000 : 0;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -64,6 +65,22 @@ class BlogController extends Controller
 
         // Lấy danh sách tag và đếm số bài viết
         $tags = Tag::withCount('posts')->get();
-        return view('client.post', compact('post', 'tags', 'categories','brands'));
+        $comments = $this->getCommentsWithReplies($id);
+        return view('client.post', compact('post', 'tags', 'categories','brands','comments'));
+    }
+     public function getCommentsWithReplies($postId, $parentId = null)
+    {
+        $comments = Comment::where('entity_id', $postId)
+            ->where('entity_type', 'post')
+            ->where('parent_id', $parentId)
+            ->with('replies') // Để lấy các bình luận con
+            ->get();
+
+        foreach ($comments as $comment) {
+            // Lấy các bình luận con của mỗi bình luận
+            $comment->replies = $this->getCommentsWithReplies($postId, $comment->id);
+        }
+
+        return $comments;
     }
 }

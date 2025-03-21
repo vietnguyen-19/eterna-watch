@@ -152,41 +152,35 @@
                                                             class="form-control form-control-sm mt-1">
                                                     @endif
                                                 </td>
-                                                <td class="align-middle" style="width: 20%;">
+                                                <td class="align-middle" style="width: 25%;">
                                                     <div class="">
                                                         @foreach ($variant->attributeValues as $value)
-                                                            <div class="d-flex align-items-center gap-2 mb-2">
-                                                                <label class="text-muted mb-0" style="width: 150px;">
-                                                                    {{ $value->nameValue->attribute->attribute_name }}:
-                                                                </label>
-                                                                <select class="form-select form-select-sm w-100"
-                                                                    name="attributes[{{ $variant->id }}][{{ $value->id }}]">
-                                                                    @foreach ($allAttributeValues[$value->nameValue->attribute->id] as $option)
-                                                                        <option value="{{ $option->id }}"
-                                                                            {{ $option->id == $value->nameValue->id ? 'selected' : '' }}>
-                                                                            {{ $option->value_name }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
+                                                            <div class="d-flex align-items-đcenter mb-2">
+                                                                <input type="hidden"
+                                                                    name="attributes[{{ $variant->id }}][{{ $value->id }}]"
+                                                                    value="{{ $value->nameValue->id }}">
+                                                                <span class="text-muted mb-0">
+                                                                    <strong>{{ $value->nameValue->attribute->attribute_name }}</strong>: {{ $value->nameValue->value_name }}
+                                                                </span>
                                                             </div>
                                                         @endforeach
-
+                                                        
                                                     </div>
                                                 </td>
-
-
                                                 <td class="align-middle" style="width: 15%">
                                                     <input type="text" name="sku[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm" value="{{ $variant->sku }}" required>
+                                                        class="form-control form-control-sm" value="{{ $variant->sku }}"
+                                                        required>
                                                 </td>
                                                 <td class="align-middle" style="width: 15%;">
                                                     <input type="text" name="price[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm"
-                                                        value="{{ number_format($variant->price, 0, ',', '.') }}" required>
+                                                        class="form-control form-control-sm price-input"
+                                                        value="{{ $variant->price}}"
+                                                        required>
                                                 </td>
                                                 <td class="align-middle" style="width:10%">
                                                     <input type="text" name="stock[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm"
+                                                        class="form-control form-control-sm stock-input"
                                                         value="{{ $variant->stock }}" required>
                                                 </td>
                                                 <td class="align-middle text-center" style="width:10%">

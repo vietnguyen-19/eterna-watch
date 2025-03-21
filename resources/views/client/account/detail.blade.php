@@ -4,113 +4,109 @@
     <main style="padding-top: 90px;">
         <div class="mb-4 pb-4"></div>
         <section class="my-account container py-5">
-          <div class="row">
-            <div class="col-lg-3">
-              <nav class="nav flex-column border-end pe-3">
-                  <a href="{{ route('account.dashboard') }}" class="nav-link text-dark fw-semibold">Bảng điều
-                      khiển</a>
-                  <a href="{{ route('account.order') }}" class="nav-link text-dark">Đơn hàng</a>
-                  <a href="{{ route('account.address') }}" class="nav-link text-dark">Địa chỉ</a>
-                  <a href="{{ route('account.detail') }}" class="nav-link text-dark active">Chi tiết tài khoản</a>
-                  <a href="{{ route('account.wishlist') }}" class="nav-link text-dark">Danh sách yêu thích</a>
-
-                  <form action="{{ route('client.logout') }}" method="POST" class="w-100">
-                      @csrf
-                      <button type="submit" class="nav-link fw-semibold text-danger logout-btn">Đăng xuất</button>
-                  </form>
-              </nav>
-          </div>
-            <div class="col-lg-9">
-              <div class="">
-                <div class="my-account__edit-form">
-                  <form name="account_edit_form" class="needs-validation" novalidate="">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-floating my-3">
-                          <input type="text" class="form-control" id="account_first_name" placeholder="First Name" required="">
-                          <label for="account_first_name">First Name</label>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="user-info mb-3"
+                        style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
+                        <div class="avatar" style="width: 88px; height: 88px; margin-right: 15px;">
+                            <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
+                                style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                         </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-floating my-3">
-                          <input type="text" class="form-control" id="account_last_name" placeholder="Last Name" required="">
-                          <label for="account_last_name">Last Name</label>
+                        <div class="user-details">
+                            <strong>{{ auth()->user()->name }}</strong> <br>
+                            <small>{{ auth()->user()->email }}</small>
                         </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-floating my-3">
-                          <input type="text" class="form-control" id="account_display_name" placeholder="Display Name" required="">
-                          <label for="account_display_name">Display Name</label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-floating my-3">
-                          <input type="email" class="form-control" id="account_email" placeholder="Email Address" required="">
-                          <label for="account_email">Email Address</label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="my-3">
-                          <h5 class="text-uppercase mb-0">Password Change</h5>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-floating my-3">
-                          <input type="password" class="form-control" id="account_current_password" placeholder="Current password" required="">
-                          <label for="account_current_password">Current password</label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-floating my-3">
-                          <input type="password" class="form-control" id="account_new_password" placeholder="New password" required="">
-                          <label for="account_new_password">New password</label>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-floating my-3">
-                          <input type="password" class="form-control" data-cf-pwd="#account_new_password" id="account_confirm_password" placeholder="Confirm new password" required="">
-                          <label for="account_confirm_password">Confirm new password</label>
-                          <div class="invalid-feedback">Passwords did not match!</div>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="my-3">
-                          <button class="btn btn-primary">Save Changes</button>
-                        </div>
-                      </div>
                     </div>
-                  </form>
+                    <nav class="nav flex-column account-sidebar sticky-sidebar">
+                        <a href="{{ route('account.order') }}" class="nav-link active">
+                            <i class="fas fa-shopping-bag me-2"></i> Đơn hàng
+                        </a>
+                        <a href="{{ route('account.re_password') }}" class="nav-link">
+                            <i class="fas fa-key me-2"></i> Cập nhật mật khẩu
+                        </a>
+                        <a href="{{ route('account.edit') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i> Chi tiết tài khoản
+                        </a>
+                        <form action="{{ route('client.logout') }}" method="POST" class="w-100">
+                            @csrf
+                            <button type="submit" class="nav-link text-danger logout-btn">
+                                <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </nav>
                 </div>
-              </div>
-            </div>
-          </div>
+                <div class="col-lg-9">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold text-primary">Thông Tin Tài Khoản</h5>
+                                <a href="{{route('account.edit')}}" class="btn btn-outline-primary btn-sm">Chỉnh sửa</a>
+                            </div>
+                            <div class="mb-3">
+                                <p class="mb-1"><strong>Họ tên:</strong> {{ Auth::user()->name }}</p>
+                                <p class="mb-1"><strong>Email:</strong> {{ Auth::user()->email }}</p>
+                                <p class="mb-1"><strong>Số điện thoại:</strong> {{ Auth::user()->phone }}</p>
+                                <p class="mb-1"><strong>Giới tính:</strong>
+                                    {{ Auth::user()->gender == 1 ? 'Nam' : 'Nữ' }}</p>
+                            </div>
+                            @if (Auth::user()->defaultAddress)
+                                <div class="border-top pt-3">
+                                    <h6 class="text-secondary fw-bold">Địa chỉ mặc định</h6>
+                                    <p class="mb-1"><strong>Địa chỉ:</strong>
+                                        {{ Auth::user()->defaultAddress->street_address }},
+                                        {{ Auth::user()->defaultAddress->district }}</p>
+                                    <p class="mb-1"><strong>Thành phố:</strong> {{ Auth::user()->defaultAddress->city }},
+                                        {{ Auth::user()->defaultAddress->country }}</p>
+                                </div>
+                            @else
+                                <p class="text-muted">Chưa cập nhật địa chỉ</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
         </section>
-      </main>
+    </main>
+
+
     <div class="mb-5 pb-xl-5"></div>
 @endsection
 @section('script')
 @endsection
 @section('style')
     <style>
-        .nav-link {
+        /* Sidebar */
+        .account-sidebar .nav-link {
             font-size: 16px;
-            padding: 12px 16px;
-            transition: background-color 0.3s ease, padding-left 0.3s ease;
+            padding: 12px 18px;
+            border-radius: 3px;
+            background: #fdfdfd;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            color: #333;
+            font-weight: 500;
         }
 
-        .nav-link:hover {
-            background: #f0f0f0;
-            padding-left: 20px;
+        .account-sidebar .nav-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
         }
 
-        .nav-link.active {
-            background: hsl(0, 100%, 96%);
+        .account-sidebar .nav-link:hover {
+            background: #ececec;
+            padding-left: 22px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .account-sidebar .nav-link.active {
+            background: #e84040;
+            color: #ffffff;
             font-weight: bold;
-            color: #d3401f !important;
-            border-left: 3px solid #fda3a3;
         }
 
-        /* Hiệu ứng hover cho các liên kết */
+        /* Hiệu ứng hover cho liên kết */
         .link-hover {
             transition: color 0.3s ease-in-out;
         }
@@ -120,12 +116,12 @@
             text-decoration: underline;
         }
 
-        /* Bố cục nội dung đẹp hơn */
+        /* Nội dung chính */
         .content-box {
-            background: white;
-            border-radius: 8px;
+            background: #f8f9fa;
+            border-radius: 10px;
             padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         }
 
         .logout-btn {
@@ -133,15 +129,16 @@
             border: none;
             text-align: left;
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 18px;
             transition: background-color 0.3s, padding-left 0.3s;
             font-size: 16px;
-            color: #c61a18 !important;
+            color: #d3401f !important;
+            font-weight: bold;
         }
 
         .logout-btn:hover {
-            background: #f5f5f5;
-            padding-left: 18px;
+            background: #fff5f5;
+            padding-left: 22px;
         }
 
         /* Responsive tối ưu */

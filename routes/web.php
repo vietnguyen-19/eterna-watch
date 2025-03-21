@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 
@@ -120,16 +121,9 @@ Route::prefix('admin')->group(function () {
     });
 
     // Banner
-    Route::prefix('banners')->group(function () {
-        Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
-        Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
-        Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
-        Route::get('/{id}', [BannerController::class, 'show'])->name('admin.banners.show');
-        Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
-        Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-        Route::get('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
-    });
+    Route::post('/upload-image', [ImageController::class, 'uploadImage']);
+    Route::post('/remove-image', [ImageController::class, 'removeImage']);
+    Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
     Route::resource('roles', RoleController::class);
 });
-

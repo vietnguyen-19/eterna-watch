@@ -10,7 +10,6 @@
                             role="alert">
                             <i class="ri-notification-off-line label-icon"></i><strong>
                                 {{ session('thongbao.message') }}</strong>
-
                         </div>
                         @php
                             session()->forget('thongbao');
@@ -20,94 +19,66 @@
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0">Danh sách banner</h5>
-                                    </div>
+                                    <h5 class="card-title mb-0">Danh sách banner</h5>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
-                                    </div>
+                                    <a href="{{ route('admin.banners.create') }}" class="btn btn-success">
+                                        <i class="ri-add-line align-bottom me-1"></i>Thêm banner
+                                    </a>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- /.card-header -->
                         <div class="card-body">
-                            <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-6"></div>
-                                    <div class="col-sm-12 col-md-6"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <table class="table table-bordered" aria-describedby="example2_info"
-                                            id="danhmucTable">
-                                            <thead class="text-muted">
-                                                <tr>
-                                                    <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="image_link">Đường dẫn ảnh</th>
-                                                    <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng</th>
-                                                    <th class="sort" data-sort="action">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="list form-check-all">
-                                                @foreach ($banners as $banner)
-                                                    <tr>
-
-                                                        <td class="id">{{ $banner->id }}</td>
-                                                        <td class="image_link"><a href="{{ $banner->image_link }}"
-                                                                target="_blank" title="{{ $banner->image_link }}">
-                                                                {{ Str::limit($banner->image_link, 30, '...') }}
-                                                            </a></td>
-                                                        <td class="redirect_link">
-                                                            @if ($banner->redirect_link)
-                                                                <a href="{{ $banner->redirect_link }}"
-                                                                    target="_blank">{{ $banner->redirect_link }}</a>
-                                                            @else
-                                                                <span class="text-muted">Không có liên kết chuyển hướng</span>
-                                                            @endif
-                                                        </td>
-
-                                                        <td>
-                                                            <ul class="list-inline hstack gap-2 mb-0">
-                                                                <!-- Edit Button -->
-                                                                <li class="list-inline-item edit" title="Edit">
-                                                                    <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                        <i class="bi bi-pen"></i>Sửa
-                                                                    </a>
-                                                                </li>
-                                                                <!-- Remove Button -->
-                                                                <li class="list-inline-item delete" title="Remove">
-                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
-                                                                        href="{{ route('admin.banners.destroy', $banner->id) }}">
-                                                                        <i class="bi bi-trash"></i>Xóa
-                                                                    </a>
-                                                                </li>
-
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <thead class="text-muted">
-                                                <tr>
-                                                    <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="image_link">Đường dẫn ảnh</th>
-                                                    <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng</th>
-                                                    <th class="sort" data-sort="action">Action</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-
-                                    </div>
-                                </div>
-                            </div>
+                            <table class="table table-bordered">
+                                <thead class="text-muted">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Ảnh Banner</th>
+                                        <th>Liên kết</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($banners as $banner)
+                                        <tr>
+                                            <td>{{ $banner->id }}</td>
+                                            <td>
+                                                <img src="{{ $banner->image_link }}" alt="Banner"
+                                                    style="width: 120px; height: auto;">
+                                            </td>
+                                            <td>
+                                                @if ($banner->redirect_link)
+                                                    <a href="{{ $banner->redirect_link }}" target="_blank">
+                                                        {{ Str::limit($banner->redirect_link, 30, '...') }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">Không có liên kết</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge bg-{{ $banner->status == 'active' ? 'success' : 'danger' }}">
+                                                    {{ $banner->status == 'active' ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('admin.banners.edit', $banner->id) }}"
+                                                    class="btn btn-warning btn-sm">
+                                                    <i class="bi bi-pen"></i> Sửa
+                                                </a>
+                                                <a onclick="return confirm('Bạn có chắc chắn muốn xóa?')"
+                                                    href="{{ route('admin.banners.destroy', $banner->id) }}"
+                                                    class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i> Xóa
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- /.card-body -->
                     </div>
                 </div>
             </div>

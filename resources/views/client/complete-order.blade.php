@@ -139,15 +139,12 @@
                                     <td class="text-end">
                                         @if ($order->shipping_method == 'fixed')
                                             <span class="shopping-cart__product-price">
-                                                {{ number_format(30000, 0, ',', '.') }}đ</span>
+                                                {{ number_format($order->getShippingFee(), 0, ',', '.') }}đ</span>
                                         @else
                                             Miễn phí
                                         @endif
                                     </td>
                                 </tr>
-                                @php
-                                    $discount = $total - $order->total_amount + 30000;
-                                @endphp
                                 <tr>
                                     <th>Mã giảm giá
                                         @if ($order->voucher)
@@ -155,7 +152,7 @@
                                         @endif
                                     </th>
                                     <td class="text-end"> <span class="shopping-cart__product-price">
-                                            {{ number_format($discount, 0, ',', '.') }}đ
+                                            {{ number_format($order->getDiscountAmount(), 0, ',', '.') }}đ
                                         </span></td>
                                 </tr>
                                 <tr>

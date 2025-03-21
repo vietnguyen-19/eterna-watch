@@ -2,7 +2,7 @@
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
-      
+
         <div class="mb-4 pb-lg-3"></div>
 
         <section class="shop-main container d-flex">
@@ -88,8 +88,6 @@
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion-item -->
 
-
-
                 <form action="{{ route('client.shop.filter') }}" method="GET">
                     <div class="accordion" id="price-filters">
                         <div class="accordion-item mb-4">
@@ -98,7 +96,8 @@
                                     data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
                                     aria-controls="accordion-filter-price">
                                     Lọc sản phẩm theo giá trị
-                                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
                                             <path
                                                 d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
@@ -108,19 +107,32 @@
                             </h5>
                             <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
                                 aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
-                                <input id="price-min" type="range" class="form-range" name="min_price" min="10000" max="1000000"
-                                    step="5000" value="{{ request('min_price', 25000) }}">
-                                <p class="text-secondary">Giá tối thiểu: <span class="fw-bold price-range__min">${{ number_format(request('min_price', 25000)) }}</span></p>
-                                <input id="price-max" type="range" class="form-range" name="max_price" min="10000" max="1000000"
-                                    step="5000" value="{{ request('max_price', 450000) }}">
-                                <p class="text-secondary">Giá tối đa: <span class="fw-bold price-range__max">${{ number_format(request('max_price', 450000)) }}</span></p>
-                
+
+                                <!-- Thanh trượt -->
+                                <div id="price-slider" class="my-3"></div>
+
+                                <!-- Hiển thị giá trị -->
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-secondary">Min:
+                                        <span id="min-price" class="fw-bold price-range__min">0</span>₫
+                                    </p>
+                                    <p class="text-secondary">Max:
+                                        <span id="max-price" class="fw-bold price-range__max">0</span>₫
+                                    </p>
+
+                                </div>
+                                <!-- Input ẩn để gửi dữ liệu -->
+                                <input type="hidden" name="min_price" id="min_price_input">
+                                <input type="hidden" name="max_price" id="max_price_input">
+
                                 <!-- Button lọc -->
                                 <button type="submit" class="w-100 btn btn-primary mt-3">Lọc theo giá</button>
                             </div>
                         </div>
                     </div>
                 </form>
+
+
             </div><!-- /.shop-sidebar -->
 
             <div class="shop-list flex-grow-1">
@@ -190,27 +202,14 @@
                                             <a
                                                 href="{{ route('client.shop.show', $product->id) }}">{{ $product->name }}</a>
                                         </h6>
-                                        <div class="product-card__price d-flex mb-1">
-                                            <span
-                                                class="money price fs-base fw-semi-bold">${{ $product->price_default }}</span>
-                                        </div>
-
-                                        <div
-                                            class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0">
-                                            <!-- Nút Add to Cart -->
-                                            <button class="btn-icon me-auto me-xxl-3 js-add-cart js-open-aside"
-                                                data-aside="cartDrawer" title="Add To Cart">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_cart"></use>
-                                                </svg>
-                                            </button>
-
-                                            <!-- Nút Wishlist -->
-                                            <button class="btn-icon js-add-wishlist" title="Add To Wishlist">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_heart"></use>
-                                                </svg>
-                                            </button>
+                                        <div style="color: rgb(188, 0, 0); "
+                                            class="product-card__price d-flex mb-1 fw-bold">
+                                            @if ($product->min_price == $product->max_price)
+                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                            @else
+                                                {{ number_format($product->min_price, 0, ',', '.') }} -
+                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                            @endif
                                         </div>
 
                                     </div>
@@ -232,35 +231,53 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
 @endsection
 @section('script')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let minPriceInput = document.getElementById("price-min");
-        let maxPriceInput = document.getElementById("price-max");
-        let minPriceDisplay = document.querySelector(".price-range__min");
-        let maxPriceDisplay = document.querySelector(".price-range__max");
+    <!-- JS noUiSlider -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
-        // Hàm cập nhật giá khi kéo thanh trượt
-        function updatePriceDisplay() {
-            minPriceDisplay.textContent = formatCurrency(minPriceInput.value);
-            maxPriceDisplay.textContent = formatCurrency(maxPriceInput.value);
-        }
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var priceSlider = document.getElementById('price-slider');
 
-        // Hàm định dạng số thành tiền tệ
-        function formatCurrency(value) {
-            return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
-        }
+            noUiSlider.create(priceSlider, {
+                start: [{{ request('min_price', 25000) }},
+                    {{ request('max_price', 450000) }}
+                ], // Giá trị mặc định
+                connect: true,
+                range: {
+                    'min': 10000,
+                    'max': 1000000
+                },
+                step: 5000,
+                format: {
+                    to: function(value) {
+                        return Math.round(value);
+                    },
+                    from: function(value) {
+                        return Number(value);
+                    }
+                }
+            });
 
-        // Gán sự kiện khi thay đổi giá trị
-        minPriceInput.addEventListener("input", updatePriceDisplay);
-        maxPriceInput.addEventListener("input", updatePriceDisplay);
+            var minPriceInput = document.getElementById('min_price_input');
+            var maxPriceInput = document.getElementById('max_price_input');
+            var minPriceDisplay = document.getElementById('min-price');
+            var maxPriceDisplay = document.getElementById('max-price');
 
-        // Cập nhật giá ban đầu khi tải trang
-        updatePriceDisplay();
-    });
-</script>
+            // Cập nhật giá trị khi thanh trượt thay đổi
+            priceSlider.noUiSlider.on('update', function(values) {
+                minPriceDisplay.innerHTML = new Intl.NumberFormat().format(values[0]);
+                maxPriceDisplay.innerHTML = new Intl.NumberFormat().format(values[1]);
 
+                minPriceInput.value = values[0];
+                maxPriceInput.value = values[1];
+            });
+        });
+    </script>
 @endsection
 @section('style')
+    <!-- CSS noUiSlider -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+
     <style>
         .btn-icon {
             width: 40px;
@@ -294,6 +311,41 @@
 
         .btn-icon:hover svg {
             fill: #000;
+        }
+
+        /* Bo tròn đầu tay cầm */
+        .noUi-handle {
+            width: 8px;
+            height: 8px;
+            background: #2f2f2f;
+            border: 1px solid #a81717;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: grab;
+        }
+
+        /* Đổi màu thanh trượt */
+        .noUi-connect {
+            background: #414141;
+        }
+
+        /* Màu nền thanh trượt */
+        .noUi-target {
+            background: #e0e0e0;
+            border-radius: 4px;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Hover hiệu ứng nhẹ */
+        .noUi-handle:hover {
+            background: #0056b3;
+        }
+
+        /* Hiển thị giá trị khi thay đổi */
+        .price-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
         }
     </style>
 @endsection
