@@ -39,7 +39,7 @@
                                             <div class="row g-2 align-items-center">
                                                 <div class="col-auto">
                                                     <label for="">Lọc theo trang thái : </label>
-                                                    <select name="status" class="form-select"
+                                                    <select name="status" class="form-select" aria-label="Default select example"
                                                         onchange="this.form.submit()">
                                                         <option value="">-- Tất cả trạng thái --
                                                         </option>
