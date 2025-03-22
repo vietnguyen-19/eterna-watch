@@ -34,7 +34,6 @@ class Voucher extends Model
                ($this->start_date === null || $this->start_date->isPast()) &&
                ($this->max_uses === null || $this->used_count < $this->max_uses);
     }
-    // Tính giảm giá
     public function calculateDiscount($orderTotal)
     {
         if ($this->discount_type === 'percent') {

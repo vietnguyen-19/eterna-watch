@@ -31,7 +31,7 @@
   <![endif]-->
 
     <!-- Document Title -->
-    <title>Home v19 | Uomo eCommerce HTML5 Template</title>
+    <title>Eterna Watch</title>
     <style>
         .dropdown-item.login:hover {
             color: rgb(168, 19, 19) !important;
@@ -97,9 +97,11 @@
             });
         });
     </script>
-    @yield('script')
+    
     <!-- External JavaScripts -->
     <script src="{{ asset('theme/client/js/plugins/jquery.min.js') }}"></script>
+
+    @yield('script')
     <script src="{{ asset('theme/client/js/plugins/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('theme/client/js/plugins/bootstrap-slider.min.js') }}"></script>
 

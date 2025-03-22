@@ -48,5 +48,18 @@ class Product extends Model
     {
         return $this->morphMany(Comment::class, 'entity');
     }
-    
+    public function getMinPriceAttribute()
+    {
+        return $this->variants()
+            ->min('price') ?? $this->price;
+    }
+
+    /**
+     * Lấy giá cao nhất của từng sản phẩm
+     */
+    public function getMaxPriceAttribute()
+    {
+        return $this->variants()
+            ->max('price') ?? $this->price;
+    }
 }

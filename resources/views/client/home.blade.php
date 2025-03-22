@@ -129,36 +129,16 @@
                                             <a
                                                 href="{{ route('client.shop.show', $product->id) }}">{{ $product->name }}</a>
                                         </h6>
-                                        <div class="product-card__price d-flex mb-1">
-                                            <span
-                                                class="money price fs-base fw-semi-bold">${{ $product->price_default }}</span>
+                                        <div style="color: rgb(188, 0, 0); "
+                                            class="product-card__price d-flex mb-1 fw-bold">
+                                            @if ($product->min_price == $product->max_price)
+                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                            @else
+                                                {{ number_format($product->min_price, 0, ',', '.') }} -
+                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                            @endif
                                         </div>
 
-                                        <div
-                                            class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0">
-                                            <!-- Nút Add to Cart -->
-                                            <button class="btn-icon me-auto me-xxl-3 js-add-cart js-open-aside"
-                                                data-aside="cartDrawer" title="Add To Cart">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_cart"></use>
-                                                </svg>
-                                            </button>
-
-                                            <!-- Nút Quick View -->
-                                            <button class="btn-icon me-3 me-xxl-3 js-quick-view" data-bs-toggle="modal"
-                                                data-bs-target="#quickView" title="Quick View">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_view"></use>
-                                                </svg>
-                                            </button>
-
-                                            <!-- Nút Wishlist -->
-                                            <button class="btn-icon js-add-wishlist" title="Add To Wishlist">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_heart"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
 
                                     </div>
                                 </div>
@@ -247,36 +227,17 @@
                                             <a
                                                 href="{{ route('client.shop.show', $product->id) }}">{{ $product->name }}</a>
                                         </h6>
-                                        <div class="product-card__price d-flex mb-1">
-                                            <span
-                                                class="money price fs-base fw-semi-bold">${{ $product->price_default }}</span>
+                                        <div style="color: rgb(188, 0, 0); "
+                                            class="product-card__price d-flex mb-1 fw-bold">
+                                            @if ($product->min_price == $product->max_price)
+                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                            @else
+                                                {{ number_format($product->min_price, 0, ',', '.') }} -
+                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                            @endif
                                         </div>
 
-                                        <div
-                                            class="d-flex align-items-center hover__content position-relative mt-3 mt-sm-0">
-                                            <!-- Nút Add to Cart -->
-                                            <button class="btn-icon me-auto me-xxl-3 js-add-cart js-open-aside"
-                                                data-aside="cartDrawer" title="Add To Cart">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_cart"></use>
-                                                </svg>
-                                            </button>
 
-                                            <!-- Nút Quick View -->
-                                            <button class="btn-icon me-3 me-xxl-3 js-quick-view" data-bs-toggle="modal"
-                                                data-bs-target="#quickView" title="Quick View">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_view"></use>
-                                                </svg>
-                                            </button>
-
-                                            <!-- Nút Wishlist -->
-                                            <button class="btn-icon js-add-wishlist" title="Add To Wishlist">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_heart"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
 
                                     </div>
                                 </div>

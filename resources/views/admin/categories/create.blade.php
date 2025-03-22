@@ -3,7 +3,6 @@
     <div class="col-lg-12">
         <div class="card" id="customerList">
             <div class="card-header border-bottom-dashed">
-
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
@@ -12,7 +11,6 @@
                     </div>
                 </div>
             </div>
-
 
 
             <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"

@@ -257,7 +257,7 @@
 
 
                 {{-- Order --}}
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+              
 
 
                 {{-- Bình luận --}}
@@ -281,8 +281,8 @@
                     </ul>
                 </li>
 
-
-                {{-- <li class="nav-item">
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+               
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
@@ -299,13 +299,7 @@
                                 <p>Danh sách</p>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a href="{{ route('admin.orders.show') }}"
-                                class="nav-link {{ Request::routeIs('admin.permissions.show') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Thêm mới</p>
-                            </a>
-                        </li> --}}
+                       
                     </ul>
                 </li>
 

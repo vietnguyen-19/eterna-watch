@@ -14,15 +14,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     $data = Order::with('user', 'orderItems')->latest('id')->get();
-
-    //     return view('admin.order.index', [
-    //         'data' => $data,
-    //     ]);
-    // }
-
+   
     public function index(Request $request)
     {
         $status = $request->query('status');
