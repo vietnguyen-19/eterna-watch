@@ -51,7 +51,7 @@ class ProductVariantController extends Controller
     }
     public function store(Request $request)
     {
-      
+       
         DB::beginTransaction();
 
         // Lấy dữ liệu từ request, loại bỏ _token
@@ -68,33 +68,23 @@ class ProductVariantController extends Controller
                 'sku'   => $variant['sku'],
                 'price' => $variant['price'],
                 'stock' => $variant['stock'],
+                'image' => $variant['image'],
             ];
 
-            // Kiểm tra và xử lý file ảnh nếu được tải lên
-            if (isset($variant['image']) && $variant['image'] instanceof \Illuminate\Http\UploadedFile) {
-                $image = $variant['image'];
-                $fileName =  time() . $index . '.' . $image->getClientOriginalExtension();
-                $destinationPath = storage_path('app/public/products');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $image->move($destinationPath, $fileName);
-                $variantData['image'] = 'products/' . $fileName;
-            }
 
             // Tạo bản ghi cho biến thể sản phẩm
             $productVariant = ProductVariant::create($variantData);
             $productVariantId = $productVariant->id;
 
-            // Lưu các thuộc tính của biến thể (name_value_ids)
             if (isset($variant['name_value_ids']) && is_array($variant['name_value_ids'])) {
                 foreach ($variant['name_value_ids'] as $valueId) {
-                    VariantAttribute::create([
+                   VariantAttribute::create([
                         'variant_id'         => $productVariantId,
                         'attribute_value_id' => $valueId
                     ]);
                 }
             }
+           
         }
 
         DB::commit();

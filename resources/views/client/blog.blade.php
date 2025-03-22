@@ -2,26 +2,7 @@
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
-        <section class="blog-page-title mb-4 mb-xl-5">
-            <div class="title-bg">
-                <img loading="lazy" src="{{ asset('theme/client/images/blog_title_bg.jpg') }}" width="1780" height="420"
-                    alt="">
-            </div>
-            <div class="container">
-                <h2 class="page-title">The Blog</h2>
-                <div class="blog__filter">
-                    <a href="#" class="menu-link menu-link_us-s">ALL</a>
-                    <a href="#" class="menu-link menu-link_us-s">COMPANY</a>
-                    <a href="#" class="menu-link menu-link_us-s menu-link_active">FASHION</a>
-                    <a href="#" class="menu-link menu-link_us-s">STYLE</a>
-                    <a href="#" class="menu-link menu-link_us-s">TRENDS</a>
-                    <a href="#" class="menu-link menu-link_us-s">BEAUTY</a>
-                </div>
-            </div>
-        </section>
-
         <div class="mb-4 pb-lg-3"></div>
-
         <section class="shop-main container d-flex">
             <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
                 <div class="aside-header d-flex d-lg-none align-items-center">
@@ -210,9 +191,11 @@
             <div class="shop-list flex-grow-1">
                 <div class="d-flex justify-content-between mb-4 pb-md-2">
                     <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
-                        <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium"><strong>Trang
+                                chủ</strong></a>
+                        <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">|</span>
+                        <a href="#"
+                            class="menu-link menu-link_us-s text-uppercase fw-medium"><strong>Blog</strong></a>
                     </div><!-- /.breadcrumb -->
 
                     <div
@@ -257,26 +240,33 @@
 
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
                     @foreach ($posts as $post)
-                        <div class="blog-grid__item">
-                            <div class="blog-grid__item-image">
-                                <img loading="lazy" class="h-auto"
-                                    src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}" width="450"
-                                    height="400" alt="">
-                            </div>
-                            <div class="blog-grid__item-detail">
-                                <div class="blog-grid__item-meta">
-                                    <span class="blog-grid__item-meta__author">Đăng bởi |
-                                        <strong>{{ $post->user->name }}</strong></span>
-                                    <span
-                                        class="blog-grid__item-meta__date">{{ \Carbon\Carbon::parse($post->pushlisted_at)->format('M d, Y') }}
-                                    </span>
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="blog-grid__item-image">
+                                    <img loading="lazy" class="card-img-top img-fluid"
+                                        src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}"
+                                        alt="{{ $post->title }}" style="object-fit: cover; height: 250px;">
                                 </div>
-                                <div class="blog-grid__item-title">
-                                    <a href="{{route('client.blog.detail', $post->id)}}">{{ $post->title }}</a>
-                                </div>
-                                <div class="blog-grid__item-content">
-                                    <p>{{ $post->excerpt }}</p>
-                                    <a href="{{route('client.blog.detail', $post->id)}}" class="readmore-link">Continue Reading</a>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="text-muted mb-2">
+                                        <p class="mb-0">Đăng bởi | <strong>{{ $post->user->name }}</strong></p>
+                                        <p class="mb-0">
+                                            {{ \Carbon\Carbon::parse($post->pushlisted_at)->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                    <h5 class="">
+                                        <a href="{{ route('client.blog.detail', $post->id) }}"
+                                            class="text-decoration-none text-dark">
+                                            {{ $post->title }}
+                                        </a>
+                                    </h5>
+                                    <div class="card-text blog-grid__item-content flex-grow-1">
+                                        <p class="text-muted">{{ $post->excerpt }}</p>
+                                    </div>
+                                    <a href="{{ route('client.blog.detail', $post->id) }}"
+                                        class="btn btn-outline-primary mt-2">
+                                        Đọc bài viết
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -287,8 +277,6 @@
                 <div class="justify-content-center mt-4">
                     {{ $posts->links() }}
                 </div>
-
-
             </div>
         </section><!-- /.shop-main container -->
     </main>

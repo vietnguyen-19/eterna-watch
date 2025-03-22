@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,14 @@ Route::prefix('admin')->group(function () {
     });
 
     // Banner
+
+    Route::post('/upload-image', [ImageController::class, 'uploadImage']);
+    Route::post('/remove-image', [ImageController::class, 'removeImage']);
+    Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
+
+    Route::resource('roles', RoleController::class);
+});
+
     Route::prefix('banners')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
@@ -167,8 +176,6 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::resource('roles', RoleController::class);
-});
-
 
 
 Route::prefix('admin/articles')->group(function () {
@@ -179,3 +186,4 @@ Route::prefix('admin/articles')->group(function () {
     Route::put('{id}', [ArticleController::class, 'update'])->name('admin.articles.update'); // Cập nhật
     Route::delete('{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy'); // Xóa
 });
+

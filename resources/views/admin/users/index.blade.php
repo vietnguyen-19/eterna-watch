@@ -47,6 +47,7 @@
                                             <th>Email</th>
                                             <th>Số điện thoại</th>
                                             <th>Trạng thái</th>
+                                            <th>Vai trò</th>  <!-- Cột vai trò thêm vào -->
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -69,6 +70,7 @@
                                                         {{ $user->status == 'active' ? 'Hoạt động' : 'Ngưng hoạt động' }}
                                                     </span>
                                                 </td>
+                                                <td>{{ $user->role->name ?? 'Chưa có' }}</td>  <!-- Hiển thị tên vai trò -->
                                                 <td>
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('admin.users.edit', $user->id) }}"
@@ -87,7 +89,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center text-muted">Không có tài khoản nào được tìm thấy.</td>
+                                                <td colspan="7" class="text-center text-muted">Không có tài khoản nào được tìm thấy.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -99,4 +101,52 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('style')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+@endsection
+
+@section('script')
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#userTable').DataTable({
+                "paging": true,
+                "lengthMenu": [10, 20, 50],
+                "searching": true,
+                "ordering": true,
+                "autoWidth": false,
+                "responsive": true,
+                "info": true,
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Đang hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Trang đầu",
+                        "last": "Trang cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
+                    }
+                }
+            });
+        });
+
+        // Tự động đóng thông báo sau 5 giây
+        setTimeout(function() {
+            var alert = document.getElementById('thongbao-alert');
+            if (alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 5000);
+    </script>
 @endsection
