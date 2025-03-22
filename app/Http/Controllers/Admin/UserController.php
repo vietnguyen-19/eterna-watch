@@ -10,13 +10,24 @@ use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    public function index($id)
+    /**
+     * Hiển thị danh sách người dùng theo vai trò.
+     */
+    public function index(Request $request, $id = null)
     {
-        $data = User::with('role')->where('role_id', $id)->latest('id')->get();
-        $role = Role::findOrFail($id); // Lấy tên role
+        if ($id) {
+            // Sắp xếp theo created_at giảm dần để hiển thị dữ liệu mới nhất lên đầu
+            $data = User::with('role')->where('role_id', $id)->latest('created_at')->get();
+            $role = Role::findOrFail($id);
+        } else {
+            // Sắp xếp theo created_at giảm dần để hiển thị dữ liệu mới nhất lên đầu
+            $data = User::with('role')->latest('created_at')->get();
+            $role = null;
+        }
 
         return view('admin.users.index', [
             'data' => $data,
@@ -24,34 +35,48 @@ class UserController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Hiển thị form tạo mới người dùng.
+     */
     public function create()
     {
-        $roles = Role::query()->get();
+        $roles = Role::all(); // Lấy tất cả vai trò
         return view('admin.users.create', [
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 
+    /**
+     * Hiển thị thông tin người dùng.
+     */
     public function show($id)
     {
         $user = User::with('addresses')->findOrFail($id);
-
         return view('admin.users.show', compact('user'));
     }
 
+    /**
+     * Hiển thị form chỉnh sửa người dùng.
+     */
     public function edit($id)
     {
-        $roles = Role::get();
+        $roles = Role::all(); // Lấy tất cả vai trò
         $user = User::with('role')->findOrFail($id);
         $address = UserAddress::where('user_id', $id)->where('is_default', true)->first();
 
         return view('admin.users.edit', compact('user', 'roles', 'address'));
     }
 
+    /**
+     * Lưu thông tin người dùng mới.
+     */
     public function store(UserStoreRequest $request)
     {
-        $data = $request->validated(); // Lấy dữ liệu đã validate
+        $data = $request->validated();
 
+        // Lưu thông tin người dùng mới
         User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -60,7 +85,7 @@ class UserController extends Controller
             'gender' => $data['gender'] ?? null,
             'avatar' => 'avatar/default.jpeg',
             'note' => $data['note'] ?? null,
-            'role_id' => $data['role_id'],
+            'role_id' => $data['role_id'],  // Gán vai trò cho người dùng
             'status' => 'active',
         ]);
 
@@ -72,7 +97,9 @@ class UserController extends Controller
         ]);
     }
 
-
+    /**
+     * Cập nhật thông tin người dùng.
+     */
     public function update(UserUpdateRequest $request, $id)
     {
         $user = User::findOrFail($id);
@@ -81,11 +108,12 @@ class UserController extends Controller
         $user->phone = $request->input('phone');
         $user->gender = $request->input('gender');
         $user->note = $request->input('note');
+
+        // Kiểm tra và lưu avatar nếu có
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
             $fileName = time() . '.' . $avatar->getClientOriginalExtension();
             $destinationPath = storage_path('app/public/avatars');
-            // Tạo thư mục nếu chưa có
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
             }
@@ -98,24 +126,19 @@ class UserController extends Controller
             $user->avatar = 'avatars/' . $fileName;
         }
 
+        // Cập nhật hoặc tạo mới địa chỉ mặc định
+        $address = UserAddress::firstOrCreate(
+            ['user_id' => $id, 'is_default' => true],
+            [
+                'country' => $request->input('country'),
+                'city' => $request->input('city'),
+                'district' => $request->input('district'),
+                'ward' => $request->input('ward'),
+                'specific_address' => $request->input('specific_address')
+            ]
+        );
 
-        $address = UserAddress::where('user_id', $id)->where('is_default', true)->first();
-
-        // Nếu không tìm thấy địa chỉ, tạo mới
-        if (!$address) {
-            $address = new UserAddress();
-            $address->user_id = $id;
-            $address->is_default = true; // Đánh dấu là địa chỉ mặc định
-        }
-
-        // Cập nhật thông tin địa chỉ
-        $address->country = $request->input('country');
-        $address->city = $request->input('city');
-        $address->district = $request->input('district');
-        $address->ward = $request->input('ward');
-        $address->specific_address = $request->input('specific_address');
-
-        // Lưu thông tin user và address
+        // Lưu thông tin người dùng và địa chỉ
         $user->save();
         $address->save();
 
@@ -126,11 +149,16 @@ class UserController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Xóa người dùng.
+     */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);  
-        $user->addresses()->delete();
-        $user->delete();
+        $user = User::findOrFail($id);
+        $user->addresses()->delete();  // Xóa tất cả địa chỉ của người dùng
+        $user->delete();  // Xóa người dùng
+
         return redirect()->route('admin.users.index', $user->role_id)->with([
             'thongbao' => [
                 'type' => 'success',

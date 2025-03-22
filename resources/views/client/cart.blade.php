@@ -140,7 +140,6 @@
                             @endif
                         </tbody>
                     </table>
-
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div id="fixedBar" class="card mt-5">

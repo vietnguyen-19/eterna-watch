@@ -1,6 +1,5 @@
 @extends('admin.layouts.master')
 @section('content')
-
     <div class="col-lg-12">
         <div class="card" id="customerList">
             <div class="card-header border-bottom-dashed">
@@ -8,65 +7,43 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
-                            <h5 class="card-title mb-0">Thêm mới thương hiệu</h5>
+                            <h5 class="card-title mb-0">Chỉnh sửa bình luận</h5>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Hiển thị lỗi --}}
-            @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-
-            <form action="{{ route('admin.brands.store') }}" autocomplete="off" method="POST"
+            <form action="{{ route('admin.comments.update', $item->id) }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
+                @method('PUT') <!-- Đảm bảo sử dụng phương thức PUT để cập nhật -->
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
-                            <label for="name" class="form-label">Tên thương hiệu</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                value="{{ old('name') }}" required placeholder="Enter name">
+                            <label for="name" class="form-label">Nội dung bình luận</label>
+                            <input value="{{ old('content', $item->content) }}" name="content" type="text" id="content"
+                                class="form-control" placeholder="Enter content">
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="mb-3 col-12">
-                            <select name="parent_id" class="form-control">
-                                <option value="">Chọn danh mục cha</option>
-                                @foreach ($brands as $brand)
-                                    <option value="{{ $brand->id }}"
-                                        {{ old('parent_id') == $brand->id ? 'selected' : '' }}>
-                                        {{ $brand->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-                        <button type="submit" class="btn btn-success" id="add-btn">Thêm thương hiệu</button>
-                        <a href="{{ route('admin.brands.index') }}" class="btn btn-light">Đóng</a>
-                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                        <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh mục</button>
+                        <a href="{{ route('admin.comments.index') }}" class="btn btn-light">Đóng</a>
                     </div>
                 </div>
             </form>
+
         </div>
 
 
     </div>
 
     </div>
-
 @endsection
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
