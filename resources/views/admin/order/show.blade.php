@@ -41,35 +41,46 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <p><strong>Khách hàng:</strong> {{ $order->user->name ?? 'Khách ẩn danh' }}</p>
-                                        <p><strong>Trạng thái:</strong> <span
-                                                class="badge bg-success">{{ ucfirst($order->status) }}</span></p>
+                                        <h3 class="mb-4">Chi tiết đơn hàng #{{ $order->id }}</h3>
 
-                                        <!-- Form đổi trạng thái -->
-                                        <form id="statusForm" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <label for="status">Thay đổi trạng thái:</label>
-                                            <select name="status" class="form-select w-auto d-inline"
-                                                onchange="submitStatusForm(this.value)">
-                                                <option disabled selected>Chọn trạng thái</option>
-                                                @php
-                                                    $next = [
-                                                        'pending' => ['confirmed'],
-                                                        'confirmed' => ['processing'],
-                                                        'processing' => ['completed'],
-                                                        'completed' => [],
-                                                        'cancelled' => [],
-                                                    ];
-                                                @endphp
-                                                @foreach ($next[$order->status] ?? [] as $status)
-                                                    <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-                                                @endforeach
-                                            </select>
-                                        </form>
+                                        <div class="mb-4">
+                                            <div class="card-header fw-bold">
+                                                Thông tin khách hàng
+                                            </div>
+                                            <p><strong>Khách hàng:</strong> {{ $order->user->name ?? 'Khách ẩn danh' }}</p>
+                                            <p><strong>Trạng thái:</strong> <span
+                                                    class="badge bg-success">{{ ucfirst($order->status) }}</span></p>
+                                            <p><strong>Địa chỉ:</strong>
+                                                {{ $order->shippingAddress->street_address ?? 'N/A' }}</p>
+                                            <p><strong>Số điện thoại:</strong>
+                                                {{ $order->shippingAddress->phone ?? 'N/A' }}</p>
+                                            <!-- Form đổi trạng thái -->
+                                            <form id="statusForm" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <label for="status">Thay đổi trạng thái:</label>
+                                                <select name="status" class="form-select w-auto d-inline"
+                                                    onchange="submitStatusForm(this.value)">
+                                                    <option disabled selected>Chọn trạng thái</option>
+                                                    @php
+                                                        $next = [
+                                                            'pending' => ['confirmed'],
+                                                            'confirmed' => ['processing'],
+                                                            'processing' => ['completed'],
+                                                            'completed' => [],
+                                                            'cancelled' => [],
+                                                        ];
+                                                    @endphp
+                                                    @foreach ($next[$order->status] ?? [] as $status)
+                                                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </form>
+                                        </div>
+
                                         <table class="table table-bordered" aria-describedby="example2_info"
                                             id="danhmucTable">
-
+                                            <h4>Sản phẩm trong đơn</h4>
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">Tên Sản phẩm</th>
@@ -81,49 +92,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                {{-- @php
-                                                    $transitions = [
-                                                        'pending' => ['confirmed'],
-                                                        'confirmed' => ['processing'],
-                                                        'processing' => ['completed'],
-                                                        'completed' => [],
-                                                        'cancelled' => [],
-                                                    ];
-                                                @endphp
 
-                                                @if (count($transitions[$order->status]) > 0)
-                                                    <form method="POST"
-                                                        action="{{ route('admin.orders.updateStatus', $order->id) }}"
-                                                        class="row g-2 align-items-center mb-3">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <div class="col-auto">
-                                                            <select name="status" class="form-select" required>
-                                                                @foreach ($transitions[$order->status] as $nextStatus)
-                                                                    <option value="{{ $nextStatus }}">
-                                                                        {{ ucfirst($nextStatus) }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <button type="submit" class="btn btn-primary btn-sm">Cập nhật
-                                                                trạng thái</button>
-                                                        </div>
-                                                    </form>
-                                                @else
-                                                    <p class="text-muted">Trạng thái này không thể thay đổi thêm.</p>
-                                                @endif
-
-                                                @if (session('success'))
-                                                    <div class="alert alert-success mt-2">{{ session('success') }}</div>
-                                                @endif
-                                                @if (session('error'))
-                                                    <div class="alert alert-danger mt-2">{{ session('error') }}</div>
-                                                @endif --}}
                                                 @foreach ($order->orderItems as $item)
                                                     <tr>
-                                                        <td>{{ $item->productVariant->products->name ?? 'N/A' }}</td>
-                                                        <td>{{ $item->productVariant->name ?? '-' }}</td>
+                                                        <td>{{ $item->productVariant->product->name ?? 'N/A' }}</td>
+                                                        <td>{{ $item->productVariant->name ?? 'N/A' }}</td>
                                                         <td>{{ number_format($item->unit_price, 0, ',', '.') }} đ</td>
                                                         <td>{{ $item->quantity }}</td>
                                                         <td>{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }}
@@ -151,7 +124,6 @@
                                                 </tr>
                                             </thead>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
