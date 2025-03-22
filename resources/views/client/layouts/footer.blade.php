@@ -1,4 +1,4 @@
-<footer class="footer footer_type_1 dark">
+<footer id="footer" class="footer footer_type_1 dark">
     <div class="footer-top container py-0">
         <div class="service-promotion horizontal container">
             <div class="row">

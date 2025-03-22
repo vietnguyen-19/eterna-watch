@@ -521,7 +521,7 @@
                                 <li>
                                     <hr class="dropdown-divider border-secondary">
                                 </li>
-                                <li><a class="dropdown-item login text-white py-2 " href=""> Hồ sơ</a></li>
+                                <li><a class="dropdown-item login text-white py-2 " href="{{route('account.order')}}"> Hồ sơ</a></li>
                                 <li><a class="dropdown-item login text-white py-2" href="">Cài đặt</a></li>
                                 <li>
                                     <hr class="dropdown-divider border-secondary">

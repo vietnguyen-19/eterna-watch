@@ -21,12 +21,10 @@
                                 <div class="row align-items-center">
                                     <!-- Ảnh đại diện -->
                                     <div class="col-3">
-                                        <label for="brand" class="form-label">Hình ảnh</label>
                                         <div class="mb-3 col-md-12 text-center">
                                             <img src="{{ asset('storage/' . $product->avatar) }}"
                                                 class="img-fluid rounded shadow" style="object-fit: cover;"
                                                 alt="Ảnh sản phẩm">
-                                            <input type="file" name="avatar" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-9">
@@ -34,12 +32,13 @@
                                             <div class="mb-3 col-md-12">
                                                 <label for="name" class="form-label">Tên sản phẩm</label>
                                                 <input type="text" name="name" id="name" class="form-control"
-                                                    value="{{ $product->name }}">
+                                                    value="{{ $product->name }}" disabled>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
                                                 <label for="category" class="form-label">Danh mục</label>
-                                                <select class="form-control" name="category_id" class="form-select">
+                                                <select class="form-control" name="category_id" class="form-select"
+                                                    disabled>
                                                     @foreach ($categories as $category)
                                                         <option value="{{ $category->id }}"
                                                             {{ $category->id == $product->category->id ? 'selected' : '' }}>
@@ -51,7 +50,7 @@
 
                                             <div class="mb-3 col-md-6">
                                                 <label for="brand" class="form-label">Thương hiệu</label>
-                                                <select class="form-control" name="brand_id" class="form-select">
+                                                <select class="form-control" name="brand_id" class="form-select" disabled>
                                                     @foreach ($brands as $brand)
                                                         <option value="{{ $brand->id }}"
                                                             {{ $brand->id == $product->brand->id ? 'selected' : '' }}>
@@ -65,12 +64,13 @@
                                                 <label for="price_default" class="form-label">Giá mặc định</label>
                                                 <input type="text" name="price_default" id="price_default"
                                                     class="form-control"
-                                                    value="{{ number_format($product->price_default, 0, ',', '.') }}">
+                                                    value="{{ number_format($product->price_default, 0, ',', '.') }}"
+                                                    disabled>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
                                                 <label for="status" class="form-label">Trạng thái</label>
-                                                <select class="form-control" name="status" class="form-select">
+                                                <select class="form-control" name="status" class="form-select" disabled>
                                                     <option value="active"
                                                         {{ $product->status === 'active' ? 'selected' : '' }}>
                                                         Đang
@@ -85,7 +85,7 @@
                                             <div class="mb-4 col-12">
                                                 <label for="brand" class="form-label">Mô tả ngắn</label>
                                                 <textarea name="short_description" id="short_description" class="form-control" rows="3"
-                                                    placeholder="Nhập mô tả ngắn">{{ $product->short_description }}</textarea>
+                                                    placeholder="Nhập mô tả ngắn" disabled>{{ $product->short_description }}</textarea>
                                                 @error('short_description')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
@@ -104,7 +104,7 @@
                                     <div class="bg-light card-header border-bottom-dashed">
                                         <div class="row g-4 align-items-center">
                                             <div class="col-sm">
-                                                <h5 class="card-title mb-0"><b>Bước 3 | Chọn các giá trị của thuộc tính</b>
+                                                <h5 class="card-title mb-0"><b>Chọn các giá trị của thuộc tính</b>
                                                 </h5>
                                             </div>
                                         </div>
@@ -179,16 +179,17 @@
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
     <script>
         // Sử dụng Event Delegation cho nút submit
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'submit-form') {
+        document.addEventListener("click", function(e) {
+            if (e.target && e.target.id === "submit-form") {
                 e.preventDefault(); // Ngăn form submit
 
-                // Gọi hàm validate
                 if (validateVariants()) {
-                    // Nếu hợp lệ thì submit form
-                    document.getElementById('variantForm').submit();
+                    document.getElementById("variantForm").submit();
                 }
             }
         });
@@ -197,26 +198,22 @@
         function validateVariants() {
             let isValid = true;
 
-            // Lặp qua tất cả các input có class validate-required
-            document.querySelectorAll('.validate-required').forEach(function(input) {
-                // Nếu input rỗng thì hiển thị lỗi
+            document.querySelectorAll(".validate-required").forEach(function(input) {
                 if (!input.value.trim()) {
                     isValid = false;
-                    input.classList.add('is-invalid');
+                    input.classList.add("is-invalid");
 
-                    // Kiểm tra nếu đã có thông báo lỗi chưa, nếu chưa thì thêm vào
                     if (!input.nextElementSibling || !input.nextElementSibling.classList.contains(
-                            'invalid-feedback')) {
-                        let errorDiv = document.createElement('div');
-                        errorDiv.classList.add('invalid-feedback');
-                        errorDiv.textContent = 'Trường này không được để trống.';
+                            "invalid-feedback")) {
+                        let errorDiv = document.createElement("div");
+                        errorDiv.classList.add("invalid-feedback");
+                        errorDiv.textContent = "Trường này không được để trống.";
                         input.parentNode.appendChild(errorDiv);
                     }
                 } else {
-                    // Xóa thông báo lỗi nếu có giá trị
-                    input.classList.remove('is-invalid');
+                    input.classList.remove("is-invalid");
                     if (input.nextElementSibling && input.nextElementSibling.classList.contains(
-                            'invalid-feedback')) {
+                            "invalid-feedback")) {
                         input.nextElementSibling.remove();
                     }
                 }
@@ -225,123 +222,185 @@
             return isValid;
         }
 
-
-        document.getElementById('add-variants').addEventListener('click', function(e) {
-            // Ngăn form submit khi click button "Tạo các biến thể"
+        document.getElementById("add-variants").addEventListener("click", function(e) {
             e.preventDefault();
 
-            // Đảm bảo form có thuộc tính enctype="multipart/form-data"
-            let form = document.getElementById('variantForm');
-            form.setAttribute('enctype', 'multipart/form-data');
+            let form = document.getElementById("variantForm");
+            form.setAttribute("enctype", "multipart/form-data");
 
-            // Lấy tất cả các select chứa giá trị thuộc tính (dùng name="name_values[]")
             let selects = document.querySelectorAll('select[name="name_values[]"]');
             let arrays = [];
 
             selects.forEach(function(select) {
-                // Lấy các option được chọn, chuyển thành mảng các đối tượng {id, name}
-                let selectedOptions = Array.from(select.selectedOptions).map(option => ({
+                let selectedOptions = Array.from(select.selectedOptions).map((option) => ({
                     id: option.value,
-                    name: option.textContent.trim()
+                    name: option.textContent.trim(),
                 }));
                 if (selectedOptions.length > 0) {
                     arrays.push(selectedOptions);
                 }
             });
 
-            // Hàm tính tích Descartes (cartesian product) của các mảng
             function cartesian(arrays) {
-                return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [...d, e])), [
+                return arrays.reduce((a, b) => a.flatMap((d) => b.map((e) => [...d, e])), [
                     []
                 ]);
             }
 
             let combinations = cartesian(arrays);
-            let container = document.getElementById('variants-combinations');
-            container.innerHTML = ''; // Xóa nội dung cũ nếu có
+            let container = document.getElementById("variants-combinations");
+            container.innerHTML = "";
 
-            // Nếu có tổ hợp và ít nhất một thuộc tính được chọn
             if (combinations.length > 0 && combinations[0].length > 0) {
-                let table = document.createElement('table');
-                table.classList.add('table', 'table-bordered');
+                let table = document.createElement("table");
+                table.classList.add("table", "table-bordered", "align-middle", "shadow-sm", "table-hover");
 
-                // Tạo header cho bảng, bao gồm cột "Xóa"
-                let thead = document.createElement('thead');
-                let headerRow = document.createElement('tr');
-                ['Biến thể', 'SKU', 'Giá', 'Số lượng tồn', 'Ảnh', 'Xóa'].forEach(function(text) {
-                    let th = document.createElement('th');
+                // Tạo header
+                let thead = document.createElement("thead");
+                thead.classList.add("table-primary");
+                let headerRow = document.createElement("tr");
+                ["Biến thể", "SKU", "Giá", "Số lượng tồn", "Ảnh", "Xóa"].forEach(function(text, index) {
+                    let th = document.createElement("th");
                     th.textContent = text;
+                    th.classList.add("text-center", "fw-medium");
+                    if (index === 4) th.style.width = "30%"; // Điều chỉnh độ rộng cột ảnh
                     headerRow.appendChild(th);
                 });
                 thead.appendChild(headerRow);
                 table.appendChild(thead);
 
-                // Tạo body cho bảng
-                let tbody = document.createElement('tbody');
+                // Tạo body
+                let tbody = document.createElement("tbody");
                 combinations.forEach(function(combo, index) {
-                    let row = document.createElement('tr');
+                    let row = document.createElement("tr");
+                    row.style.verticalAlign = "middle"; // Căn giữa nội dung theo chiều dọc
 
-                    // Ô Biến thể: ghép tên của các giá trị (ví dụ: "Đỏ - XL")
-                    let variantName = combo.map(item => item.name).join(' - ');
-                    let tdVariant = document.createElement('td');
+                    // Cột Biến thể
+                    let variantName = combo.map((item) => item.name).join(" - ");
+                    let tdVariant = document.createElement("td");
                     tdVariant.textContent = variantName;
-                    row.appendChild(tdVariant);
+                    tdVariant.classList.add("text-center");
 
-                    // Ô SKU
-                    let tdSKU = document.createElement('td');
-                    let inputSKU = document.createElement('input');
-                    inputSKU.type = 'text';
-                    inputSKU.name = `variants[${index}][sku]`;
-                    inputSKU.classList.add('form-control', 'validate-required');
-                    tdSKU.appendChild(inputSKU);
-                    row.appendChild(tdSKU);
-
-                    // Ô Giá
-                    let tdPrice = document.createElement('td');
-                    let inputPrice = document.createElement('input');
-                    inputPrice.type = 'number';
-                    inputPrice.name = `variants[${index}][price]`;
-                    inputPrice.classList.add('form-control', 'validate-required');
-                    tdPrice.appendChild(inputPrice);
-                    row.appendChild(tdPrice);
-
-                    // Ô Số lượng tồn
-                    let tdStock = document.createElement('td');
-                    let inputStock = document.createElement('input');
-                    inputStock.type = 'number';
-                    inputStock.name = `variants[${index}][stock]`;
-                    inputStock.classList.add('form-control', 'validate-required');
-                    tdStock.appendChild(inputStock);
-                    row.appendChild(tdStock);
-
-                    // Ô Ảnh: Người dùng cần chọn file để upload
-                    let tdImage = document.createElement('td');
-                    let inputImage = document.createElement('input');
-                    inputImage.type = 'file';
-                    inputImage.name = `variants[${index}][image]`;
-                    inputImage.classList.add('form-control', 'validate-required');
-                    tdImage.appendChild(inputImage);
-                    row.appendChild(tdImage);
-
-                    // Cột Xóa: Thêm nút xóa để loại bỏ hàng nếu cần
-                    let tdRemove = document.createElement('td');
-                    let btnRemove = document.createElement('button');
-                    btnRemove.textContent = 'Xóa';
-                    btnRemove.classList.add('btn', 'btn-danger', 'btn-sm');
-                    btnRemove.addEventListener('click', function() {
-                        row.remove();
-                    });
-                    tdRemove.appendChild(btnRemove);
-                    row.appendChild(tdRemove);
-
-                    // Thêm hidden input cho từng giá trị thuộc tính
                     combo.forEach(function(item) {
-                        let hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
+                        let hiddenInput = document.createElement("input");
+                        hiddenInput.type = "hidden";
                         hiddenInput.name = `variants[${index}][name_value_ids][]`;
                         hiddenInput.value = item.id;
                         tdVariant.appendChild(hiddenInput);
                     });
+
+                    row.appendChild(tdVariant);
+
+                    // Các cột nhập liệu
+                    ["sku", "price", "stock"].forEach((field) => {
+                        let td = document.createElement("td");
+                        let input = document.createElement("input");
+                        input.type = field === "price" || field === "stock" ? "number" : "text";
+                        input.name = `variants[${index}][${field}]`;
+                        input.classList.add("form-control", "form-control-sm", "validate-required");
+                        if (field === "price") {
+                            input.min = 0.01;
+                            input.step = "0.01";
+                        } else if (field === "stock") {
+                            input.min = 1;
+                            input.step = "1";
+                        }
+                        td.appendChild(input);
+                        row.appendChild(td);
+                    });
+
+                    // Cột Ảnh
+                    FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize);
+
+                    // Tạo cột chứa ảnh
+                    let tdImage = document.createElement("td");
+                    tdImage.style.width = "20%";
+
+                    // Tạo input file để upload ảnh
+                    let inputImage = document.createElement("input");
+                    inputImage.type = "file";
+                    inputImage.name = `avatar`;
+                    inputImage.classList.add("filepond");
+
+                    // Tạo input hidden để lưu đường dẫn ảnh sau khi upload
+                    let inputHidden = document.createElement("input");
+                    inputHidden.type = "hidden";
+                    inputHidden.name = `variants[${index}][image]`;
+                    inputHidden.id = `avatar-hidden-${index}`;
+
+                    // Thêm input file và input hidden vào cột ảnh
+                    tdImage.appendChild(inputImage);
+                    tdImage.appendChild(inputHidden);
+                    row.appendChild(tdImage);
+
+                    // Khởi tạo FilePond với preview ảnh
+                    const pond = FilePond.create(inputImage, {
+                        name: 'avatar', // Key của file upload
+                        allowMultiple: false,
+                        imagePreviewHeight: 100,
+                        server: {
+                            process: {
+                                url: '/admin/upload-image',
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        "meta[name='csrf-token']").getAttribute("content")
+                                },
+                                onload: (response) => {
+                                    let res = JSON.parse(response);
+                                    if (res.success) {
+                                        document.querySelector(`#avatar-hidden-${index}`)
+                                            .value = res.path;
+                                        console.log('Uploaded:', res.path);
+                                        return res.path;
+                                    } else {
+                                        alert(res.message);
+                                        return;
+                                    }
+                                },
+                                onerror: (response) => {
+                                    console.error('Upload error:', response);
+                                }
+                            },
+                            revert: {
+                                url: '/admin/remove-image',
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        "meta[name='csrf-token']").getAttribute("content")
+                                },
+                                onload: (response) => {
+                                    let res = JSON.parse(response);
+                                    if (res.success) {
+                                        document.querySelector(`#avatar-hidden-${index}`)
+                                            .value = '';
+                                        console.log('Removed:', res.message);
+                                    } else {
+                                        console.error('Remove error:', res.message);
+                                    }
+                                },
+                                onerror: (error) => {
+                                    console.error('Revert error:', error);
+                                }
+                            }
+                        }
+                    });
+
+                    // Cột Xóa
+                    let tdRemove = document.createElement("td");
+                    let btnRemove = document.createElement("button");
+                    btnRemove.type = "button";
+                    btnRemove.textContent = "Xóa";
+                    btnRemove.classList.add("btn", "btn-danger", "btn-sm", "w-100");
+                    btnRemove.addEventListener("click", function() {
+                        if (confirm("Bạn có chắc muốn xóa biến thể này?")) {
+                            row.remove();
+                        }
+                    });
+
+                    tdRemove.classList.add("text-center");
+                    tdRemove.appendChild(btnRemove);
+                    row.appendChild(tdRemove);
 
                     tbody.appendChild(row);
                 });
@@ -349,7 +408,6 @@
                 table.appendChild(tbody);
                 container.appendChild(table);
 
-                // Thêm nút submit cho form tại div button-variant
                 let buttonContainer = document.getElementById('button-variant');
                 buttonContainer.innerHTML = `
             <div class="card-footer">
@@ -359,9 +417,7 @@
             </div>
         `;
             } else {
-                // Nếu không có biến thể nào, hiển thị thông báo mặc định
-                container.innerHTML = '<p class="text-center text-muted">Chưa có biến thể nào</p>';
-                document.getElementById('button-variant').innerHTML = '';
+                container.innerHTML = '<p class="text-center text-muted py-3">Chưa có biến thể nào</p>';
             }
         });
     </script>
@@ -371,5 +427,7 @@
         type="text/css" />
     <!-- Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
     <!-- Select2 JS -->
 @endsection
