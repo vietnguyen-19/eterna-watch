@@ -11,11 +11,10 @@
                     <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
-
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="search-field__input-wrapper mb-3">
-                    <input type="text" name="search_text"
-                        class="search-field__input form-control form-control-sm border-light border-2" placeholder="SEARCH">
+                    <input style="border: 2px solid rgb(210, 26, 26)" type="text" name="search_text"
+                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
                 </div>
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="accordion" id="categories-list">
@@ -24,7 +23,7 @@
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#accordion-filter-1" aria-expanded="true"
                                 aria-controls="accordion-filter-1">
-                                Danh mục sản phẩm
+                                <strong> Danh mục sản phẩm</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -57,9 +56,9 @@
                     <div class="accordion-item mb-4 pb-3">
                         <h5 class="accordion-header" id="accordion-heading-11">
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#accordion-filter-1" aria-expanded="true"
-                                aria-controls="accordion-filter-1">
-                                Thương hiệu đồng hồ
+                                data-bs-toggle="collapse" data-bs-target="#accordion-filter-2" aria-expanded="true"
+                                aria-controls="accordion-filter-2">
+                                <strong> Thương hiệu đồng hồ</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -69,7 +68,7 @@
                                 </svg>
                             </button>
                         </h5>
-                        <div id="accordion-filter-1" class="accordion-collapse collapse show border-0"
+                        <div id="accordion-filter-2" class="accordion-collapse collapse show border-0"
                             aria-labelledby="accordion-heading-11" data-bs-parent="#categories-list">
                             <div class="accordion-body px-0 pb-0 pt-3">
                                 <ul class="list list-inline mb-0">
@@ -95,7 +94,7 @@
                                 <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
                                     aria-controls="accordion-filter-price">
-                                    Lọc sản phẩm theo giá trị
+                                    <strong> Lọc theo giá trị</strong>
                                     <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -138,35 +137,36 @@
             <div class="shop-list flex-grow-1">
                 <div class="d-flex justify-content-between mb-4 pb-md-2">
                     <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
-                        <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Trang chủ</a>
+                        <span class="breadcrumb-separator menu-link fw-bold ps-1 pe-1"> | </span>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Mua hàng</a>
                     </div><!-- /.breadcrumb -->
 
                     <div
                         class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                        <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0"
-                            aria-label="Sort Items" name="total-number">
-                            <option selected>Default Sorting</option>
-                            <option value="1">Featured</option>
-                            <option value="2">Best selling</option>
-                            <option value="3">Alphabetically, A-Z</option>
-                            <option value="3">Alphabetically, Z-A</option>
-                            <option value="3">Price, low to high</option>
-                            <option value="3">Price, high to low</option>
-                            <option value="3">Date, old to new</option>
-                            <option value="3">Date, new to old</option>
+                        <select class="form-select w-auto border-primary shadow-sm fw-medium p-1"
+                            aria-label="Sắp xếp sản phẩm" name="total-number">
+                            <option selected>Sắp xếp mặc định</option>
+                            <option value="1">Nổi bật</option>
+                            <option value="2">Bán chạy nhất</option>
+                            <option value="3">Theo bảng chữ cái, A-Z</option>
+                            <option value="4">Theo bảng chữ cái, Z-A</option>
+                            <option value="5">Giá: Thấp đến cao</option>
+                            <option value="6">Giá: Cao đến thấp</option>
+                            <option value="7">Ngày: Cũ đến mới</option>
+                            <option value="8">Ngày: Mới đến cũ</option>
                         </select>
+
 
                         <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
 
                         <div class="col-size align-items-center order-1 d-none d-lg-flex">
-                            <span class="text-uppercase fw-medium me-2">View</span>
-                            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                            <span class="text-uppercase fw-bold me-2">View</span>
+                            <button class="btn-link fw-bold me-2 js-cols-size" data-target="products-grid"
                                 data-cols="2">2</button>
-                            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                            <button class="btn-link fw-bold me-2 js-cols-size" data-target="products-grid"
                                 data-cols="3">3</button>
-                            <button class="btn-link fw-medium js-cols-size" data-target="products-grid"
+                            <button class="btn-link fw-bold js-cols-size" data-target="products-grid"
                                 data-cols="4">4</button>
                         </div><!-- /.col-size -->
 
@@ -346,6 +346,21 @@
             font-size: 16px;
             font-weight: 600;
             color: #333;
+        }
+
+        #shopFilter {
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            /* Màu nền nhẹ, dễ nhìn */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Tạo độ bóng nhẹ cho sidebar */
+            border-radius: 8px;
+            /* Bo tròn các góc của sidebar */
+            position: sticky;
+            top: 1rem;
+            /* Giữ sidebar ở vị trí cố định khi cuộn */
+            transition: all 0.3s ease;
+            /* Hiệu ứng mượt mà khi thay đổi trạng thái */
         }
     </style>
 @endsection
