@@ -5,17 +5,17 @@
             <div class="row">
                 <div class="col-12">
                     @if (session('thongbao'))
-                    <div id="thongbao-alert"
-                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                        role="alert">
-                        <i class="ri-notification-off-line label-icon"></i><strong>
-                            {{ session('thongbao.message') }}</strong>
+                        <div id="thongbao-alert"
+                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                            role="alert">
+                            <i class="ri-notification-off-line label-icon"></i><strong>
+                                {{ session('thongbao.message') }}</strong>
 
-                    </div>
-                    @php
-                        session()->forget('thongbao');
-                    @endphp
-                @endif
+                        </div>
+                        @php
+                            session()->forget('thongbao');
+                        @endphp
+                    @endif
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
@@ -53,7 +53,8 @@
                                                     <tr>
 
                                                         <td class="id">{{ $item->id }}</td>
-                                                        <td class="nguoi_binh_luan">{{ optional($item->user)->name ?? 'Ẩn danh' }}</td>
+                                                        <td class="nguoi_binh_luan">
+                                                            {{ optional($item->user)->name ?? 'Ẩn danh' }}</td>
 
                                                         <td class="noi_dung">
                                                             {{ Str::limit($item->content, 50, '...') }}
@@ -111,7 +112,6 @@
     </section>
 @endsection
 @section('script')
-
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

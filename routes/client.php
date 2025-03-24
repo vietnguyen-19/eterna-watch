@@ -10,6 +10,7 @@ use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\BlogController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\CommentController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\ShopController;
@@ -73,18 +74,15 @@ Route::prefix('shop')->group(function () {
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'viewCart'])->name('cart.index');
     Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::delete('/remove/{variantId}', [CartController::class, 'removeItem'])->name('cart.remove');
+    Route::post('/remove', [CartController::class, 'removeFromCart']);
     Route::post('/update', [CartController::class, 'updateCart'])->name('cart.update');
-    Route::post('/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+    Route::post('/remove-selected', [CartController::class, 'removeSelectedItems']);
     Route::post('/check_voucher', [CartController::class, 'checkVoucher'])->name('cart.check_voucher');
+    Route::post('/update-total', [CartController::class, 'updateTotal'])->name('cart.update_total');
 });
 Route::prefix('checkout')->group(function () {
-    Route::post('/', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/add', [CheckoutController::class, 'addToCart'])->name('checkout.add');
-    Route::delete('/remove/{variantId}', [CheckoutController::class, 'removeItem'])->name('checkout.remove');
-    Route::post('/update', [CheckoutController::class, 'updateCart'])->name('checkout.update');
-    Route::post('/clear', [CheckoutController::class, 'clearCart'])->name('checkout.clear');
-    Route::post('/check_voucher', [CheckoutController::class, 'checkVoucher'])->name('checkout.check_voucher');
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/store', [CheckoutController::class, 'store'])->name('checkout.store');
 });
 
 Route::prefix('payments')->group(function () {
@@ -93,11 +91,31 @@ Route::prefix('payments')->group(function () {
     Route::get('complete/{id}', [PaymentController::class, 'complete'])->name('payment.complete');
 });
 
-Route::prefix('account')->group(function () {
-    Route::get('', [AccountController::class, 'dashboard'])->name('account.dashboard');
-    Route::get('detail', [AccountController::class, 'detail'])->name('account.detail');
-    Route::get('order', [AccountController::class, 'order'])->name('account.order');
-    Route::get('wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
-    Route::get('address', [AccountController::class, 'address'])->name('account.address');
-    Route::get('order_detail/{id}', [AccountController::class, 'orderDetail'])->name('account.order_detail');
+Route::prefix('comments')->middleware('customer')->group(function () {
+    Route::post('/store/{id}', [CommentController::class, 'store'])->name('comments.store');
+    Route::post('/store-post/{id}', [CommentController::class, 'storePost'])->name('comments.store_post');
+    Route::post('/{comment}/reply/{entity_id}', [CommentController::class, 'reply'])->name('comments.reply');
+    Route::put('/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
+
+    Route::delete('/delete/{comment}', [CommentController::class, 'delete'])->name('comments.delete');
 });
+
+Route::prefix('account')->group(function () {
+    Route::get('edit_detail', [AccountController::class, 'editAccount'])->name('account.edit');
+    Route::post('update', [AccountController::class, 'update'])->name('account.update');
+    Route::get('order', [AccountController::class, 'order'])->name('account.order');
+
+    Route::get('re_password', [AccountController::class, 'rePassword'])->name('account.re_password');
+    Route::post('update_pass', [AccountController::class, 'updatePass'])->name('account.update_pass');
+
+    Route::get('order_detail/{id}', [AccountController::class, 'orderDetail'])->name('account.order_detail');
+    Route::post('cancel/{id}', [AccountController::class, 'cancelOrder'])->name('account.cancel');
+   
+    Route::post('/upload-image', [AccountController::class, 'uploadImage']);
+    Route::post('/remove-image', [AccountController::class, 'removeImage']);
+
+});
+
+Route::get('contact_us', [AccountController::class, 'editAccount'])->name('client.contact_us');
+Route::get('about_us', [AccountController::class, 'editAccount'])->name('client.about_us');
+
