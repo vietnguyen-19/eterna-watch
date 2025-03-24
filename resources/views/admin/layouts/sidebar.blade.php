@@ -280,9 +280,38 @@
                         </li>
                     </ul>
                 </li>
+                
+                <li class="nav-item {{ Request::is('admin/articles*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-pen-to-square"></i>
+                        <p>
+                            Bài viết
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <!-- Danh sách bài viết -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.articles.index') }}" class="nav-link {{ Request::routeIs('admin.articles.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách bài viết</p>
+                            </a>
+                        </li>
+                        <!-- Thêm bài viết mới -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.articles.create') }}" class="nav-link {{ Request::routeIs('admin.articles.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-plus"></i>
+                                <p>Thêm bài viết mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>       
 
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+                {{-- <li class="nav-item">
+
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> //chú ý dòng này
                
+
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
