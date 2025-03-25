@@ -4,8 +4,19 @@
     <main>
         <div class="mb-4 pb-lg-3"></div>
         <section class="shop-main container d-flex">
-            <div style="border: 1px solid rgb(202, 202, 202); border-radius: 3px" class="shop-sidebar side-sticky bg-body p-4"
-                id="shopFilter">
+            <div sty class="shop-sidebar side-sticky bg-body border-1 p-3 shadow-sm" id="shopFilter">
+                <div class="aside-header d-flex d-lg-none align-items-center">
+                    <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
+                    <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
+                </div><!-- /.aside-header -->
+
+                <div class="pt-4 pt-lg-0"></div>
+                <div class="search-field__input-wrapper mb-3">
+                    <input style="border: 2px solid rgb(97, 97, 97)" type="text" name="search_text"
+                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
+                </div>
+                <div class="pt-4 pt-lg-0"></div>
+
                 <div class="accordion" id="categories-list">
                     <div class="accordion-item mb-4 pb-3">
                         <h5 class="accordion-header" id="accordion-heading-11">
@@ -30,8 +41,7 @@
                                         <li class="list-item">
                                             <a href="{{ route('client.blog', ['category' => $category->name]) }}"
                                                 class="menu-link py-1">
-                                                {{ $category->name }} <span
-                                                    class="text-muted">({{ $category->posts_count }})</span>
+                                                {{ $category->name }}
                                             </a>
                                         </li>
                                     @endforeach
@@ -40,37 +50,6 @@
                         </div>
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion-item -->
-                <div class="accordion" id="categories-list">
-                    <div class="accordion-item mb-4 pb-3">
-                        <h5 class="accordion-header" id="accordion-heading-11">
-                            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#accordion-filter-2" aria-expanded="true"
-                                aria-controls="accordion-filter-2">
-                                Thương hiệu
-                                <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                                        <path
-                                            d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                                    </g>
-                                </svg>
-                            </button>
-                        </h5>
-                        <div id="accordion-filter-2" class="accordion-collapse collapse show border-0"
-                            aria-labelledby="accordion-heading-11" data-bs-parent="#categories-list">
-                            <div class="accordion-body px-0 pb-0 pt-3">
-                                <ul class="list list-inline mb-0">
-                                    @foreach ($brands as $brand)
-                                        <li class="list-item">
-                                            <a href="#" class="menu-link py-1">{{ $brand->name }}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div><!-- /.accordion-item -->
-                </div><!-- /.accordion-item -->
-
 
 
                 <div class="accordion" id="size-filters">
@@ -104,7 +83,6 @@
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion -->
             </div><!-- /.shop-sidebar -->
-
             <div class="shop-list flex-grow-1">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -157,7 +135,7 @@
                             class="btn w-100 d-flex justify-content-between align-items-center fs-5 py-3 px-4 border rounded"
                             type="button" data-bs-toggle="collapse" data-bs-target="#commentList" aria-expanded="true"
                             aria-controls="commentList">
-                            <strong><i class="fa-solid fa-comments text-primary me-2"></i> BÌNH LUẬN SẢN PHẨM</strong>
+                            <strong><i class="fa-solid fa-comments text-primary me-2"></i> BÌNH LUẬN BÀI VIẾT</strong>
                             <i class="fa-solid fa-angle-up" title="Mở hoặc đóng bình luận"></i>
                         </button>
                     </h2>
@@ -182,11 +160,11 @@
                                 <div
                                     class="blog-single__reviews-item d-flex align-items-start p-3 border rounded shadow-sm mb-3">
                                     @if ($comments->isEmpty())
-                                        <p class="text-muted"><i>Chưa có đánh giá về sản phẩm.</i></p>
+                                        <p class="text-muted text-center"><i>Chưa có bình luận nào về bài viết</i></p>
                                     @else
                                         <div class="" style="width:100%; margin: 0 auto;">
                                             @foreach ($comments as $comment)
-                                                <div id="comment-container-{{$comment->id}}" class=""
+                                                <div id="comment-container-{{ $comment->id }}" class=""
                                                     style="border-bottom: 1px solid #eee; padding: 20px 0;">
                                                     <div class="review-container" style="display: flex; gap: 15px;">
                                                         <!-- Avatar -->

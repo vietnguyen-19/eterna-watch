@@ -151,12 +151,16 @@
                                             | <strong>{{ $order->voucher->code }}</strong>
                                         @endif
                                     </th>
-                                    <td class="text-end"> <span class="shopping-cart__product-price">
-                                            {{ number_format($order->getDiscountAmount(), 0, ',', '.') }}đ
-                                        </span></td>
+                                    <td class="text-end">
+                                        <span class="shopping-cart__product-price">
+                                            {{ $order->voucher ? number_format($order->getDiscountAmount(), 0, ',', '.') . 'đ' : '' }}
+                                        </span>
+                                    </td>
+                                    
                                 </tr>
                                 <tr>
                                     <th>Tổng cộng</th>
+                                    
                                     <td class="text-end"> <span class="shopping-cart__product-price">
                                             {{ number_format($order->total_amount, 0, ',', '.') }}đ
                                         </span></td>
