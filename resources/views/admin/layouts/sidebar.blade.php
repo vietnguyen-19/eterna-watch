@@ -242,7 +242,7 @@
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách vai trò</p>
                             </a>
-                                                        
+
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.roles.create') }}"
@@ -253,7 +253,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
 
 
                 {{-- Order --}}
@@ -263,7 +263,7 @@
                 {{-- Bình luận --}}
                 <li class="nav-item {{ Request::is('admin/comments*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fa-solid fa-layer-group"></i>
+                        <i class="bi bi-chat-dots-fill"></i>
                         <p>
                             Bình luận
                             <i class="nav-icon right fas fa-angle-left"></i>
