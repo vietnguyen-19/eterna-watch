@@ -19,21 +19,20 @@ class UserController extends Controller
     /**
      * Hiển thị danh sách người dùng theo vai trò.
      */
-    public function index(Request $request, $id = null)
+    public function index(Request $request)
     {
-        if ($id) {
-            // Sắp xếp theo `created_at` giảm dần để hiển thị dữ liệu mới nhất lên đầu
-            $data = User::with('role')->where('role_id', $id)->orderBy('created_at', 'desc')->get();
-            $role = Role::findOrFail($id);
-        } else {
-            $data = User::with('role')->orderBy('created_at', 'desc')->get();
-            $role = null;
+        $roleId = $request->input('role_id');
+        
+        $query = User::with('role');
+        
+        if ($roleId) {
+            $query->where('role_id', $roleId);
         }
-
-        return view('admin.users.index', [
-            'data' => $data,
-            'role' => $role,
-        ]);
+        
+        $data = $query->orderBy('created_at', 'desc')->get();
+        $roles = Role::all();
+        
+        return view('admin.users.index', compact('data', 'roles'));
     }
 
     /**
@@ -92,7 +91,7 @@ class UserController extends Controller
                 'password' => Hash::make($request->input('password')),
                 'gender' => $request->input('gender'),
                 'role_id' => $request->input('role_id'),
-                'status' => 'active',
+                'status' => $request->input('status'),
                 'note' => $request->input('note'),
                 'avatar' => $avatarPath,
             ]);
@@ -139,6 +138,7 @@ class UserController extends Controller
             $user->phone = $request->input('phone');
             $user->gender = $request->input('gender');
             $user->role_id = $request->input('role_id');
+            $user->status = $request->input('status');
             $user->note = $request->input('note');
 
             // Cập nhật mật khẩu nếu có

@@ -91,6 +91,20 @@
                                             @enderror
                                         </div>
 
+                                        <!-- Trạng thái -->
+                                        <div class="mb-3 col-12">
+                                            <label for="status" class="form-label">Trạng thái</label>
+                                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror">
+                                                <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>Hoạt động</option>
+                                                <option value="inactive" {{ old('status', $user->status) == 'inactive' ? 'selected' : '' }}>Ngưng hoạt động</option>
+                                                <option value="banned" {{ old('status', $user->status) == 'banned' ? 'selected' : '' }}>Đã khóa</option>
+                                                <option value="pending" {{ old('status', $user->status) == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                                            </select>
+                                            @error('status')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
                                         <!-- Vai trò -->
                                         <div class="mb-3 col-12">
                                             <label for="role_id" class="form-label">Vai trò</label>
