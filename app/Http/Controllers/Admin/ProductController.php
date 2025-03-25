@@ -78,7 +78,7 @@ class ProductController extends Controller
     }
     public function store(ProductStoreRequest $request)
     {
-       
+
         DB::beginTransaction();
 
         try {
@@ -127,7 +127,7 @@ class ProductController extends Controller
     public function create()
     {
 
-        $categories = Category::select('id', 'name')->get();
+        $categories = Category::select('id', 'name')->whereNull('parent_id')->get();
         $brands = Brand::select('id', 'name')->get();
         $attributes = Attribute::select('id', 'attribute_name')->get();
         $results = AttributeValue::orderBy('attribute_id')->orderBy('id')->get();
@@ -137,6 +137,11 @@ class ProductController extends Controller
             'brands' => $brands,
             'attributes' => $attributes,
         ]);
+    }
+    public function getSubcategories($parent_id)
+    {
+        $subcategories = Category::where('parent_id', $parent_id)->get();
+        return response()->json($subcategories);
     }
 
     public function show($id)
@@ -177,7 +182,7 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, $id)
     {
 
-       
+
         DB::beginTransaction();
 
         $product = Product::findOrFail($id);
