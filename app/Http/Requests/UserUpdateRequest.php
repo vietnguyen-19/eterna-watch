@@ -11,52 +11,56 @@ class UserUpdateRequest extends FormRequest
         return true; // Cho phép request được thực thi
     }
 
-    public function rules()
+    public function rules(): array
     {
+        $userId = $this->route('id');
+
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $this->route('id'),
-            'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|in:male,female,other',
-            'note' => 'nullable|string|max:1000',
+            'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'phone' => 'required|string|max:20',
+            'password' => 'nullable|min:6',
+            'gender' => 'required|in:male,female,other',
+            'role_id' => 'required|exists:roles,id',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-
-            'country' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'district' => 'required|string|max:255',
+            'note' => 'nullable|string',
+            
+            // Địa chỉ
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'street_address' => 'required|string|max:255',
             'ward' => 'required|string|max:255',
-            'specific_address' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'name.required' => 'Vui lòng nhập họ và tên.',
-            'name.string' => 'Họ và tên phải là chuỗi ký tự.',
-            'name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
-
-            'email.required' => 'Vui lòng nhập email.',
-            'email.email' => 'Email không hợp lệ.',
-            'email.unique' => 'Email đã được sử dụng.',
-
-            'phone.string' => 'Số điện thoại phải là chuỗi ký tự.',
-            'phone.max' => 'Số điện thoại không được vượt quá 20 ký tự.',
-
-            'gender.in' => 'Giới tính không hợp lệ.',
-
-            'note.string' => 'Ghi chú phải là chuỗi ký tự.',
-            'note.max' => 'Ghi chú không được vượt quá 1000 ký tự.',
-
-            'avatar.image' => 'Ảnh đại diện phải là tệp hình ảnh.',
-            'avatar.mimes' => 'Ảnh đại diện phải có định dạng jpeg, png, jpg hoặc gif.',
-            'avatar.max' => 'Ảnh đại diện không được vượt quá 2MB.',
-
-            'country.required' => 'Vui lòng nhập quốc gia.',
-            'city.required' => 'Vui lòng nhập thành phố.',
-            'district.required' => 'Vui lòng nhập quận/huyện.',
-            'ward.required' => 'Vui lòng nhập phường/xã.',
-            'specific_address.required' => 'Vui lòng nhập địa chỉ chi tiết.',
+            'name.required' => 'Vui lòng nhập tên người dùng',
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.unique' => 'Email đã tồn tại',
+            'phone.required' => 'Vui lòng nhập số điện thoại',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            'gender.required' => 'Vui lòng chọn giới tính',
+            'gender.in' => 'Giới tính không hợp lệ',
+            'role_id.required' => 'Vui lòng chọn vai trò',
+            'role_id.exists' => 'Vai trò không tồn tại',
+            'avatar.image' => 'File phải là hình ảnh',
+            'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
+            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
+            
+            // Địa chỉ
+            'full_name.required' => 'Vui lòng nhập họ tên người nhận',
+            'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',
+            'street_address.required' => 'Vui lòng nhập địa chỉ chi tiết',
+            'ward.required' => 'Vui lòng nhập phường/xã',
+            'district.required' => 'Vui lòng nhập quận/huyện',
+            'city.required' => 'Vui lòng nhập thành phố',
+            'country.required' => 'Vui lòng nhập quốc gia',
         ];
     }
 }

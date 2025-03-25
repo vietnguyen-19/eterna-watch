@@ -47,7 +47,7 @@
                                             <th>Email</th>
                                             <th>Số điện thoại</th>
                                             <th>Trạng thái</th>
-                                            <th>Vai trò</th>  <!-- Cột vai trò thêm vào -->
+                                            <th>Vai trò</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -57,9 +57,15 @@
                                                 <td>{{ $user->id }}</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <img src="{{ $user->avatar ? Storage::url($user->avatar) : asset('avatar/default.jpeg') }}"
-                                                            alt="User Avatar" class="rounded-circle me-2"
-                                                            width="40" height="40">
+                                                        @if($user->avatar && Storage::exists('public/' . $user->avatar))
+                                                            <img src="{{ Storage::url($user->avatar) }}"
+                                                                alt="User Avatar" class="rounded-circle me-2"
+                                                                width="40" height="40">
+                                                        @else
+                                                            <img src="{{ asset('theme/velzon/assets/images/users/avatar-1.jpg') }}"
+                                                                alt="Default Avatar" class="rounded-circle me-2"
+                                                                width="40" height="40">
+                                                        @endif
                                                         {{ $user->name }}
                                                     </div>
                                                 </td>
@@ -70,7 +76,7 @@
                                                         {{ $user->status == 'active' ? 'Hoạt động' : 'Ngưng hoạt động' }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $user->role->name ?? 'Chưa có' }}</td>  <!-- Hiển thị tên vai trò -->
+                                                <td>{{ $user->role->name ?? 'Chưa có' }}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('admin.users.edit', $user->id) }}"
@@ -95,8 +101,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div> <!-- card-body -->
-                    </div> <!-- card -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,6 +127,7 @@
                 "lengthMenu": [10, 20, 50],
                 "searching": true,
                 "ordering": true,
+                "order": [[0, 'desc']],
                 "autoWidth": false,
                 "responsive": true,
                 "info": true,

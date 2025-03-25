@@ -21,8 +21,7 @@ class UserAddress extends Model
         'district',
         'city',
         'country',
-        'is_default',
-        'note'
+        'is_default'
     ];
 
     protected $casts = [
