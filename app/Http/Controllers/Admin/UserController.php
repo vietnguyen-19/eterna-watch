@@ -223,7 +223,7 @@ class UserController extends Controller
         return redirect()->route('admin.users.index', $user->role_id)->with([
             'thongbao' => [
                 'type' => 'success',
-                'message' => 'Người dùng đã được xóa thành công.',
+                'message' => 'Đã xóa người dùng thành công.',
             ]
         ]);
     }
