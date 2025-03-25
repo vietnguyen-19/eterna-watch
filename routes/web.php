@@ -11,10 +11,16 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Admin\PostController;
+
+
+use App\Http\Controllers\Admin\ArticleController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +121,9 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('{id}/update', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+
+        Route::get('/get-subcategories/{parent_id}', [ProductController::class, 'getSubcategories']);
+
     });
     Route::prefix('productvariants')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('admin.productvariants.index');
@@ -137,6 +146,14 @@ Route::prefix('admin')->group(function () {
     });
 
     // Banner
+
+    Route::post('/upload-image', [ImageController::class, 'uploadImage']);
+    Route::post('/remove-image', [ImageController::class, 'removeImage']);
+    Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
+
+    Route::resource('roles', RoleController::class);
+});
+
     Route::prefix('banners')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
@@ -167,15 +184,19 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::resource('roles', RoleController::class);
-});
-
-
 
 Route::prefix('admin/articles')->group(function () {
-    Route::get('/', [ArticleController::class, 'index'])->name('admin.articles.index'); // Danh sách bài viết
-    Route::get('create', [ArticleController::class, 'create'])->name('admin.articles.create'); // Form thêm
-    Route::post('store', [ArticleController::class, 'store'])->name('admin.articles.store'); // Lưu dữ liệu
-    Route::get('{id}/edit', [ArticleController::class, 'edit'])->name('admin.articles.edit'); // Form sửa
-    Route::put('{id}', [ArticleController::class, 'update'])->name('admin.articles.update'); // Cập nhật
-    Route::delete('{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy'); // Xóa
+    Route::get('/', [ArticleController::class, 'index'])->name('admin.articles.index');
+    Route::get('/create', [ArticleController::class, 'create'])->name('admin.articles.create');
+    Route::post('/store', [ArticleController::class, 'store'])->name('admin.articles.store');
+    Route::get('/{id}/edit', [ArticleController::class, 'edit'])->name('admin.articles.edit');
+    Route::put('/{id}', [ArticleController::class, 'update'])->name('admin.articles.update');
+    Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy');
+    Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
 });
+
+Route::resource('posts', PostController::class)->names('admin.posts');
+
+
+
+

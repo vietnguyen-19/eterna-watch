@@ -32,14 +32,8 @@ class LayoutServiceProvider extends ServiceProvider
                     return $category;
                 });
 
-            // Lấy thương hiệu cha + con và đếm số sản phẩm
-            $brands = Brand::whereNull('parent_id')
-                ->with('children')
-                ->get()
-                ->map(function ($brand) {
-                    $brand->products_count = $brand->allProducts()->count();
-                    return $brand;
-                });
+            // Lấy tất cả thương hiệu
+            $brands = Brand::with('children')->get();
             $settings = Setting::pluck('value', 'key_name');
 
 

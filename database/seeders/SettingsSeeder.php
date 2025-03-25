@@ -30,6 +30,7 @@ class SettingsSeeder extends Seeder
 
             // Logo & Favicon
             ['key_name' => 'logo_url', 'value' => 'images/logo.png'],
+            ['key_name' => 'bg_auth_url', 'value' => 'settings/bg_auth.jpg'],
             ['key_name' => 'favicon_url', 'value' => '/storage/images/favicon-eterna.ico'],
 
             // Chính sách
@@ -37,9 +38,9 @@ class SettingsSeeder extends Seeder
             ['key_name' => 'privacy_policy', 'value' => 'Chính sách bảo mật của EternaWatch giúp bảo vệ thông tin cá nhân của khách hàng một cách an toàn và tuyệt đối.'],
 
             // Cấu hình website
-            ['key_name' => 'currency', 'value' => 'VND'], // Tiền tệ Việt Nam Đồng
-            ['key_name' => 'tax_rate', 'value' => '10'], // Thuế VAT tại Việt Nam (10%)
-            ['key_name' => 'shipping_fee', 'value' => '50000'], // Phí vận chuyển mặc định (VND)
+            ['key_name' => 'currency', 'value' => 'VND'], 
+            ['key_name' => 'tax_rate', 'value' => '10'], 
+            ['key_name' => 'shipping_fee', 'value' => '50000'], 
         ]);
     
     }

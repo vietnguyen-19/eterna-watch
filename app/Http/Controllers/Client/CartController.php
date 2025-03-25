@@ -127,6 +127,7 @@ class CartController extends Controller
                     'variant_id' => $variantId,
                     'name' => $variant->product->name,
                     'price' => $variant->price,
+                    'stock' => $variant->stock,
                     'image' => $variant->image ?? 'default.jpg',
                     'quantity' => $quantity,
                     'attributes' => $variant->attributeValues->map(function ($attr) {
@@ -153,8 +154,9 @@ class CartController extends Controller
 
 
     // Xóa sản phẩm khỏi giỏ hàng
-    public function removeItem(Request $request, $variantId)
+    public function removeFromCart(Request $request)
     {
+        $variantId = $request->variant_id;
         if (Auth::check()) {
             $userId = Auth::id(); // Lấy ID của user đang đăng nhập
             $cart = Cart::where('user_id', $userId)->first();
@@ -180,22 +182,40 @@ class CartController extends Controller
     }
 
     // Xóa toàn bộ giỏ hàng
-    public function clearCart()
+    public function removeSelectedItems(Request $request)
     {
+        $variantIds = $request->variant_ids;
+
         if (!Auth::check()) {
-            // Nếu chưa đăng nhập, xóa toàn bộ giỏ hàng trong session
-            Session::forget('cart');
-            return response()->json(['success' => true, 'message' => 'Giỏ hàng đã được xóa.']);
+            // Nếu chưa đăng nhập, xóa sản phẩm trong giỏ hàng lưu trong session
+            $cart = Session::get('cart', []);
+
+            // Lọc ra những sản phẩm không nằm trong danh sách cần xóa
+            $cart = array_filter($cart, function ($item) use ($variantIds) {
+                return !in_array($item['variant_id'], $variantIds);
+            });
+
+            Session::put('cart', $cart);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa các sản phẩm đã chọn khỏi giỏ hàng trong session.'
+            ]);
         }
 
-        // Nếu đã đăng nhập, chỉ xóa CartItem, giữ lại giỏ hàng
+        // Nếu đã đăng nhập, xóa sản phẩm trong database
         $cart = Cart::where('user_id', Auth::id())->first();
 
         if ($cart) {
-            CartDetail::where('cart_id', $cart->id)->delete(); // Xóa toàn bộ CartItem
+            CartDetail::where('cart_id', $cart->id)
+                ->whereIn('variant_id', $variantIds)
+                ->delete();
         }
 
-        return response()->json(['success' => true, 'message' => 'Tất cả sản phẩm trong giỏ hàng đã bị xóa.']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã xóa các sản phẩm đã chọn khỏi giỏ hàng trong database.'
+        ]);
     }
     public function updateCart(Request $request)
     {
@@ -227,7 +247,7 @@ class CartController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Cập nhật số lượng thành công!',
+                    'message' => 'Cập nhật số lượn  g thành công!',
                     'subtotal' => number_format($cart[$variantId]['price'] * $quantity, 0, ',', '.')
                 ]);
             }
@@ -235,7 +255,61 @@ class CartController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại trong giỏ hàng.']);
     }
+    public function updateTotal(Request $request)
+    {
+        $products = $request->input('products');
+        $discountCode = $request->input('discount_code', null);
 
+        $totalAmount = 0;
+        $totalItems = 0;
+        $discount = 0; // Khởi tạo discount mặc định là 0
+        $voucherId = null; // Mã voucher sẽ trả về nếu có
+
+        $orderItems = []; // Mảng chứa các sản phẩm trong đơn hàng
+
+        foreach ($products as $product) {
+            $totalAmount += $product['price'] * $product['quantity'];
+            $totalItems += $product['quantity'];
+
+            // Thêm sản phẩm vào orderItems
+            $orderItems[] = [
+                'variant_id' => $product['variant_id'], // Giả sử 'variant_id' là id sản phẩm
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+                'subtotal' => $product['price'] * $product['quantity']
+            ];
+        }
+
+        if (!empty($discountCode)) {
+            $voucher = Voucher::where('code', $discountCode)->first();
+            if ($voucher) {
+                $voucherId = $voucher->id; // Lưu voucher id nếu có
+
+                // Kiểm tra loại giảm giá và tính toán giảm giá
+                if ($voucher->discount_type === 'fixed') {
+                    $discount = $voucher->discount_value; // Giảm giá cố định
+                } elseif ($voucher->discount_type === 'percent') {
+                    $discount = $totalAmount * ($voucher->discount_value / 100); // Giảm giá theo phần trăm
+                }
+
+                // Áp dụng giảm giá vào tổng tiền
+                $totalAmount -= $discount;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'order_items' => $orderItems, // Trả về các sản phẩm trong đơn hàng
+            'voucher_id' => $voucherId, // Trả về voucher_id nếu có
+            'total_amount' => number_format($totalAmount, 0, ',', '.'),
+            'total_items' => $totalItems,
+            'discount' => number_format($discount, 0, ',', '.') // Trả về giá trị giảm giá
+        ]);
+    }
+
+
+
+    // }
     public function checkVoucher(Request $request)
     {
         $voucherCode = $request->input('code'); // Mã giảm giá từ người dùng
