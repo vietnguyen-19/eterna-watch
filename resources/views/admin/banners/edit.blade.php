@@ -21,7 +21,6 @@
                         @endif
                     </div>
 
-                    <!-- Upload Ảnh Mới-->
                     <div class="mb-3">
                         <label for="image" class="form-label">Chọn ảnh mới:</label>
                         <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror">
