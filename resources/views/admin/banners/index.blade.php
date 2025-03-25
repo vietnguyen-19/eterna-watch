@@ -70,6 +70,7 @@
                                                                     <span class="text-muted">Không có ảnh</span>
                                                                 @endif
                                                             </td>
+
                                                             <td class="redirect_link">
                                                                 @if ($banner->redirect_link)
                                                                     <a href="{{ $banner->redirect_link }}"
@@ -79,6 +80,7 @@
                                                                         hướng</span>
                                                                 @endif
                                                             </td>
+
                                                             <td>
                                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                                     <!-- Edit Button -->
@@ -98,6 +100,8 @@
                                                                             </button>
                                                                         </form>
                                                                     </li>
+
+
                                                                 </ul>
                                                             </td>
                                                         </tr>

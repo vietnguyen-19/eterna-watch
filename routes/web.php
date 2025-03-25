@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\VoucherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -129,15 +130,26 @@ Route::prefix('admin')->group(function () {
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
         Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
-    
-     // Order
-     Route::prefix('orders')->group(function () {
+
+    // Order
+    Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
         Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
         Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
     });
-    
+
+    //voucher
+
+
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('admin.vouchers.create');
+        Route::post('/', [VoucherController::class, 'store'])->name('admin.vouchers.store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+    });
+
 
     Route::resource('roles', RoleController::class);
 });
-   
