@@ -91,7 +91,7 @@
                                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
                                                 <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ngưng hoạt động</option>
                                                 <option value="banned" {{ old('status') == 'banned' ? 'selected' : '' }}>Đã khóa</option>
-                                                <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                                                
                                             </select>
                                             @error('status')
                                                 <div class="invalid-feedback">{{ $message }}</div>
