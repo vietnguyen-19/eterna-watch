@@ -286,7 +286,7 @@
                                     class="form-select @error('shipping_method') is-invalid @enderror"
                                     onchange="updateShipping()">
                                     <option value=""><strong>-- Chọn lại phương thức vận chuyển --</strong></option>
-                                    <option value="fixed">Phí giao hàng cố định (30.000đ)</option>
+                                    <option value="fixed">Phí giao hàng cố định (100.000đ)</option>
                                     <option value="store">Nhận tại cửa hàng (Miễn phí)</option>
                                     <option value="free">Miễn phí đơn trên 1.000.000đ</option>
                                 </select>
@@ -352,7 +352,7 @@
 
             switch (shippingMethod) {
                 case "fixed":
-                    shippingCost = 30000;
+                    shippingCost = 100000;
                     break;
                 case "store":
                     shippingCost = 0;

@@ -556,12 +556,12 @@
                             <div class="box-menu" style="width: 1200px;">
                                 @foreach ($categories as $category)
                                     <div class="col pe-4">
-                                        <a href="#"
+                                        <a href="{{ route('client.shop', ['category_id' => $category->id]) }}"
                                             class="sub-menu__title"><strong>{{ $category->name }}</strong></a>
                                         <ul class="sub-menu__list list-unstyled">
                                             @foreach ($category->children as $item)
                                                 <li class="sub-menu__item">
-                                                    <a href="../Demo1/index.html"
+                                                    <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
                                                         class="menu-link menu-link_us-s">{{ $item->name }}</a>
                                                 </li>
                                             @endforeach

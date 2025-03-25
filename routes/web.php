@@ -121,6 +121,9 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('{id}/update', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+
+        Route::get('/get-subcategories/{parent_id}', [ProductController::class, 'getSubcategories']);
+
     });
     Route::prefix('productvariants')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('admin.productvariants.index');
