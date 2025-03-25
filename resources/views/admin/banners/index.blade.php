@@ -70,8 +70,6 @@
                                                                     <span class="text-muted">Không có ảnh</span>
                                                                 @endif
                                                             </td>
-
-
                                                             <td class="redirect_link">
                                                                 @if ($banner->redirect_link)
                                                                     <a href="{{ $banner->redirect_link }}"

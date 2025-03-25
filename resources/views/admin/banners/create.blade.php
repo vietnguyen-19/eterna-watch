@@ -20,7 +20,7 @@
                     @enderror
                 </div>
 
-                <!-- Redirect Link -->
+                <!-- Redirect Link--->
                 <div class="mb-3">
                     <label class="form-label" for="redirect_link">Redirect Link</label>
                     <input type="text" name="redirect_link" id="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" placeholder="Enter redirect URL" value="{{ old('redirect_link') }}">
