@@ -87,21 +87,23 @@
                                                                     <li class="list-inline-item edit" title="Edit">
                                                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                                             class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                            <i class="bi bi-pen"></i>Sửa
+                                                                            <i class="fa-solid fa-edit"></i>
                                                                         </a>
                                                                     </li>
                                                                     <!-- Remove Button -->
                                                                     <li class="list-inline-item delete" title="Remove">
-                                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" onsubmit="return confirm('Bạn đã chắc chắn chưa?');">
+                                                                        <form
+                                                                            action="{{ route('admin.banners.destroy', $banner->id) }}"
+                                                                            method="POST"
+                                                                            onsubmit="return confirm('Bạn chắc chăn muốn xóa?');">
                                                                             @csrf
                                                                             @method('DELETE')
-                                                                            <button type="submit" class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
-                                                                                <i class="bi bi-trash"></i> Xóa
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
+                                                                                <i class="fa-solid fa-trash"></i>
                                                                             </button>
                                                                         </form>
                                                                     </li>
-
-
                                                                 </ul>
                                                             </td>
                                                         </tr>

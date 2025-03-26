@@ -18,8 +18,11 @@
                                     <h5 class="card-title mb-0">Danh sách Voucher</h5>
                                 </div>
                                 <div class="col-sm-auto">
+                                    <a href="{{ route('admin.vouchers.trash') }}" class="btn btn-warning me-2">
+                                        <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                    </a>
                                     <a href="{{ route('admin.vouchers.create') }}" class="btn btn-success add-btn">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thêm Voucher mới
+                                        <i class="ri-add-line align-bottom me-1"></i>Thêm mới Voucher
                                     </a>
                                 </div>
                             </div>

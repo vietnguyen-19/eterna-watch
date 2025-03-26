@@ -152,27 +152,26 @@ Route::prefix('admin')->group(function () {
 
 
     // Banner
-Route::prefix('banners')->group(function () {
-    Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
-    Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
-    Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
-    Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
-    Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-    Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
-});
-//voucher
-
-
-Route::prefix('vouchers')->group(function () {
-    Route::get('/', [VoucherController::class, 'index'])->name('admin.vouchers.index');
-    Route::get('/create', [VoucherController::class, 'create'])->name('admin.vouchers.create');
-    Route::post('/', [VoucherController::class, 'store'])->name('admin.vouchers.store');
-    Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
-    Route::put('/{id}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
-    Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
-});
-
-
+    Route::prefix('banners')->group(function () {
+        Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
+        Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
+        Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
+        Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
+        Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
+        Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
+    });
+    //voucher
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('admin.vouchers.create');
+        Route::post('/', [VoucherController::class, 'store'])->name('admin.vouchers.store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+    });
 });
 
 
