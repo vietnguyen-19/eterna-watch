@@ -5,17 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\BannerStoreRequest;
+use App\Http\Requests\BannerUpdateRequest;
 
 class BannerController extends Controller
 {
     public function index()
     {
-        $banners = Banner::all();
-
+        $banners = Banner::orderBy('id', 'desc')->get();
         return view('admin.banners.index', compact('banners'));
     }
-
-
 
     public function create()
     {
@@ -24,16 +24,31 @@ class BannerController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'image_link' => 'required|string',
-            'redirect_link' => 'nullable|string',
-        ]);
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/banners', $imageName);
 
-        Banner::create($request->all());
+            // Lưu thông tin Banner vào cơ sở dữ liệu
+            $banner = new Banner();
+            $banner->image_link = 'storage/banners/' . $imageName;
 
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
+            // Lưu redirect_link nếu có
+            if ($request->has('redirect_link')) {
+                $banner->redirect_link = $request->input('redirect_link');
+            }
 
+            $banner->save();
+
+            return redirect()->route('admin.banners.index')->with('thongbao', [
+                'type' => 'success',
+                'message' => 'Thêm mới Banner thành công!'
+            ]);
+        }
+
+        return redirect()->back()->with('error', '⚠️ Không có file nào được tải lên!');
     }
+
 
     public function edit($id)
     {
@@ -41,40 +56,59 @@ class BannerController extends Controller
         return view('admin.banners.edit', compact('banner'));
     }
 
-    public function update(Request $request, $id)
+    public function update(BannerUpdateRequest $request, $id)
     {
-        // Lấy bản ghi banner
         $banner = Banner::findOrFail($id);
+        $data = $request->validated();
 
-        // Kiểm tra dữ liệu đầu vào
-        $request->validate([
-            'image_link' => 'required|string|url', // Đảm bảo đây là URL hợp lệ
-            'redirect_link' => 'nullable|string|url', // URL hoặc null
+        if ($request->hasFile('image')) {
+            if (!empty($banner->image_link)) {
+                $oldImagePath = str_replace('storage/', 'public/', $banner->image_link);
+                if (Storage::exists($oldImagePath)) {
+                    Storage::delete($oldImagePath);
+                }
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('public/banners', $imageName);
+            $data['image_link'] = 'storage/banners/' . $imageName;
+        }
+
+        // Cập nhật redirect_link nếu có
+        if ($request->has('redirect_link')) {
+            $data['redirect_link'] = $request->input('redirect_link');
+        }
+
+        $banner->update($data);
+
+        return redirect()->route('admin.banners.index')->with('thongbao', [
+            'type' => 'success',
+            'message' => 'Cập nhật banner thành công!'
         ]);
-
-        // Cập nhật dữ liệu
-        $banner->update([
-            'image_link' => $request->input('image_link'),
-            'redirect_link' => $request->input('redirect_link'),
-        ]);
-
-        // Quay lại danh sách với thông báo thành công
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
-
     }
 
 
-    public function destroy($id)
-    {
-        $banner = Banner::findOrFail($id);
-        $banner->delete();
 
-        return redirect()->route('admin.banners.index')->with('success', 'Banner created successfully');
+  public function destroy($id)
+{
+    $banner = Banner::findOrFail($id);
 
+    if (!empty($banner->image_link)) {
+        $imagePath = public_path($banner->image_link);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
     }
-    public function show($id)
-    {
-        $banner = Banner::findOrFail($id);
-        return view('admin.banners.show', compact('banner'));
-    }
+
+    $banner->delete();
+
+    return redirect()->route('admin.banners.index')->with('thongbao', [
+        'type' => 'danger',
+        'message' => 'Banner đã bị xóa thành công!'
+    ]);
+}
+
+
 }

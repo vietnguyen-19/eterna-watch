@@ -18,7 +18,7 @@ class ProductUpdateRequest extends FormRequest
             'price_default' => 'required|numeric|min:0',
             'short_description' => 'required|string|max:500',
             'full_description' => 'required|string',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'avatar' => 'nullable',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'status' => 'required|in:active,inactive'

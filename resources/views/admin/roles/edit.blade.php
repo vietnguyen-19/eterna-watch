@@ -1,16 +1,32 @@
-@extends('admin.layouts.roles')
+@extends('admin.layouts.master')
 
 @section('content')
-<div class="container">
-    <h1>Sửa Role</h1>
-    <form action="{{ route('roles.update', $role->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="form-group">
-            <label for="name">Tên Role</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $role->name }}" required>
+<section class="content pt-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header border-bottom-dashed">
+                        <h5 class="card-title mb-0">Chỉnh sửa vai trò</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('admin.roles.update', $role->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Tên vai trò</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Nhập tên vai trò" value="{{ old('name', $role->name) }}">
+                                @error('name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-success">Cập nhật vai trò</button>
+                            <a href="{{ route('admin.roles.index') }}" class="btn btn-light">Hủy</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-success mt-3">Cập nhật</button>
-    </form>
-</div>
+    </div>
+</section>
 @endsection

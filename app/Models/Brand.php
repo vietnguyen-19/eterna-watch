@@ -12,14 +12,34 @@ class Brand extends Model
 
     protected $fillable = ['name', 'parent_id'];
 
+    protected $appends = ['products_count'];
+
     // Mối quan hệ đệ quy (một thương hiệu có thể có thương hiệu cha)
     public function parent()
     {
         return $this->belongsTo(Brand::class, 'parent_id');
     }
 
+    // Quan hệ với thương hiệu con
     public function children()
     {
         return $this->hasMany(Brand::class, 'parent_id');
+    }
+
+    // Lấy tất cả sản phẩm thuộc thương hiệu cha + con
+    public function allProducts()
+    {
+        return Product::whereIn('brand_id', function ($query) {
+            $query->select('id')
+                ->from('brands')
+                ->where('id', $this->id)
+                ->orWhere('parent_id', $this->id);
+        });
+    }
+
+    // Accessor để lấy số lượng sản phẩm
+    public function getProductsCountAttribute()
+    {
+        return $this->allProducts()->count();
     }
 }
