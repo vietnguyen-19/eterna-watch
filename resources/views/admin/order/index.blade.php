@@ -39,8 +39,7 @@
                                             <div class="row g-2 align-items-center">
                                                 <div class="col-auto">
                                                     <label for="">Lọc theo trang thái : </label>
-                                                    <select name="status" class="form-select"
-                                                        onchange="this.form.submit()">
+                                                    <select name="status" class="form-select"  onchange="this.form.submit()">
                                                         <option value="">-- Tất cả trạng thái --
                                                         </option>
                                                         @foreach (['pending', 'confirmed', 'processing', 'completed', 'cancelled'] as $status)
@@ -111,7 +110,7 @@
 
                                                         <td>
                                                             <ul class="list-inline hstack gap-2 mb-0">
-                                                                <!-- Edit Button -->
+                                                                {{-- <!-- Edit Button -->
                                                                 <!-- Remove Button -->
                                                                 <li class="list-inline-item" title="Remove">
                                                                     <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
@@ -119,7 +118,7 @@
                                                                         href="{{ route('admin.orders.destroy', $item->id) }}">
                                                                         Xóa
                                                                     </a>
-                                                                </li>
+                                                                </li> --}}
                                                                 <a class="btn btn-info"
                                                                     href="{{ route('admin.orders.show', $item->id) }}">
                                                                     Chi tiết

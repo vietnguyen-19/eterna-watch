@@ -9,9 +9,8 @@ class Post extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id', 'title', 'content', 'excerpt', 'status', 'image', 'published_at'
+        'user_id', 'title', 'content', 'excerpt', 'status', 'image', 'published_at', 'view_count'
     ];
-
     protected $casts = [
         'published_at' => 'datetime',
     ];
@@ -25,11 +24,9 @@ class Post extends Model
     }
     public function categories() {
         return $this->belongsToMany(Category::class, 'post_categories');
-    }
-    
+    } 
     public function comments()
     {
         return $this->morphMany(Comment::class, 'entity');
     }
-
 }

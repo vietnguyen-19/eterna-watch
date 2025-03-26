@@ -14,32 +14,24 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     $data = Order::with('user', 'orderItems')->latest('id')->get();
-       
-    //     return view('admin.order.index', [
-    //         'data' => $data,
-    //     ]);
-    // }
-
+   
     public function index(Request $request)
-{
-    $status = $request->query('status');
+    {
+        $status = $request->query('status');
 
-    $query = Order::with('user', 'orderItems')->latest('id');
+        $query = Order::with('user', 'orderItems')->latest('id');
 
-    if ($status) {
-        $query->where('status', $status);
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $data = $query->get();
+
+        return view('admin.order.index', [
+            'data' => $data,
+            'filterStatus' => $status
+        ]);
     }
-
-    $data = $query->get();
-
-    return view('admin.order.index', [
-        'data' => $data,
-        'filterStatus' => $status
-    ]);
-}
 
 
     /**
@@ -61,9 +53,13 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $order = Order::with(['user', 'orderItems.productVariant.product'])->findOrFail($id);
+
+        return view('admin.order.show', [
+            'order' => $order,
+        ]);
     }
 
     /**
@@ -79,7 +75,31 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $order = Order::findOrFail($id);
+
+        $allowedTransitions = [
+            'pending'    => ['confirmed'],
+            'confirmed'  => ['processing'],
+            'processing' => ['completed'],
+            'completed'  => [],
+            'cancelled'  => [],
+        ];
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,processing,completed,cancelled',
+        ]);
+
+        $current = $order->status;
+        $newStatus = $request->status;
+
+        if (!in_array($newStatus, $allowedTransitions[$current])) {
+            return redirect()->back()->with('error', 'Không thể chuyển trạng thái từ "' . $current . '" sang "' . $newStatus . '"');
+        }
+
+        $order->status = $newStatus;
+        $order->save();
+
+        return redirect()->route('admin.orders.show', $id)->with('success', 'Trạng thái đã được cập nhật!');
     }
 
     /**

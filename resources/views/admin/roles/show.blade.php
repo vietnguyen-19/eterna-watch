@@ -13,6 +13,6 @@
         </div>
     </div>
 
-    <a href="{{ route('roles.index') }}" class="btn btn-primary mt-3">Quay lại danh sách</a>
+    <a href="{{ route('admin.roles.index') }}" class="btn btn-primary mt-3">Quay lại danh sách</a>
 </div>
 @endsection

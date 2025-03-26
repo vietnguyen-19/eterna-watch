@@ -16,8 +16,9 @@
                     <li style="background-color: rgb(86, 86, 86); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <img src=" {{ asset('theme\admin\dist\img\avatar.png') }}"
-                                class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
+                            <img src=" {{ asset('theme/admin/dist/img/avatar.png') }}" class="nav-icon rounded-circle me-2"
+                                alt="User Image" width="100%">
+
 
                             <p class="fw-semibold ml-2">Alexander Pierce</p>
 
@@ -255,9 +256,91 @@
                         </li>
                     </ul>
                 </li>
+                <!-- Quản lý Role -->
+                <li class="nav-item {{ Request::is('admin/roles*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Request::is('admin/roles*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-users"></i>
+                        <p>
+                            Vai trò
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.index') }}" class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách vai trò</p>
+                            </a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.roles.create') }}"
+                               class="nav-link {{ Request::routeIs('admin.roles.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Thêm vai trò mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
 
                 {{-- Order --}}
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
+
+
+
+                {{-- Bình luận --}}
+                <li class="nav-item {{ Request::is('admin/comments*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-chat-dots-fill"></i>
+                        <p>
+                            Bình luận
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.comments.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item {{ Request::is('admin/articles*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa-solid fa-pen-to-square"></i>
+                        <p>
+                            Bài viết
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <!-- Danh sách bài viết -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.articles.index') }}" class="nav-link {{ Request::routeIs('admin.articles.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách bài viết</p>
+                            </a>
+                        </li>
+                        <!-- Thêm bài viết mới -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.articles.create') }}" class="nav-link {{ Request::routeIs('admin.articles.create') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-plus"></i>
+                                <p>Thêm bài viết mới</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- <li class="nav-item">
+
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> //chú ý dòng này
+
+
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
@@ -274,15 +357,13 @@
                                 <p>Danh sách</p>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a href="{{ route('admin.orders.show') }}"
-                                class="nav-link {{ Request::routeIs('admin.permissions.show') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Thêm mới</p>
-                            </a>
-                        </li> --}}
+
                     </ul>
                 </li>
+<<<<<<< HEAD
+=======
+                --}}
+>>>>>>> ba2f4aa3d67c96b42c5c5e374d333790ab22ec07
 
             </ul>
         </nav>

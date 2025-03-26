@@ -77,11 +77,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+
                                 @foreach ($order->orderItems as $item)
                                     <tr>
                                         <td>
                                             <div class="shopping-cart__product-item">
-                                                <a href="product1_simple.html">
+                                                <a
+                                                    href="{{ route('client.shop.show', $item->productVariant->product->id) }}">
                                                     <img style="border: 1px solid #c4bebe;width:88px"
                                                         src="{{ Storage::url($item->productVariant->image) }}"
                                                         alt="">
@@ -90,7 +92,8 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item__detail">
-                                                <h4><a href="product1_simple.html">
+                                                <h4><a
+                                                        href="{{ route('client.shop.show', $item->productVariant->product->id) }}">
                                                         <strong>{{ $item->productVariant->product->name ?? 'Sản phẩm không tồn tại' }}</strong></a>
                                                 </h4>
                                                 <ul class="shopping-cart__product-item__options">
@@ -116,13 +119,18 @@
                                 @endforeach
                             </tbody>
                         </table>
+
+                        @php
+                            $total = $order->orderItems->sum('total_price');
+                        @endphp
+
                         <table class="checkout-totals">
                             <tbody>
                                 <tr>
                                     <th>Tạm tính</th>
                                     <td class="text-end">
                                         <span class="shopping-cart__product-price">
-                                            {{ number_format($item->total_price, 0, ',', '.') }}đ
+                                            {{ number_format($total, 0, ',', '.') }}đ
                                         </span>
                                     </td>
                                 </tr>
@@ -131,27 +139,28 @@
                                     <td class="text-end">
                                         @if ($order->shipping_method == 'fixed')
                                             <span class="shopping-cart__product-price">
-                                                {{ number_format(30000, 0, ',', '.') }}đ</span>
+                                                {{ number_format($order->getShippingFee(), 0, ',', '.') }}đ</span>
                                         @else
                                             Miễn phí
                                         @endif
                                     </td>
                                 </tr>
-                                @php
-                                    $discount = $item->total_price - $order->total_amount +30000 ;
-                                @endphp
                                 <tr>
                                     <th>Mã giảm giá
                                         @if ($order->voucher)
                                             | <strong>{{ $order->voucher->code }}</strong>
                                         @endif
                                     </th>
-                                    <td class="text-end"> <span class="shopping-cart__product-price">
-                                        {{ number_format($discount, 0, ',', '.') }}đ
-                                    </span></td>
+                                    <td class="text-end">
+                                        <span class="shopping-cart__product-price">
+                                            {{ $order->voucher ? number_format($order->getDiscountAmount(), 0, ',', '.') . 'đ' : '' }}
+                                        </span>
+                                    </td>
+                                    
                                 </tr>
                                 <tr>
                                     <th>Tổng cộng</th>
+                                    
                                     <td class="text-end"> <span class="shopping-cart__product-price">
                                             {{ number_format($order->total_amount, 0, ',', '.') }}đ
                                         </span></td>
