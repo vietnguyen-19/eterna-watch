@@ -19,7 +19,7 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Client\CustomerController;
 
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
@@ -116,6 +116,17 @@ Route::prefix('account')->group(function () {
     Route::post('/remove-image', [AccountController::class, 'removeImage']);
 
 });
+Route::middleware('auth')->prefix('customer')->group(function(){
+    Route::get('profile',[CustomerController::class,'profile'])->name('customer.profile');
+    Route::get('addresses',[CustomerController::class,'manageAddresses'])->name('customer.manageAddresse');
+    Route::get('orders',[CustomerController::class,'orders'])->name('customer.orders');
+    Route::get('cart',[CustomerController::class,'cart'])->name('customer.cart');
+    Route::get('discounts',[CustomerController::class,'discounts'])->name('customer.discounts');
+    Route::get('notifications',[CustomerController::class,'notifications'])->name('customer.notifications');
+
+});
+// Thêm dòng này vào file routes/web.php
+
 
 Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
 Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');

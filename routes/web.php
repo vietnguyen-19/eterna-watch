@@ -195,6 +195,8 @@ Route::prefix('admin/articles')->group(function () {
     Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
 });
 
+
+
 Route::resource('posts', PostController::class)->names('admin.posts');
 
 
