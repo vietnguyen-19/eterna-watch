@@ -7,7 +7,7 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
-                            <h5 class="card-title mb-0">Thêm mới danh mục</h5>
+                            <h5 class="card-title mb-0">Chỉnh sửa danh mục</h5>
                         </div>
                     </div>
                 </div>

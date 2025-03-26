@@ -3,14 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -20,13 +26,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'phone',
         'password',
+        'phone',
         'gender',
-        'avatar',
-        'note',
         'role_id',
-        'status'
+        'status',
+        'note',
+        'avatar',
     ];
 
     // Mối quan hệ với Role
@@ -34,11 +40,22 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
-    
-    public function addresses()
+    public function cart()
     {
-        return $this->hasMany(UserAddress::class, 'user_id');
+        return $this->hasOne(Cart::class, 'user_id');
     }
+    // app/Models/User.php
+
+    public function defaultAddress()
+    {
+        return $this->hasOne(UserAddress::class)->where('is_default', 1);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -58,4 +75,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Thêm sắp xếp mặc định theo created_at giảm dần
+    protected static function booted()
+    {
+        static::addGlobalScope('order', function ($query) {
+            $query->orderBy('created_at', 'desc');
+        });
+    }
+
+    /**
+     * Get the user's avatar URL.
+     */
+    public function getAvatarAttribute($value)
+    {
+        return $value ? $value : 'avatar/default.jpg';
+    }
 }

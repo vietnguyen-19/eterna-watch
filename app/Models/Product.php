@@ -17,6 +17,7 @@ class Product extends Model
         'category_id',
         'brand_id',
         'status',
+        'view_count'
     ];
 
     public function category()
@@ -43,5 +44,22 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class, 'product_id');
     }
-    
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'entity');
+    }
+    public function getMinPriceAttribute()
+    {
+        return $this->variants()
+            ->min('price') ?? $this->price;
+    }
+
+    /**
+     * Lấy giá cao nhất của từng sản phẩm
+     */
+    public function getMaxPriceAttribute()
+    {
+        return $this->variants()
+            ->max('price') ?? $this->price;
+    }
 }

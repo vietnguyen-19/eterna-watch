@@ -28,7 +28,7 @@
                                             <label for="name" class="form-label">Tên sản phẩm</label>
                                             <input type="text" name="name" id="name" class="form-control"
                                                 value="{{ $data->name }}">
-                                                @error('name')
+                                            @error('name')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -44,8 +44,8 @@
                                                 @endforeach
                                             </select>
                                             @error('category_id')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <div class="mb-3 col-md-12">
@@ -59,17 +59,16 @@
                                                 @endforeach
                                             </select>
                                             @error('brand_id')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <div class="mb-3 col-md-12">
                                             <label for="price_default" class="form-label">Giá mặc định</label>
                                             <input type="text" name="price_default" id="price_default"
-                                                class="form-control"
-                                                value="{{$data->price_default}}"
+                                                class="form-control" value="{{ $data->price_default }}"
                                                 oninput="formatPrice(this)">
-                                                @error('price_default')
+                                            @error('price_default')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
 
@@ -88,26 +87,30 @@
                                                 </option>
                                             </select>
                                             @error('status')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-12 text-center">
-                                            <img src="{{ asset('storage/' . $data->avatar) }}"
-                                                class="img-fluid rounded shadow" style="object-fit: cover;"
-                                                alt="Ảnh sản phẩm">
-                                            <input type="file" name="avatar" class="form-control mt-2">
+                                            <label for="avatar" class="d-block mb-2">Ảnh hiện tại</label>
+                                            <div class="col-md-12 text-center">
+                                                <input type="file" id="avatar" name="avatar" class="filepond">
+                                                <input type="hidden" id="avatar-hidden" name="avatar_hidden"
+                                                    value="{{ $data->avatar ?? '' }}">
+                                            </div>
+
                                             @error('avatar')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
+
                                     </div>
                                     <div class="col-9">
                                         <div class="mb-3 col-12">
                                             <label for="short_description" class="form-label">Mô tả ngắn</label>
                                             <textarea name="short_description" id="short_description" class="form-control" rows="3">{{ $data->short_description }}</textarea>
                                             @error('short_description')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="mb-4 col-12">
                                             <label for="short_description" class="form-label">Mô tả đầy đủ</label>
@@ -151,9 +154,98 @@
             });
         });
     </script>
+
+
+    <!-- FilePond JS -->
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            FilePond.registerPlugin(FilePondPluginImagePreview);
+
+            const avatarInput = document.getElementById("avatar");
+            const avatarHidden = document.getElementById("avatar-hidden");
+
+            const pond = FilePond.create(avatarInput, {
+                allowMultiple: false,
+                allowImagePreview: true,
+                imagePreviewHeight: 200,
+                labelIdle: "Kéo & thả ảnh hoặc <span class='filepond--label-action'>chọn ảnh</span>",
+                server: {
+                    process: {
+                        url: "{{ url('/admin/upload-image') }}",
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        onload: (response) => {
+                            try {
+                                let res = JSON.parse(response);
+                                if (res.success) {
+                                    avatarHidden.value = res.path;
+                                } else {
+                                    alert("Lỗi: " + (res.message || "Không thể tải ảnh lên."));
+                                }
+                            } catch (error) {
+                                console.error("Lỗi JSON:", error);
+                                alert("Lỗi không xác định khi tải ảnh lên.");
+                            }
+                        }
+                    },
+                    revert: (filename, load) => {
+                        fetch("{{ url('/admin/remove-image') }}", {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    path: avatarHidden.value
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    avatarHidden.value = "";
+                                } else {
+                                    alert("Lỗi: " + (data.message || "Không thể xóa ảnh."));
+                                }
+                                load();
+                            })
+                            .catch(error => {
+                                console.error("Lỗi khi xóa ảnh:", error);
+                                alert("Lỗi kết nối đến server.");
+                                load();
+                            });
+                    }
+                }
+            });
+
+            // ✅ Thêm ảnh cũ vào FilePond sau khi khởi tạo
+            let oldImage = "{{ $data->avatar ? asset('storage/' . $data->avatar) : '' }}";
+            if (oldImage) {
+                fetch(oldImage)
+                    .then(res => {
+                        if (res.ok) {
+                            pond.addFile(oldImage, {
+                                source: oldImage
+                            });
+                        } else {
+                            console.error("Ảnh không tồn tại hoặc không thể tải.");
+                        }
+                    })
+                    .catch(error => console.error("Lỗi khi tải ảnh:", error));
+            }
+        });
+    </script>
 @endsection
 @section('style')
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
         type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+
+    <!-- FilePond CSS -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 @endsection
