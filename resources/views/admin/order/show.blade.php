@@ -51,12 +51,13 @@
                                             <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
                                             <p><strong>Khách hàng:</strong> {{ $order->user->name ?? 'Khách ẩn danh' }}</p>
                                             <p><strong>Trạng thái:</strong> <span
-                                                    class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'cancelled' ? 'danger' : 'warning') }}">{{ ucfirst($order->status) }}</span></p>
+                                                    class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'cancelled' ? 'danger' : 'warning') }}">{{ ucfirst($order->status) }}</span>
+                                            </p>
                                             <p><strong>Địa chỉ:</strong>
                                                 {{ $order->shippingAddress->street_address ?? 'N/A' }}</p>
                                             <p><strong>Số điện thoại:</strong>
                                                 {{ $order->shippingAddress->phone_number ?? 'N/A' }}</p>
-                                            
+
                                             <!-- Form đổi trạng thái -->
                                             <div class="mt-3">
                                                 <label class="d-block mb-2">Thay đổi trạng thái:</label>
@@ -71,9 +72,9 @@
                                                         ];
                                                     @endphp
                                                     @foreach ($next[$order->status] ?? [] as $status)
-                                                        <button type="button" 
-                                                                class="btn btn-{{ $status === 'completed' ? 'success' : ($status === 'cancelled' ? 'danger' : 'warning') }}"
-                                                                onclick="confirmStatusChange('{{ $status }}')">
+                                                        <button type="button"
+                                                            class="btn btn-{{ $status === 'completed' ? 'success' : ($status === 'cancelled' ? 'danger' : 'warning') }}"
+                                                            onclick="confirmStatusChange('{{ $status }}')">
                                                             {{ ucfirst($status) }}
                                                         </button>
                                                     @endforeach
@@ -97,14 +98,23 @@
                                                 @forelse ($order->orderItems as $item)
                                                     <tr>
                                                         <td>{{ $item->productVariant->product->name ?? 'N/A' }}</td>
-                                                        <td>{{ $item->productVariant->id ?? 'N/A' }}</td>
+                                                        {{-- <td>{{ $item->nameValue->attribute->attribute_name ?? 'Thuộc tính' ?? 'N/A' }}</td> --}}
+                                                        <td>
+                                                            @foreach ($item->productVariant->attributeValues as $value)
+                                                                <small>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
+                                                                    {{ $value->nameValue->value_name ?? 'Không xác định' }}
+                                                                </small><br>
+                                                            @endforeach
+                                                        </td>
                                                         <td>{{ number_format($item->unit_price, 0, ',', '.') }} đ</td>
                                                         <td>{{ $item->quantity }}</td>
-                                                        <td>{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }} đ</td>
+                                                        <td>{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }}
+                                                            đ</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="5" class="text-center">Không có sản phẩm nào trong đơn hàng</td>
+                                                        <td colspan="5" class="text-center">Không có sản phẩm nào trong
+                                                            đơn hàng</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
@@ -112,7 +122,8 @@
                                                 <tr>
                                                     <td colspan="4" class="text-end fw-bold">Tổng tiền:</td>
                                                     <td class="fw-bold text-danger">
-                                                        {{ number_format($order->orderItems->sum(fn($item) => $item->unit_price * $item->quantity), 0, ',', '.') }} đ
+                                                        {{ number_format($order->orderItems->sum(fn($item) => $item->unit_price * $item->quantity), 0, ',', '.') }}
+                                                        đ
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -182,37 +193,40 @@
 
             if (confirm(`Bạn có chắc muốn ${statusMessages[status]}?`)) {
                 fetch('{{ route('admin.orders.update', $order->id) }}', {
-                    method: 'PATCH',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ status })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status) {
-                        // Hiển thị thông báo thành công
-                        const alertDiv = document.createElement('div');
-                        alertDiv.className = 'alert alert-success alert-dismissible fade show';
-                        alertDiv.innerHTML = `
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status) {
+                            // Hiển thị thông báo thành công
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                            alertDiv.innerHTML = `
                             ${data.message}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         `;
-                        document.querySelector('.card-body').insertBefore(alertDiv, document.querySelector('.card-body').firstChild);
-                        
-                        // Tự động reload trang sau 2 giây
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        alert(data.message || 'Có lỗi xảy ra khi cập nhật trạng thái!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi cập nhật trạng thái!');
-                });
+                            document.querySelector('.card-body').insertBefore(alertDiv, document.querySelector(
+                                '.card-body').firstChild);
+
+                            // Tự động reload trang sau 2 giây
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            alert(data.message || 'Có lỗi xảy ra khi cập nhật trạng thái!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+                    });
             }
         }
     </script>
