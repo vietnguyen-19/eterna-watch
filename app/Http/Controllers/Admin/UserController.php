@@ -51,8 +51,10 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::with('addresses')->findOrFail($id);
-        return view('admin.users.show', compact('user'));
+        $user = User::with('role')->findOrFail($id);
+        $address = UserAddress::where('user_id', $id)->where('is_default', true)->first();
+        
+        return view('admin.users.show', compact('user', 'address'));
     }
 
     /**
@@ -112,7 +114,7 @@ class UserController extends Controller
 
             DB::commit();
         
-            return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được tạo thành công');
+            return redirect()->route('admin.users.index')->with('success', 'Thêm tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();
@@ -130,7 +132,6 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $user = User::findOrFail($id);
-            Log::info('Found User:', $user->toArray());
             
             // Cập nhật thông tin cơ bản
             $user->name = $request->input('name');
@@ -144,36 +145,23 @@ class UserController extends Controller
             // Cập nhật mật khẩu nếu có
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->input('password'));
-                Log::info('Password updated');
             }
 
             // Xử lý avatar
             if ($request->hasFile('avatar')) {
-                Log::info('Processing avatar:', [
-                    'original_name' => $request->file('avatar')->getClientOriginalName(),
-                    'mime_type' => $request->file('avatar')->getMimeType(),
-                    'size' => $request->file('avatar')->getSize()
-                ]);
-
                 // Xóa avatar cũ nếu có
                 if ($user->avatar) {
                     Storage::delete('public/' . $user->avatar);
-                    Log::info('Old avatar deleted');
                 }
 
                 // Lưu avatar mới
                 $avatar = $request->file('avatar');
                 $fileName = time() . '.' . $avatar->getClientOriginalExtension();
                 $path = $avatar->storeAs('avatar', $fileName, 'public');
-                $user->avatar = 'avatar/' . $fileName;
-                Log::info('New avatar saved:', ['path' => $user->avatar]);
+                $user->avatar = $path;
             }
-
-            // Log user data before save
-            Log::info('User data before save:', $user->toArray());
             
             $user->save();
-            Log::info('User saved successfully');
 
             // Cập nhật hoặc tạo mới địa chỉ
             $addressData = [
@@ -188,25 +176,16 @@ class UserController extends Controller
                 'is_default' => true
             ];
 
-            Log::info('Address data to update:', $addressData);
-
-            $address = UserAddress::updateOrCreate(
+            UserAddress::updateOrCreate(
                 ['user_id' => $id, 'is_default' => true],
                 $addressData
             );
 
-            Log::info('Address updated:', $address->toArray());
-
             DB::commit();
-            Log::info('Transaction committed successfully');
 
-            return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được cập nhật thành công');
+            return redirect()->route('admin.users.index')->with('success', 'Cập nhật tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error updating user:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();
         }
     }
@@ -216,15 +195,28 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->addresses()->delete();  // Xóa tất cả địa chỉ của người dùng
-        $user->delete();  // Xóa người dùng
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('admin.users.index', $user->role_id)->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Đã xóa người dùng thành công.',
-            ]
-        ]);
+            $user = User::findOrFail($id);
+            
+            // Xóa avatar nếu có
+            if ($user->avatar && Storage::exists('public/' . $user->avatar)) {
+                Storage::delete('public/' . $user->avatar);
+            }
+
+            // Xóa tất cả địa chỉ của người dùng
+            $user->addresses()->delete();
+            
+            // Xóa người dùng
+            $user->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.users.index')->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 }
