@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\ArticleController;
 
 
 Route::prefix('admin')->group(function () {
+
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -53,6 +54,8 @@ Route::prefix('admin')->group(function () {
 
 //test git
 Route::prefix('admin')->group(function () {
+    Route::resource('posts', PostController::class)->names('admin.posts');
+
     Route::resource('brands', BrandController::class)->names([
         'index' => 'admin.brands.index',
         'create' => 'admin.brands.create',
@@ -76,6 +79,8 @@ Route::prefix('admin')->group(function () {
 
 
     Route::prefix('admin')->group(function () {
+        Route::resource('posts', PostController::class)->names('admin.posts');
+
         Route::resource('roles', RoleController::class)->names([
             'index' => 'admin.roles.index',
             'create' => 'admin.roles.create',
@@ -192,7 +197,6 @@ Route::prefix('admin/articles')->group(function () {
     Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
 });
 
-Route::resource('posts', PostController::class)->names('admin.posts');
 
 
 
