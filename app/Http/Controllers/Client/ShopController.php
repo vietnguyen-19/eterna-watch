@@ -16,22 +16,33 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         $productsQuery = Product::with(['brand', 'category', 'variants']);
-
         // Lọc theo danh mục cha + con
-        if ($request->has('category')) {
-            $categoryName = $request->input('category');
+        if ($request->has('category_id')) {
+            $categoryId = $request->input('category_id');
 
-            // Lấy ID của danh mục cha và tất cả danh mục con
-            $categoryIds = Category::where('name', $categoryName)
-                ->orWhereHas('parent', function ($query) use ($categoryName) {
-                    $query->where('name', $categoryName);
-                })
-                ->pluck('id')
-                ->toArray();
+            // Tìm danh mục hiện tại
+            $category = Category::find($categoryId);
 
-            $productsQuery->whereIn('category_id', $categoryIds);
+            if ($category) {
+                if ($category->parent_id === null) { // Nếu là danh mục cha
+                    // Lấy toàn bộ ID của danh mục con và con cháu
+                    $categoryIds = Category::where('parent_id', $category->id)
+                        ->orWhereHas('parent', function ($query) use ($category) {
+                            $query->where('parent_id', $category->id);
+                        })
+                        ->pluck('id')
+                        ->toArray();
+
+                    // Thêm danh mục cha vào danh sách ID
+                    $categoryIds[] = $category->id;
+                } else {
+                    // Nếu là danh mục con, chỉ lấy sản phẩm thuộc danh mục đó
+                    $categoryIds = [$category->id];
+                }
+
+                $productsQuery->whereIn('category_id', $categoryIds);
+            }
         }
-
         // Lọc theo thương hiệu cha + con
         if ($request->has('brand')) {
             $brandName = $request->input('brand');
@@ -46,10 +57,50 @@ class ShopController extends Controller
 
             $productsQuery->whereIn('brand_id', $brandIds);
         }
+        if ($request->has('filter')) {
+            $filter = $request->input('filter');
+
+            switch ($filter) {
+                case 'best_selling':
+                    $bestSellingProducts = Product::select('products.*')
+                        ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                        ->join('order_items', 'product_variants.id', '=', 'order_items.variant_id')
+                        ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                        ->where('orders.status', 'completed') // Chỉ tính đơn đã hoàn thành
+                        ->groupBy('products.id')
+                        ->orderByRaw('SUM(order_items.quantity) DESC')
+                        ->limit(8)
+                        ->get();
+
+                    break;
+                case 'az':
+                    $productsQuery->orderBy('name', 'asc'); // A-Z
+                    break;
+                case 'za':
+                    $productsQuery->orderBy('name', 'desc'); // Z-A
+                    break;
+                case 'price_asc':
+                    $productsQuery->orderBy('price_default', 'asc'); // Giá thấp đến cao
+                    break;
+                case 'price_desc':
+                    $productsQuery->orderBy('price_default', 'desc'); // Giá cao đến thấp
+                    break;
+                case 'date_old':
+                    $productsQuery->orderBy('created_at', 'asc'); // Cũ đến mới
+                    break;
+                case 'date_new':
+                    $productsQuery->orderBy('created_at', 'desc'); // Mới đến cũ
+                    break;
+                default:
+                    $productsQuery->latest('id'); // Mặc định theo ID mới nhất
+                    break;
+            }
+        } else {
+            $productsQuery->latest('id'); // Mặc định nếu không có filter
+        }
 
         // Phân trang sản phẩm
         $products = $productsQuery->latest('id')->paginate(12);
-
         return view('client.shop', compact('products'));
     }
     public function filterProducts(Request $request)
@@ -93,7 +144,7 @@ class ShopController extends Controller
             ];
         });
         $comments = $this->getCommentsWithReplies($product->id);
-       
+
         return view('client.product', [
             'product' => $product,
             'attributes' => $attributes,

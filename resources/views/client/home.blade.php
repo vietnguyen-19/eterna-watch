@@ -49,50 +49,20 @@
           }
         }'>
                         <div class="swiper-wrapper">
+                            @foreach($categories as $index => $item)
                             <div class="swiper-slide">
+                                 <a href="{{ route('client.shop', ['category_id' => $item->id]) }}">
                                 <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                    src="{{ asset('theme/client/images/home/demo19/category-1.jpg') }}" width="330"
-                                    height="400" alt="">
+                                    src="{{ asset('storage/cate/cate' . ($index + 1) . '.jpg') }}" width="330"
+                                    height="400" alt=""></a>
                                 <div class="text-center">
-                                    <a href="shop1.html"
+                                    <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
                                         class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
-                                        Bộ Sưu Tập Cổ Điển
+                                        {{$item->name}}
                                     </a>
                                 </div>
                             </div>
-                            <div class="swiper-slide">
-                                <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                    src="{{ asset('theme/client/images/home/demo19/category-2.jpg') }}" width="330"
-                                    height="400" alt="">
-                                <div class="text-center">
-                                    <a href="shop1.html"
-                                        class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
-                                        Bộ Sưu Tập Vàng
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                    src="{{ asset('theme/client/images/home/demo19/category-2.jpg') }}" width="330"
-                                    height="400" alt="">
-                                <div class="text-center">
-                                    <a href="shop1.html"
-                                        class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
-                                        Bộ Sưu Tập Thể Thao
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                    src="{{ asset('theme/client/images/home/demo19/category-4.jpg') }}" width="330"
-                                    height="400" alt="">
-                                <div class="text-center">
-                                    <a href="shop1.html"
-                                        class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
-                                        Bộ Sưu Tập Di Sản
-                                    </a>
-                                </div>
-                            </div>
+                          @endforeach
                         </div><!-- /.swiper-wrapper -->
 
                     </div><!-- /.swiper-container js-swiper-slider -->
@@ -296,102 +266,33 @@
         }
       }'>
                     <div class="swiper-wrapper blog-grid row-cols-xl-3">
-                        <div class="swiper-slide blog-grid__item mb-4">
-                            <div class="blog-grid__item-image">
-                                <img loading="lazy" class="h-auto"
-                                    src="{{ asset('theme/client/images/home/demo19/blog-1.jpg') }}" width="331"
-                                    height="300" alt="">
-                            </div>
-                            <div class="blog-grid__item-detail">
-                                <div class="blog-grid__item-meta text-lowercase">
-                                    <span class="blog-grid__item-meta__author">By Admin</span>
-                                    <span class="blog-grid__item-meta__date">Aprial 05, 2023</span>
-                                </div>
-                                <div class="blog-grid__item-title mb-2">
-                                    <a href="blog_single.html" class="fs-15 text-uppercase fw-semi-bold">Woman with
-                                        good shoes is never be ugly place</a>
-                                </div>
-                                <div class="blog-grid__item-content mb-2">
-                                    <p class="text-secondary">Est Diam Debitis An, Error Recusabo Id Pro, Quo Eripuit
-                                        Civibus Ut.</p>
-                                    <a href="blog_single.html"
-                                        class="btn-link btn-link_md default-underline fs-13 text-uppercase fw-semi-bold">Read
-                                        More</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide blog-grid__item mb-4">
-                            <div class="blog-grid__item-image">
-                                <img loading="lazy" class="h-auto"
-                                    src="{{ asset('theme/client/images/home/demo19/blog-2.jpg') }}" width="331"
-                                    height="300" alt="">
-                            </div>
-                            <div class="blog-grid__item-detail">
-                                <div class="blog-grid__item-meta text-lowercase">
-                                    <span class="blog-grid__item-meta__author">By Admin</span>
-                                    <span class="blog-grid__item-meta__date">Aprial 05, 2023</span>
-                                </div>
-                                <div class="blog-grid__item-title mb-2">
-                                    <a href="blog_single.html" class="fs-15 text-uppercase fw-semi-bold">Woman with
-                                        good shoes is never be ugly place</a>
-                                </div>
-                                <div class="blog-grid__item-content mb-2">
-                                    <p class="text-secondary">Est Diam Debitis An, Error Recusabo Id Pro, Quo Eripuit
-                                        Civibus Ut.</p>
-                                    <a href="blog_single.html"
-                                        class="btn-link btn-link_md default-underline fs-13 text-uppercase fw-semi-bold">Read
-                                        More</a>
+                        @foreach ($posts as $post)
+                            <div class="swiper-slide blog-grid__item mb-4">
+                                <div class="blog-card">
+                                    <div class="blog-card__image">
+                                        <img loading="lazy"
+                                            src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}"
+                                            alt="{{ $post->title }}">
+                                    </div>
+                                    <div class="blog-card__content">
+                                        <div class="blog-card__meta">
+                                            <span class="blog-card__author">Tác giả:
+                                                {{ $post->user->name ?? 'Quản trị viên' }}</span>
+                                            <span class="blog-card__date">{{ $post->created_at->format('d/m/Y') }}</span>
+                                        </div>
+                                        <h3 class="blog-card__title">
+                                            <a
+                                                href="{{ route('client.blog.detail', $post->id) }}">{{ $post->title }}</a>
+                                        </h3>
+                                        <p class="blog-card__excerpt">{{ Str::limit($post->content, 100) }}</p>
+                                        <a href="{{ route('client.blog.detail', $post->id) }}"
+                                            class="blog-card__read-more">Xem thêm</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="swiper-slide blog-grid__item mb-4">
-                            <div class="blog-grid__item-image">
-                                <img loading="lazy" class="h-auto"
-                                    src="{{ asset('theme/client/images/home/demo19/blog-3.jpg') }}" width="331"
-                                    height="300" alt="">
-                            </div>
-                            <div class="blog-grid__item-detail">
-                                <div class="blog-grid__item-meta text-lowercase">
-                                    <span class="blog-grid__item-meta__author">By Admin</span>
-                                    <span class="blog-grid__item-meta__date">Aprial 05, 2023</span>
-                                </div>
-                                <div class="blog-grid__item-title mb-2">
-                                    <a href="blog_single.html" class="fs-15 text-uppercase fw-semi-bold">Woman with
-                                        good shoes is never be ugly place</a>
-                                </div>
-                                <div class="blog-grid__item-content mb-2">
-                                    <p class="text-secondary">Est Diam Debitis An, Error Recusabo Id Pro, Quo Eripuit
-                                        Civibus Ut.</p>
-                                    <a href="blog_single.html"
-                                        class="btn-link btn-link_md default-underline fs-13 text-uppercase fw-semi-bold">Read
-                                        More</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide blog-grid__item mb-4">
-                            <div class="blog-grid__item-image">
-                                <img loading="lazy" class="h-auto"
-                                    src="{{ asset('theme/client/images/home/demo19/blog-4.jpg') }}" width="331"
-                                    height="300" alt="">
-                            </div>
-                            <div class="blog-grid__item-detail">
-                                <div class="blog-grid__item-meta text-lowercase">
-                                    <span class="blog-grid__item-meta__author">By Admin</span>
-                                    <span class="blog-grid__item-meta__date">Aprial 05, 2023</span>
-                                </div>
-                                <div class="blog-grid__item-title mb-2">
-                                    <a href="blog_single.html" class="fs-15 text-uppercase fw-semi-bold">Woman with
-                                        good shoes is never be ugly place</a>
-                                </div>
-                                <div class="blog-grid__item-content mb-2">
-                                    <p class="text-secondary">Est Diam Debitis An, Error Recusabo Id Pro, Quo Eripuit
-                                        Civibus Ut.</p>
-                                    <a href="blog_single.html"
-                                        class="btn-link btn-link_md default-underline fs-13 text-uppercase fw-semi-bold">Read
-                                        More</a>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
+
+
                     </div><!-- /.swiper-wrapper -->
                 </div><!-- /.swiper-container js-swiper-slider -->
             </div><!-- /.position-relative -->
@@ -399,4 +300,74 @@
 
         <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     </main>
+@endsection
+@section('style')
+    <style>
+        .blog-card {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .blog-card__image img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .blog-card__content {
+            padding: 15px;
+        }
+
+        .blog-card__meta {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .blog-card__title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .blog-card__title a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .blog-card__title a:hover {
+            color: #e20000;
+        }
+
+        .blog-card__excerpt {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .blog-card__read-more {
+            font-size: 14px;
+            color: #e20000;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .blog-card__read-more:hover {
+            color: #e20000;
+        }
+    </style>
 @endsection

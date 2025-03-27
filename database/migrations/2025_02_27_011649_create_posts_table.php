@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
+            $table->unsignedBigInteger('view_count')->nullable(); // Thêm cột view_count
         });
     }
 

@@ -22,6 +22,7 @@ class PostFactory extends Factory
             'excerpt' => $this->faker->text(100),
             'status' => $this->faker->randomElement(['draft', 'published', 'archived']),
             'image' => 'blogs/blog-' . rand(1,16) . '.jpg',
+            'view_count' => rand(10,1000),
             'published_at' => $this->faker->boolean(70) ? now() : null,
         ];
     }

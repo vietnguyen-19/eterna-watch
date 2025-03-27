@@ -13,6 +13,7 @@ use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\CommentController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PaymentController;
+use App\Http\Controllers\Client\SettingController;
 use App\Http\Controllers\Client\ShopController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
@@ -116,6 +117,8 @@ Route::prefix('account')->group(function () {
 
 });
 
-Route::get('contact_us', [AccountController::class, 'editAccount'])->name('client.contact_us');
-Route::get('about_us', [AccountController::class, 'editAccount'])->name('client.about_us');
+Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
+Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');
+
+Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
 

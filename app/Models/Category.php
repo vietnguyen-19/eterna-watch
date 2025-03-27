@@ -39,4 +39,15 @@ class Category extends Model
                 ->orWhere('id', $this->id);
         })->get(); // Thêm `->get()` để thực thi truy vấn
     }
+    
+    public function post_count()
+    {
+        // Lấy tất cả danh mục con nếu đây là danh mục cha
+        $categoryIds = $this->children()->pluck('id')->toArray();
+        $categoryIds[] = $this->id; // Thêm chính nó vào danh sách
+
+        return Post::whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        })->count();
+    }
 }
