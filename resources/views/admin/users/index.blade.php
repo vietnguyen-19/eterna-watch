@@ -28,10 +28,18 @@
                         </div>
 
                         <div class="card-body">
-                            @if (session('thongbao'))
-                                <div id="thongbao-alert" class="alert alert-{{ session('thongbao.type') }} alert-dismissible fade show" role="alert">
-                                    <i class="ri-notification-off-line me-2"></i>
-                                    {{ session('thongbao.message') }}
+                            @if (session('success'))
+                                <div class="alert alert-success alert-border-left alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Thành công!</strong> {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <strong>Lỗi!</strong> {{ session('error') }}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
@@ -99,10 +107,14 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="hstack gap-2">
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ route('admin.users.show', $user->id) }}" 
+                                                           class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </a>
                                                         <a href="{{ route('admin.users.edit', $user->id) }}" 
                                                            class="btn btn-sm btn-warning">
-                                                            <i class="ri-edit-2-line"></i> Sửa
+                                                            <i class="fas fa-edit"></i>
                                                         </a>
                                                         <form action="{{ route('admin.users.destroy', $user->id) }}" 
                                                               method="POST" 
@@ -111,7 +123,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger">
-                                                                <i class="ri-delete-bin-line"></i> Xóa
+                                                                <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
                                                     </div>
@@ -138,24 +150,6 @@
         .avatar-xs {
             height: 2.2rem;
             width: 2.2rem;
-        }
-        .btn-soft-warning {
-            background-color: rgba(247, 184, 75, .1);
-            color: #f7b84b;
-            border: none;
-        }
-        .btn-soft-warning:hover {
-            background-color: #f7b84b;
-            color: #fff;
-        }
-        .btn-soft-danger {
-            background-color: rgba(240, 101, 72, .1);
-            color: #f06548;
-            border: none;
-        }
-        .btn-soft-danger:hover {
-            background-color: #f06548;
-            color: #fff;
         }
         .bg-success-subtle { background-color: rgba(10, 179, 156, .1); }
         .bg-danger-subtle { background-color: rgba(240, 101, 72, .1); }
@@ -191,10 +185,10 @@
                 }
             });
 
-            // Tự động ẩn thông báo
+            // Tự động ẩn thông báo sau 5 giây
             setTimeout(function() {
-                $("#thongbao-alert").fadeOut('slow');
-            }, 3000);
+                $('.alert').fadeOut('slow');
+            }, 5000);
         });
     </script>
 @endsection
