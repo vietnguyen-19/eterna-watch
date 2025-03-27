@@ -39,7 +39,7 @@
                                         <thead class="table-light text-muted">
                                             <tr>
                                                 <th class="sort" data-sort="id">ID</th>
-                                                <th class="sort" data-sort="product">Sản phẩm</th>   
+                                                <th class="sort" data-sort="product">Sản phẩm</th>
                                                 <th class="sort" data-sort="status">Thương hiệu</th>
                                                 <th class="sort" data-sort="phone">Giá mặc định</th>
                                                 <th class="sort" data-sort="created_at">Trạng thái</th>
@@ -63,12 +63,12 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    
+
                                                     <td class="align-middle"> {{ $product->brand->name }}</td>
                                                     <td class="align-middle">{{ number_format($product->price_default, 0, ',', '.') }} VND</td>
                                                     <td class="align-middle">
                                                         <span
-                                                            class="badge 
+                                                            class="badge
                                                             @if ($product->status == 'active') bg-success
                                                             @elseif($product->status == 'inactive') bg-warning
                                                             @else bg-danger @endif">

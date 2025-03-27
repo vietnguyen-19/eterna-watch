@@ -44,7 +44,7 @@
                                     <!-- Danh mục sản phẩm -->
                                     <div class="mb-3 col-md-12">
                                         <label for="category_id" class="form-label">Danh mục sản phẩm</label>
-                                        <select name="category_id" class="form-control form-select">
+                                        <select id="categorySelect" class="form-control form-select">
                                             <option value="">Chọn danh mục</option>
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}"
@@ -57,6 +57,18 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    <div class="mb-3 col-md-12">
+                                        <label for="subcategory_id" class="form-label">Danh mục con</label>
+                                        <select id="subcategorySelect" name="category_id"
+                                            class="form-control form-select">
+                                            <option value="">Chọn danh mục con</option>
+                                        </select>
+                                        @error('subcategory_id')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
 
                                     <!-- Thương hiệu -->
                                     <div class="mb-3 col-md-12">
@@ -258,6 +270,32 @@
                             console.error('Revert error:', error);
                         }
                     }
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#categorySelect').change(function() {
+                let parentId = $(this).val();
+                $('#subcategorySelect').html(
+                    '<option value="">Chọn danh mục con</option>'); // Reset danh mục con
+
+                if (parentId) {
+                    $.ajax({
+                        url: '/admin/products/get-subcategories/' + parentId,
+                        type: 'GET',
+                        success: function(data) {
+                            data.forEach(function(subcategory) {
+                                $('#subcategorySelect').append(
+                                    `<option value="${subcategory.id}">${subcategory.name}</option>`
+                                );
+                            });
+                        },
+                        error: function() {
+                            alert('Có lỗi xảy ra, vui lòng thử lại!');
+                        }
+                    });
                 }
             });
         });

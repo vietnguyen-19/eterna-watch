@@ -12,6 +12,8 @@ class Brand extends Model
 
     protected $fillable = ['name', 'parent_id'];
 
+    protected $appends = ['products_count'];
+
     // Mối quan hệ đệ quy (một thương hiệu có thể có thương hiệu cha)
     public function parent()
     {
@@ -33,5 +35,11 @@ class Brand extends Model
                 ->where('id', $this->id)
                 ->orWhere('parent_id', $this->id);
         });
+    }
+
+    // Accessor để lấy số lượng sản phẩm
+    public function getProductsCountAttribute()
+    {
+        return $this->allProducts()->count();
     }
 }

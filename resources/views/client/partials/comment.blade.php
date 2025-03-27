@@ -1,5 +1,5 @@
 <!-- resources/views/partials/comment.blade.php -->
-<div style="border-bottom: 1px solid #eee; padding: 20px 0; width: 100%">
+<div id="comment-container-{{$comment->id}}" style="border-bottom: 1px solid #eee; padding: 20px 0; width: 100%">
     <div class="review-container" style="display: flex; gap: 15px;">
         <!-- Avatar -->
         <div class="">
@@ -32,10 +32,8 @@
 
             <!-- Nội dung bình luận -->
             <div style="width: 100%; font-size: 14px; color: #333; line-height: 1.5;">
-                <p style="margin: 0;">{{ $comment->content }}</p>
+                <p id="comment-content-{{ $comment->id }}" style="margin: 0;">{{ $comment->content }}</p>
             </div>
-
-
             <!-- Nút trả lời -->
             <div class="review-actions" style="display: flex; gap: 15px; margin-top: 8px;">
                 <!-- Nút Trả lời -->
@@ -51,26 +49,22 @@
                 @if (Auth::check() && Auth::id() === $comment->user_id)
                     <!-- Nút Xóa -->
                     <div class="review-action">
-                        <form
-                            action="{{ route('comments.delete', ['comment' => $comment->id, 'entity_id' => $comment->entity_id]) }}"
-                            method="POST" class="delete-form" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <a href="#" class="delete-btn" data-comment-id="{{ $comment->id }}"
-                                style="color: #e74c3c; font-size: 13px; text-decoration: none; font-style: italic;">
-                                <i>Xóa</i>
-                            </a>
-                        </form>
-                    </div>
-
-                    <!-- Nút Sửa -->
-                    <div class="review-action">
                         <a href="#" class="update-btn" data-comment-id="{{ $comment->id }}"
                             data-entity-id="{{ $comment->entity_id }}"
                             style="color: #1e1e1e; font-size: 13px; text-decoration: none; font-style: italic;">
                             <i>Sửa</i>
                         </a>
                     </div>
+                    <div class="review-action">
+                        <a  href="#" class="delete-btn" data-comment-id="{{ $comment->id }}"
+                            data-comment-id="{{ $comment->id }}"
+                            style="color: #e74c3c; font-size: 13px; text-decoration: none; font-style: italic;">
+                            <i>Xóa</i>
+                        </a>
+                    </div>
+
+                    <!-- Nút Sửa -->
+                 
                 @endif
             </div>
 
@@ -83,14 +77,14 @@
                     <textarea name="content" rows="2" placeholder="Viết câu trả lời..."
                         style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box;">{{ old('content') }}</textarea>
                     @if ($errors->has('content'))
-                        <span style="color: #e74c3c; font-size: 12px; display: block; margin-top: 5px;">
+                        <span style="color: #3c47e7; font-size: 12px; display: block; margin-top: 5px;">
                             {{ $errors->first('content') }}
                         </span>
                     @endif
                     <input type="hidden" name="entity_id" value="{{ $comment->entity_id }}">
                     <div style="display: flex; gap: 10px; margin-top: 8px;">
                         <button type="submit"
-                            style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                            style="background: #3c47e7; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
                             Gửi
                         </button>
                         <button type="button" class="cancel-reply"
@@ -100,25 +94,24 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Form Sửa (ẩn mặc định) -->
             @if (Auth::check() && Auth::id() === $comment->user_id)
-                <div class="update-form" id="update-form-{{ $comment->id }}" style="display: none; margin-top: 15px;">
-                    <form
-                        action="{{ route('comments.update', ['comment' => $comment->id, 'entity_id' => $comment->entity_id]) }}"
-                        method="POST">
+                <div class="update-form" id="update-form-{{ $comment->id }}"
+                    style="display: none; margin-top: 15px; width:100%">
+                    <form id="comment-update-form-{{ $comment->id }}">
                         @csrf
-                        @method('PUT')
-                        <textarea name="content" rows="2" placeholder="Chỉnh sửa bình luận..."
+
+
+                        <textarea name="content" class="update-content" data-id="{{ $comment->id }}" rows="2"
+                            placeholder="Chỉnh sửa bình luận..."
                             style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box;">{{ $comment->content }}</textarea>
-                        @if ($errors->has('content'))
+
+                        @error('content')
                             <span style="color: #e74c3c; font-size: 12px; display: block; margin-top: 5px;">
-                                {{ $errors->first('content') }}
+                                {{ $message }}
                             </span>
-                        @endif
-                        <input type="hidden" name="entity_id" value="{{ $comment->entity_id }}">
+                        @enderror
                         <div style="display: flex; gap: 10px; margin-top: 8px;">
-                            <button type="submit"
+                            <button type="button" class="save-update" data-id="{{ $comment->id }}"
                                 style="background: #1e1e1e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
                                 Lưu
                             </button>

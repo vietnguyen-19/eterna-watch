@@ -13,6 +13,7 @@ use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Client\CommentController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PaymentController;
+use App\Http\Controllers\Client\SettingController;
 use App\Http\Controllers\Client\ShopController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
@@ -91,18 +92,16 @@ Route::prefix('payments')->group(function () {
     Route::get('complete/{id}', [PaymentController::class, 'complete'])->name('payment.complete');
 });
 
-Route::prefix('comments')->group(function () {
+Route::prefix('comments')->middleware('customer')->group(function () {
     Route::post('/store/{id}', [CommentController::class, 'store'])->name('comments.store');
     Route::post('/store-post/{id}', [CommentController::class, 'storePost'])->name('comments.store_post');
     Route::post('/{comment}/reply/{entity_id}', [CommentController::class, 'reply'])->name('comments.reply');
     Route::put('/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
-    Route::delete('/{comment}/delete/{entity_id}', [CommentController::class, 'delete'])->name('comments.delete');
 
-   
+    Route::delete('/delete/{comment}', [CommentController::class, 'delete'])->name('comments.delete');
 });
 
 Route::prefix('account')->group(function () {
-  
     Route::get('edit_detail', [AccountController::class, 'editAccount'])->name('account.edit');
     Route::post('update', [AccountController::class, 'update'])->name('account.update');
     Route::get('order', [AccountController::class, 'order'])->name('account.order');
@@ -117,4 +116,9 @@ Route::prefix('account')->group(function () {
     Route::post('/remove-image', [AccountController::class, 'removeImage']);
 
 });
+
+Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
+Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');
+
+Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
 

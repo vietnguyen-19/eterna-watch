@@ -417,8 +417,8 @@
                         </svg>
                     </div>
                     <div class="service-promotion__content-wrap">
-                        <h3 class="service-promotion__title h6 text-white mb-0">Need Help</h3>
-                        <p class=" text-white service-promotion__content fs-base mb-0">+0020 500 5832</p>
+                        <h3 class="service-promotion__title h6 text-white mb-0">Tư vấn hỗ trợ</h3>
+                        <p class=" text-white service-promotion__content fs-base mb-0">{{ $settings['company_phone'] }}</p>
                     </div>
                 </div>
                 <div class="logo">
@@ -442,10 +442,10 @@
 
                         <div class="search-popup js-hidden-content">
                             <form action="./search_result.html" method="GET" class="search-field container">
-                                <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
+                                <p class="text-uppercase text-secondary fw-medium mb-4">Bạn đang tìm kiếm gì?</p>
                                 <div class="position-relative">
                                     <input class="search-field__input search-popup__input w-100 fw-medium"
-                                        type="text" name="search-keyword" placeholder="Search products">
+                                        type="text" name="search-keyword" placeholder="Tìm kiếm sản phẩm">
                                     <button class="btn-icon search-popup__submit" type="submit">
                                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20"
                                             fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -454,37 +454,29 @@
                                     </button>
                                     <button class="btn-icon btn-close-lg search-popup__reset" type="reset"></button>
                                 </div>
-
+                        
                                 <div class="search-popup__results">
                                     <div class="sub-menu search-suggestion">
-                                        <h6 class="sub-menu__title fs-base">Quicklinks</h6>
+                                        <h6 class="sub-menu__title fs-base">Liên kết nhanh</h6>
                                         <ul class="sub-menu__list list-unstyled">
                                             <li class="sub-menu__item"><a href="./shop2.html"
-                                                    class="menu-link menu-link_us-s">New Arrivals</a></li>
+                                                    class="menu-link menu-link_us-s">Hàng mới về</a></li>
                                             <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Dresses</a></li>
+                                                    class="menu-link menu-link_us-s">Đầm</a></li>
                                             <li class="sub-menu__item"><a href="./shop3.html"
-                                                    class="menu-link menu-link_us-s">Accessories</a></li>
+                                                    class="menu-link menu-link_us-s">Phụ kiện</a></li>
                                             <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Footwear</a></li>
+                                                    class="menu-link menu-link_us-s">Giày dép</a></li>
                                             <li class="sub-menu__item"><a href="#"
-                                                    class="menu-link menu-link_us-s">Sweatshirt</a></li>
+                                                    class="menu-link menu-link_us-s">Áo nỉ</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="search-result row row-cols-5"></div>
                                 </div>
                             </form><!-- /.header-search -->
                         </div><!-- /.search-popup -->
+                        
                     </div><!-- /.header-tools__item hover-container -->
-
-                    <a class="header-tools__item" href="./account_wishlist.html">
-                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <use href="#icon_heart"></use>
-                        </svg>
-                    </a>
-
                     <a href="{{ route('cart.index') }}" class="header-tools__item header-tools__cart">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -555,21 +547,21 @@
                     <ul class="navigation__list list-unstyled d-flex my-1">
                         <li class="navigation__item">
                             <a href="{{ route('client.home') }}" class="navigation__link"
-                                style="font-weight:bold;{{ Request::is('/') ? 'color: #c20f0f;' : '' }}">Trang chủ</a>
+                                style="font-weight:bold;{{ Request::is('/') ? 'color: #c20f0f;font-size: 17px' : '' }}">Trang chủ</a>
                         </li>
 
                         <li class="navigation__item">
                             <a href="{{ route('client.shop') }}" class="navigation__link"
-                                style="font-weight:bold;{{ Request::is('shop') ? 'color: #c20f0f;' : '' }}">Shop</a>
+                                style="font-weight:bold;{{ Request::is('shop') ? 'color: #c20f0f;font-size: 17px' : '' }}">Shop</a>
                             <div class="box-menu" style="width: 1200px;">
                                 @foreach ($categories as $category)
                                     <div class="col pe-4">
-                                        <a href="#"
+                                        <a href="{{ route('client.shop', ['category_id' => $category->id]) }}"
                                             class="sub-menu__title"><strong>{{ $category->name }}</strong></a>
                                         <ul class="sub-menu__list list-unstyled">
                                             @foreach ($category->children as $item)
                                                 <li class="sub-menu__item">
-                                                    <a href="../Demo1/index.html"
+                                                    <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
                                                         class="menu-link menu-link_us-s">{{ $item->name }}</a>
                                                 </li>
                                             @endforeach
@@ -579,29 +571,17 @@
                             </div><!-- /.box-menu -->
                         </li>
                         <li class="navigation__item">
-                            <a href="#" class="navigation__link">Thương hiệu</a>
-                            <div class="box-menu" style="width: 200px;">
-                                <div class="col">
-                                    <ul class="sub-menu__list list-unstyled">
-                                        @foreach ($brands as $brand)
-                                            <li class="sub-menu__item"><a href="../Demo1/index.html"
-                                                    class="menu-link menu-link_us-s">{{ $brand->name }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-
-
-                            </div><!-- /.box-menu -->
-                        </li>
-                        <li class="navigation__item">
-                            <a href="#" class="navigation__link">Blog</a>
+                            <a href="{{ route('client.blog') }}" class="navigation__link"
+                            style="font-weight:bold;{{ Request::is('blog') ? 'color: #c20f0f;font-size: 17px' : '' }}">Blog</a>
 
                         </li>
                         <li class="navigation__item">
-                            <a href="./about.html" class="navigation__link">về eterna</a>
+                            <a href="{{ route('client.about_us') }}" class="navigation__link"
+                            style="font-weight:bold;{{ Request::is('about_us') ? 'color: #c20f0f;font-size: 17px' : '' }}">Về aterna</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="./contact.html" class="navigation__link">Liên hệ</a>
+                            <a href="{{ route('client.contact_us') }}" class="navigation__link"
+                            style="font-weight:bold;{{ Request::is('contact_us') ? 'color: #c20f0f;font-size: 17px' : '' }}">Liên hệ</a>
                         </li>
                     </ul><!-- /.navigation__list -->
                 </nav><!-- /.navigation -->

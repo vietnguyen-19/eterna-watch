@@ -2,20 +2,17 @@
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
-
         <div class="mb-4 pb-lg-3"></div>
-
         <section class="shop-main container d-flex">
             <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
                 <div class="aside-header d-flex d-lg-none align-items-center">
                     <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
-
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="search-field__input-wrapper mb-3">
-                    <input type="text" name="search_text"
-                        class="search-field__input form-control form-control-sm border-light border-2" placeholder="SEARCH">
+                    <input style="border: 2px solid rgb(97, 97, 97)" type="text" name="search_text"
+                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
                 </div>
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="accordion" id="categories-list">
@@ -24,7 +21,7 @@
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#accordion-filter-1" aria-expanded="true"
                                 aria-controls="accordion-filter-1">
-                                Danh mục sản phẩm
+                                <strong> Danh mục sản phẩm</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -40,7 +37,7 @@
                                 <ul class="list list-inline mb-0">
                                     @foreach ($categories as $category)
                                         <li class="list-item">
-                                            <a href="{{ route('client.shop', ['category' => $category->name]) }}"
+                                            <a href="{{ route('client.shop', ['category_id' => $category->id]) }}"
                                                 class="menu-link py-1">
                                                 {{ $category->name }} <span
                                                     class="text-muted">({{ $category->products_count }})</span>
@@ -52,14 +49,13 @@
                         </div>
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion-item -->
-
                 <div class="accordion" id="categories-list">
                     <div class="accordion-item mb-4 pb-3">
                         <h5 class="accordion-header" id="accordion-heading-11">
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#accordion-filter-1" aria-expanded="true"
-                                aria-controls="accordion-filter-1">
-                                Thương hiệu đồng hồ
+                                data-bs-toggle="collapse" data-bs-target="#accordion-filter-2" aria-expanded="true"
+                                aria-controls="accordion-filter-2">
+                                <strong> Thương hiệu đồng hồ</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -69,18 +65,33 @@
                                 </svg>
                             </button>
                         </h5>
-                        <div id="accordion-filter-1" class="accordion-collapse collapse show border-0"
+                        <div id="accordion-filter-2" class="accordion-collapse collapse show border-0"
                             aria-labelledby="accordion-heading-11" data-bs-parent="#categories-list">
                             <div class="accordion-body px-0 pb-0 pt-3">
                                 <ul class="list list-inline mb-0">
                                     @foreach ($brands as $brand)
-                                        <li class="list-item">
-                                            <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
-                                                class="menu-link py-1">
-                                                {{ $brand->name }} <span
-                                                    class="text-muted">({{ $brand->products_count }})</span>
-                                            </a>
-                                        </li>
+                                        @if($brand->parent_id === null)
+                                            <li class="list-item">
+                                                <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
+                                                    class="menu-link py-1">
+                                                    {{ $brand->name }} <span
+                                                        class="text-muted">({{ $brand->products_count }})</span>
+                                                </a>
+                                                @if($brand->children->count() > 0)
+                                                    <ul class="list list-inline mb-0 ms-3">
+                                                        @foreach($brand->children as $child)
+                                                            <li class="list-item">
+                                                                <a href="{{ route('client.shop', ['brand' => $child->name]) }}"
+                                                                    class="menu-link py-1">
+                                                                    {{ $child->name }} <span
+                                                                        class="text-muted">({{ $child->products_count }})</span>
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </div>
@@ -95,7 +106,7 @@
                                 <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
                                     aria-controls="accordion-filter-price">
-                                    Lọc sản phẩm theo giá trị
+                                    <strong> Lọc theo giá trị</strong>
                                     <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -138,35 +149,50 @@
             <div class="shop-list flex-grow-1">
                 <div class="d-flex justify-content-between mb-4 pb-md-2">
                     <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
-                        <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Trang chủ</a>
+                        <span class="breadcrumb-separator menu-link fw-bold ps-1 pe-1">|</span>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Mua hàng</a>
                     </div><!-- /.breadcrumb -->
 
                     <div
                         class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                        <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0"
-                            aria-label="Sort Items" name="total-number">
-                            <option selected>Default Sorting</option>
-                            <option value="1">Featured</option>
-                            <option value="2">Best selling</option>
-                            <option value="3">Alphabetically, A-Z</option>
-                            <option value="3">Alphabetically, Z-A</option>
-                            <option value="3">Price, low to high</option>
-                            <option value="3">Price, high to low</option>
-                            <option value="3">Date, old to new</option>
-                            <option value="3">Date, new to old</option>
+                        @php
+                            $currentFilter = request('filter'); // Lấy giá trị filter từ URL
+                        @endphp
+
+                        <select style="width: 50%;" class="form-select border-light shadow-sm fw-medium p-1"
+                            aria-label="Sắp xếp sản phẩm" name="total-number"
+                            onchange="window.location.href = this.value;">
+
+                            <option value="{{ route('client.shop') }}" {{ $currentFilter ? '' : 'selected' }}>Tất cả sản
+                                phẩm</option>
+                            <option value="{{ route('client.shop', ['filter' => 'best_selling']) }}"
+                                {{ $currentFilter == 'best_selling' ? 'selected' : '' }}>Bán chạy nhất</option>
+                            <option value="{{ route('client.shop', ['filter' => 'az']) }}"
+                                {{ $currentFilter == 'az' ? 'selected' : '' }}>Theo bảng chữ cái, A-Z</option>
+                            <option value="{{ route('client.shop', ['filter' => 'za']) }}"
+                                {{ $currentFilter == 'za' ? 'selected' : '' }}>Theo bảng chữ cái, Z-A</option>
+                            <option value="{{ route('client.shop', ['filter' => 'price_asc']) }}"
+                                {{ $currentFilter == 'price_asc' ? 'selected' : '' }}>Giá: Thấp đến cao</option>
+                            <option value="{{ route('client.shop', ['filter' => 'price_desc']) }}"
+                                {{ $currentFilter == 'price_desc' ? 'selected' : '' }}>Giá: Cao đến thấp</option>
+                            <option value="{{ route('client.shop', ['filter' => 'date_old']) }}"
+                                {{ $currentFilter == 'date_old' ? 'selected' : '' }}>Ngày: Cũ đến mới</option>
+                            <option value="{{ route('client.shop', ['filter' => 'date_new']) }}"
+                                {{ $currentFilter == 'date_new' ? 'selected' : '' }}>Ngày: Mới đến cũ</option>
                         </select>
+
+
 
                         <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
 
                         <div class="col-size align-items-center order-1 d-none d-lg-flex">
-                            <span class="text-uppercase fw-medium me-2">View</span>
-                            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                            <span class="text-uppercase fw-bold me-2">View</span>
+                            <button class="btn-link fw-bold me-2 js-cols-size" data-target="products-grid"
                                 data-cols="2">2</button>
-                            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                            <button class="btn-link fw-bold me-2 js-cols-size" data-target="products-grid"
                                 data-cols="3">3</button>
-                            <button class="btn-link fw-medium js-cols-size" data-target="products-grid"
+                            <button class="btn-link fw-bold js-cols-size" data-target="products-grid"
                                 data-cols="4">4</button>
                         </div><!-- /.col-size -->
 
@@ -182,7 +208,6 @@
                         </div><!-- /.col-size d-flex align-items-center ms-auto ms-md-3 -->
                     </div><!-- /.shop-acs -->
                 </div><!-- /.d-flex justify-content-between -->
-
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
                     @foreach ($products as $product)
                         <div class="product-card-wrapper">
@@ -218,13 +243,10 @@
                         </div>
                     @endforeach
                 </div>
-
                 <!-- Hiển thị phân trang -->
                 <div class="justify-content-center mt-4">
                     {{ $products->links() }}
                 </div>
-
-
             </div>
         </section><!-- /.shop-main container -->
     </main>
@@ -346,6 +368,21 @@
             font-size: 16px;
             font-weight: 600;
             color: #333;
+        }
+
+        #shopFilter {
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            /* Màu nền nhẹ, dễ nhìn */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Tạo độ bóng nhẹ cho sidebar */
+            border-radius: 8px;
+            /* Bo tròn các góc của sidebar */
+            position: sticky;
+            top: 1rem;
+            /* Giữ sidebar ở vị trí cố định khi cuộn */
+            transition: all 0.3s ease;
+            /* Hiệu ứng mượt mà khi thay đổi trạng thái */
         }
     </style>
 @endsection
