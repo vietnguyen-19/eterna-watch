@@ -47,21 +47,20 @@
                                             <div class="card-header fw-bold">
                                                 Thông tin khách hàng
                                             </div>
+                                            <p><strong>Mã đơn hàng:</strong> #{{ $order->id }}</p>
+                                            <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
                                             <p><strong>Khách hàng:</strong> {{ $order->user->name ?? 'Khách ẩn danh' }}</p>
                                             <p><strong>Trạng thái:</strong> <span
-                                                    class="badge bg-success">{{ ucfirst($order->status) }}</span></p>
+                                                    class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'cancelled' ? 'danger' : 'warning') }}">{{ ucfirst($order->status) }}</span></p>
                                             <p><strong>Địa chỉ:</strong>
                                                 {{ $order->shippingAddress->street_address ?? 'N/A' }}</p>
                                             <p><strong>Số điện thoại:</strong>
-                                                {{ $order->shippingAddress->phone ?? 'N/A' }}</p>
+                                                {{ $order->shippingAddress->phone_number ?? 'N/A' }}</p>
+                                            
                                             <!-- Form đổi trạng thái -->
-                                            <form id="statusForm" method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <label for="status">Thay đổi trạng thái:</label>
-                                                <select name="status" class="form-select w-auto d-inline"
-                                                    onchange="submitStatusForm(this.value)">
-                                                    <option disabled selected>Chọn trạng thái</option>
+                                            <div class="mt-3">
+                                                <label class="d-block mb-2">Thay đổi trạng thái:</label>
+                                                <div class="d-flex gap-2">
                                                     @php
                                                         $next = [
                                                             'pending' => ['confirmed'],
@@ -72,10 +71,14 @@
                                                         ];
                                                     @endphp
                                                     @foreach ($next[$order->status] ?? [] as $status)
-                                                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                                        <button type="button" 
+                                                                class="btn btn-{{ $status === 'completed' ? 'success' : ($status === 'cancelled' ? 'danger' : 'warning') }}"
+                                                                onclick="confirmStatusChange('{{ $status }}')">
+                                                            {{ ucfirst($status) }}
+                                                        </button>
                                                     @endforeach
-                                                </select>
-                                            </form>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <table class="table table-bordered" aria-describedby="example2_info"
@@ -84,45 +87,35 @@
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">Tên Sản phẩm</th>
-                                                    <th class="sort" data-sort="ten_user">Biến THể</th>
-                                                    <th class="sort" data-sort="tong_tien">Đơn Giá </th>
+                                                    <th class="sort" data-sort="ten_user">Biến Thể</th>
+                                                    <th class="sort" data-sort="tong_tien">Đơn Giá</th>
                                                     <th class="sort" data-sort="trang_thai">Số Lượng</th>
-                                                    <th class="sort" data-sort="created_at"> Thành Tiền</th>
-                                                    {{-- <th class="sort" data-sort="hanh_dong">Hành động</th> --}}
+                                                    <th class="sort" data-sort="created_at">Thành Tiền</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-
-                                                @foreach ($order->orderItems as $item)
+                                                @forelse ($order->orderItems as $item)
                                                     <tr>
                                                         <td>{{ $item->productVariant->product->name ?? 'N/A' }}</td>
-                                                        <td>{{ $item->productVariant->name ?? 'N/A' }}</td>
+                                                        <td>{{ $item->productVariant->id ?? 'N/A' }}</td>
                                                         <td>{{ number_format($item->unit_price, 0, ',', '.') }} đ</td>
                                                         <td>{{ $item->quantity }}</td>
-                                                        <td>{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }}
-                                                            đ</td>
+                                                        <td>{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }} đ</td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">Không có sản phẩm nào trong đơn hàng</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="4" class="text-end fw-bold">Tổng tiền:</td>
                                                     <td class="fw-bold text-danger">
-                                                        {{ number_format($order->orderItems->sum(fn($item) => $item->unit_price * $item->quantity), 0, ',', '.') }}
-                                                        đ
+                                                        {{ number_format($order->orderItems->sum(fn($item) => $item->unit_price * $item->quantity), 0, ',', '.') }} đ
                                                     </td>
                                                 </tr>
                                             </tfoot>
-                                            <thead class="text-muted">
-                                                <tr>
-                                                    <th class="sort" data-sort="id">Tên Sản phẩm</th>
-                                                    <th class="sort" data-sort="ten_user">Biến THể</th>
-                                                    <th class="sort" data-sort="tong_tien">Đơn Giá </th>
-                                                    <th class="sort" data-sort="trang_thai">Số Lượng</th>
-                                                    <th class="sort" data-sort="created_at"> Thành Tiền</th>
-                                                    {{-- <th class="sort" data-sort="hanh_dong">Hành động</th> --}}
-                                                </tr>
-                                            </thead>
                                         </table>
                                     </div>
                                 </div>
@@ -179,31 +172,47 @@
     </script>
 
     <script>
-        function submitStatusForm(status) {
-            if (confirm('Bạn có chắc muốn cập nhật trạng thái?')) {
+        function confirmStatusChange(status) {
+            const statusMessages = {
+                'confirmed': 'Xác nhận đơn hàng',
+                'processing': 'Bắt đầu xử lý đơn hàng',
+                'completed': 'Hoàn thành đơn hàng',
+                'cancelled': 'Hủy đơn hàng'
+            };
+
+            if (confirm(`Bạn có chắc muốn ${statusMessages[status]}?`)) {
                 fetch('{{ route('admin.orders.update', $order->id) }}', {
-                        method: 'PATCH',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status) {
-                            alert(data.message);
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        // Hiển thị thông báo thành công
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                        alertDiv.innerHTML = `
+                            ${data.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        `;
+                        document.querySelector('.card-body').insertBefore(alertDiv, document.querySelector('.card-body').firstChild);
+                        
+                        // Tự động reload trang sau 2 giây
+                        setTimeout(() => {
                             location.reload();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(err => {
-                        alert('Lỗi cập nhật trạng thái!');
-                        console.error(err);
-                    });
+                        }, 2000);
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi cập nhật trạng thái!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+                });
             }
         }
     </script>
