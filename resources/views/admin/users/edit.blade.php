@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-<section class="content pt-3">
+    <section class="content pt-3">
     @if(session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
@@ -14,47 +14,47 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header border-bottom-dashed">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header border-bottom-dashed">
                             <h5 class="card-title mb-0"><b>Chỉnh sửa tài khoản nhân viên</b></h5>
-                        </div>
+                            </div>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <div class="row">
-                                        <!-- Tên người dùng -->
-                                        <div class="mb-3 col-12">
-                                            <label for="name" class="form-label">Tên người dùng</label>
-                                            <input value="{{ old('name', $user->name) }}" name="name" type="text"
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <!-- Tên người dùng -->
+                                            <div class="mb-3 col-12">
+                                                <label for="name" class="form-label">Tên người dùng</label>
+                                                <input value="{{ old('name', $user->name) }}" name="name" type="text"
                                                 id="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nhập tên người dùng">
-                                            @error('name')
+                                                @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                @enderror
+                                            </div>
 
-                                        <!-- Email -->
-                                        <div class="mb-3 col-12">
-                                            <label for="email" class="form-label">Email</label>
+                                            <!-- Email -->
+                                            <div class="mb-3 col-12">
+                                                <label for="email" class="form-label">Email</label>
                                             <input value="{{ old('email', $user->email) }}" name="email" type="email"
                                                 id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Nhập email">
-                                            @error('email')
+                                                @error('email')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                @enderror
+                                            </div>
 
-                                        <!-- Số điện thoại -->
-                                        <div class="mb-3 col-12">
-                                            <label for="phone" class="form-label">Số điện thoại</label>
+                                            <!-- Số điện thoại -->
+                                            <div class="mb-3 col-12">
+                                                <label for="phone" class="form-label">Số điện thoại</label>
                                             <input value="{{ old('phone', $user->phone) }}" name="phone" type="text"
                                                 id="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="Nhập số điện thoại">
-                                            @error('phone')
+                                                @error('phone')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -101,40 +101,40 @@
                                             </select>
                                             @error('status')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                @enderror
+                                            </div>
 
-                                        <!-- Vai trò -->
+                                            <!-- Vai trò -->
                                         <div class="mb-3 col-12">
                                             <label for="role_id" class="form-label">Vai trò</label>
                                             <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror">
                                                 <option value="">Chọn vai trò</option>
                                                 @foreach($roles as $role)
                                                     <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
-                                                        {{ $role->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('role_id')
+                                                            {{ $role->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('role_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                @enderror
+                                            </div>
 
                                         <!-- Ghi chú -->
-                                        <div class="mb-3 col-12">
+                                            <div class="mb-3 col-12">
                                             <label for="note" class="form-label">Ghi chú</label>
                                             <textarea name="note" id="note" class="form-control @error('note') is-invalid @enderror" rows="3" placeholder="Nhập ghi chú">{{ old('note', $user->note) }}</textarea>
-                                            @error('note')
+                                                @error('note')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                                @enderror
+                                        </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Avatar -->
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="avatar" class="form-label">Ảnh đại diện</label>
+                                    <!-- Avatar -->
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="avatar" class="form-label">Ảnh đại diện</label>
                                         <div class="text-center">
                                             @if($user->avatar && Storage::exists('public/' . $user->avatar))
                                                 <img src="{{ Storage::url($user->avatar) }}" 
@@ -148,22 +148,22 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Địa chỉ -->
-                    <div class="card">
-                        <div class="card-header border-bottom-dashed">
-                            <h5 class="card-title mb-0">Thông tin địa chỉ</h5>
-                        </div>
+                        <!-- Địa chỉ -->
+                        <div class="card">
+                            <div class="card-header border-bottom-dashed">
+                                <h5 class="card-title mb-0">Thông tin địa chỉ</h5>
+                            </div>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
                                         <!-- Họ tên người nhận -->
                                         <div class="mb-3 col-6">
                                             <label for="full_name" class="form-label">Họ tên người nhận</label>
@@ -220,15 +220,15 @@
                                         </div>
 
                                         <!-- Thành phố -->
-                                        <div class="mb-3 col-6">
+                                                <div class="mb-3 col-6">
                                             <label for="city" class="form-label">Thành phố</label>
                                             <input value="{{ old('city', $address->city ?? '') }}" name="city"
                                                 type="text" id="city" class="form-control @error('city') is-invalid @enderror"
                                                 placeholder="Nhập thành phố">
                                             @error('city')
                                                 <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                    @enderror
+                                                </div>
 
                                         <!-- Quốc gia -->
                                         <div class="mb-3 col-6">
@@ -240,26 +240,26 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Nút Submit -->
-                    <div class="card">
-                        <div class="card-footer">
-                            <div class="hstack gap-2 justify-content-left">
+                        <!-- Nút Submit -->
+                        <div class="card">
+                            <div class="card-footer">
+                                <div class="hstack gap-2 justify-content-left">
                                 <button type="submit" class="btn btn-success">Cập nhật tài khoản</button>
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-light">Đóng</a>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-light">Đóng</a>
+                            </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-</section>
+        </form>
+    </section>
 @endsection
 
 @section('style')

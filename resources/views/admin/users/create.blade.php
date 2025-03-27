@@ -219,15 +219,15 @@
                                         </div>
 
                                         <!-- Quốc gia -->
-                                        <div class="mb-3 col-6">
+                                            <div class="mb-3 col-6">
                                             <label for="country" class="form-label">Quốc gia</label>
                                             <input value="{{ old('country') }}" name="country"
                                                 type="text" id="country" class="form-control"
                                                 placeholder="Nhập quốc gia">
                                             @error('country')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                     </div>
                                 </div>
                             </div>
