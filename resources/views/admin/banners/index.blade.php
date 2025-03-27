@@ -87,7 +87,7 @@
                                                                     <li class="list-inline-item edit" title="Edit">
                                                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                                             class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                            <i class="fa-solid fa-edit"></i>
+                                                                            <i class="bi bi-pen"></i>Sửa
                                                                         </a>
                                                                     </li>
                                                                     <!-- Remove Button -->
@@ -104,6 +104,7 @@
                                                                             </button>
                                                                         </form>
                                                                     </li>
+
                                                                 </ul>
                                                             </td>
                                                         </tr>

@@ -23,28 +23,56 @@ class UserStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
-            'password' => 'required|string|min:6',
-            'gender' => 'nullable|in:male,female,other',
-            'note' => 'nullable|string|max:1000',
+            'phone' => 'required|string|max:20',
+            'password' => 'required|min:6',
+            'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
+            'status' => 'required|in:active,inactive,banned,pending',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'note' => 'nullable|string',
+            
+            // Địa chỉ
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'street_address' => 'required|string|max:255',
+            'ward' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
         ];
     }
 
     /**
      * Tùy chỉnh thông báo lỗi
      */
-    public function messages()
+    public function messages(): array
     {
         return [
-            'name.required' => 'Tên không được để trống.',
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Email không hợp lệ.',
-            'email.unique' => 'Email đã tồn tại.',
-            'password.required' => 'Mật khẩu không được để trống.',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
-            'role_id.required' => 'Vai trò là bắt buộc.',
-            'role_id.exists' => 'Vai trò không hợp lệ.',
+            'name.required' => 'Vui lòng nhập tên người dùng',
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.unique' => 'Email đã tồn tại',
+            'phone.required' => 'Vui lòng nhập số điện thoại',
+            'password.required' => 'Vui lòng nhập mật khẩu',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            'gender.required' => 'Vui lòng chọn giới tính',
+            'gender.in' => 'Giới tính không hợp lệ',
+            'role_id.required' => 'Vui lòng chọn vai trò',
+            'role_id.exists' => 'Vai trò không tồn tại',
+            'status.required' => 'Vui lòng chọn trạng thái',
+            'status.in' => 'Trạng thái không hợp lệ',
+            'avatar.image' => 'File phải là hình ảnh',
+            'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
+            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
+            
+            // Địa chỉ
+            'full_name.required' => 'Vui lòng nhập họ tên người nhận',
+            'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',
+            'street_address.required' => 'Vui lòng nhập địa chỉ chi tiết',
+            'ward.required' => 'Vui lòng nhập phường/xã',
+            'district.required' => 'Vui lòng nhập quận/huyện',
+            'city.required' => 'Vui lòng nhập thành phố',
+            'country.required' => 'Vui lòng nhập quốc gia',
         ];
     }
 }
