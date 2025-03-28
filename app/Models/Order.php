@@ -71,4 +71,12 @@ class Order extends Model
     {
         return $this->shipment->shipping_method === 'fixed' ? 100000 : 0;
     }
+    public function productVariant()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id', 'product_id');
+    }
+    public function shippingAddress()
+    {
+        return $this->hasOne(UserAddress::class, 'user_id', 'user_id')->where('is_default', 1);
+    }
 }
