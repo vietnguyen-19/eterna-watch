@@ -282,7 +282,7 @@
 
 
 
-                {{-- Order --}}
+                
 
 
 
@@ -333,12 +333,13 @@
                     </ul>
                 </li>
 
-                {{-- <li class="nav-item">
+                <li class="nav-item">
 
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> //chú ý dòng này
+                    {{-- Order --}}
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> 
 
 
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('admin.orders.index') }}  " class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
                             Đơn hàng
@@ -357,7 +358,7 @@
 
                     </ul>
                 </li>
-                --}}
+               
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
