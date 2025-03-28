@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
+
+use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\Admin\ArticleController;
 
 
 Route::prefix('admin')->group(function () {
+
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -53,6 +56,8 @@ Route::prefix('admin')->group(function () {
 
 //test git
 Route::prefix('admin')->group(function () {
+    Route::resource('posts', PostController::class)->names('admin.posts');
+
     Route::resource('brands', BrandController::class)->names([
         'index' => 'admin.brands.index',
         'create' => 'admin.brands.create',
@@ -76,6 +81,8 @@ Route::prefix('admin')->group(function () {
 
 
     Route::prefix('admin')->group(function () {
+        Route::resource('posts', PostController::class)->names('admin.posts');
+
         Route::resource('roles', RoleController::class)->names([
             'index' => 'admin.roles.index',
             'create' => 'admin.roles.create',
@@ -86,9 +93,6 @@ Route::prefix('admin')->group(function () {
             'destroy' => 'admin.roles.destroy',
         ]);
     });
-    
-
-
 
     Route::prefix('attributes')->group(function () {
         Route::get('/', [AttributeController::class, 'index'])->name('admin.attributes.index');
@@ -98,7 +102,6 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('admin.attributes.edit');
         Route::post('update', [AttributeController::class, 'update'])->name('admin.attributes.update');
         Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('admin.attributes.destroy');
-
     });
 
     // 📌 Giá trị thuộc tính (Attribute Values)
@@ -123,7 +126,6 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 
         Route::get('/get-subcategories/{parent_id}', [ProductController::class, 'getSubcategories']);
-
     });
     Route::prefix('productvariants')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('admin.productvariants.index');
@@ -145,15 +147,16 @@ Route::prefix('admin')->group(function () {
         Route::delete('/destroy/{id}',  [PermissionController::class,  'destroy'])->name('admin.permissions.destroy');
     });
 
-    // Banner
+
 
     Route::post('/upload-image', [ImageController::class, 'uploadImage']);
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
     Route::resource('roles', RoleController::class);
-});
 
+
+    // Banner
     Route::prefix('banners')->group(function () {
         Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
         Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
@@ -162,28 +165,45 @@ Route::prefix('admin')->group(function () {
         Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
         Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
     });
-    
-     // Order
-     Route::prefix('orders')->group(function () {
-        Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
-        Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
-        Route::patch('/{id}/update ', [OrderController::class, 'update'])->name('admin.orders.update');
-        Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+    //voucher
+    Route::prefix('vouchers')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('admin.vouchers.create');
+        Route::post('/', [VoucherController::class, 'store'])->name('admin.vouchers.store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('admin.vouchers.edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
     });
+});
 
 
-    // Bình luận
-    Route::prefix('comments')->group(function () {
-        Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
-        // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
-        // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
-        Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
-        Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
-        Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
-        Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
-    });
+// Order
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+    Route::patch('/{id}/update ', [OrderController::class, 'update'])->name('admin.orders.update');
+    Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+});
 
-    Route::resource('roles', RoleController::class);
+
+
+
+// Bình luận
+Route::prefix('comments')->group(function () {
+    Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
+    // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
+    // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
+    Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
+    Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
+    Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
+    Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
+});
+
+
+Route::resource('roles', RoleController::class);
 
 Route::prefix('admin/articles')->group(function () {
     Route::get('/', [ArticleController::class, 'index'])->name('admin.articles.index');
@@ -195,8 +215,5 @@ Route::prefix('admin/articles')->group(function () {
     Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
 });
 
+
 Route::resource('posts', PostController::class)->names('admin.posts');
-
-
-
-
