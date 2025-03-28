@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('client.layouts.master')
 
 @section('title', 'User Settings')
 

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('usersSetting', function (Blueprint $table) {
+        Schema::create('adminsettings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('password');
+            $table->string('key')->unique(); // Chìa khóa để xác định cài đặt
+            $table->string('value'); // Giá trị của cài đặt
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('adminsettings');
     }
 };

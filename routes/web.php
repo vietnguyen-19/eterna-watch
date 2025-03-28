@@ -13,11 +13,11 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
-
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\AdminSettingsController;
 
 
 use App\Http\Controllers\Admin\ArticleController;
@@ -121,5 +121,7 @@ Route::prefix('admin')->group(function () {
 
     // đơn hàng
     Route::resource('orders', OrderController::class)->names('admin.orders');
-
+    //settings
+    Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
+    Route::post('/admin/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
 });
