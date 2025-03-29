@@ -2,31 +2,47 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller; 
-use App\Models\SettingsAdmin;
+use App\Models\Settings;
 use Illuminate\Http\Request;
+use Auth;
 
 class AdminSettingsController extends Controller
 {
-    public function index()
+    public function edit()
     {
-        // Lấy tất cả các cài đặt từ cơ sở dữ liệu
-        $settings = SettingsAdmin::pluck('value', 'key'); // Lấy giá trị theo key
-
-        return view('admin.settings_admin', compact('settings'));
+        $user = Auth::user();
+        if ($user->is_admin) { // Giả sử bạn có một cột `is_admin` trong bảng users
+            // Hiển thị thông tin cài đặt cho admin
+            return view('settings.admin_edit', compact('user'));
+        }
+        return view('settings.edit', compact('user'));
     }
 
     public function update(Request $request)
     {
-        // Xác thực dữ liệu đầu vào
         $request->validate([
-            'site_name' => 'required|string|max:255',
-            'contact_email' => 'required|email|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'nullable|string|max:15',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'password' => 'nullable|string|min:8|confirmed'
         ]);
 
-        // Cập nhật hoặc tạo mới các cài đặt
-        Setting::updateOrCreate(['key' => 'site_name'], ['value' => $request->site_name]);
-        Setting::updateOrCreate(['key' => 'contact_email'], ['value' => $request->contact_email]);
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
 
-        return redirect()->route('admin.settings')->with('success', 'Cài đặt đã được cập nhật!');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $user->image = $path;
+        }
+
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+        return redirect()->route('settings.edit')->with('status', 'Cài đặt đã được cập nhật!');
     }
 }

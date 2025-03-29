@@ -5,48 +5,46 @@ namespace App\Http\Controllers\Client\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 class LoginController extends Controller
 {
+    // Hiển thị form đăng nhập
     public function showLoginForm()
     {
-        return view('client.auth.login');
+        return view('Admin.settings.login');
     }
 
+    // Xử lý đăng nhập
     public function login(Request $request)
     {
-        // Validate dữ liệu đầu vào
-        $validated = $request->validate([
-            'email'    => 'required|email|max:255',
-            'password' => 'required|string|min:6|max:255',
-        ], [
-            'email.required'    => 'Email không được để trống.',
-            'email.email'       => 'Email không hợp lệ.',
-            'email.max'         => 'Email không được vượt quá 255 ký tự.',
-            'password.required' => 'Mật khẩu không được để trống.',
-            'password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.',
-            'password.max'      => 'Mật khẩu không được vượt quá 255 ký tự.',
+        // Validate thông tin đăng nhập
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
         ]);
 
-        // Kiểm tra đăng nhập
-        if (Auth::attempt($validated)) {
-            $user = Auth::user();
-
-            if ($user->role_id == 3) {
-                return redirect()->route('client.home');
-            }
-
-            Auth::logout();
-            return redirect()->route('client.home')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
+        // Cố gắng đăng nhập
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ], $request->remember)) {
+            // Nếu đăng nhập thành công, chuyển hướng đến trang trước đó hoặc trang mặc định
+            return redirect()->intended(route('admin.dashboard'));
         }
 
-        return back()->withErrors(['email' => 'Thông tin đăng nhập không chính xác.']);
+        // Nếu đăng nhập thất bại, quay lại form đăng nhập với thông báo lỗi
+        return back()->withErrors([
+            'email' => 'Thông tin đăng nhập không chính xác.',
+        ]);
     }
 
-
-    public function logout()
+    // Đăng xuất
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('client.home');
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
