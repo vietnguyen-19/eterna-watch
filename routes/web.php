@@ -21,8 +21,8 @@ use App\Http\Controllers\Admin\AdminSettingsController;
 
 
 use App\Http\Controllers\Admin\ArticleController;
-
-
+use App\Http\Controllers\Admin\DashboardController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,3 +125,4 @@ Route::prefix('admin')->group(function () {
     Route::get('/admin/settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
     Route::post('/admin/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
 });
+
