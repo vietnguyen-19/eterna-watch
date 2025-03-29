@@ -40,13 +40,15 @@
                                             </div>
 
                                             <!-- Email -->
-                                            <div class="mb-3 col-12">
-                                                <label for="email" class="form-label">Email</label>
-                                            <input value="{{ old('email', $user->email) }}" name="email" type="email"
-                                                id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Nhập email">
-                                                @error('email')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                                        id="email" name="email" value="{{ old('email', $user->email) }}" required>
+                                                    @error('email')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
                                             </div>
 
                                             <!-- Số điện thoại -->
@@ -127,7 +129,7 @@
                                                 @error('note')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
-                                        </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -252,7 +254,7 @@
                                 <div class="hstack gap-2 justify-content-left">
                                 <button type="submit" class="btn btn-success">Cập nhật tài khoản</button>
                                     <a href="{{ route('admin.users.index') }}" class="btn btn-light">Đóng</a>
-                            </div>
+                                </div>
                             </div>
                         </div>
                     </div>

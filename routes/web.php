@@ -21,8 +21,8 @@ use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Client\Auth\LoginController;
 
 use App\Http\Controllers\Admin\ArticleController;
-
-
+use App\Http\Controllers\Admin\DashboardController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------

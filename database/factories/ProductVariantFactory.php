@@ -23,6 +23,7 @@ class ProductVariantFactory extends Factory
             'price' => $this->faker->randomFloat(2, 100, 1000),
             'stock' => $this->faker->numberBetween(10, 100),
             'image' => 'products/product' . rand(1,36) . '.jpeg',
+            'status' => 'in_stock'
         ];
     }
 }
