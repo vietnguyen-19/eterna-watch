@@ -69,6 +69,7 @@ class ProductVariantController extends Controller
                 'price' => $variant['price'],
                 'stock' => $variant['stock'],
                 'image' => $variant['image'],
+                'status' =>'in_stock'
             ];
 
 
@@ -162,6 +163,7 @@ class ProductVariantController extends Controller
                     'sku'   => $newVariant['sku'],
                     'price' => $newVariant['price'],
                     'stock' => $newVariant['stock'],
+                    'status' => 'in_stock',
                 ];
 
                 // Xử lý ảnh cho biến thể mới
