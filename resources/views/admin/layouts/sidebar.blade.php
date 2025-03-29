@@ -293,16 +293,16 @@
                     <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <!-- Danh sách bài viết -->
                         <li class="nav-item">
-                            <a href="{{ route('admin.articles.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.articles.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.posts.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.posts.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách bài viết</p>
                             </a>
                         </li>
                         <!-- Thêm bài viết mới -->
                         <li class="nav-item">
-                            <a href="{{ route('admin.articles.create') }}"
-                                class="nav-link {{ Request::routeIs('admin.articles.create') ? 'active' : '' }}">
+                            <a href="{{ route('admin.posts.create') }}"
+                                class="nav-link {{ Request::routeIs('admin.posts.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-plus"></i>
                                 <p>Thêm bài viết mới</p>
                             </a>
@@ -312,7 +312,7 @@
 
                 <li class="nav-item">
 
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> //chú ý dòng này
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> 
 
 
                     <a href="#" class="nav-link">
@@ -337,6 +337,5 @@
 
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
 </aside>

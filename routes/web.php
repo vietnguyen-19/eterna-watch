@@ -35,10 +35,10 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 Route::prefix('admin')->group(function () {
-        Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
-        Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
-        Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
-      
+    Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
+    Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
+    Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
+
     // Danh mục
     Route::prefix('categories')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
@@ -149,8 +149,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
-   
 
+    Route::resource('posts', PostController::class)->names('admin.posts');
+    
     Route::resource('roles', RoleController::class);
 });
 
@@ -195,5 +196,3 @@ Route::prefix('admin/articles')->group(function () {
     Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy');
     Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
 });
-
-Route::resource('posts', PostController::class)->names('admin.posts');
