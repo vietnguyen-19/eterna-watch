@@ -5,7 +5,6 @@
         <div class="mb-4"></div>
         <section class="my-account container py-5">
             <div class="row">
-
                 <div class="col-lg-3">
                     <div class="user-info mb-3"
                         style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">

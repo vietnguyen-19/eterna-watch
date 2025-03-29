@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Role;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -32,9 +33,11 @@ class UserFactory extends Factory
             'gender' => $this->faker->randomElement(['male', 'female', 'other']),
             'avatar' => 'avatar/avatar' . rand(1,15) . '.jpeg',
             'note' => $this->faker->paragraph,
-            'role_id' => rand(2,3), // Tạo role mẫu cho người dùng
+            'role_id' => 3, // Tạo role mẫu cho người dùng
             'status' => $this->faker->randomElement(['active', 'inactive', 'banned']),
             'email_verified_at' => now(),
+            'created_at' => $createdAt = Carbon::createFromTimestamp(mt_rand($start = Carbon::create(2020, 1, 1)->timestamp, Carbon::now()->timestamp)),
+            'updated_at' => $createdAt = now(),
         ];
     }
 
@@ -47,4 +50,5 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+    
 }

@@ -102,6 +102,9 @@ class PaymentController extends Controller
                 ]);
 
                 $variant->decrement('stock', $item['quantity']);
+                if ($variant->stock <= 0) {
+                    $variant->update(['status' => 'out_of_stock']);
+                }
             }
 
             // Cập nhật voucher nếu có

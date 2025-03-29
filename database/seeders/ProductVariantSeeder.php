@@ -83,6 +83,7 @@ class ProductVariantSeeder extends Seeder
                     'price'      => $price,
                     'stock'      => $stock,
                     'image'      => $image,
+                    'status' => 'in_stock',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -90,8 +91,6 @@ class ProductVariantSeeder extends Seeder
                 // Lưu variant_id để dùng cho bước tiếp theo
                 $variants[$variant_id] = $selectedValues;
             }
-
-            // Bước 4: Gán giá trị thuộc tính cho từng biến thể
             foreach ($variants as $variant_id => $selectedValues) {
                 foreach ($selectedValues as $attribute_value_id) {
                     DB::table('variant_attributes')->insert([

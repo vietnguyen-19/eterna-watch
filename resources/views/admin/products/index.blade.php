@@ -46,7 +46,6 @@
                                                 <th class="sort" data-sort="action">Hành động</th>
                                             </tr>
                                         </thead>
-
                                         <tbody class="list form-check-all">
                                             @foreach ($data as $product)
                                                 <tr>
