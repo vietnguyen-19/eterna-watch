@@ -47,42 +47,41 @@
             </form>
         </div>
     </div>
-    <<<<<<< HEAD=======</div>
-        >>>>>>> 7a1b9543a606d606d0ba582c363b42f59857daf1
-    @endsection
-    @section('script-lib')
-        <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
-        <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js">
-        </script>
-        <script src="{{ asset('theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
-        <script src="{{ asset('theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
 
-        <!--ecommerce-customer init js -->
-        <script src="{{ asset('theme/velzon/assets/js/pages/ecommerce-customer-list.init.js') }}"></script>
+@endsection
+@section('script-lib')
+    <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
+    <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js">
+    </script>
+    <script src="{{ asset('theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
+    <script src="{{ asset('theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
 
-        <!-- Sweet Alerts js -->
-        <script src="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-    @endsection
-    @section('script')
-        <script>
-            document.getElementById('name').addEventListener('input', function() {
-                // Lấy giá trị từ ô nhập liệu Tên danh mục
-                var tenDanhMuc = this.value;
+    <!--ecommerce-customer init js -->
+    <script src="{{ asset('theme/velzon/assets/js/pages/ecommerce-customer-list.init.js') }}"></script>
 
-                // Chuyển đổi Tên danh mục thành Slug
-                var slug = tenDanhMuc.toLowerCase()
-                    .normalize('NFD') // Chuẩn hóa Unicode để xử lý các ký tự tiếng Việt
-                    .replace(/[\u0300-\u036f]/g, '') // Xóa các dấu phụ
-                    .replace(/[^a-z0-9\s-]/g, '') // Xóa các ký tự đặc biệt không phải chữ cái Latin hoặc số
-                    .replace(/\s+/g, '-') // Thay thế khoảng trắng bằng dấu gạch ngang
-                    .replace(/-+/g, '-'); // Loại bỏ các dấu gạch ngang thừa
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+@endsection
+@section('script')
+    <script>
+        document.getElementById('name').addEventListener('input', function() {
+            // Lấy giá trị từ ô nhập liệu Tên danh mục
+            var tenDanhMuc = this.value;
 
-                // Gán giá trị Slug vào ô nhập liệu Slug
-                document.getElementById('slug').value = slug;
-            });
-        </script>
-    @endsection
-    @section('style')
-        <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
-            type="text/css" />
-    @endsection
+            // Chuyển đổi Tên danh mục thành Slug
+            var slug = tenDanhMuc.toLowerCase()
+                .normalize('NFD') // Chuẩn hóa Unicode để xử lý các ký tự tiếng Việt
+                .replace(/[\u0300-\u036f]/g, '') // Xóa các dấu phụ
+                .replace(/[^a-z0-9\s-]/g, '') // Xóa các ký tự đặc biệt không phải chữ cái Latin hoặc số
+                .replace(/\s+/g, '-') // Thay thế khoảng trắng bằng dấu gạch ngang
+                .replace(/-+/g, '-'); // Loại bỏ các dấu gạch ngang thừa
+
+            // Gán giá trị Slug vào ô nhập liệu Slug
+            document.getElementById('slug').value = slug;
+        });
+    </script>
+@endsection
+@section('style')
+    <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
+        type="text/css" />
+@endsection

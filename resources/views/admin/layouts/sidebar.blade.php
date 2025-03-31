@@ -16,10 +16,9 @@
                     <li style="background-color: rgb(86, 86, 86); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <img src=" {{ asset('theme/admin/dist/img/avatar.png') }}" class="nav-icon rounded-circle me-2"
-                                alt="User Image" width="100%">
 
-
+                            <img src=" {{ asset('theme\admin\dist\img\avatar.png') }}"
+                                class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
                             <p class="fw-semibold ml-2">Alexander Pierce</p>
 
                         </a>
@@ -50,11 +49,12 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
+            
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="nav-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.dashboard.revenue')}}"
+                        class="nav-link {{ Request::routeIs('admin.dashboard.revenue') ? 'active' : '' }}">
                         <i class="nav-icon fa-solid fa-square-poll-vertical"></i>
                         <p>Dashboard</p>
                     </a>
@@ -86,7 +86,6 @@
                         </li>
                     </ul>
                 </li>
-
                 <!-- quản lý banner -->
                 <li class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
@@ -153,14 +152,14 @@
                     </a>
                     <ul class="text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.index') }}" 
+                            <a href="{{ route('admin.users.index') }}"
                                class="nav-link {{ Request::routeIs('admin.users.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.create') }}" 
+                            <a href="{{ route('admin.users.create') }}"
                                class="nav-link {{ Request::routeIs('admin.users.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Thêm mới</p>
@@ -264,7 +263,8 @@
                     </a>
                     <ul class="text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.roles.index') }}" class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.roles.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách vai trò</p>
                             </a>
@@ -272,19 +272,13 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.roles.create') }}"
-                               class="nav-link {{ Request::routeIs('admin.roles.create') ? 'active' : '' }}">
+                                class="nav-link {{ Request::routeIs('admin.roles.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Thêm vai trò mới</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
-
-
-                {{-- Order --}}
-
-
 
                 {{-- Bình luận --}}
                 <li class="nav-item {{ Request::is('admin/comments*') ? 'menu-open' : '' }}">
@@ -318,14 +312,14 @@
                     <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <!-- Danh sách bài viết -->
                         <li class="nav-item">
-                            <a href="{{ route('admin.articles.index') }}" class="nav-link {{ Request::routeIs('admin.articles.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.posts.index') }}" class="nav-link {{ Request::routeIs('admin.posts.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
                                 <p>Danh sách bài viết</p>
                             </a>
                         </li>
                         <!-- Thêm bài viết mới -->
                         <li class="nav-item">
-                            <a href="{{ route('admin.articles.create') }}" class="nav-link {{ Request::routeIs('admin.articles.create') ? 'active' : '' }}">
+                            <a href="{{ route('admin.posts.create') }}" class="nav-link {{ Request::routeIs('admin.posts.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-plus"></i>
                                 <p>Thêm bài viết mới</p>
                             </a>
@@ -333,12 +327,11 @@
                     </ul>
                 </li>
 
-                {{-- <li class="nav-item">
+                <li class="nav-item">
+                    {{-- Order --}}
+                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> 
 
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}"> //chú ý dòng này
-
-
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('admin.orders.index') }}  " class="nav-link">
                         <i class="nav-icon fa-solid fa-layer-group"></i>
                         <p>
                             Đơn hàng
@@ -357,10 +350,9 @@
 
                     </ul>
                 </li>
-                --}}
+               
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>
