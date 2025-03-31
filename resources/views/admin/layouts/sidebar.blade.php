@@ -123,7 +123,6 @@
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
-
                     <ul class="text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.vouchers.index') }}"
@@ -143,35 +142,33 @@
                 </li>
 
                 <!--Khách hàng-->
+                <!-- Tài khoản -->
                 <li class="nav-item {{ Request::is('admin/users*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fa-solid fa-user"></i>
+                    <a href="#" class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-users"></i>
                         <p>
                             Tài khoản
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
-
                     <ul class="text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.index', ['id' => 2]) }}"
-                                class="nav-link {{ Request::routeIs('admin.users.index') && request()->id == 2 ? 'active' : '' }}">
+                            <a href="{{ route('admin.users.index') }}" 
+                               class="nav-link {{ Request::routeIs('admin.users.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Nhân viên</p>
+                                <p>Danh sách</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.index', ['id' => 3]) }}"
-                                class="nav-link {{ Request::routeIs('admin.users.index') && request()->id == 3 ? 'active' : '' }}">
+                            <a href="{{ route('admin.users.create') }}" 
+                               class="nav-link {{ Request::routeIs('admin.users.create') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Khách hàng</p>
+                                <p>Thêm mới</p>
                             </a>
                         </li>
-
-
                     </ul>
-
                 </li>
+
                 <li
                     class="nav-item {{ Request::is('admin/products*') || Request::is('admin/attributes*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
@@ -360,11 +357,7 @@
 
                     </ul>
                 </li>
-<<<<<<< HEAD
-=======
                 --}}
->>>>>>> ba2f4aa3d67c96b42c5c5e374d333790ab22ec07
-
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
