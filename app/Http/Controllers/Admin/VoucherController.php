@@ -45,6 +45,7 @@ class VoucherController extends Controller
     {
         $voucher->update($request->validated());
 
+
         return redirect()->route('admin.vouchers.index')
         ->with('thongbao', [
             'type' => 'success',
