@@ -18,8 +18,6 @@ use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\AdminSettingsController;
-use App\Http\Controllers\Client\Auth\LoginController;
-
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -121,14 +119,18 @@ Route::prefix('admin')->group(function () {
 
     // đơn hàng
     Route::resource('orders', OrderController::class)->names('admin.orders');
+
+
     //settings
-    Route::middleware(['auth'])->group(function() {
-        Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
-        Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+    Route::middleware('auth')->group(function () {
+        // Route cho người dùng
+        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
+        
+        // Route cho admin
+        Route::post('/settings/admin', [AdminSettingsController::class, 'adminUpdate'])
+            ->name('settings.admin')
+            ->middleware('admin');
     });
-    //login
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
