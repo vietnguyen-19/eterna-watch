@@ -125,3 +125,4 @@ Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.
 Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');
 
 Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
+
