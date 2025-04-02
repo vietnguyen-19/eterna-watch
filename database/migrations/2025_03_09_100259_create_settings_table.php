@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('password');
-            $table->string('image')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('language')->default('vi'); // Ngôn ngữ mặc định là tiếng Việt
+            // Cài đặt thông báo
+            $table->boolean('notification_email')->default(true);
+            $table->boolean('notification_sms')->default(false);
+            $table->boolean('notification_app')->default(true);
+            // Cài đặt quyền riêng tư
+            $table->string('privacy_profile')->default('public'); // public/friends/private
+            $table->string('privacy_contact')->default('public');
+            // Cài đặt giao diện
+            $table->string('theme')->default('light'); // light/dark
+            $table->string('layout')->default('default');
             $table->timestamps();
         });
     }

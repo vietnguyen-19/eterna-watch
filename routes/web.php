@@ -11,18 +11,17 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\ImageController; 
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\AdminSettingsController;
-use App\Http\Controllers\Client\Auth\LoginController;
-
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Client\ClientSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +40,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
-
+    Route::get('/dashboard/revenue', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
     // danh mục
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
@@ -121,14 +120,15 @@ Route::prefix('admin')->group(function () {
 
     // đơn hàng
     Route::resource('orders', OrderController::class)->names('admin.orders');
-    //settings
-    Route::middleware(['auth'])->group(function() {
-        Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
-        Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
-    });
-    //login
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-});
 
+
+    //settings
+    // Route admin
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
+    Route::get('/support', [AdminSettingsController::class, 'index'])->name('support');
+    
+    
+});
+Route::get('user/settings', [ClientSettingsController::class, 'index'])->name('client.settings.index');
+Route::post('user/settings', [ClientSettingsController::class, 'store'])->name('client.settings.store');
