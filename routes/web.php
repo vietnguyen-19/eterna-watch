@@ -11,17 +11,17 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\ImageController; 
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
-
-
+use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Client\ClientSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,30 +51,12 @@ Route::prefix('admin')->group(function () {
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
 });
-
-//test git
-Route::prefix('admin')->group(function () {
-    Route::resource('brands', BrandController::class)->names([
-        'index' => 'admin.brands.index',
-        'create' => 'admin.brands.create',
-        'store' => 'admin.brands.store',
-        'show' => 'admin.brands.show',
-        'edit' => 'admin.brands.edit',
-        'update' => 'admin.brands.update',
-        'destroy' => 'admin.brands.destroy',
-    ]);
-
-
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('admin.users.index'); // Hiển thị tất cả người dùng
-        Route::get('create', [UserController::class, 'create'])->name('admin.users.create'); // Form tạo mới người dùng
-        Route::post('store', [UserController::class, 'store'])->name('admin.users.store'); // Lưu người dùng mới
-        Route::get('show/{id}', [UserController::class, 'show'])->name('admin.users.show'); // Xem thông tin người dùng
-        Route::get('{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit'); // Form chỉnh sửa người dùng
-        Route::put('{id}/update', [UserController::class, 'update'])->name('admin.users.update'); // Cập nhật thông tin người dùng
-        Route::delete('{id}/destroy', [UserController::class, 'destroy'])->name('admin.users.destroy'); // Xóa người dùng
-    });
-
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+    Route::get('/dashboard/revenue', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
+    // danh mục
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 
     Route::prefix('admin')->group(function () {
         Route::resource('roles', RoleController::class)->names([
@@ -150,44 +132,19 @@ Route::prefix('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
-    Route::resource('vouchers', VoucherController::class)->names('admin.vouchers');
-    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
 
-    Route::resource('roles', RoleController::class);
+    // đơn hàng
+    Route::resource('orders', OrderController::class)->names('admin.orders');
+
+
+    //settings
+    // Route admin
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
+    Route::get('/support', [AdminSettingsController::class, 'index'])->name('support');
+    
+    
 });
+Route::get('user/settings', [ClientSettingsController::class, 'index'])->name('client.settings.index');
+Route::post('user/settings', [ClientSettingsController::class, 'store'])->name('client.settings.store');
 
-Route::prefix('banners')->group(function () {
-    Route::get('/', [BannerController::class, 'index'])->name('admin.banners.index');
-    Route::get('/create', [BannerController::class, 'create'])->name('admin.banners.create');
-    Route::post('/', [BannerController::class, 'store'])->name('admin.banners.store');
-    Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('admin.banners.edit');
-    Route::put('/{id}', [BannerController::class, 'update'])->name('admin.banners.update');
-    Route::delete('/{id}', [BannerController::class, 'destroy'])->name('admin.banners.destroy');
-});
-
-// Order
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
-    Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
-    Route::patch('/{id}/update ', [OrderController::class, 'update'])->name('admin.orders.update');
-    Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
-});
-
-
-// Bình luận
-Route::prefix('comments')->group(function () {
-    Route::get('/', [CommentController::class, 'index'])->name('admin.comments.index');
-    // Route::get('create', [CommentController::class, 'create'])->name('admin.comments.create');
-    // Route::post('store', [CommentController::class, 'store'])->name('admin.comments.store');
-    Route::get('show/{id}', [CommentController::class, 'show'])->name('admin.comments.show');
-    Route::get('{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
-    Route::put('{id}/update', [CommentController::class, 'update'])->name('admin.comments.update');
-    Route::get('{id}/destroy', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
-});
-
-
-Route::resource('roles', RoleController::class);
-
-
-
-Route::resource('posts', PostController::class)->names('admin.posts');
