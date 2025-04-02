@@ -52,13 +52,13 @@
             
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{ route('admin.dashboard.revenue')}}"
                         class="nav-link {{ Request::routeIs('admin.dashboard.revenue') ? 'active' : '' }}">
                         <i class="nav-icon fa-solid fa-square-poll-vertical"></i>
                         <p>Dashboard</p>
                     </a>
-                </li> -->
+                </li>
 
                 <li class="nav-item {{ Request::is('admin/categories*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">

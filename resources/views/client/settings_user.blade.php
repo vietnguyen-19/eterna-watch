@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+@extends('client.layouts.master')
 @section('content')
 <div class="container">
     <h2>Cài đặt</h2>
@@ -7,7 +7,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('settings.store') }}">
+    <form method="POST" action="{{ route('client.settings.store') }}">
         @csrf
         
         <!-- Cài đặt ngôn ngữ -->

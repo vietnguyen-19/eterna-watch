@@ -62,22 +62,22 @@
             <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
                 <div class="logo">
                     <a href="index.html">
-                        <img width="90%" src="{{ Storage::url($settings['logo_url']) }}" alt="Uomo"
+                        <img width="90%" src="{{ Storage::url($settings['logo_url'] ?? 'default/logo.png') }}" alt="Uomo"
                             class="logo__image d-block">
                     </a>
                 </div><!-- /.logo -->
-                <p class="footer-address fs-13">{{ $settings['company_address'] }}</p>
+                <p class="footer-address fs-13">{{ $settings['company_address'] ?? 'Chưa cập nhật địa chỉ' }}</p>
 
                 <p class="m-0">
-                    <strong class="fw-normal fs-13">{{ $settings['company_email'] }}</strong>
+                    <strong class="fw-normal fs-13">{{ $settings['company_email'] ?? 'Chưa cập nhật email' }}</strong>
                 </p>
                 <p>
-                    <strong class="fw-normal fs-13">{{ $settings['company_phone'] }}</strong>
+                    <strong class="fw-normal fs-13">{{ $settings['company_phone'] ?? 'Chưa cập nhật phone' }}</strong>
                 </p>
 
                 <ul class="social-links list-unstyled d-flex flex-wrap mb-0">
                     <li>
-                        <a href="{{ $settings['facebook_link'] }}" class="footer__social-link d-block">
+                        <a href="{{ $settings['facebook_link'] ?? '#'}}" class="footer__social-link d-block">
                             <svg class="svg-icon svg-icon_facebook" width="9" height="15" viewBox="0 0 9 15"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <use href="#icon_facebook" />
@@ -85,7 +85,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ $settings['twitter_link'] }}" class="footer__social-link d-block">
+                        <a href="{{ $settings['twitter_link'] ?? '#' }}" class="footer__social-link d-block">
                             <svg class="svg-icon svg-icon_twitter" width="14" height="13" viewBox="0 0 14 13"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <use href="#icon_twitter" />
@@ -93,7 +93,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ $settings['instagram_link'] }}" class="footer__social-link d-block">
+                        <a href="{{ $settings['instagram_link'] ?? '#' }}" class="footer__social-link d-block">
                             <svg class="svg-icon svg-icon_instagram" width="14" height="13" viewBox="0 0 14 13"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <use href="#icon_instagram" />

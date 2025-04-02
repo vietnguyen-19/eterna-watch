@@ -11,7 +11,7 @@ class AdminSettingsController extends Controller
     // Hiển thị form cài đặt
     public function index()
     {
-        $setting = new Setting();
+        $setting = Setting::firstOrNew(['id' => 1]);
         return view('admin.settings.index', compact('setting'));
     }
 

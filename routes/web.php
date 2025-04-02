@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Client\ClientSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
-
+    Route::get('/dashboard/revenue', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
     // danh mục
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
@@ -122,15 +123,12 @@ Route::prefix('admin')->group(function () {
 
 
     //settings
-    // Route cho người dùng
+    // Route admin
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
     Route::get('/support', [AdminSettingsController::class, 'index'])->name('support');
-
-    // Route cho admin
-    // Route::post('/settings', [AdminSettingsController::class, 'adminUpdate'])
-    //     ->name('settings.admin')
-    //     ->middleware('admin');
+    
     
 });
-
+Route::get('user/settings', [ClientSettingsController::class, 'index'])->name('client.settings.index');
+Route::post('user/settings', [ClientSettingsController::class, 'store'])->name('client.settings.store');

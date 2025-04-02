@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
-// Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
-// Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
+Route::post('/login', [LoginController::class, 'login']);
 
 // Route::post('/logout', [LoginController::class, 'logout'])->name('client.logout');
 Route::get('/dashboard', function () {
@@ -116,7 +116,10 @@ Route::prefix('account')->group(function () {
     Route::post('/upload-image', [AccountController::class, 'uploadImage']);
     Route::post('/remove-image', [AccountController::class, 'removeImage']);
 
+
 });
+
+    
 
 Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
 Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');
