@@ -23,10 +23,10 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
-Route::post('/login', [LoginController::class, 'login']);
+// Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
+// Route::post('/login', [LoginController::class, 'login']);
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('client.logout');
+// Route::post('/logout', [LoginController::class, 'logout'])->name('client.logout');
 Route::get('/dashboard', function () {
     return view('client.dashboard');
 })->name('client.dashboard');

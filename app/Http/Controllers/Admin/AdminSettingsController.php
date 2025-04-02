@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller; 
-use App\Models\Settings;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -11,8 +11,8 @@ class AdminSettingsController extends Controller
     // Hiển thị form cài đặt
     public function index()
     {
-        $setting = Auth::user()->setting ?? new Setting();
-        return view('settings.index', compact('setting'));
+        $setting = new Setting();
+        return view('admin.settings.index', compact('setting'));
     }
 
     
@@ -30,7 +30,7 @@ class AdminSettingsController extends Controller
             'layout' => 'required|in:default,compact,wide'
         ]);
         $setting = Setting::updateOrCreate(
-            ['user_id' => Auth::id()],
+            ['user_id' => 1],
             $request->only([
                 'language',
                 'notification_email',

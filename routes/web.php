@@ -122,18 +122,15 @@ Route::prefix('admin')->group(function () {
 
 
     //settings
-    Route::middleware('auth')->group(function () {
-        // Route cho người dùng
-        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
-        
-        // Route cho admin
-        // Route::post('/settings/admin', [AdminSettingsController::class, 'adminUpdate'])
-        //     ->name('settings.admin')
-        //     ->middleware('admin');
-    });
-    Route::get('/test', function () {
-        return "Hello World";
-    });
+    // Route cho người dùng
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
+    Route::get('/support', [AdminSettingsController::class, 'index'])->name('support');
+
+    // Route cho admin
+    // Route::post('/settings', [AdminSettingsController::class, 'adminUpdate'])
+    //     ->name('settings.admin')
+    //     ->middleware('admin');
+    
 });
 

@@ -6,7 +6,7 @@
     @if(session('status'))
         <div class="alert alert-success">{{ session('status') }}</div>
     @endif
-    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('store.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label for="name">Tên</label>
