@@ -21,7 +21,7 @@ class OrderFactory extends Factory
         $voucher = Voucher::inRandomOrder()->first(); // Lấy voucher ngẫu nhiên (có thể null)
         $start = $user->created_at->timestamp;
         $end = now()->subDays(7)->timestamp; // Giới hạn tối đa là 7 ngày trước hiện tại
-        $createdAt = Carbon::createFromTimestamp(mt_rand($start, $end));
+        $createdAt = Carbon::createFromTimestamp(rand($start, $end));
         return [
             'order_code' => 'ORD-' . now()->format('Ymd') . '-' . Str::upper(Str::random(4)),
             'user_id' => $user->id,

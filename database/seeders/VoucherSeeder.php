@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 
 class VoucherSeeder extends Seeder
 {
-    
+
     public function run()
     {
         $vouchers = [
