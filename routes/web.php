@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\ImageController; 
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CommentController;
@@ -128,9 +128,12 @@ Route::prefix('admin')->group(function () {
         Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
         
         // Route cho admin
-        Route::post('/settings/admin', [AdminSettingsController::class, 'adminUpdate'])
-            ->name('settings.admin')
-            ->middleware('admin');
+        // Route::post('/settings/admin', [AdminSettingsController::class, 'adminUpdate'])
+        //     ->name('settings.admin')
+        //     ->middleware('admin');
+    });
+    Route::get('/test', function () {
+        return "Hello World";
     });
 });
 
