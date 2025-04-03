@@ -47,7 +47,7 @@ Route::prefix('admin')->group(function () {
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
-});
+//});
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
