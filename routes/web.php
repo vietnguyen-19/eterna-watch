@@ -18,9 +18,8 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
-
-
-
+use App\Http\Controllers\Client\Auth\LoginController;
+use App\Http\Middleware\AdminAuth;
 
 /*
 |--------------------------------------------------------------------------
@@ -153,8 +152,8 @@ Route::prefix('admin')->group(function () {
 
     //settings
     Route::middleware(['auth'])->group(function () {
-        Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
-        Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+        Route::get('/settings', [AdminAuth::class, 'edit'])->name('admin.settings.edit');
+        Route::post('/settings', [AdminAuth::class, 'update'])->name('admin.settings.update');
     });
 
     //login
