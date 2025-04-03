@@ -90,25 +90,23 @@ class BannerController extends Controller
 
 
 
-  public function destroy($id)
-{
-    $banner = Banner::findOrFail($id);
+    public function destroy($id)
+    {
+        $banner = Banner::findOrFail($id);
 
-    if (!empty($banner->image_link)) {
-        $imagePath = public_path($banner->image_link);
+        if (!empty($banner->image_link)) {
+            $imagePath = public_path($banner->image_link);
 
-        if (file_exists($imagePath)) {
-            unlink($imagePath);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
         }
+
+        $banner->delete();
+
+        return redirect()->route('admin.banners.index')->with('thongbao', [
+            'type' => 'danger',
+            'message' => 'Banner đã bị xóa thành công!'
+        ]);
     }
-
-    $banner->delete();
-
-    return redirect()->route('admin.banners.index')->with('thongbao', [
-        'type' => 'danger',
-        'message' => 'Banner đã bị xóa thành công!'
-    ]);
-}
-
-
 }

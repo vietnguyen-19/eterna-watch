@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
@@ -11,17 +10,15 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\ImageController; 
+use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
-use App\Http\Controllers\Admin\AdminSettingsController;
-use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
-use App\Http\Controllers\Client\ClientSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +52,8 @@ Route::prefix('admin')->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
     Route::get('/dashboard/revenue', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
+    Route::get('/dashboard/customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
+    Route::get('/dashboard/stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
     // danh mục
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
@@ -138,13 +137,8 @@ Route::prefix('admin')->group(function () {
 
 
     //settings
-    // Route admin
-    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [AdminSettingsController::class, 'store'])->name('settings.store');
-    Route::get('/support', [AdminSettingsController::class, 'index'])->name('support');
-    
-    
+    Route::resource('settings', SettingController::class)->names('admin.settings');
+
 });
-Route::get('user/settings', [ClientSettingsController::class, 'index'])->name('client.settings.index');
-Route::post('user/settings', [ClientSettingsController::class, 'store'])->name('client.settings.store');
+
 
