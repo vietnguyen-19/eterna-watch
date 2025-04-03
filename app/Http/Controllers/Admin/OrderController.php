@@ -14,23 +14,36 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-   
+
     public function index(Request $request)
     {
-        $status = $request->query('status');
+        $status = $request->input('status', 'all');
 
-        $query = Order::with('user', 'orderItems')->latest('id');
+        // Đếm số lượng đơn hàng theo trạng thái
+        $statusCounts = Order::selectRaw("status, COUNT(*) as count")
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
 
-        if ($status) {
-            $query->where('status', $status);
+        // Đảm bảo tất cả trạng thái đều có giá trị
+        $allStatuses = ['pending', 'confirmed', 'processing', 'completed', 'cancelled'];
+        foreach ($allStatuses as $s) {
+            $statusCounts[$s] = $statusCounts[$s] ?? 0;
         }
 
-        $data = $query->get();
+        // Đếm tổng số đơn hàng
+        $statusCounts['all'] = array_sum($statusCounts);
 
-        return view('admin.order.index', [
-            'data' => $data,
-            'filterStatus' => $status
-        ]);
+        // Lấy danh sách đơn hàng theo trạng thái
+        $orders = Order::with('orderItems')
+            ->when($status !== 'all', function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.orders.index',
+             compact('orders', 'statusCounts', 'status'));
     }
 
 

@@ -25,10 +25,10 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                    {{-- <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.orders.create') }}" class="btn btn-success add-btn"><i
                                                 class="ri-add-line align-bottom me-1"></i>Thêm đơn hàng mới</a>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -67,17 +67,64 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-
+                                        <!-- Tabs trạng thái đơn hàng -->
+                                        <ul class="nav nav-tabs nav-tabs-custom">
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'all' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'all']) }}">
+                                                    Tất cả
+                                                    <span
+                                                        class="badge rounded-pill bg-dark">{{ $statusCounts['all'] }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'pending']) }}">
+                                                    Đơn mới
+                                                    <span
+                                                        class="badge rounded-pill bg-danger text-dark">{{ $statusCounts['pending'] }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'confirmed' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'confirmed']) }}">
+                                                    Đã xác nhận
+                                                    <span
+                                                        class="badge rounded-pill bg-warning text-dark">{{ $statusCounts['confirmed'] }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'processing' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'processing']) }}">
+                                                    Đang chuẩn bị
+                                                    <span
+                                                        class="badge rounded-pill bg-primary">{{ $statusCounts['processing'] }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'completed' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'completed']) }}">
+                                                    Hoàn thành
+                                                    <span
+                                                        class="badge rounded-pill bg-success">{{ $statusCounts['completed'] }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ $status === 'cancelled' ? 'active' : '' }}"
+                                                    href="{{ route('admin.orders.index', ['status' => 'cancelled']) }}">
+                                                    Đã hủy
+                                                    <span
+                                                        class="badge rounded-pill bg-danger">{{ $statusCounts['cancelled'] }}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                         <table class="table table-bordered" aria-describedby="example2_info"
                                             id="danhmucTable">
 
                                             <thead class="text-muted">
                                                 <tr>
-                                                    <th style="width: 4%">
-                                                        <input type="checkbox" id="checkAll" class="align-middle">
-                                                    </th>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="ten_user">Mã đơn hàng</th>
+                                                    <th class="sort" data-sort="order_code">Mã đơn hàng</th>
                                                     <th class="sort" data-sort="ten_user">Khách hàng</th>
                                                     <th class="sort" data-sort="tong_tien">Tổng tiền</th>
                                                     <th class="sort" data-sort="trang_thai">Trang thái</th>
@@ -86,15 +133,12 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($data as $item)
+                                                @foreach ($orders as $item)
                                                     <tr>
-                                                        <td class="align-middle">
-                                                            <input type="checkbox" class="checkbox-item"
-                                                                value="{{ $item->id }}">
-                                                        </td>
+
                                                         <td class="id">{{ $item->id }}</td>
                                                         <td class="align-middle">
-                                                            <strong>{{ $order->order_code }}</strong>
+                                                            <strong>{{ $item->order_code }}</strong>
                                                         </td>
                                                         <td class="ten_user">
                                                             {{ $item->user->name ?? 'Khách vãng lai' }}
@@ -103,7 +147,6 @@
                                                             {{ number_format($item->total_amount, 0, ',', '.') }}Đ
                                                         </td>
 
-                                                        <td class="trang_thai">
                                                         <td class="align-middle">
                                                             @switch($item->status)
                                                                 @case('pending')
@@ -127,22 +170,23 @@
                                                                     <span class="badge bg-secondary">Không xác định</span>
                                                             @endswitch
                                                         </td>
-                                                        </td>
+
+
                                                         <td class="created_at"> {{ $item->created_at->format('d/m/Y') }}
                                                         </td>
 
                                                         <td class="align-middle">
                                                             <div class="btn-group">
-                                                                <a href="{{ route('admin.orders.show', $order->id) }}"
+                                                                <a href="{{ route('admin.orders.show', $item->id) }}"
                                                                     class="btn btn-info btn-sm">
                                                                     Chi tiết
                                                                 </a>
-                                                                <a href="{{ route('admin.orders.edit', $order->id) }}"
+                                                                <a href="{{ route('admin.orders.edit', $item->id) }}"
                                                                     class="btn btn-dark btn-sm">
                                                                     Sửa
                                                                 </a>
                                                                 <form
-                                                                    action="{{ route('admin.orders.destroy', $order->id) }}"
+                                                                    action="{{ route('admin.orders.destroy', $item->id) }}"
                                                                     method="POST" class="d-inline-block">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -158,11 +202,8 @@
                                             </tbody>
                                             <thead class="text-muted">
                                                 <tr>
-                                                    <th style="width: 4%">
-                                                        <input type="checkbox" id="checkAll" class="align-middle">
-                                                    </th>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="ten_user">Mã đơn hàng</th>
+                                                    <th class="sort" data-sort="order_code">Mã đơn hàng</th>
                                                     <th class="sort" data-sort="ten_user">Khách hàng</th>
                                                     <th class="sort" data-sort="tong_tien">Tổng tiền</th>
                                                     <th class="sort" data-sort="trang_thai">Trang thái</th>
@@ -186,9 +227,71 @@
 @section('script')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .nav-tabs-custom .nav-item .nav-link.active {
+            background-color: #007bff;
+            color: white !important;
+            border-radius: 4px;
+            font-weight: bold;
+        }
 
+        .nav-tabs-custom .nav-item .nav-link {
+            color: #007bff;
+            transition: background-color 0.3s;
+        }
+
+        .nav-tabs-custom .nav-item .nav-link:hover {
+            background-color: #e9ecef;
+        }
+
+        .btn.btn-outline-info:hover {
+            color: #fff;
+            /* Màu chữ khi hover */
+            background-color: #464d4e;
+            /* Màu nền khi hover */
+            border-color: #17a2b8;
+            /* Màu viền khi hover */
+        }
+    </style>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        // Mảng chứa các ID của các bảng cần áp dụng DataTable
+        var tableIds = [
+            'orderTableall',
+            'orderTablepending',
+            'orderTableprocessing',
+            'orderTableconfirmed',
+            'orderTablecompleted',
+            'orderTablecancelled',
+
+        ];
+
+        // Lặp qua từng ID và áp dụng DataTable
+        tableIds.forEach(function(tableId) {
+            $('#' + tableId).DataTable({
+                "paging": true,
+                "lengthMenu": [10, 20, 50],
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Trang đầu",
+                        "last": "Trang cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
+                    }
+                }
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function() {
             $('#danhmucTable').DataTable({
