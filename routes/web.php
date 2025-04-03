@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
+use App\Http\Controllers\NewsController;
 
 
 
@@ -122,4 +123,7 @@ Route::prefix('admin')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('admin.settings');
+
+    Route::get('/news', [NewsController::class, 'index'])->name('news.index'); // Danh sách tin tức
+Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show'); // Chi tiết tin tức
 });
