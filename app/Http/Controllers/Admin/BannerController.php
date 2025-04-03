@@ -106,7 +106,7 @@ class BannerController extends Controller
 
         return redirect()->route('admin.banners.index')->with('thongbao', [
             'type' => 'danger',
-            'message' => 'Banner đã bị xóa thành công!'
+            'message' => 'Xóa thành công banner!'
         ]);
     }
 }
