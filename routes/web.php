@@ -37,10 +37,9 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 Route::prefix('admin')->group(function () {
-
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
+    Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
+    Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
 
     // danh mục
     Route::resource('categories', CategoryController::class)->names('admin.categories');
@@ -49,7 +48,9 @@ Route::prefix('admin')->group(function () {
     Route::resource('banners', BannerController::class)->names('admin.banners');
 
     //voucher
-    Route::resource('vouchers', VoucherController::class)->names('admin.vouchers');
+    Route::resource('vouchers', VoucherController::class)->except(['show'])->names('admin.vouchers');
+    Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
+    Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
     Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
 
     // người dùng
@@ -119,8 +120,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
-<<<<<<< HEAD
-    Route::resource('roles', RoleController::class);
+
+    Route::resource('roles', RoleController::class)->names('admin.roles');
+
 
 
     // Banner
@@ -141,20 +143,20 @@ Route::prefix('admin')->group(function () {
         Route::put('/{voucher}', [VoucherController::class, 'update'])->name('admin.vouchers.update');
         Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
         Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
-        Route::post('/{voucher}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
-        Route::delete('/{voucher}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
-=======
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+    });
+
     // đơn hàng
     Route::resource('orders', OrderController::class)->names('admin.orders');
     //settings
-    Route::middleware(['auth'])->group(function() {
+    Route::middleware(['auth'])->group(function () {
         Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
         Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
->>>>>>> ab3d52d11b4045e4008aab86f53c17c56f2d350f
     });
+
     //login
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login']);
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
-

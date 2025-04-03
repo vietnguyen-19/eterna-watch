@@ -68,17 +68,16 @@ class VoucherController extends Controller
 
     // Thêm phương thức khôi phục
     public function restore($id)
-    {
-        $voucher = Voucher::onlyTrashed()->findOrFail($id);
-        $voucher->restore();
+{
+    $voucher = Voucher::onlyTrashed()->findOrFail($id);
+    $voucher->restore();
 
-        return redirect()
-            ->route('admin.vouchers.index')
-            ->with('thongbao', [
-                'type' => 'success',
-                'message' => 'Voucher đã được khôi phục!'
-            ]);
-    }
+    return redirect()->route('admin.vouchers.trash')->with('thongbao', [
+        'type' => 'success',
+        'message' => 'Voucher đã được khôi phục!'
+    ]);
+}
+
 
     // Thêm phương thức xóa vĩnh viễn
     public function forceDelete($id)
@@ -86,13 +85,12 @@ class VoucherController extends Controller
         $voucher = Voucher::onlyTrashed()->findOrFail($id);
         $voucher->forceDelete();
 
-        return redirect()
-            ->route('admin.vouchers.trash')
-            ->with('thongbao', [
-                'type' => 'success',
-                'message' => 'Voucher đã bị xóa vĩnh viễn!'
-            ]);
+        return redirect()->route('admin.vouchers.trash')->with('thongbao', [
+            'type' => 'success',
+            'message' => 'Voucher đã bị xóa vĩnh viễn!'
+        ]);
     }
+
 
     // Danh sách voucher đã xóa
     public function trash()
