@@ -77,7 +77,30 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".nav-item > .nav-link").forEach(function (menu) {
+                menu.addEventListener("click", function (e) {
+                    // Chỉ chặn khi href là "#"
+                    if (this.getAttribute("href") === "#") {
+                        e.preventDefault();
+                    }
+    
+                    let parentLi = this.parentElement; // Lấy thẻ <li> cha
+    
+                    // Toggle class 'menu-open' cho chính nó
+                    parentLi.classList.toggle("menu-open");
+    
+                    // Toggle icon fa-angle-left để đổi hướng
+                    let icon = this.querySelector(".fa-angle-left");
+                    if (icon) {
+                        icon.classList.toggle("fa-rotate-90"); // Xoay 90 độ khi mở
+                    }
+                });
+            });
+        });
+    </script>
+    
     <!-- jQuery -->
     <script src="{{ asset('theme/admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->

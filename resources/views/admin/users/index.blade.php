@@ -69,7 +69,7 @@
                                                                     class="rounded-circle avatar-xs">
                                                             @else
                                                                 <img src="{{ asset('theme/velzon/assets/images/users/avatar-1.jpg') }}"
-                                                                    alt="Avatar" class="rounded-circle avatar-xs">
+                                                                    alt="" class="rounded-circle avatar-xs">
                                                             @endif
                                                         </div>
                                                         <div class="flex-grow-1 ms-2">

@@ -418,7 +418,7 @@
                     </div>
                     <div class="service-promotion__content-wrap">
                         <h3 class="service-promotion__title h6 text-white mb-0">Tư vấn hỗ trợ</h3>
-                        <p class=" text-white service-promotion__content fs-base mb-0">{{ $settings['company_phone'] }}</p>
+                        <p class=" text-white service-promotion__content fs-base mb-0">{{ $settings['company_phone'] ?? 'chua cap nhat so dien thoai'}}</p>
                     </div>
                 </div>
                 <div class="logo">

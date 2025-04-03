@@ -7,9 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    use HasFactory;
-    protected $table = 'settings'; // Tên bảng trong database
-
-    protected $fillable = ['key_name', 'value']; // Các cột có thể ghi dữ liệu vào
+    protected $fillable = [
+        'user_id',
+        'language',
+        'notification_email',
+        'notification_sms',
+        'notification_app',
+        'privacy_profile',
+        'privacy_contact',
+        'theme',
+        'layout'
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

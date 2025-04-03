@@ -10,14 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('key_name')->unique();
-            $table->text('value');
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('settings', function (Blueprint $table) {
+        $table->id();
+        $table->string('key')->unique(); // Khóa duy nhất cho mỗi setting
+        $table->text('value'); // Giá trị cài đặt, lưu chuỗi, số, JSON, v.v.
+        $table->enum('type', ['string', 'number', 'boolean', 'json'])->default('string'); // Kiểu dữ liệu
+        $table->timestamps();
+    });
+}
+
 
     /**
      * Reverse the migrations.
