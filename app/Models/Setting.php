@@ -7,20 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    protected $table = 'settings';
     protected $fillable = [
+        'key_name',
+        'value',
         'user_id',
-        'language',
-        'notification_email',
-        'notification_sms',
-        'notification_app',
-        'privacy_profile',
-        'privacy_contact',
-        'theme',
-        'layout'
     ];
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }

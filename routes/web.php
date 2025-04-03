@@ -138,5 +138,10 @@ Route::prefix('admin')->group(function () {
     Route::resource('orders', OrderController::class)->names('admin.orders');
 
     //settings
-    Route::resource('settings', SettingController::class)->names('admin.settings');
+    Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
+    Route::get('/settings/create', [SettingController::class, 'create'])->name('admin.settings.create');
+    Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
+    Route::get('/settings/{id}/edit', [SettingController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('/settings/{id}', [SettingController::class, 'update'])->name('admin.settings.update');
+    Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('admin.settings.destroy');
 });
