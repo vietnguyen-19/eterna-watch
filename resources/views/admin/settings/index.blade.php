@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @foreach ($settings as $setting)
-                           
+                            
                             <tr>
                                 <td>{{ $setting->id }}</td>
                                 <td>{{ $setting->key_name }}</td>
