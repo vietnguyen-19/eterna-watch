@@ -12,8 +12,8 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::all();
-        //dd($settings);
+        $settings = Setting::all(); // Lấy tất cả các cài đặt
+        //dd($settings);                   
         return view('admin.settings.index', compact('settings'));
     }
 

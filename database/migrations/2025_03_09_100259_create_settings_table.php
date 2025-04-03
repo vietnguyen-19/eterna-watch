@@ -13,11 +13,10 @@ return new class extends Migration
 {
     Schema::create('settings', function (Blueprint $table) {
         $table->id();
-        $table->string('key_name')->unique();
-        $table->string('value');
-        $table->unsignedBigInteger('user_id')->nullable();
+        $table->string('key')->unique(); // Khóa duy nhất cho mỗi setting
+        $table->text('value'); // Giá trị cài đặt, lưu chuỗi, số, JSON, v.v.
+        $table->enum('type', ['string', 'number', 'boolean', 'json'])->default('string'); // Kiểu dữ liệu
         $table->timestamps();
-        $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
     });
 }
 

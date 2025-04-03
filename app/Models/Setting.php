@@ -9,13 +9,30 @@ class Setting extends Model
 {
     protected $table = 'settings';
     protected $fillable = [
-        'key_name',
+        'key',
         'value',
         'user_id',
     ];
-    public function user()
+    public function getValueAttribute($value)
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return match ($this->type) {
+            'number' => (int) $value,
+            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+            'json' => json_decode($value, true),
+            default => $value,
+        };
     }
+
+    /**
+     * Chuyển đổi giá trị về đúng kiểu khi lưu vào database.
+     */
+    public function setValueAttribute($value)
+    {
+        $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
+    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
 }
