@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderItemController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\OrderItemControlle;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
@@ -97,6 +99,29 @@ Route::prefix('admin')->group(function () {
         Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('admin.productvariants.destroy');
     });
 
+    // Đơn Hàng
+    Route::prefix('order_items')->group(function () {
+        Route::get('users-search', [OrderItemController::class, 'search'])->name('admin.orders.user-search');
+        Route::get('products-search', [OrderItemController::class, 'searchPro'])->name('admin.products.search');
+        Route::post('add-order-item', [OrderItemController::class, 'addOrderItem'])->name('admin.order.addItem');
+        Route::post('remove-order-item', [OrderItemController::class, 'removeOrderItem'])->name('admin.order.removeItem');
+        Route::post('update-order-item', [OrderItemController::class, 'updateOrderItem'])->name('admin.order.updateItem');
+        Route::post('check-voucher', [OrderItemController::class, 'checkVoucher'])->name('admin.vouchers.check');
+    });
+
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('create', [OrderController::class, 'create'])->name('admin.orders.create');
+        Route::post('store', [OrderController::class, 'store'])->name('admin.orders.store');
+        Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+        Route::get('{id}/edit', [OrderController::class, 'edit'])->name('admin.orders.edit');
+        Route::put('{id}/update', [OrderController::class, 'update'])->name('admin.orders.update');
+        Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+        // Route::post('{id}/shipments/send', [ShipmentController::class, 'sendToGhn'])->name('admin.shipments.send');
+        Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.status');
+    });
+
+
     // Thương hiệu
     Route::resource('brands', BrandController::class)->names('admin.brands');
 
@@ -118,7 +143,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
     // đơn hàng
-    Route::resource('orders', OrderController::class)->names('admin.orders');
+    // Route::resource('orders', OrderController::class)->names('admin.orders');
 
     //settings
     Route::resource('settings', SettingController::class)->names('admin.settings');

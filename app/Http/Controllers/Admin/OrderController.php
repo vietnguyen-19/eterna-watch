@@ -7,7 +7,17 @@ use Illuminate\Http\Request;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\ProductVariant;
+use App\Models\StatusHistory;
+use App\Models\User;
+use App\Models\UserAddress;
+use App\Models\Voucher;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+
 
 class OrderController extends Controller
 {
@@ -42,8 +52,10 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.orders.index',
-             compact('orders', 'statusCounts', 'status'));
+        return view(
+            'admin.orders.index',
+            compact('orders', 'statusCounts', 'status')
+        );
     }
 
 
@@ -52,7 +64,9 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $productVariants = ProductVariant::all(); // Lấy danh sách biến thể sản phẩm
+
+        return view('admin.orders.create', compact('productVariants'));
     }
 
     /**
@@ -60,9 +74,83 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
 
+        DB::beginTransaction();
+
+        // Kiểm tra nếu user_id = null, thì tạo user mới
+        if ($request->user_id == null) {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'phone'    => $request->phone,
+                'password' => Hash::make(Str::random(10)), // Mật khẩu ngẫu nhiên
+                'gender'   => null,
+                'avatar'   => null,
+                'note'     => null,
+                'role_id'  => 2,  // Mặc định role user
+                'status'   => 'active'
+            ]);
+
+            // Tạo địa chỉ cho user
+            UserAddress::create([
+                'user_id'          => $user->id,
+                'city'             => $request->city,
+                'district'         => $request->district,
+                'ward'             => $request->ward,
+                'specific_address' => $request->specific_address
+            ]);
+
+            // Gán user_id mới vào đơn hàng
+            $userId = $user->id;
+        } else {
+            $userId = $request->user_id;
+        }
+
+        // Tạo đơn hàng
+        $order = new Order();
+        $order->user_id      = $userId;
+        $order->voucher_id   = $request->voucher_id;
+        $order->total_amount = $request->total_amount;
+        $order->status       = 'pending';
+        $order->order_code = 'ORD-' . $order->id . '-' . Str::random(5);
+        $order->save();
+
+        // Xử lý danh sách sản phẩm trong đơn hàng
+        foreach ($request->order_items as $item) {
+            $variant = ProductVariant::find($item['id']);
+            if (!$variant || $variant->stock < $item['quantity']) {
+                return redirect()->back()->with('error', 'Sản phẩm không đủ hàng');
+            }
+
+            OrderItem::create([
+                'order_id'    => $order->id,
+                'variant_id'  => $variant->id,
+                'quantity'    => $item['quantity'],
+                'unit_price'  => $variant->price,
+                'total_price' => $variant->price * $item['quantity']
+            ]);
+
+            $variant->decrement('stock', $item['quantity']);
+        }
+
+        if ($request->voucher_id) {
+            Voucher::where('id', $request->voucher_id)->increment('used_count');
+        }
+        Payment::create([
+            'order_id'        => $order->id,
+            'payment_method'  => $request->payment_method,
+            'amount'          => $request->total_amount,
+            'payment_status'  => $request->payment_status,
+            'transaction_id'  => '', // Mã giao dịch ngẫu nhiên
+            'payment_date'    => now()
+        ]);
+
+        DB::commit();
+
+        // Điều hướng đến trang chi tiết đơn hàng
+        return redirect()->route('admin.orders.edit', $order->id)
+            ->with('success', 'Đặt hàng thành công! Mã đơn: ' . $order->order_code);
+    }
     /**
      * Display the specified resource.
      */
@@ -70,7 +158,7 @@ class OrderController extends Controller
     {
         $order = Order::with(['user', 'orderItems.productVariant.product'])->findOrFail($id);
 
-        return view('admin.order.show', [
+        return view('admin.orders.show', [
             'order' => $order,
         ]);
     }
@@ -78,41 +166,61 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $order = Order::with(['orderItems.productVariant.product', 'user.addresses', 'entity', 'payment', 'voucher'])->findOrFail($id);
+        $statusHistories = StatusHistory::where('entity_id', $order->id)
+            ->where('entity_type', 'order')
+            ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
+            ->get();
+        return view('admin.orders.edit', compact('order', 'statusHistories'));
     }
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Order $order)
     {
-        $order = Order::findOrFail($id);
 
-        $allowedTransitions = [
-            'pending'    => ['confirmed'],
-            'confirmed'  => ['processing'],
-            'processing' => ['completed'],
-            'completed'  => [],
-            'cancelled'  => [],
+        $newStatus = $request->input('status');
+        $currentStatus = $order->status;
+
+        // Danh sách trạng thái hợp lệ và điều kiện chuyển đổi
+        $validTransitions = [
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['processing', 'cancelled'],
+            'processing' => ['completed', 'cancelled'],
+            'completed' => [],
+            'cancelled' => []
         ];
 
-        $request->validate([
-            'status' => 'required|in:pending,confirmed,processing,completed,cancelled',
+        // Kiểm tra nếu trạng thái mới có trong danh sách hợp lệ
+        if (!isset($validTransitions[$currentStatus]) || !in_array($newStatus, $validTransitions[$currentStatus])) {
+            return redirect()->route('admin.orders.edit', $order->id)->with([
+                'thongbao' => [
+                    'type' => 'danger',
+                    'message' => 'Trạng thái không hợp lệ.',
+                ]
+            ]);
+        }
+        StatusHistory::create([
+            'entity_id' => $order->id,
+            'entity_type' => 'order',
+            'old_status' => $currentStatus,
+            'new_status' => $newStatus,
+            'changed_by' => auth()->user()->id, // Giả sử có người dùng đăng nhập
+            'changed_at' => now(), // Thời gian thay đổi
         ]);
 
-        $current = $order->status;
-        $newStatus = $request->status;
-
-        if (!in_array($newStatus, $allowedTransitions[$current])) {
-            return redirect()->back()->with('error', 'Không thể chuyển trạng thái từ "' . $current . '" sang "' . $newStatus . '"');
-        }
-
+        // Cập nhật trạng thái
         $order->status = $newStatus;
         $order->save();
 
-        return redirect()->route('admin.orders.show', $id)->with('success', 'Trạng thái đã được cập nhật!');
+        return redirect()->route('admin.orders.edit', $order->id)->with([
+            'thongbao' => [
+                'type' => 'success',
+                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
+            ]
+        ]);
     }
 
     /**
