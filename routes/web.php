@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
@@ -13,16 +12,15 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
-use App\Http\Controllers\Admin\AdminSettingsController;
-use App\Http\Controllers\Client\Auth\LoginController;
-
-use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Admin\VoucherController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +35,9 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 Route::prefix('admin')->group(function () {
+
+    // bảng điều khiển
+
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
     Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
     Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
@@ -149,6 +150,7 @@ Route::prefix('admin')->group(function () {
 
     // đơn hàng
     Route::resource('orders', OrderController::class)->names('admin.orders');
+
     //settings
     Route::middleware(['auth'])->group(function () {
         Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
@@ -159,4 +161,8 @@ Route::prefix('admin')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login']);
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    //settings
+    Route::resource('settings', SettingController::class)->names('admin.settings');
+
 });

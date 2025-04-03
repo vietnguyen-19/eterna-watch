@@ -33,7 +33,11 @@ class HomeController extends Controller
             ->limit(8)
             ->get(); // Lấy 8 bài post ngẫu nhiên
 
+<<<<<<< HEAD
             $settings = Setting::pluck('value', 'key')->toArray();
+=======
+        $settings = Setting::pluck('value', 'key')->toArray();
+>>>>>>> 3485ae6d454277bc4fbe33f764eb90b1d18c0fc2
 
 
         return view('client.home', compact('bestSellingProducts', 'trendingProducts', 'posts','categories'));
