@@ -25,7 +25,10 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-
+                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm đơn hàng mới</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +42,8 @@
                                             <div class="row g-2 align-items-center">
                                                 <div class="col-auto">
                                                     <label for="">Lọc theo trang thái : </label>
-                                                    <select name="status" class="form-select"  onchange="this.form.submit()">
+                                                    <select name="status" class="form-select"
+                                                        onchange="this.form.submit()">
                                                         <option value="">-- Tất cả trạng thái --
                                                         </option>
                                                         @foreach (['pending', 'confirmed', 'processing', 'completed', 'cancelled'] as $status)
@@ -69,9 +73,12 @@
 
                                             <thead class="text-muted">
                                                 <tr>
+                                                    <th style="width: 4%">
+                                                        <input type="checkbox" id="checkAll" class="align-middle">
+                                                    </th>
                                                     <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_user">Mã đơn hàng</th>
                                                     <th class="sort" data-sort="ten_user">Khách hàng</th>
-                                                    {{-- <th class="sort" data-sort="so_luong">Số Lượng mua </th> --}}
                                                     <th class="sort" data-sort="tong_tien">Tổng tiền</th>
                                                     <th class="sort" data-sort="trang_thai">Trang thái</th>
                                                     <th class="sort" data-sort="created_at"> Ngày đặt</th>
@@ -81,58 +88,82 @@
                                             <tbody class="list form-check-all">
                                                 @foreach ($data as $item)
                                                     <tr>
-
+                                                        <td class="align-middle">
+                                                            <input type="checkbox" class="checkbox-item"
+                                                                value="{{ $item->id }}">
+                                                        </td>
                                                         <td class="id">{{ $item->id }}</td>
-                                                        <td class="ten_user">{{ $item->user->name }}</td>
-                                                        {{-- <td class="so_luong"> {{ $item->quantity }} </td> --}}
-                                                        <td class="tong_tien"> {{ number_format($item->total_amount) }}
+                                                        <td class="align-middle">
+                                                            <strong>{{ $order->order_code }}</strong>
+                                                        </td>
+                                                        <td class="ten_user">
+                                                            {{ $item->user->name ?? 'Khách vãng lai' }}
+                                                        </td>
+                                                        <td class="tong_tien">
+                                                            {{ number_format($item->total_amount, 0, ',', '.') }}Đ
                                                         </td>
 
                                                         <td class="trang_thai">
+                                                        <td class="align-middle">
+                                                            @switch($item->status)
+                                                                @case('pending')
+                                                                    <span class="badge bg-warning text-dark">Chờ xử
+                                                                        lý</span>
+                                                                @break
 
-                                                            @php
-                                                                $badgeClass = match ($item->status) {
-                                                                    'pending' => 'secondary',
-                                                                    'confirmed' => 'info',
-                                                                    'processing' => 'warning',
-                                                                    'completed' => 'success',
-                                                                    'cancelled' => 'danger',
-                                                                    default => 'light',
-                                                                };
-                                                            @endphp
-                                                            <span
-                                                                class="badge bg-{{ $badgeClass }}">{{ ucfirst($item->status) }}
-                                                            </span>
+                                                                @case('processing')
+                                                                    <span class="badge bg-primary">Đang xử lý</span>
+                                                                @break
 
+                                                                @case('completed')
+                                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                                @break
+
+                                                                @case('cancelled')
+                                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                                @break
+
+                                                                @default
+                                                                    <span class="badge bg-secondary">Không xác định</span>
+                                                            @endswitch
+                                                        </td>
                                                         </td>
                                                         <td class="created_at"> {{ $item->created_at->format('d/m/Y') }}
                                                         </td>
 
-                                                        <td>
-                                                            <ul class="list-inline hstack gap-2 mb-0">
-                                                                {{-- <!-- Edit Button -->
-                                                                <!-- Remove Button -->
-                                                                <li class="list-inline-item" title="Remove">
-                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
-                                                                        href="{{ route('admin.orders.destroy', $item->id) }}">
-                                                                        Xóa
-                                                                    </a>
-                                                                </li> --}}
-                                                                <a class="btn btn-info"
-                                                                    href="{{ route('admin.orders.show', $item->id) }}">
+                                                        <td class="align-middle">
+                                                            <div class="btn-group">
+                                                                <a href="{{ route('admin.orders.show', $order->id) }}"
+                                                                    class="btn btn-info btn-sm">
                                                                     Chi tiết
                                                                 </a>
-                                                            </ul>
+                                                                <a href="{{ route('admin.orders.edit', $order->id) }}"
+                                                                    class="btn btn-dark btn-sm">
+                                                                    Sửa
+                                                                </a>
+                                                                <form
+                                                                    action="{{ route('admin.orders.destroy', $order->id) }}"
+                                                                    method="POST" class="d-inline-block">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
+                                                                        Xóa
+                                                                    </button>
+                                                                </form>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                             <thead class="text-muted">
                                                 <tr>
+                                                    <th style="width: 4%">
+                                                        <input type="checkbox" id="checkAll" class="align-middle">
+                                                    </th>
                                                     <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_user">Mã đơn hàng</th>
                                                     <th class="sort" data-sort="ten_user">Khách hàng</th>
-                                                    {{-- <th class="sort" data-sort="so_luong">Số Lượng mua </th> --}}
                                                     <th class="sort" data-sort="tong_tien">Tổng tiền</th>
                                                     <th class="sort" data-sort="trang_thai">Trang thái</th>
                                                     <th class="sort" data-sort="created_at"> Ngày đặt</th>
