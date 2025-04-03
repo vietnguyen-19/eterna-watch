@@ -150,7 +150,7 @@
                                                     </select>
 
                                                     @error('status')
-                                                        <div class="text-danger">{{ $message }}</div>
+                                                        {{-- <div class="text-danger">{{ $message }}</div> --}}
                                                     @enderror
                                                 </div>
                                             @endif

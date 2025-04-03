@@ -178,7 +178,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function updateStatus(Request $request, Order $order)
     {
 
         $newStatus = $request->input('status');
@@ -202,12 +202,14 @@ class OrderController extends Controller
                 ]
             ]);
         }
+      
+
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'order',
             'old_status' => $currentStatus,
             'new_status' => $newStatus,
-            'changed_by' => auth()->user()->id, // Giả sử có người dùng đăng nhập
+            'changed_by' =>  auth()->user()->id , // Giả sử có người dùng đăng nhập
             'changed_at' => now(), // Thời gian thay đổi
         ]);
 

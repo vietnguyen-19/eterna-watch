@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\OrderItemController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
@@ -149,7 +150,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('{id}/edit', [OrderController::class, 'edit'])->name('admin.orders.edit');
         Route::put('{id}/update', [OrderController::class, 'update'])->name('admin.orders.update');
         Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
-        // Route::post('{id}/shipments/send', [ShipmentController::class, 'sendToGhn'])->name('admin.shipments.send');
+        Route::post('{id}/shipments/send', [ShipmentController::class, 'sendToGhn'])->name('admin.shipments.send');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.status');
     });
 
