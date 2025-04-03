@@ -12,6 +12,7 @@
                 </div>
             </div>
 
+
             <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
