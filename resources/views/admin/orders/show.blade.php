@@ -59,7 +59,7 @@
                                                 {{ $order->shippingAddress->phone_number ?? 'N/A' }}</p>
 
                                             <!-- Form đổi trạng thái -->
-                                            <div class="mt-3">
+                                            {{-- <div class="mt-3">
                                                 <label class="d-block mb-2">Thay đổi trạng thái:</label>
                                                 <div class="d-flex gap-2">
                                                     @php
@@ -79,7 +79,7 @@
                                                         </button>
                                                     @endforeach
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
 
                                         <table class="table table-bordered" aria-describedby="example2_info"

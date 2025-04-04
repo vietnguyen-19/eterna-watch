@@ -4,18 +4,21 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    @if (session('thongbao'))
+                    @php
+                        $thongbao = session('thongbao');
+                    @endphp
+                    @if ($thongbao)
                         <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                            class="alert alert-{{ $thongbao['type'] }} alert-dismissible bg-{{ $thongbao['type'] }} text-white alert-label-icon fade show"
                             role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
-
+                            <i class="ri-notification-off-line label-icon"></i>
+                            <strong>{{ $thongbao['message'] }}</strong>
                         </div>
                         @php
                             session()->forget('thongbao');
                         @endphp
                     @endif
+
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
                             <div class="row g-4 align-items-center">
@@ -61,13 +64,20 @@
 
                                     Phương thức thanh toán:
                                     <span class="badge bg-success">
-                                        {{ optional($order)->payment_method ?? 'Chưa có phương thức thanh toán' }}
+                                        {{ optional($order->payment)->payment_method ?? 'Chưa có phương thức thanh toán' }}
 
                                     </span>
 
                                     | Trạng thái:
-                                    <span
-                                        class="badge bg-warning text-dark">{{ $order->payment->payment_status }}</span><br>
+                                    {{-- <span
+                                        class="badge bg-warning text-dark">{{ $order->payment->payment_status }}
+                                    </span> --}}
+
+                                    <span class="badge bg-warning text-dark">
+                                        {{ optional($order->payment)->payment_status ?? 'Chưa thanh toán' }}
+                                    </span>
+
+                                    <br>
 
                                     Nhà vận chuyển: <b>968-34567</b><br>
 
@@ -96,10 +106,17 @@
                                     To
                                     <address>
                                         <strong>{{ $order->user->name }}</strong><br>
-                                        {{ $order->user->addresses->first()->specific_address }},
-                                        P.{{ $order->user->addresses->first()->ward }}<br>
-                                        Q. {{ $order->user->addresses->first()->district }}, TP.
-                                        {{ $order->user->addresses->first()->city }}, Việt Nam<br>
+                                        @php
+                                            $address = $order->user->addresses->first();
+                                        @endphp
+                                        @if ($address)
+                                            {{ $address->specific_address }},
+                                            P.{{ $address->ward }}<br>
+                                            Q. {{ $address->district }}, TP.{{ $address->city }} <br>
+                                        @else
+                                            <span class="text-danger">Chưa có địa chỉ</span>
+                                        @endif
+
                                         Phone: {{ $order->user->phone }}<br>
                                         Email: {{ $order->user->email }}
                                     </address>
@@ -149,9 +166,10 @@
                                                         @endforeach
                                                     </select>
 
-                                                    @error('status')
-                                                        {{-- <div class="text-danger">{{ $message }}</div> --}}
+                                                    @error('shipment_provider')
+                                                        <div class="text-danger">{{ $message }}</div>
                                                     @enderror
+
                                                 </div>
                                             @endif
                                             <div class="mb-3 col-12">
@@ -173,6 +191,18 @@
                                             @endif
                                         </div>
 
+                                        {{-- <form action="{{ route('admin.shipments.send', $order->id) }}" method="POST">
+                                            @csrf
+                                            <label for="shipment_provider">Chọn nhà vận chuyển</label>
+                                            <select name="shipment_provider" required>
+                                                <option value="Giao hàng tiết kiệm">Giao hàng tiết kiệm</option>
+                                                <option value="ViettelPost">ViettelPost</option>
+                                                <option value="VietExpress">VietExpress</option>
+                                            </select>
+                                        
+                                            <button type="submit" class="btn btn-primary mt-2">Gửi bên vận chuyển</button>
+                                        </form> --}}
+                                        
                                     </div>
 
                                 </div>
@@ -230,8 +260,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
                 <div class="col-lg-9">
                     <div class="card" id="customerList">
@@ -268,18 +296,21 @@
                                             $subtotal += $item->total_price;
                                         @endphp
                                         <tr>
-                                            <td class="align-middle">{{ $item->id }}</td>
+
+                                            <td class="align-middle">{{ $loop->iteration }}</td>
+
                                             <td class="align-middle">
                                                 <img src="{{ Storage::url($item->productVariant->product->avatar ?? 'default-avatar.png') }}"
                                                     alt="product Avatar" class="me-2" width="40" height="40">
-                                                {{ $item->productVariant->product->name }}
+                                                {{ $item->productVariant->product->name ?? 'N/A' }}
+
                                             </td>
                                             <td class="align-middle">{{ $item->quantity }}</td>
                                             <td class="align-middle">
-                                                {{ number_format($item->unit_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->unit_price, 0, ',', '.') }}&nbsp; VND
                                             </td>
                                             <td class="align-middle">
-                                                {{ number_format($item->total_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->total_price, 0, ',', '.') }}&nbsp; VND
                                             </td>
                                         </tr>
                                     @endforeach

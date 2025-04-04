@@ -185,7 +185,7 @@
                                                                     class="btn btn-dark btn-sm">
                                                                     Sửa
                                                                 </a>
-                                                                <form
+                                                                {{-- <form
                                                                     action="{{ route('admin.orders.destroy', $item->id) }}"
                                                                     method="POST" class="d-inline-block">
                                                                     @csrf
@@ -194,7 +194,7 @@
                                                                         onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
                                                                         Xóa
                                                                     </button>
-                                                                </form>
+                                                                </form> --}}
                                                             </div>
                                                         </td>
                                                     </tr>
