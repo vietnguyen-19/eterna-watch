@@ -15,7 +15,7 @@
 
 
 
-            <form action="{{ route('admin.categories.update', $item->id) }}" autocomplete="off" method="POST"
+            <form action="{{ route('admin.setting.update', $item->id) }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT') <!-- Đảm bảo sử dụng phương thức PUT để cập nhật -->
@@ -34,10 +34,10 @@
                             <label for="parent_id" class="form-label">Danh mục cha</label>
                             <select name="parent_id" class="form-control">
                                 <option value="">Chọn danh mục cha</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ old('parent_id', $item->parent_id) == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                @foreach ($settings as $setting)
+                                    <option value="{{ $setting->id }}"
+                                        {{ old('parent_id', $item->parent_id) == $setting->id ? 'selected' : '' }}>
+                                        {{ $setting->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -63,7 +63,7 @@
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
                         <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh mục</button>
-                        <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
+                        <a href="{{ route('admin.setting.index') }}" class="btn btn-light">Đóng</a>
                     </div>
                 </div>
             </form>
