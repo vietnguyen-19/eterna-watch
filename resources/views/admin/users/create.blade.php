@@ -91,7 +91,7 @@
                                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
                                                 <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ngưng hoạt động</option>
                                                 <option value="banned" {{ old('status') == 'banned' ? 'selected' : '' }}>Đã khóa</option>
-                                                
+
                                             </select>
                                             @error('status')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -140,10 +140,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card-footer">
+                            <div class="hstack gap-2 justify-content-left">
+                                <button type="submit" class="btn btn-success">Thêm tài khoản</button>
+                                <a href="{{ route('admin.users.index') }}" class="btn btn-light">Đóng</a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Địa chỉ -->
-                    <div class="card">
+                    {{-- <div class="card">
                         <div class="card-header border-bottom-dashed">
                             <h5 class="card-title mb-0">Thông tin địa chỉ</h5>
                         </div>
@@ -232,17 +238,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Nút Submit -->
-                    <div class="card">
-                        <div class="card-footer">
-                            <div class="hstack gap-2 justify-content-left">
-                                <button type="submit" class="btn btn-success">Thêm tài khoản</button>
-                                <a href="{{ route('admin.users.index') }}" class="btn btn-light">Đóng</a>
-                            </div>
-                        </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
