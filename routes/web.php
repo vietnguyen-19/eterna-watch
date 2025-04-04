@@ -34,18 +34,21 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 |
 */
 
-// phần login
-
-
+// phần AdminAdmin
+// đăng nhập admin
 Route::prefix('admin')->group(function () {
-    // đăng nhập
-    Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
-    Route::post('/adminLogin', [AdminLoginController::class, 'adminLogin'])->name('adminLogin');
 
+    Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
+    Route::post('/login', [AdminLoginController::class, 'adminLogin'])->name('login');
+    Route::post('/logout', [AdminLoginController::class, 'adminLogout'])->name('logout');
     Route::get('forgot-password', [AdminLoginController::class, 'forgotPasswordForm'])
         ->name('password.forgot');
-    Route::post('forgot-password', [AdminLoginController::class, 'adminForgotPassword'])
+    Route::post('forgot-password', [AdminLoginController::class, 'admin.ForgotPassword'])
         ->name('password.email');
+});
+// chức năng adminadmin
+Route::prefix('admin')->middleware('admin')->group(function () {
+
 
     // bảng điều khiển
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
@@ -136,7 +139,19 @@ Route::prefix('admin')->group(function () {
     Route::resource('settings', SettingController::class)->names('admin.settings');
 });
 
+// phần Staff
+// Đăng nhập staff
 Route::prefix('staff')->group(function () {
+    Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
+    Route::post('/login', [AdminLoginController::class, 'adminLogin'])->name('login');
+    Route::post('/logout', [AdminLoginController::class, 'adminLogout'])->name('logout');
+    Route::get('forgot-password', [AdminLoginController::class, 'forgotPasswordForm'])
+        ->name('password.forgot');
+    Route::post('forgot-password', [AdminLoginController::class, 'admin.ForgotPassword'])
+        ->name('password.email');
+});
+// chức năng staff
+Route::prefix('staff')->middleware('staff')->group(function () {
     // bảng điều khiển
     Route::get('/', [DashboardController::class, 'revenue'])->name('staff.dashboard.revenue');
     Route::get('report_stock', [DashboardController::class, 'stock'])->name('staff.dashboard.stock');

@@ -28,7 +28,7 @@
             <div class="card-body">
                 <p class="login-box-msg">Đăng nhập với tư cách quản trị viên</p>
 
-                <form action="{{ route('adminLogin') }}" method="post">
+                <form action="{{ route('login') }}" method="post">
                     @csrf
                     <div class="input-group mb-3">
                         <input type="email" class="form-control" name="email" placeholder="Email *">
@@ -57,7 +57,7 @@
                         </div> --}}
                         <!-- /.col -->
                         <div class="col-8 mx-auto">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
                         </div>
                         <!-- /.col -->
                     </div>

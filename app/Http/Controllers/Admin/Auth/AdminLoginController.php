@@ -89,9 +89,12 @@ class AdminLoginController extends Controller
             : back()->withErrors(['email' => __($status)]);
     }
 
-    public function logout()
+    public function adminLogout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('user.login');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }

@@ -16,25 +16,31 @@
                     <li style="background-color: rgb(86, 86, 86); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-
-                            <img src=" {{ asset('theme\admin\dist\img\avatar.png') }}"
-                                class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
-                            <p class="fw-semibold ml-2">Alexander Pierce</p>
+                            @if (Auth::check())
+                                @if (Auth::user()->avatar && Storage::exists('public/' . Auth::user()->avatar))
+                                    <img src=" {{ Storage::url(Auth::user()->avatar) }}"
+                                        class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
+                                @else
+                                    <img src="{{ asset('theme/velzon/assets/images/users/avatar-1.jpg') }}"
+                                        class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
+                                @endif
+                                <p class="fw-semibold ml-2">{{ Auth::user()->name }}</p>
+                            @endif
 
                         </a>
                         <ul class="text-sm align-middle nav nav-treeview">
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{{ route('admin.users.show', Auth::user()->id) }}" class="nav-link">
                                     <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
-                                    <p>Profile</p>
+                                    <p>Xem tài khoản</p>
                                 </a>
                             </li>
-                            <form id="logout-form" action="" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
                             <li class="nav-item">
                                 <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    href="#" class="nav-link">
+                                    href="" class="nav-link">
                                     <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                     <p>Đăng xuất</p>
                                 </a>
