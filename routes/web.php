@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
 
 
 
@@ -33,8 +34,19 @@ use App\Http\Controllers\Admin\VoucherController;
 |
 */
 
+// phần login
+
 
 Route::prefix('admin')->group(function () {
+    // đăng nhập
+    Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
+    Route::post('/adminLogin', [AdminLoginController::class, 'adminLogin'])->name('adminLogin');
+
+    Route::get('forgot-password', [AdminLoginController::class, 'forgotPasswordForm'])
+        ->name('password.forgot');
+    Route::post('forgot-password', [AdminLoginController::class, 'adminForgotPassword'])
+        ->name('password.email');
+
     // bảng điều khiển
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
     Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
@@ -122,4 +134,94 @@ Route::prefix('admin')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('admin.settings');
+});
+
+Route::prefix('staff')->group(function () {
+    // bảng điều khiển
+    Route::get('/', [DashboardController::class, 'revenue'])->name('staff.dashboard.revenue');
+    Route::get('report_stock', [DashboardController::class, 'stock'])->name('staff.dashboard.stock');
+    Route::get('report_customer', [DashboardController::class, 'customer'])->name('staff.dashboard.customer');
+
+    // danh mục
+    Route::resource('categories', CategoryController::class)->names('staff.categories');
+
+    // Banner
+    Route::resource('banners', BannerController::class)->names('staff.banners');
+
+    //voucher
+    Route::resource('vouchers', VoucherController::class)->names('staff.vouchers');
+    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('staff.vouchers.forceDelete');
+
+    // người dùng
+    Route::resource('users', UserController::class)->names('staff.users');
+
+    // thuộc tính sản phẩm
+    Route::prefix('attributes')->group(function () {
+        Route::get('/', [AttributeController::class, 'index'])->name('staff.attributes.index');
+        Route::get('create', [AttributeController::class, 'create'])->name('staff.attributes.create');
+        Route::post('store', [AttributeController::class, 'store'])->name('staff.attributes.store');
+        Route::get('show/{id}', [AttributeController::class, 'show'])->name('staff.attributes.show');
+        Route::get('{id}/edit', [AttributeController::class, 'edit'])->name('staff.attributes.edit');
+        Route::post('update', [AttributeController::class, 'update'])->name('staff.attributes.update');
+        Route::get('destroy/{id}', [AttributeController::class, 'destroy'])->name('staff.attributes.destroy');
+    });
+
+    // Giá trị thuộc tính (Attribute Values)
+    Route::prefix('attribute_values')->group(function () {
+        Route::get('/{id}', [AttributeValueController::class, 'index'])->name('staff.attribute_values.index');
+        Route::get('create/{id}', [AttributeValueController::class, 'create'])->name('staff.attribute_values.create');
+        Route::post('store', [AttributeValueController::class, 'store'])->name('staff.attribute_values.store');
+        Route::get('show/{id}', [AttributeValueController::class, 'show'])->name('staff.attribute_values.show');
+        Route::get('{id}/edit', [AttributeValueController::class, 'edit'])->name('staff.attribute_values.edit');
+        Route::put('update/{id}', [AttributeValueController::class, 'update'])->name('staff.attribute_values.update');
+        Route::delete('destroy/{id}', [AttributeValueController::class, 'destroy'])->name('staff.attribute_values.destroy');
+    });
+
+    // Sản phẩm
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('staff.products.index');
+        Route::get('create', [ProductController::class, 'create'])->name('staff.products.create');
+        Route::get('/get-values/{id}', [AttributeController::class, 'getAttributeValues'])->name('staff.products.get-values');
+        Route::post('store', [ProductController::class, 'store'])->name('staff.products.store');
+        Route::get('show/{id}', [ProductController::class, 'show'])->name('staff.products.show');
+        Route::get('{id}/edit', [ProductController::class, 'edit'])->name('staff.products.edit');
+        Route::put('{id}/update', [ProductController::class, 'update'])->name('staff.products.update');
+        Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('staff.products.destroy');
+
+        Route::get('/get-subcategories/{parent_id}', [ProductController::class, 'getSubcategories']);
+    });
+    Route::prefix('productvariants')->group(function () {
+        Route::get('/', [ProductVariantController::class, 'index'])->name('staff.productvariants.index');
+        Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('staff.productvariants.create');
+        Route::post('store', [ProductVariantController::class, 'store'])->name('staff.productvariants.store');
+        Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('staff.productvariants.edit');
+        Route::put('{id}/update', [ProductVariantController::class, 'update'])->name('staff.productvariants.update');
+        Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('staff.productvariants.destroy');
+    });
+
+    // Thương hiệu
+    Route::resource('brands', BrandController::class)->names('staff.brands');
+
+    // Phân quyền
+    Route::resource('permissions', PermissionController::class)->names('staff.permissions');
+
+    // vai trò
+    Route::resource('roles', RoleController::class)->names('staff.roles');
+
+    // Bình luận
+    Route::resource('comments', CommentController::class)->names('staff.comments');
+
+    // Bài viết
+    Route::resource('posts', PostController::class)->names('staff.posts');
+
+    // upload ảnh
+    Route::post('/upload-image', [ImageController::class, 'uploadImage']);
+    Route::post('/remove-image', [ImageController::class, 'removeImage']);
+    Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('staff.products.update-image');
+
+    // đơn hàng
+    Route::resource('orders', OrderController::class)->names('staff.orders');
+
+    //settings
+    Route::resource('settings', SettingController::class)->names('staff.settings');
 });
