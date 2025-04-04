@@ -65,11 +65,16 @@
                                                 <td>{{ $voucher->min_order ? number_format($voucher->min_order, 0, ',', '.') . ' đ' : 'Không' }}</td>
                                                 <td>{{ $voucher->max_uses ?? 'Không giới hạn' }}</td>
                                                 <td>{{ $voucher->used_count }}</td>
-                                                <td>{{ $voucher->start_date ? date('d/m/Y H:i', strtotime($voucher->start_date)) : 'Chưa áp dụng' }}</td>
-                                                <td>{{ $voucher->expires_at ? date('d/m/Y H:i', strtotime($voucher->expires_at)) : 'Không hạn' }}</td>
+                                                <td>{{ $voucher->start_date ? $voucher->start_date->format('d/m/Y H:i') : 'Chưa áp dụng' }}</td>
+                                                <td>{{ $voucher->expires_at ? $voucher->expires_at->format('d/m/Y H:i') : 'Không hạn' }}</td>
                                                 <td>
-                                                    <span class="badge {{ $voucher->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                                        {{ ucfirst($voucher->status) }}
+                                                    @php
+                                                        $isExpired = $voucher->isExpired();
+                                                        $statusClass = $isExpired ? 'bg-danger' : 'bg-success';
+                                                        $statusText = $isExpired ? 'Hết hạn' : 'Hoạt động';
+                                                    @endphp
+                                                    <span class="badge {{ $statusClass }}">
+                                                        {{ $statusText }}
                                                     </span>
                                                 </td>
                                                 <td>
