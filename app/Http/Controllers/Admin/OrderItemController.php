@@ -19,12 +19,27 @@ class OrderItemController extends Controller
         return response()->json($users);
     }
 
+
+    
     public function searchPro(Request $request)
     {
         // Logic để tìm kiếm sản phẩm
-        $query = $request->input('query');
-        $products = Product::where('name', 'like', '%' . $query . '%')->get();
-        return response()->json($products);
+        $search = $request->input('search');
+
+        $products = Product::where('name', 'like', "%$search%")
+            
+            ->get();
+
+        $results = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'text' => $product->name,
+                'price' => $product->price_default,
+                'image' => $product->image_url,
+            ];
+        });
+
+        return response()->json(['results' => $results]);
     }
 
     public function addOrderItem(Request $request)
@@ -66,12 +81,27 @@ class OrderItemController extends Controller
     public function checkVoucher(Request $request)
     {
         // Logic để kiểm tra voucher
-        $voucherCode = $request->input('voucher_code');
-        $voucher = Voucher::where('code', $voucherCode)->first();
-        if ($voucher) {
-            return response()->json(['message' => 'Voucher hợp lệ']);
-        } else {
-            return response()->json(['message' => 'Voucher không hợp lệ'], 404);
+        $code = $request->input('code');
+        $total = $request->input('total');
+
+        $voucher = Voucher::where('code', $code)->first();
+
+        if (!$voucher || !$voucher->is_valid) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.',
+            ]);
         }
+
+        $discount = $voucher->calculateDiscount($total);
+        $newTotal = $total - $discount;
+
+        return response()->json([
+            'valid' => true,
+            'message' => 'Áp dụng mã giảm giá thành công!',
+            'discount' => $discount,
+            'newTotal' => $newTotal,
+            'voucher_id' => $voucher->id
+        ]);
     }
 }

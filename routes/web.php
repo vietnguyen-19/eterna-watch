@@ -149,11 +149,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
         Route::get('{id}/edit', [OrderController::class, 'edit'])->name('admin.orders.edit');
         Route::put('{id}/update', [OrderController::class, 'update'])->name('admin.orders.update');
-        Route::get('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
-        Route::post('{id}/shipments/send', [ShipmentController::class, 'sendToGhn'])->name('admin.shipments.send');
+        Route::delete('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+        // Route::post('{id}/shipments/send', [ShipmentController::class, 'sendToGhn'])->name('admin.shipments.send');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.status');
     });
 
+    Route::post('/admin/orders/{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send');
 
     // Thương hiệu
     Route::resource('brands', BrandController::class)->names('admin.brands');
