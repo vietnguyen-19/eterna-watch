@@ -21,13 +21,13 @@
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Danh sách danh mục</h5>
+                                        <h5 class="card-title mb-0">Danh sách cài đặt</h5>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.categories.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm danh mục</a>
+                                        <a href="{{ route('admin.settings.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm cài đặt</a>
                                     </div>
                                 </div>
                             </div>
@@ -54,17 +54,18 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($data as $item)
+                                                @foreach ($settings as $setting)
+                                                
+                                                    <td>{{ $setting->id ?? 'ID không tồn tại' }}</td>
                                                     <tr>
-
-                                                        <td class="id">{{ $item->id }}</td>
-                                                        <td class="ten_danh_muc">{{ $item->name }}</td>
+                                                        <td class="id">{{ $setting->id }}</td>
+                                                        <td class="ten_danh_muc">{{ $setting->name }}</td>
                                                         <td class="slug">
-                                                            {{ $item->parent ? $item->parent->name : 'Danh mục gốc' }}
+                                                            {{ $setting->parent ? $setting->parent->name : 'Danh mục gốc' }}
                                                         </td>
 
                                                         <td class="trang_thai">
-                                                            {{ $item->status }}
+                                                            {{ $setting->status }}
                                                         </td>
 
 
@@ -72,7 +73,7 @@
                                                             <ul class="list-inline hstack gap-2 mb-0">
                                                                 <!-- Edit Button -->
                                                                 <li class="list-inline-item edit" title="Edit">
-                                                                    <a href="{{ route('admin.categories.edit', $item->id) }}"
+                                                                    <a href="{{ route('admin.settings.edit', $setting->id) }}"
                                                                         class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                         Sửa
                                                                     </a>
@@ -81,7 +82,7 @@
                                                                 <li class="list-inline-item" title="Remove">
                                                                     <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
                                                                         onclick="return confirm('Bạn đã chắc chắn chưa?')"
-                                                                        href="{{ route('admin.categories.destroy', $item->id) }}">
+                                                                        href="{{ route('admin.settings.destroy', $setting->id) }}">
                                                                         Xóa
                                                                     </a>
                                                                 </li>
@@ -89,6 +90,7 @@
                                                             </ul>
                                                         </td>
                                                     </tr>
+                                                    
                                                 @endforeach
                                             </tbody>
                                             <thead class="text-muted">

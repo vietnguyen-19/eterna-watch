@@ -52,6 +52,23 @@ Route::prefix('admin')->group(function () {
     Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
     Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
 
+    // Danh mục
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
+        Route::get('create', [CategoryController::class, 'create'])->name('admin.categories.create');
+        Route::post('store', [CategoryController::class, 'store'])->name('admin.categories.store');
+        Route::get('show/{id}', [CategoryController::class, 'show'])->name('admin.categories.show');
+        Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+        Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
+        Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    });
+//});
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+    Route::get('/dashboard/revenue', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
+    Route::get('/dashboard/customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
+    Route::get('/dashboard/stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
     // danh mục
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
@@ -133,7 +150,12 @@ Route::prefix('admin')->group(function () {
     Route::resource('orders', OrderController::class)->names('admin.orders');
 
     //settings
-    Route::resource('settings', SettingController::class)->names('admin.settings');
+    Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
+    Route::get('/settings/create', [SettingController::class, 'create'])->name('admin.settings.create');
+    Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
+    Route::get('/settings/{id}/edit', [SettingController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('/settings/{id}', [SettingController::class, 'update'])->name('admin.settings.update');
+    Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('admin.settings.destroy');
 });
 
 Route::prefix('staff')->group(function () {
