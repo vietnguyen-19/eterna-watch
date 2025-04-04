@@ -30,15 +30,15 @@ class UserStoreRequest extends FormRequest
             'status' => 'required|in:active,inactive,banned,pending',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'note' => 'nullable|string',
-            
+
             // Địa chỉ
-            'full_name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
-            'street_address' => 'required|string|max:255',
-            'ward' => 'required|string|max:255',
-            'district' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
+            // 'full_name' => 'required|string|max:255',
+            // 'phone_number' => 'required|string|max:20',
+            // 'street_address' => 'required|string|max:255',
+            // 'ward' => 'required|string|max:255',
+            // 'district' => 'required|string|max:255',
+            // 'city' => 'required|string|max:255',
+            // 'country' => 'required|string|max:255',
         ];
     }
 
@@ -64,15 +64,15 @@ class UserStoreRequest extends FormRequest
             'avatar.image' => 'File phải là hình ảnh',
             'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
-            
+
             // Địa chỉ
-            'full_name.required' => 'Vui lòng nhập họ tên người nhận',
-            'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',
-            'street_address.required' => 'Vui lòng nhập địa chỉ chi tiết',
-            'ward.required' => 'Vui lòng nhập phường/xã',
-            'district.required' => 'Vui lòng nhập quận/huyện',
-            'city.required' => 'Vui lòng nhập thành phố',
-            'country.required' => 'Vui lòng nhập quốc gia',
+            // 'full_name.required' => 'Vui lòng nhập họ tên người nhận',
+            // 'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',
+            // 'street_address.required' => 'Vui lòng nhập địa chỉ chi tiết',
+            // 'ward.required' => 'Vui lòng nhập phường/xã',
+            // 'district.required' => 'Vui lòng nhập quận/huyện',
+            // 'city.required' => 'Vui lòng nhập thành phố',
+            // 'country.required' => 'Vui lòng nhập quốc gia',
         ];
     }
 }

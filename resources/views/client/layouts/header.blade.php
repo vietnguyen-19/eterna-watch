@@ -346,7 +346,7 @@
 </div><!-- /.header-mobile -->
 
 <header id="header"
-    class="header sticky_disabled w-100 position-absolute header-transparent-bg header_sticky-bg_dark">
+    class="header sticky-top w-100 header-transparent-bg header_sticky-bg_dark">
     <div style="background: #8c0f0f" class="header-top">
         <div class="container d-flex container color-white align-items-center">
             <ul class="list-unstyled d-flex flex-1 gap-3 m-0">
@@ -454,7 +454,7 @@
                                     </button>
                                     <button class="btn-icon btn-close-lg search-popup__reset" type="reset"></button>
                                 </div>
-                        
+
                                 <div class="search-popup__results">
                                     <div class="sub-menu search-suggestion">
                                         <h6 class="sub-menu__title fs-base">Liên kết nhanh</h6>
@@ -475,7 +475,7 @@
                                 </div>
                             </form><!-- /.header-search -->
                         </div><!-- /.search-popup -->
-                        
+
                     </div><!-- /.header-tools__item hover-container -->
                     <a href="{{ route('cart.index') }}" class="header-tools__item header-tools__cart">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
