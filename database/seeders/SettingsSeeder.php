@@ -29,7 +29,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'linkedin_link', 'value' => 'https://www.linkedin.com/company/eternawatchvn', 'type' => 'string'],
 
             // Logo & Favicon
-            ['key' => 'logo_url', 'value' => 'images/logo.png'], 'type' => 'string',
+            ['key' => 'logo_url', 'value' => 'images/logo.png', 'type' => 'string'],
             ['key' => 'bg_auth_url', 'value' => 'settings/bg_auth.jpg', 'type' => 'string'],
             ['key' => 'favicon_url', 'value' => '/storage/images/favicon-eterna.ico', 'type' => 'string'],
 
