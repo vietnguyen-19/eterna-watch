@@ -70,13 +70,28 @@
                             <div class="accordion-body px-0 pb-0 pt-3">
                                 <ul class="list list-inline mb-0">
                                     @foreach ($brands as $brand)
-                                        <li class="list-item">
-                                            <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
-                                                class="menu-link py-1">
-                                                {{ $brand->name }} <span
-                                                    class="text-muted">({{ $brand->products_count }})</span>
-                                            </a>
-                                        </li>
+                                        @if($brand->parent_id === null)
+                                            <li class="list-item">
+                                                <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
+                                                    class="menu-link py-1">
+                                                    {{ $brand->name }} <span
+                                                        class="text-muted">({{ $brand->products_count }})</span>
+                                                </a>
+                                                @if($brand->children->count() > 0)
+                                                    <ul class="list list-inline mb-0 ms-3">
+                                                        @foreach($brand->children as $child)
+                                                            <li class="list-item">
+                                                                <a href="{{ route('client.shop', ['brand' => $child->name]) }}"
+                                                                    class="menu-link py-1">
+                                                                    {{ $child->name }} <span
+                                                                        class="text-muted">({{ $child->products_count }})</span>
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </div>

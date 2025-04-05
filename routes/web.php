@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PostController;
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\VoucherController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -149,9 +150,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
+    Route::resource('vouchers', VoucherController::class)->names('admin.vouchers');
+    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
 
-    Route::resource('posts', PostController::class)->names('admin.posts');
-    
     Route::resource('roles', RoleController::class);
 });
 
@@ -187,12 +188,6 @@ Route::prefix('comments')->group(function () {
 
 Route::resource('roles', RoleController::class);
 
-Route::prefix('admin/articles')->group(function () {
-    Route::get('/', [ArticleController::class, 'index'])->name('admin.articles.index');
-    Route::get('/create', [ArticleController::class, 'create'])->name('admin.articles.create');
-    Route::post('/store', [ArticleController::class, 'store'])->name('admin.articles.store');
-    Route::get('/{id}/edit', [ArticleController::class, 'edit'])->name('admin.articles.edit');
-    Route::put('/{id}', [ArticleController::class, 'update'])->name('admin.articles.update');
-    Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('admin.articles.destroy');
-    Route::get('/{id}', [ArticleController::class, 'show'])->name('admin.articles.show');
-});
+
+
+Route::resource('posts', PostController::class)->names('admin.posts');

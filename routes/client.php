@@ -15,6 +15,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\SettingController;
 use App\Http\Controllers\Client\ShopController;
+use App\Http\Controllers\Client\SettingsController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
