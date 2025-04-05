@@ -51,9 +51,9 @@
                                                 <thead class="text-muted">
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Image link</th>
-                                                        <th class="sort" data-sort="redirect_link">Redirect link</th>
-                                                        <th class="sort" data-sort="action">Action</th>
+                                                        <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
+                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng</th>
+                                                        <th class="sort" data-sort="action">Hành động</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="list form-check-all">
@@ -87,7 +87,7 @@
                                                                     <li class="list-inline-item edit" title="Edit">
                                                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                                             class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                            <i class="bi bi-pen"></i>Sửa
+                                                                            <i class="fa-solid fa-edit"></i>
                                                                         </a>
                                                                     </li>
                                                                     <!-- Remove Button -->
