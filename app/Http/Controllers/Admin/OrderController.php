@@ -182,7 +182,19 @@ class OrderController extends Controller
     {
 
         $newStatus = $request->input('status');
+
+        // Kiểm tra nếu không có trạng thái mới hoặc trạng thái không hợp lệ
+        if (!$newStatus || !is_string($newStatus)) {
+            return redirect()->route('admin.orders.edit', $order->id)->with([
+                'thongbao' => [
+                    'type' => 'danger',
+                    'message' => 'Trạng thái không hợp lệ hoặc không được cung cấp.',
+                ]
+            ]);
+        }
+
         $currentStatus = $order->status;
+        $userId = auth()->id(); // Lấy ID của user hiện tại
 
         // Danh sách trạng thái hợp lệ và điều kiện chuyển đổi
         $validTransitions = [
@@ -198,38 +210,61 @@ class OrderController extends Controller
             return redirect()->route('admin.orders.edit', $order->id)->with([
                 'thongbao' => [
                     'type' => 'danger',
-                    'message' => 'Trạng thái không hợp lệ.',
+                    'message' => 'Chuyển đổi Trạng thái không hợp lệ.',
                 ]
             ]);
         }
-      
 
-        StatusHistory::create([
-            'entity_id' => $order->id,
-            'entity_type' => 'order',
-            'old_status' => $currentStatus,
-            'new_status' => $newStatus,
-            'changed_by' =>  auth()->user()->id , // Giả sử có người dùng đăng nhập
-            'changed_at' => now(), // Thời gian thay đổi
-        ]);
+        // Kiểm tra nếu trạng thái không thay đổi
+        if ($newStatus === $currentStatus) {
+            return redirect()->route('admin.orders.edit', $order->id)->with([
+                'thongbao' => [
+                    'type' => 'info',
+                    'message' => 'Trạng thái đơn hàng không thay đổi.',
+                ]
+            ]);
+        }
 
-        // Cập nhật trạng thái
-        $order->status = $newStatus;
-        $order->save();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('admin.orders.edit', $order->id)->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
-            ]
-        ]);
+            // Lưu lịch sử trạng thái
+            StatusHistory::create([
+                'entity_id' => $order->id,
+                'entity_type' => 'order',
+                'old_status' => $currentStatus,
+                'new_status' => $newStatus,
+                'changed_by' => auth()->id() ?? 1, // Kiểm tra có user đăng nhập không
+                'changed_at' => now(),
+            ]);
+
+            // Cập nhật trạng thái đơn hàng
+            $order->status = $newStatus;
+            $order->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.orders.edit', $order->id)->with([
+                'thongbao' => [
+                    'type' => 'success',
+                    'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
+                ]
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.orders.edit', $order->id)->with([
+                'thongbao' => [
+                    'type' => 'danger',
+                    'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+                ]
+            ]);
+        }
+
+       
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
-    {
-     
-    }
+    public function destroy(Order $order) {}
 }
