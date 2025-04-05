@@ -166,9 +166,9 @@
                                                         @endforeach
                                                     </select>
 
-                                                    @error('shipment_provider')
+                                                    {{-- @error('shipment_providers')
                                                         <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
                                                 </div>
                                             @endif
@@ -397,7 +397,7 @@
                 var bsAlert = new bootstrap.Alert(alert);
                 bsAlert.close();
             }
-        }, 5000); // 5000ms = 5 giây
+        }, 10000); // 5000ms = 5 giây
     </script>
 @endsection
 @section('style')
