@@ -16,16 +16,18 @@
                 @endif
                 <div class="col-lg-3">
                     <div class="user-info mb-3"
-                        style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
-                        <div class="avatar" style="width: 88px; height: 88px; margin-right: 15px;">
+                    style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
+                    <div class="d-flex flex-column align-items-center text-center p-3">
+                        {{-- Avatar --}}
+                        <div class="avatar" style="width: 200px; height: 200px; overflow: hidden;">
                             <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
-                                style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                         </div>
-                        <div class="user-details">
-                            <strong>{{ auth()->user()->name }}</strong> <br>
-                            <small>{{ auth()->user()->email }}</small>
-                        </div>
+                        <h5 class="mt-3 mb-1">{{ auth()->user()->name }}</h5>
+                        <p class="text-muted">{{ auth()->user()->email }}</p>
                     </div>
+                    
+                </div>
                     <nav class="nav flex-column account-sidebar sticky-sidebar">
                        
                         <a href="{{ route('account.order') }}" class="nav-link">
