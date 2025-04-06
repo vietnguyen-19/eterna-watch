@@ -45,7 +45,7 @@ class OrderController extends Controller
         $statusCounts['all'] = array_sum($statusCounts);
 
         // Lấy danh sách đơn hàng theo trạng thái
-        $orders = Order::with('orderItems')
+        $orders = Order::with('orderItems.productVariant.product' )
             ->when($status !== 'all', function ($query) use ($status) {
                 $query->where('status', $status);
             })
