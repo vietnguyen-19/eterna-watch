@@ -21,14 +21,14 @@
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Danh sách Đơn Hàng </h5>
+                                        <h1 class="card-title mb-0">Danh sách Đơn Hàng </h1>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                    {{-- <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.orders.create') }}" class="btn btn-success add-btn"><i
                                                 class="ri-add-line align-bottom me-1"></i>Thêm đơn hàng mới</a>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -118,18 +118,17 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                        <table class="table table-bordered" aria-describedby="example2_info"
-                                            id="danhmucTable">
+                                        <table class="table table-bordered" aria-describedby="example2_info" >
 
                                             <thead class="text-muted">
                                                 <tr>
-                                                    <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="order_code">Mã đơn hàng</th>
-                                                    <th class="sort" data-sort="ten_user">Khách hàng</th>
-                                                    <th class="sort" data-sort="tong_tien">Tổng tiền</th>
-                                                    <th class="sort" data-sort="trang_thai">Trang thái</th>
-                                                    <th class="sort" data-sort="created_at"> Ngày đặt</th>
-                                                    <th class="sort" data-sort="hanh_dong">Hành động</th>
+                                                    <th class="" >ID</th>
+                                                    <th class="" >Mã đơn hàng</th>
+                                                    <th class="" ">Khách hàng</th>
+                                                    <th class="" >Tổng tiền</th>
+                                                    <th class="" >Trang thái</th>
+                                                    <th class="" > Ngày đặt</th>
+                                                    <th class="" >Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -200,7 +199,7 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <thead class="text-muted">
+                                            {{-- <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">ID</th>
                                                     <th class="sort" data-sort="order_code">Mã đơn hàng</th>
@@ -210,7 +209,7 @@
                                                     <th class="sort" data-sort="created_at"> Ngày đặt</th>
                                                     <th class="sort" data-sort="hanh_dong">Hành động</th>
                                                 </tr>
-                                            </thead>
+                                            </thead> --}}
                                         </table>
 
                                     </div>
@@ -296,7 +295,7 @@
         $(document).ready(function() {
             $('#danhmucTable').DataTable({
                 "paging": true, // Bật phân trang
-                "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
+                "lengthMenu": [10, 20, 50], // Số dòng hiển thị mỗi trang
                 "searching": true, // Bật ô tìm kiếm
                 "ordering": true, // Bật sắp xếp cột
                 "info": true, // Hiển thị thông tin tổng số dòng

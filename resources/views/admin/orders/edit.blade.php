@@ -128,86 +128,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="card" id="customerList">
-                        <div class="card-header border-bottom-dashed">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0"><b>Quản lí vận chuyển</b>
-                                        </h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <form action="{{ route('admin.shipments.send', $order->id) }}" method="POST">
-                            @csrf
-                            <div class="card-body">
-                                <div class="row invoice-info">
-                                    <div class="col-sm-12 invoice-col">
-                                        <div class="body">
-                                            @if (!$order->shipment)
-                                                <div class="mb-3 col-12">
-                                                    <label for="status" class="form-label">Chọn nhà vận chuyển</label>
-                                                    <select name="shipment_provider" class="form-control"
-                                                        {{ $order->shipment ? 'disabled' : '' }} required>
-                                                        @php
-                                                            $shipment_providers = [
-                                                                'Giao hàng tiết kiệm',
-                                                                'ViettelPost',
-                                                                'VietExpress',
-                                                            ];
-                                                        @endphp
-
-                                                        @foreach ($shipment_providers as $key => $label)
-                                                            <option value="{{ $label }}"
-                                                                {{ old('shipment_provider', $order->shipment_provider) == $label ? 'selected' : '' }}>
-                                                                {{ $label }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    {{-- @error('shipment_providers')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror --}}
-
-                                                </div>
-                                            @endif
-                                            <div class="mb-3 col-12">
-                                                @if ($order->shipment)
-                                                    <p><strong>Bên vận chuyển | </strong>
-                                                        {{ $order->shipment->shipping_provider }}</p>
-                                                    <p><strong>Mã vận đơn | </strong>
-                                                        {{ $order->shipment->tracking_number }}</p>
-                                                    <p><strong>Trạng thái |</strong>
-                                                        <span class="badge bg-success">
-                                                            {{ $order->shipment->shipment_status }}</span>
-                                                    </p>
-                                                @endif
-                                            </div>
-                                            @if (!$order->shipment)
-                                                <button onclick="return confirm('Bạn đã chắc chắn với hàng động của mình?')"
-                                                    type="submit" class="btn btn-primary mb-3 col-12">Gửi bên vận
-                                                    chuyển</button>
-                                            @endif
-                                        </div>
-
-                                        {{-- <form action="{{ route('admin.shipments.send', $order->id) }}" method="POST">
-                                            @csrf
-                                            <label for="shipment_provider">Chọn nhà vận chuyển</label>
-                                            <select name="shipment_provider" required>
-                                                <option value="Giao hàng tiết kiệm">Giao hàng tiết kiệm</option>
-                                                <option value="ViettelPost">ViettelPost</option>
-                                                <option value="VietExpress">VietExpress</option>
-                                            </select>
-                                        
-                                            <button type="submit" class="btn btn-primary mt-2">Gửi bên vận chuyển</button>
-                                        </form> --}}
-                                        
-                                    </div>
-
-                                </div>
-                            </div>
-                        </form>
+                        
                     </div>
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
@@ -280,9 +201,11 @@
                                 <thead class="text-muted">
                                     <tr>
                                         <th style="width:5%" class="sort" data-sort="id">STT</th>
+                                        <th class="sort" data-sort="ten_danh_muc">Ảnh sản phẩm</th>
                                         <th class="sort" data-sort="ten_danh_muc">Sản phẩm</th>
-                                        <th class="sort" data-sort="mo_ta">Số lượng</th>
+                                        <th class="sort" data-sort="mo_ta">Biến Thể</th>
                                         <th class="sort" data-sort="mo_ta">Giá</th>
+                                        <th class="sort" data-sort="mo_ta">Số lượng</th>
                                         <th class="sort" data-sort="action">Tổng</th>
                                     </tr>
                                 </thead>
@@ -298,17 +221,31 @@
                                         <tr>
 
                                             <td class="align-middle">{{ $loop->iteration }}</td>
-
                                             <td class="align-middle">
                                                 <img src="{{ Storage::url($item->productVariant->product->avatar ?? 'default-avatar.png') }}"
                                                     alt="product Avatar" class="me-2" width="40" height="40">
-                                                {{ $item->productVariant->product->name ?? 'N/A' }}
-
                                             </td>
-                                            <td class="align-middle">{{ $item->quantity }}</td>
+
+                                            <td class="align-middle">  
+                                                <a href="{{ route('admin.products.show', $item->productVariant->product->id) }}" class="text-decoration-none ">
+                                                    {{ $item->productVariant->product->name ?? 'N/A' }}
+
+                                                </a>
+                                            </td>
+
+                                            
+                                            <td>
+                                                @foreach ($item->productVariant->attributeValues as $value)
+                                                    <small>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
+                                                        {{ $value->nameValue->value_name ?? 'Không xác định' }}
+                                                    </small><br>
+                                                @endforeach
+                                            </td>
                                             <td class="align-middle">
                                                 {{ number_format($item->unit_price, 0, ',', '.') }}&nbsp; VND
                                             </td>
+                                            <td class="align-middle">{{ $item->quantity }}</td>
+                                            
                                             <td class="align-middle">
                                                 {{ number_format($item->total_price, 0, ',', '.') }}&nbsp; VND
                                             </td>
@@ -333,27 +270,27 @@
                                     @endphp
 
                                     <tr>
-                                        <th colspan="4" class="text-end">Tạm tính</th>
+                                        <th colspan="6" class="text-end">Tạm tính</th>
                                         <td class="text-end">{{ number_format($subtotal, 0, ',', '.') }}
                                             VND</td>
                                     </tr>
 
                                     @if ($order->voucher)
                                         <tr>
-                                            <th colspan="4" class="text-end">Mã giảm giá</th>
+                                            <th colspan="6" class="text-end">Mã giảm giá</th>
                                             <td class="text-end"><span
                                                     class="badge bg-success">{{ $order->voucher->code }}</span></td>
                                         </tr>
                                         <tr>
-                                            <th colspan="4" class="text-end">Giảm giá</th>
+                                            <th colspan="6" class="text-end">Giảm giá</th>
                                             <td class="text-end">-{{ number_format($discountAmount, 0, ',', '.') }}
                                                 VND</td>
                                         </tr>
                                     @endif
 
                                     <tr>
-                                        <th colspan="4" class="text-end"><strong>Tổng thanh toán</strong></th>
-                                        <td class="text-end">
+                                        <th colspan="6" class="text-end"><strong>Tổng thanh toán</strong></th>
+                                        <td class="text-end text-danger">
                                             <strong>{{ number_format($totalPayment, 0, ',', '.') }} VND</strong>
                                         </td>
                                     </tr>
