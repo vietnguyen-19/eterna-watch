@@ -1,8 +1,6 @@
 @extends('admin.layouts.master')
 @section('content')
     <div class="container mt-4">
-        <h2 class="mb-3">Danh sách Banner</h2>
-
         <section class="content pt-3">
             <div class="container-fluid">
                 <div class="row">
@@ -13,7 +11,6 @@
                                 role="alert">
                                 <i class="ri-notification-off-line label-icon"></i><strong>
                                     {{ session('thongbao.message') }}</strong>
-
 
                             </div>
                             @php
@@ -29,10 +26,14 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-auto">
-                                        <div class="d-flex flex-wrap align-items-start gap-2">
+
+                                            <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
+                                                <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                            </a>
+
                                             <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
                                                     class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -92,14 +93,10 @@
                                                                     </li>
                                                                     <!-- Remove Button -->
                                                                     <li class="list-inline-item delete" title="Remove">
-                                                                        <form
-                                                                            action="{{ route('admin.banners.destroy', $banner->id) }}"
-                                                                            method="POST"
-                                                                            onsubmit="return confirm('Bạn chắc chăn muốn xóa?');">
+                                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" style="display:inline;">
                                                                             @csrf
                                                                             @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
+                                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                                                 <i class="fa-solid fa-trash"></i>
                                                                             </button>
                                                                         </form>
@@ -113,10 +110,10 @@
                                                 <thead class="text-muted">
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Image link</th>
-                                                        <th class="sort" data-sort="redirect_link">Redirect link
+                                                        <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
+                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
                                                         </th>
-                                                        <th class="sort" data-sort="action">Action</th>
+                                                        <th class="sort" data-sort="action">Hành động</th>
                                                     </tr>
                                                 </thead>
                                             </table>
