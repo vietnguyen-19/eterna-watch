@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('settings', function (Blueprint $table) {
-        $table->id();
-        $table->string('key')->unique(); // Khóa duy nhất cho mỗi setting
-        $table->text('value'); // Giá trị cài đặt, lưu chuỗi, số, JSON, v.v.
-        $table->enum('type', ['string', 'number', 'boolean', 'json'])->default('string'); // Kiểu dữ liệu
-        $table->timestamps();
-    });
+    if (!Schema::hasTable('settings')) {
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('key');
+            $table->text('value');
+            $table->enum('type', ['string', 'number', 'boolean', 'json'])->default('string');
+            $table->timestamps();
+        });
+    }
+    
 }
 
 
