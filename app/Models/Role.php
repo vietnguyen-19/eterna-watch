@@ -10,7 +10,8 @@ use Spatie\Permission\Models\Role as SpatieRole;
 
 class Role extends Model
 {
-    use HasFactory;
+
+    use HasFactory,HasRoles; 
 
     protected $table = 'roles'; // Tên bảng trong CSDL
 
