@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('entity_type');
             $table->text('content');
             $table->integer('rating')->nullable();
+            // $table->enum('status');
             $table->foreignId('parent_id')
                 ->nullable()
                 ->constrained('comments')

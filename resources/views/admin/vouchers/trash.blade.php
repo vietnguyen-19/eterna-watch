@@ -10,6 +10,12 @@
                             <h3 class="card-title">Voucher đã xóa</h3>
                         </div>
                         <div class="card-body">
+                            @if(session('thongbao'))
+    <div class="alert alert-{{ session('thongbao')['type'] }} alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        {{ session('thongbao')['message'] }}
+    </div>
+@endif
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -44,6 +50,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <div class="mt-3">
+                                <a href="{{ route('admin.vouchers.index') }}" class="btn btn-secondary">Hủy</a>
+                            </div>
                         </div>
                     </div>
                 </div>
