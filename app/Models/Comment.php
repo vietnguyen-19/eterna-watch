@@ -19,6 +19,7 @@ class Comment extends Model
         'content',
         'rating',
         'parent_id',
+        'status',
     ];
 
     // Liên kết với User

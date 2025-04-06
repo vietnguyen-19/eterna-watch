@@ -169,7 +169,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('roles', RoleController::class)->names('admin.roles');
 
     // Bình luận
-    Route::resource('comments', CommentController::class)->names('admin.comments');
+    Route::prefix('comments')->group(function () {
+        Route::get('comments', [CommentController::class, 'index'])->name('admin.comments.index');
+        Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
+        Route::put('/{id}', [CommentController::class, 'update'])->name('admin.comments.update');
+        Route::get('/comments/product', [CommentController::class, 'productComments'])->name('admin.comments.product');
+    });
 
     // Bài viết
     Route::resource('posts', PostController::class)->names('admin.posts');
@@ -179,10 +184,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
-
     Route::resource('roles', RoleController::class)->names('admin.roles');
-
-
 
     // Banner
     Route::prefix('banners')->group(function () {
