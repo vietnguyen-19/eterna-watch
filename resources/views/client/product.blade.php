@@ -230,7 +230,8 @@
                         class="product-single__reviews-title"><strong>MÔ TẢ SẢN PHẨM</strong></h2>
 
                     <div class="product-single__description">
-                        <p>{{ $product->full_description }}</p>
+                        <p>{!! $product->full_description !!}</p>
+
                     </div>
 
                 </div>

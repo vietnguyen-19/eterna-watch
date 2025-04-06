@@ -15,7 +15,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\SettingController;
 use App\Http\Controllers\Client\ShopController;
-
+use App\Http\Controllers\Client\SettingsController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
 Route::post('/login', [LoginController::class, 'login']);
 
-// Route::post('/logout', [LoginController::class, 'logout'])->name('client.logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('client.logout');
 Route::get('/dashboard', function () {
     return view('client.dashboard');
 })->name('client.dashboard');
@@ -112,14 +112,11 @@ Route::prefix('account')->group(function () {
 
     Route::get('order_detail/{id}', [AccountController::class, 'orderDetail'])->name('account.order_detail');
     Route::post('cancel/{id}', [AccountController::class, 'cancelOrder'])->name('account.cancel');
-   
+
     Route::post('/upload-image', [AccountController::class, 'uploadImage']);
     Route::post('/remove-image', [AccountController::class, 'removeImage']);
 
-
 });
-
-    
 
 Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
 Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');

@@ -201,12 +201,15 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             
             // Xóa avatar nếu có
-            if ($user->avatar && Storage::exists('public/' . $user->avatar)) {
-                Storage::delete('public/' . $user->avatar);
+            if ($user->avatar) {
+                $avatarPath = public_path('storage/' . $user->avatar);
+                if (file_exists($avatarPath)) {
+                    unlink($avatarPath);
+                }
             }
 
             // Xóa tất cả địa chỉ của người dùng
-            $user->addresses()->delete();
+            UserAddress::where('user_id', $id)->delete();
             
             // Xóa người dùng
             $user->delete();
@@ -216,7 +219,8 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('admin.users.index')->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            Log::error('Error deleting user: ' . $e->getMessage());
+            return redirect()->route('admin.users.index')->with('error', 'Có lỗi xảy ra khi xóa tài khoản: ' . $e->getMessage());
         }
     }
 }

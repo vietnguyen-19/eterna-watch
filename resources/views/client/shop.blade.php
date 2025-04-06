@@ -77,19 +77,6 @@
                                                     {{ $brand->name }} <span
                                                         class="text-muted">({{ $brand->products_count }})</span>
                                                 </a>
-                                                @if($brand->children->count() > 0)
-                                                    <ul class="list list-inline mb-0 ms-3">
-                                                        @foreach($brand->children as $child)
-                                                            <li class="list-item">
-                                                                <a href="{{ route('client.shop', ['brand' => $child->name]) }}"
-                                                                    class="menu-link py-1">
-                                                                    {{ $child->name }} <span
-                                                                        class="text-muted">({{ $child->products_count }})</span>
-                                                                </a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
                                             </li>
                                         @endif
                                     @endforeach
@@ -106,42 +93,36 @@
                                 <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
                                     aria-controls="accordion-filter-price">
-                                    <strong> Lọc theo giá trị</strong>
+                                    <strong>Lọc theo giá trị</strong>
                                     <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                                            <path
-                                                d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                                            <path d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z"/>
                                         </g>
                                     </svg>
                                 </button>
                             </h5>
+                
                             <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
                                 aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
-
-                                <!-- Thanh trượt -->
-                                <div id="price-slider" class="my-3"></div>
-
-                                <!-- Hiển thị giá trị -->
-                                <div class="d-flex justify-content-between">
-                                    <p class="text-secondary">Min:
-                                        <span id="min-price" class="fw-bold price-range__min">0</span>₫
-                                    </p>
-                                    <p class="text-secondary">Max:
-                                        <span id="max-price" class="fw-bold price-range__max">0</span>₫
-                                    </p>
-
+                                
+                                <!-- Nhập khoảng giá -->
+                                <div class="mb-3">
+                                    <label for="min_price" class="form-label">Giá tối thiểu (₫)</label>
+                                    <input type="number" class="form-control" id="min_price" name="min_price" placeholder="Nhập giá từ..." min="0">
                                 </div>
-                                <!-- Input ẩn để gửi dữ liệu -->
-                                <input type="hidden" name="min_price" id="min_price_input">
-                                <input type="hidden" name="max_price" id="max_price_input">
-
+                                <div class="mb-3">
+                                    <label for="max_price" class="form-label">Giá tối đa (₫)</label>
+                                    <input type="number" class="form-control" id="max_price" name="max_price" placeholder="Nhập giá đến..." min="0">
+                                </div>
+                
                                 <!-- Button lọc -->
-                                <button type="submit" class="w-100 btn btn-primary mt-3">Lọc theo giá</button>
+                                <button type="submit" class="w-100 btn btn-primary">Lọc theo giá</button>
                             </div>
                         </div>
                     </div>
                 </form>
+                
 
 
             </div><!-- /.shop-sidebar -->
