@@ -9,13 +9,14 @@ class Setting extends Model
 {
     protected $table = 'settings';
     protected $fillable = [
+        'id',
         'key',
         'value',
-        'user_id',
     ];
     public function getValueAttribute($value)
     {
-        return match ($this->type) {
+        $type = $this->attributes['type'] ?? null;
+        return match ($type) {
             'number' => (int) $value,
             'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'json' => json_decode($value, true),
@@ -30,9 +31,6 @@ class Setting extends Model
     {
         $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
     }
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
+
 
 }
