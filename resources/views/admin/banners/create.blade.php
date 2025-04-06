@@ -27,7 +27,9 @@
                     @enderror
                 </div>
 
+
                 <button type="submit" class="btn btn-success">Thêm mới</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
                 <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
             </form>
         </div>

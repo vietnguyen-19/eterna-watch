@@ -51,7 +51,7 @@
                                 </tbody>
                             </table>
                             <div class="mt-3">
-                                <a href="{{ route('admin.vouchers.index') }}" class="btn btn-secondary">Hủy</a>
+                                <a href="{{ route('admin.vouchers.index') }}" class="btn btn-secondary">Quay lại</a>
                             </div>
                         </div>
                     </div>

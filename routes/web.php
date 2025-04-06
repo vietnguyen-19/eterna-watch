@@ -82,7 +82,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // Banner
     Route::prefix('banners')->name('admin.banners.')->group(function () {
-        // Resource route (CRUD cơ bản)
         Route::resource('/', BannerController::class)->except(['show'])->parameters(['' => 'id']);
         // Route quản lý thùng rác
         Route::prefix('trash')->group(function () {
@@ -92,9 +91,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         });
     });
 
+
     //voucher
        // Voucher
        Route::prefix('vouchers')->group(function () {
+
+    // Voucher
+    Route::prefix('vouchers')->group(function () {
         Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
         Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
         Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
@@ -248,9 +251,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // Banner
     Route::resource('banners', BannerController::class)->names('staff.banners');
 
-    //voucher
-    Route::resource('vouchers', VoucherController::class)->names('staff.vouchers');
-    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('staff.vouchers.forceDelete');
 
     // người dùng
     Route::resource('users', UserController::class)->names('staff.users');
@@ -327,3 +327,4 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
 });
 
+});
