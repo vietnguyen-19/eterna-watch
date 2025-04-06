@@ -35,9 +35,6 @@ class HomeController extends Controller
 
 
         $settings = Setting::pluck('value', 'key')->toArray();
-        $settings = Setting::pluck('value', 'key')->toArray();
-
-
 
         return view('client.home', compact('bestSellingProducts', 'trendingProducts', 'posts', 'categories'));
     }
