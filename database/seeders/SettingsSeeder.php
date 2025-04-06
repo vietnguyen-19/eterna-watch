@@ -42,7 +42,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'privacy_policy', 'value' => 'Chính sách bảo mật của EternaWatch giúp bảo vệ thông tin cá nhân của khách hàng một cách an toàn và tuyệt đối.', 'type' => 'string', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
 
             // Cấu hình website
-            ['key' => 'shipping_fee', 'value' => '50000', 'type' => 'number'],
+            ['key' => 'shipping_fee', 'value' => '50000', 'type' => 'string'],
         ];
 
             ['key' => 'shipping_fee', 'value' => '50000', 'type' => 'string', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()
