@@ -270,8 +270,9 @@ class PaymentController extends Controller
             'changed_at' => now(),
         ]);
 
-        return redirect()->route('payment.complete', $order->id)
-            ->with('message', 'Thanh toán thành công! Giỏ hàng đã được làm trống.');
+        return redirect()
+            ->route('account.order')
+            ->with('message', "Đơn hàng #{$order->order_code}đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
     public function payWithCash($order_id)
     {
@@ -290,6 +291,8 @@ class PaymentController extends Controller
             $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
             CartDetail::whereIn('variant_id', $variantIds)->delete();
         }
-        return redirect()->route('payment.complete', $order->id)->with('message', 'Thanh toán bằng tiền mặt, chờ xác nhận!');
+        return redirect()
+            ->route('account.order')
+            ->with('message', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
 }

@@ -8,17 +8,19 @@
                 <div class="col-lg-3">
                     <div class="user-info mb-3"
                         style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
-                        <div class="avatar" style="width: 50px; height: 50px; margin-right: 15px;">
-                            <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
-                                style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        <div class="d-flex flex-column align-items-center text-center p-3">
+                            {{-- Avatar --}}
+                            <div class="avatar" style="width: 200px; height: 200px; overflow: hidden;">
+                                <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
+                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            </div>
+                            <h5 class="mt-3 mb-1">{{ auth()->user()->name }}</h5>
+                            <p class="text-muted">{{ auth()->user()->email }}</p>
                         </div>
-                        <div class="user-details">
-                            <strong>{{ auth()->user()->name }}</strong> <br>
-                            <small>{{ auth()->user()->email }}</small>
-                        </div>
+
                     </div>
                     <nav class="nav flex-column account-sidebar sticky-sidebar">
-                       
+
                         <a href="{{ route('account.order') }}" class="nav-link active">
                             <i class="fas fa-shopping-bag me-2"></i> Đơn hàng
                         </a>
@@ -39,6 +41,26 @@
 
 
                 <div class="col-lg-9">
+                    @if (session('message'))
+                    <div class="alert alert-success alert-dismissible fade show shadow-lg rounded-lg p-4 mb-4 d-flex align-items-center"
+                        role="alert" style="background-color: #28a745; color: white; font-size: 16px;">
+                        
+                        <!-- Icon FontAwesome -->
+                        <i class="fas fa-check-circle me-3 fs-3 text-white"></i>
+                
+                        <!-- Thông báo -->
+                        <div class="d-flex flex-column">
+                            <strong class="fs-5 mb-2">{{ session('message') }}</strong>
+                        </div>
+                
+                        <!-- Button Close -->
+                        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                
+
+
+
                     <div class="content-box p-4">
                         <div class="order-list" style="margin: 0 auto;">
                             @foreach ($orders as $order)
@@ -78,7 +100,8 @@
                                                 <!-- Thông tin sản phẩm -->
                                                 <div style="flex-grow: 1;">
                                                     <div><strong>{{ $item->productVariant->product->name }} x
-                                                           <span style="color: #d3401f"> {{ $item->quantity }}</span></strong></div>
+                                                            <span style="color: #d3401f">
+                                                                {{ $item->quantity }}</span></strong></div>
                                                     @foreach ($item->productVariant->attributeValues as $value)
                                                         <small>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
                                                             {{ $value->nameValue->value_name ?? 'Không xác định' }}
@@ -97,7 +120,7 @@
                                         style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px;">
                                         <div>
                                             Tổng: <strong>{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
-                                            ({{  $order->orderItems->sum('quantity') }} sản phẩm)
+                                            ({{ $order->orderItems->sum('quantity') }} sản phẩm)
                                         </div>
                                         <a href="{{ route('account.order_detail', $order->id) }}" class="btn btn-sm"
                                             style="background-color: #1c7bff; color: #fff; border-radius: 3px; text-decoration: none; padding: 5px 15px;">
@@ -158,6 +181,7 @@
             color: rgb(31, 31, 31) !important;
             text-transform: uppercase;
         }
+
         .account-sidebar .nav-link {
             font-size: 16px;
             padding: 12px 18px;
