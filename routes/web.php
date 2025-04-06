@@ -82,6 +82,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // Banner
     Route::prefix('banners')->name('admin.banners.')->group(function () {
+        // Resource route
         Route::resource('/', BannerController::class)->except(['show'])->parameters(['' => 'id']);
         // Route quản lý thùng rác
         Route::prefix('trash')->group(function () {
@@ -91,17 +92,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         });
     });
 
-
-    //voucher
-       // Voucher
-       Route::prefix('vouchers')->group(function () {
-
-    // Voucher
-    Route::prefix('vouchers')->group(function () {
-        Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
-        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
-        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
-        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+//Voucher
+    Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
+        // Resource route
+        Route::resource('/', VoucherController::class)->except(['show'])->parameters(['' => 'id']);
+        // Route quản lý thùng rác
+        Route::prefix('trash')->group(function () {
+            Route::get('/', [VoucherController::class, 'trash'])->name('trash');
+            Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore');
+            Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
+        });
     });
 
     // người dùng
@@ -324,7 +324,4 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('staff.settings');
-
-});
-
 });
