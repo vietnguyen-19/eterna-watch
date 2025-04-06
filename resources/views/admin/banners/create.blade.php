@@ -1,38 +1,37 @@
 @extends('admin.layouts.master')
 
+@section('title', 'Thêm Mới Banner')
+
 @section('content')
-<div class="container mt-4">
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h4>Thêm mới Banner</h4>
+        <div class="card-header">
+            <h3 class="card-title">Thêm Mới Banner</h3>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <!--  Image -->
-                <div class="mb-3">
-                    <label class="form-label" for="image">Chọn ảnh</label>
+                <div class="form-group">
+                    <label for="image">Ảnh Banner <span class="text-danger">*</span></label>
                     <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" required>
-
                     @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <!-- Redirect Link--->
-                <div class="mb-3">
-                    <label class="form-label" for="redirect_link">Redirect Link</label>
-                    <input type="text" name="redirect_link" id="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" placeholder="Enter redirect URL" value="{{ old('redirect_link') }}">
 
+                <div class="form-group">
+                    <label for="redirect_link">Đường dẫn chuyển hướng</label>
+                    <input type="text" name="redirect_link" id="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" value="{{ old('redirect_link') }}" placeholder="Nhập URL chuyển hướng">
                     @error('redirect_link')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <!-- Submit-->
-                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Thêm mới</button>
-                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+
+
+                <button type="submit" class="btn btn-success">Thêm mới</button>
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
             </form>
         </div>
     </div>
-</div>
 @endsection

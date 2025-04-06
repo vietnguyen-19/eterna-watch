@@ -261,9 +261,10 @@
                                         <tr class="d-flex justify-content-between py-2">
                                             <th class="text-start">Phí vận chuyển</th>
                                             <td class="text-end">
-                                                <span id="shipping_cost">0đ</span>
+                                                <span id="shipping_cost">100.000đ</span>
                                             </td>
                                         </tr>
+                                        @endphp
                                         <tr class="d-flex justify-content-between py-2">
                                             <th class="text-start">Tổng cộng</th>
                                             <td class="text-end">
@@ -285,11 +286,15 @@
                                 <select name="shipping_method" id="shipping_method"
                                     class="form-select @error('shipping_method') is-invalid @enderror"
                                     onchange="updateShipping()">
+
                                     <option value=""><strong>-- Chọn lại phương thức vận chuyển --</strong></option>
-                                    <option value="fixed">Phí giao hàng cố định (100.000đ)</option>
+
+                                    <!-- ✅ Đặt selected vào đây -->
+                                    <option value="fixed" selected>Phí giao hàng cố định (100.000đ)</option>
+
                                     <option value="store">Nhận tại cửa hàng (Miễn phí)</option>
-                                    <option value="free">Miễn phí đơn trên 1.000.000đ</option>
                                 </select>
+
 
                                 @error('shipping_method')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -339,43 +344,42 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
 @endsection
 @section('script')
-    <script>
-        function updateShipping() {
-            let shippingMethod = document.getElementById("shipping_method").value;
-            let shippingCostEl = document.getElementById("shipping_cost");
-            let totalAmountEl = document.getElementById("total_amount");
-            let totalAmountInput = document.getElementById("totalAmount");
+   <!-- Script -->
+<script>
+    function updateShipping() {
+        let shippingMethod = document.getElementById("shipping_method").value;
+        let shippingCostEl = document.getElementById("shipping_cost");
+        let totalAmountEl = document.getElementById("total_amount");
+        let totalAmountInput = document.getElementById("totalAmount");
 
-            // Lấy giá trị tổng tiền gốc từ `data-default`
-            let totalAmount = Number(totalAmountInput.dataset.default) || 0;
-            let shippingCost = 0;
+        // Lấy giá trị tổng tiền gốc từ `data-default`
+        let totalAmount = Number(totalAmountInput.dataset.default) || 0;
+        let shippingCost = 0;
 
-            switch (shippingMethod) {
-                case "fixed":
-                    shippingCost = 100000;
-                    break;
-                case "store":
-                    shippingCost = 0;
-                    break;
-                case "free":
-                    if (totalAmount < 1000000) {
-                        alert("Đơn hàng phải trên 1.000.000đ để được miễn phí vận chuyển!");
-                        document.getElementById("shipping_method").value = "0"; // Reset chọn
-                        return;
-                    }
-                    shippingCost = 0;
-                    break;
-            }
-
-            // Cập nhật UI
-            shippingCostEl.textContent = shippingCost.toLocaleString("vi-VN") + "đ";
-            let newTotal = totalAmount + shippingCost;
-            totalAmountEl.textContent = newTotal.toLocaleString("vi-VN") + "đ";
-
-            // Cập nhật input hidden để gửi lên server
-            totalAmountInput.value = newTotal;
+        switch (shippingMethod) {
+            case "fixed":
+                shippingCost = 100000;
+                break;
+            case "store":
+                shippingCost = 0;
+                break;
         }
-    </script>
+
+        // Cập nhật UI
+        shippingCostEl.textContent = shippingCost.toLocaleString("vi-VN") + "đ";
+        let newTotal = totalAmount + shippingCost;
+        totalAmountEl.textContent = newTotal.toLocaleString("vi-VN") + "đ";
+
+        // Cập nhật input hidden để gửi lên server
+        totalAmountInput.value = newTotal;
+    }
+
+    // ✅ Gọi khi trang load để cập nhật mặc định
+    window.addEventListener("DOMContentLoaded", function () {
+        updateShipping();
+    });
+</script>
+
 @endsection
 @section('style')
 @endsection

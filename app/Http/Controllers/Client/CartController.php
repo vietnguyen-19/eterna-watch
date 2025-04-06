@@ -67,6 +67,12 @@ class CartController extends Controller
     // Thêm sản phẩm vào giỏ hàng
     public function addToCart(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn cần đăng nhập để có thể thực hiện hành động!'
+            ]);
+        }
         $request->validate([
             'variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1'

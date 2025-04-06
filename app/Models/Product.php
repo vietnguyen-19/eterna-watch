@@ -24,7 +24,7 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-   
+
 
     public function brand()
     {
@@ -61,5 +61,15 @@ class Product extends Model
     {
         return $this->variants()
             ->max('price') ?? $this->price;
+    }
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            // Xóa các đơn hàng chứa sản phẩm này
+            OrderItem::where('product_id', $product->id)->delete();
+
+            // Optionally: nếu muốn xóa cả Order không còn OrderItem nào
+            Order::doesntHave('orderItems')->delete();
+        });
     }
 }
