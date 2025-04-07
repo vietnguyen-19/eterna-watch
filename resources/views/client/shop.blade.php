@@ -10,10 +10,22 @@
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
                 <div class="pt-4 pt-lg-0"></div>
-                <div class="search-field__input-wrapper mb-3">
-                    <input style="border: 2px solid rgb(97, 97, 97)" type="text" name="search_text"
-                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
-                </div>
+                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4" role="search">
+                    <div class="input-group shadow-sm" style="max-width: 500px;">
+                        <input type="text" name="query" class="form-control form-control-lg" placeholder="Tìm sản phẩm..." aria-label="Search" required>
+                        <input type="hidden" name="type" value="product">
+                        <button class="btn btn-outline-secondary w-auto px-3" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
+                                    1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 
+                                    5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+                
+                
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="accordion" id="categories-list">
                     <div class="accordion-item mb-4 pb-3">
@@ -70,26 +82,13 @@
                             <div class="accordion-body px-0 pb-0 pt-3">
                                 <ul class="list list-inline mb-0">
                                     @foreach ($brands as $brand)
-                                        @if($brand->parent_id === null)
+                                        @if ($brand->parent_id === null)
                                             <li class="list-item">
                                                 <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
                                                     class="menu-link py-1">
                                                     {{ $brand->name }} <span
                                                         class="text-muted">({{ $brand->products_count }})</span>
                                                 </a>
-                                                @if($brand->children->count() > 0)
-                                                    <ul class="list list-inline mb-0 ms-3">
-                                                        @foreach($brand->children as $child)
-                                                            <li class="list-item">
-                                                                <a href="{{ route('client.shop', ['brand' => $child->name]) }}"
-                                                                    class="menu-link py-1">
-                                                                    {{ $child->name }} <span
-                                                                        class="text-muted">({{ $child->products_count }})</span>
-                                                                </a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
                                             </li>
                                         @endif
                                     @endforeach
@@ -106,7 +105,7 @@
                                 <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
                                     aria-controls="accordion-filter-price">
-                                    <strong> Lọc theo giá trị</strong>
+                                    <strong>Lọc theo giá trị</strong>
                                     <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -116,32 +115,29 @@
                                     </svg>
                                 </button>
                             </h5>
+
                             <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
                                 aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
 
-                                <!-- Thanh trượt -->
-                                <div id="price-slider" class="my-3"></div>
-
-                                <!-- Hiển thị giá trị -->
-                                <div class="d-flex justify-content-between">
-                                    <p class="text-secondary">Min:
-                                        <span id="min-price" class="fw-bold price-range__min">0</span>₫
-                                    </p>
-                                    <p class="text-secondary">Max:
-                                        <span id="max-price" class="fw-bold price-range__max">0</span>₫
-                                    </p>
-
+                                <!-- Nhập khoảng giá -->
+                                <div class="mb-3">
+                                    <label for="min_price" class="form-label">Giá tối thiểu (₫)</label>
+                                    <input type="number" class="form-control" id="min_price" name="min_price"
+                                        placeholder="Nhập giá từ..." min="0">
                                 </div>
-                                <!-- Input ẩn để gửi dữ liệu -->
-                                <input type="hidden" name="min_price" id="min_price_input">
-                                <input type="hidden" name="max_price" id="max_price_input">
+                                <div class="mb-3">
+                                    <label for="max_price" class="form-label">Giá tối đa (₫)</label>
+                                    <input type="number" class="form-control" id="max_price" name="max_price"
+                                        placeholder="Nhập giá đến..." min="0">
+                                </div>
 
                                 <!-- Button lọc -->
-                                <button type="submit" class="w-100 btn btn-primary mt-3">Lọc theo giá</button>
+                                <button type="submit" class="w-100 btn btn-primary">Lọc theo giá</button>
                             </div>
                         </div>
                     </div>
                 </form>
+
 
 
             </div><!-- /.shop-sidebar -->
@@ -208,7 +204,14 @@
                         </div><!-- /.col-size d-flex align-items-center ms-auto ms-md-3 -->
                     </div><!-- /.shop-acs -->
                 </div><!-- /.d-flex justify-content-between -->
+                @if (Route::currentRouteName() == 'client.search')
+                    <p class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
+                        Kết quả tìm kiếm cho: "{{ request('query') }}"
+                    </p>
+                @endif
+
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+
                     @foreach ($products as $product)
                         <div class="product-card-wrapper">
                             <div class="product-card product-card_style6 hover-container mb-3">

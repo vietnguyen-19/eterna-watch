@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles; 
 
     protected $table = 'users';
 
@@ -65,6 +65,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserAddress::class);
     }
 
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -99,5 +101,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAvatarAttribute($value)
     {
         return $value ? $value : 'avatar/default.jpg';
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (!$user->role_id) {
+                $user->assignRole('customer'); // Gán vai trò mặc định
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuth
 {
@@ -15,6 +16,13 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
+
+        // Kiểm tra nếu user đã đăng nhập và có role_id = 1
+        if (Auth::check() && Auth::user()->role_id == 1) {
+            return $next($request); // Cho phép tiếp tục
+        }
+
+        // Nếu không phải adminadmin, chuyển hướng về trang đăng nhập
+        return redirect()->route('login');
     }
 }

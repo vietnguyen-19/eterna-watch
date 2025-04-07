@@ -24,7 +24,9 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('comments')
                 ->onDelete('cascade');
+            $table->enum('status',['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
+
 
             // Chỉ mục giúp truy vấn nhanh hơn
             $table->index(['entity_id', 'entity_type']);

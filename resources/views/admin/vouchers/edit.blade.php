@@ -8,6 +8,8 @@
             <h3 class="card-title">Chỉnh sửa Voucher</h3>
         </div>
         <div class="card-body">
+
+
             <form action="{{ route('admin.vouchers.update', $voucher->id) }}" method="POST">
                 @csrf
                 @method('PUT')

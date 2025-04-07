@@ -1,38 +1,39 @@
 @extends('admin.layouts.master')
 @section('content')
+
     <section class="content pt-3">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     @if (session('thongbao'))
-                    <div id="thongbao-alert"
-                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                        role="alert">
-                        <i class="ri-notification-off-line label-icon"></i><strong>
-                            {{ session('thongbao.message') }}</strong>
-                        
-                    </div>
-                    @php
-                        session()->forget('thongbao');
-                    @endphp
-                @endif
+                        <div id="thongbao-alert"
+                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                            role="alert">
+                            <i class="ri-notification-off-line label-icon"></i><strong>
+                                {{ session('thongbao.message') }}</strong>
+
+                        </div>
+                        @php
+                            session()->forget('thongbao');
+                        @endphp
+                    @endif
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Danh sách danh mục</h5>
+                                        <h5 class="card-title mb-0">Danh sách cài đặt</h5>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.categories.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm danh mục</a>
+                                        <a href="{{ route('admin.settings.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm cài đặt</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                       
+
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -47,45 +48,29 @@
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
-                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
-                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="key">Tên cài đặt</th>
+                                                    <th class="sort" data-sort="value">Nội dung</th>
+                                                    <th class="sort" data-sort="value">Kiểu dữ liệu</th>
                                                     <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
-                                                @foreach ($data as $item)
+
+                                                @foreach ($setting as $item)
                                                     <tr>
-
                                                         <td class="id">{{ $item->id }}</td>
-                                                        <td class="ten_danh_muc">{{ $item->name }}</td>
-                                                        <td class="slug">
-                                                            {{ $item->parent ? $item->parent->name : 'Danh mục gốc' }}
-                                                        </td>
-
-                                                        <td class="trang_thai">
-                                                            {{ $item->status }}
-                                                        </td>
-
-
+                                                        <td class="key">{{ $item->key }}</td>
+                                                        <td class="value">{{ $item->value }}</td>
+                                                        <td class="value">{{ $item->type }}</td>
                                                         <td>
                                                             <ul class="list-inline hstack gap-2 mb-0">
                                                                 <!-- Edit Button -->
                                                                 <li class="list-inline-item edit" title="Edit">
-                                                                    <a href="{{ route('admin.categories.edit', $item->id) }}"
+                                                                    <a href="{{ route('admin.settings.edit', $item->id) }}"
                                                                         class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                         Sửa
                                                                     </a>
                                                                 </li>
-                                                                <!-- Remove Button -->
-                                                                <li class="list-inline-item" title="Remove">
-                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
-                                                                        href="{{ route('admin.categories.destroy', $item->id) }}">
-                                                                        Xóa
-                                                                    </a>
-                                                                </li>
-
                                                             </ul>
                                                         </td>
                                                     </tr>
@@ -94,9 +79,9 @@
                                             <thead class="text-muted">
                                                 <tr>
                                                     <th class="sort" data-sort="id">ID</th>
-                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
-                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
-                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="key">Tên cài đặt</th>
+                                                    <th class="sort" data-sort="value">Nội dung</th>
+                                                    <th class="sort" data-sort="value">Kiểu dữ liệu</th>
                                                     <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
@@ -114,7 +99,6 @@
     </section>
 @endsection
 @section('script')
-
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

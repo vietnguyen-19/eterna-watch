@@ -9,6 +9,10 @@ use App\Models\ProductVariant;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Str;
+use App\Http\Controllers\Client\PaymentController;
 
 class CheckoutController extends Controller
 {
@@ -36,66 +40,27 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-        $orderItems = json_decode($request->input('order_items'), true);
-        if (!$orderItems || !is_array($orderItems)) {
-            return redirect()->back()->with('error', 'Dữ liệu giỏ hàng không hợp lệ.');
-        }
-
-        // Xử lý discount
-        $discount = $request->input('discount', 0);
-        $discount = (int) str_replace('.', '', $discount); // Loại bỏ dấu chấm, chuyển thành số
-
-        // Lấy voucher_id từ request (có thể null)
-        $voucherId = $request->input('voucher_id');
-
-        // Khởi tạo các biến
-        $totalFirst = 0;
-        $totalItems = 0;
-
-        // Lấy danh sách variant_id từ orderItems
-        $variantIds = array_column($orderItems, 'variant_id');
-
-        // Truy vấn thông tin sản phẩm (Eager Loading)
-        $variants = ProductVariant::with(['product', 'attributeValues.nameValue.attribute'])
-            ->whereIn('id', $variantIds)
-            ->get()
-            ->keyBy('id'); // Để tìm variant nhanh hơn
-
-        // Mảng để lưu thông tin sản phẩm đã xử lý
-        foreach ($orderItems as $item) {
-            $variant = $variants->get($item['variant_id']);
-
-            if ($variant) { // Chỉ xử lý nếu tìm thấy sản phẩm
-                $quantity = max(1, (int) $item['quantity']); // Đảm bảo số lượng hợp lệ
-                $subtotal = $variant->price * $quantity;
-
-                $variantDetails[] = [
-                    'variant' => $variant,
-                    'quantity' => $quantity,
-                    'total' => $subtotal
-                ];
-
-                $totalFirst += $subtotal;
-                $totalItems += $quantity;
-            }
-        }
-
-        // Nếu có voucher_id, kiểm tra xem voucher có tồn tại không
-        $voucher = $voucherId ? Voucher::find($voucherId) : null;
-
-        // Tính tổng tiền sau khi áp dụng giảm giá
-        $totalAmount = max(0, $totalFirst - $discount);
-
-        session([
-            'checkout_data' => [
-                'variantDetails' => $variantDetails,
-                'voucher'        => $voucher,
-                'discount'       => $discount,
-                'totalAmount'    => $totalAmount,
-                'totalFirst'     => $totalFirst,
-                'totalItems'     => $totalItems,
-            ]
+        // Validate dữ liệu
+        $validatedData = $request->validate([
+            'full_name'       => 'required|string|max:255',
+            'phone_number'    => 'required|string|max:20',
+            'email'           => 'required|email|max:255',
+            'street_address'  => 'required|string|max:255',
+            'ward'            => 'required|string|max:255',
+            'district'        => 'required|string|max:255',
+            'city'            => 'required|string|max:255',
+            'country'        => 'required|string|max:255',
+            'note'           => 'nullable|string|max:1000',
+            'total_amount'   => 'required|numeric|min:0',
+            'shipping_method' => 'required|string|in:free,store,fixed',
+            'payment_method' => 'required|string|in:cash,vnpay',
         ]);
-        return redirect()->route('checkout.index');
+
+        // Xử lý thanh toán dựa trên phương thức được chọn
+        if ($request->payment_method === 'vnpay') {
+            return app(PaymentController::class)->vnpay($request);
+        } else {
+            return app(PaymentController::class)->checkout($request);
+        }
     }
 }
