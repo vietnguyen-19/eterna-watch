@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
+use App\Http\Controllers\NewsController;
 
 use App\Http\Controllers\Client\Auth\LoginController;
 use App\Http\Middleware\AdminAuth;
@@ -215,6 +216,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     //settings
     Route::resource('settings', SettingController::class)->names('admin.settings');
 
+
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::get('/settings/create', [SettingController::class, 'create'])->name('admin.settings.create');
     Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
@@ -344,4 +346,5 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/vnpay/return', [PaymentController::class, 'vnPayCallback'])->name('vnpay.return');
         Route::get('/complete/{id}', [PaymentController::class, 'complete'])->name('complete');
     });
+
 });
