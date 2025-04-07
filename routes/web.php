@@ -340,8 +340,8 @@ Route::prefix('client')->name('client.')->group(function () {
 
     // Payment routes
     Route::prefix('payment')->name('payment.')->group(function () {
-        Route::post('/vnpay', [PaymentController::class, 'vnpay'])->name('vnpay');
-        Route::get('/vnpay/return', [PaymentController::class, 'vnPayCallback'])->name('vnpay.return');
-        Route::get('/complete/{id}', [PaymentController::class, 'complete'])->name('complete');
+        Route::get('vnpay/{orderId}', [PaymentController::class, 'payWithVNPay'])->name('vnpay');
+        Route::get('cash/{orderId}', [PaymentController::class, 'payWithCash'])->name('cash');
+        Route::get('vnpay/callback', [PaymentController::class, 'vnPayCallback'])->name('vnpay.callback');
     });
 });

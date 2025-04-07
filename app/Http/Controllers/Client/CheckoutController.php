@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Client\PaymentController;
 
 class CheckoutController extends Controller
 {
@@ -40,27 +39,67 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-        // Validate dữ liệu
-        $validatedData = $request->validate([
-            'full_name'       => 'required|string|max:255',
-            'phone_number'    => 'required|string|max:20',
-            'email'           => 'required|email|max:255',
-            'street_address'  => 'required|string|max:255',
-            'ward'            => 'required|string|max:255',
-            'district'        => 'required|string|max:255',
-            'city'            => 'required|string|max:255',
-            'country'        => 'required|string|max:255',
-            'note'           => 'nullable|string|max:1000',
-            'total_amount'   => 'required|numeric|min:0',
-            'shipping_method' => 'required|string|in:free,store,fixed',
-            'payment_method' => 'required|string|in:cash,vnpay',
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone_number' => 'required|string|max:20',
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string',
+            'district' => 'required|string',
+            'ward' => 'required|string',
+            'country' => 'required|string|max:255',
+            'note' => 'nullable|string',
+            'payment_method' => 'required|in:cash,vnpay',
+            'shipping_method' => 'required|in:fixed,store'
         ]);
 
-        // Xử lý thanh toán dựa trên phương thức được chọn
-        if ($request->payment_method === 'vnpay') {
-            return app(PaymentController::class)->vnpay($request);
-        } else {
-            return app(PaymentController::class)->checkout($request);
+        // Lấy dữ liệu từ session
+        $checkoutData = session('checkout_data');
+        if (!$checkoutData) {
+            return redirect()->route('client.cart.view')->with('error', 'Giỏ hàng trống!');
         }
+
+        // Tạo đơn hàng
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'voucher_id' => $checkoutData['voucher'] ? $checkoutData['voucher']->id : null,
+            'total_amount' => $checkoutData['totalAmount'],
+            'status' => 'pending',
+            'order_code' => 'ORD-' . time() . '-' . Str::random(4),
+            'shipping_address' => $request->street_address,
+            'shipping_city' => $request->city,
+            'shipping_district' => $request->district,
+            'shipping_ward' => $request->ward,
+            'shipping_country' => $request->country,
+            'shipping_phone' => $request->phone_number,
+            'shipping_email' => $request->email,
+            'shipping_name' => $request->full_name,
+            'note' => $request->note
+        ]);
+
+        // Tạo chi tiết đơn hàng
+        foreach ($checkoutData['variantDetails'] as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'variant_id' => $item['variant']->id,
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['variant']->price,
+                'total_price' => $item['total']
+            ]);
+
+            // Cập nhật số lượng tồn kho
+            $item['variant']->decrement('stock', $item['quantity']);
+        }
+
+        // Xóa dữ liệu checkout khỏi session
+        session()->forget('checkout_data');
+
+        // Xử lý thanh toán
+        if ($request->payment_method === 'vnpay') {
+            return redirect()->route('client.payment.vnpay', ['orderId' => $order->id]);
+        }
+
+        // Nếu thanh toán khi nhận hàng
+        return redirect()->route('client.payment.cash', ['orderId' => $order->id]);
     }
 }
