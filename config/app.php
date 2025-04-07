@@ -187,4 +187,11 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+'providers' => [
+    // Other Service Providers
+
+    Spatie\Permission\PermissionServiceProvider::class,
+],
+
+
 ];
