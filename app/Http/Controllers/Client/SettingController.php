@@ -18,6 +18,10 @@ class SettingController extends Controller
         $about = config('about_us'); // Lấy dữ liệu từ config
         return view('client.about_us', compact('about'));
     }
+    public function privacy()
+    {
+        return view('client.privacy');
+    }
     public function contactStore(Request $request)
     {
         // Xác thực dữ liệu đầu vào
