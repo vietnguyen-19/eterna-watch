@@ -31,7 +31,7 @@
                 </a>
             </div>
 
-            <form id="checkoutForm" action="{{ route('client.checkout.store') }}" method="POST">
+            <form action="{{ route('client.checkout.store') }}" method="POST">
                 @csrf
                 <div class="checkout-form">
                     <div class="billing-info__wrapper col-xl-4">
@@ -132,14 +132,14 @@
                                 </div>
                             </div>
 
-                            {{-- <!-- Quốc gia -->
+                            <!-- Quốc gia -->
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="country">Quốc gia</label>
                                     <input type="text" class="form-control" id="country" name="country"
                                         value="Việt Nam" required>
                                 </div>
-                            </div> --}}
+                            </div>
 
                             <!-- Ghi chú đơn hàng -->
                             <div class="col-md-12">
@@ -529,28 +529,6 @@
             }
             
             return true;
-        });
-
-        // Xử lý khi thay đổi phương thức thanh toán
-        $('input[name="payment_method"]').change(function() {
-            var paymentMethod = $(this).val();
-            var form = $('#checkoutForm');
-            
-            if (paymentMethod === 'vnpay') {
-                form.attr('action', '{{ route("client.payment.vnpay") }}');
-            } else {
-                form.attr('action', '{{ route("client.checkout.store") }}');
-            }
-        });
-        
-        // Xử lý submit form
-        $('#checkoutForm').submit(function(e) {
-            var selectedPayment = $('input[name="payment_method"]:checked').val();
-            if (!selectedPayment) {
-                e.preventDefault();
-                alert('Vui lòng chọn phương thức thanh toán');
-                return false;
-            }
         });
     });
 </script>
