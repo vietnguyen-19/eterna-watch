@@ -62,6 +62,9 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset'])
     ->name('password.update');
 
 Route::get('/', [HomeController::class, 'index'])->name('client.home');
+
+Route::get('/search', [HomeController::class, 'search'])->name('client.search');
+
 Route::get('/notfound', [HomeController::class, 'notFound'])->name('client.notfound');
 Route::get('/blog', [BlogController::class, 'index'])->name('client.blog');
 Route::get('/blog/{id}', [BlogController::class, 'show'])->name('client.blog.detail');
@@ -101,8 +104,7 @@ Route::prefix('comments')->middleware('customer')->group(function () {
 
     Route::delete('/delete/{comment}', [CommentController::class, 'delete'])->name('comments.delete');
 });
-
-Route::prefix('account')->group(function () {
+Route::prefix('account')->middleware('customer')->group(function () {
     Route::get('edit_detail', [AccountController::class, 'editAccount'])->name('account.edit');
     Route::post('update', [AccountController::class, 'update'])->name('account.update');
     Route::get('order', [AccountController::class, 'order'])->name('account.order');
@@ -122,4 +124,5 @@ Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.
 Route::post('contact_us/store', [SettingController::class, 'contactStore'])->name('client.contact_us.store');
 
 Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
+Route::get('privacy', [SettingController::class, 'privacy'])->name('client.privacy');
 

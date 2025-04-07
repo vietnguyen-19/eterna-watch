@@ -402,4 +402,51 @@ class CartController extends Controller
             'newTotal' => $newTotal
         ]);
     }
+
+    public function checkout(Request $request)
+    {
+        // Lấy danh sách sản phẩm được chọn từ request
+        $selectedItems = json_decode($request->order_items, true);
+        
+        if (empty($selectedItems)) {
+            return redirect()->route('client.cart.view')->with('error', 'Vui lòng chọn sản phẩm để mua!');
+        }
+
+        // Tính toán tổng tiền và chi tiết sản phẩm
+        $totalAmount = 0;
+        $totalItems = 0;
+        $variantDetails = [];
+
+        foreach ($selectedItems as $item) {
+            $variant = ProductVariant::with('product', 'attributeValues.nameValue.attribute')
+                ->find($item['variant_id']);
+                
+            if ($variant) {
+                $quantity = $item['quantity'];
+                $subtotal = $variant->price * $quantity;
+                $totalAmount += $subtotal;
+                $totalItems += $quantity;
+
+                $variantDetails[] = [
+                    'variant' => $variant,
+                    'quantity' => $quantity,
+                    'total' => $subtotal
+                ];
+            }
+        }
+
+        // Lưu thông tin vào session để sử dụng ở trang checkout
+        session([
+            'checkout_data' => [
+                'variantDetails' => $variantDetails,
+                'voucher' => null,
+                'discount' => 0,
+                'totalAmount' => $totalAmount,
+                'totalFirst' => $totalAmount,
+                'totalItems' => $totalItems
+            ]
+        ]);
+
+        return redirect()->route('client.checkout.index');
+    }
 }

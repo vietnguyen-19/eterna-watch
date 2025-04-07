@@ -31,7 +31,7 @@
                 </a>
             </div>
 
-            <form action="{{ route('payment.checkout') }}" method="POST">
+            <form action="{{ route('client.checkout.store') }}" method="POST">
                 @csrf
                 <div class="checkout-form">
                     <div class="billing-info__wrapper col-xl-4">
@@ -39,12 +39,12 @@
                         <div class="row">
                             <!-- Họ và tên -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
+                                <div class="form-group">
+                                    <label for="full_name">Họ và tên</label>
                                     <input type="text" class="form-control @error('full_name') is-invalid @enderror"
                                         id="full_name" name="full_name"
                                         value="{{ old('full_name', Auth::check() ? Auth::user()->name : '') }}"
-                                        placeholder="Họ và Tên">
-                                    <label for="full_name">Họ và Tên *</label>
+                                        placeholder="Họ và Tên" required>
                                     @error('full_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -53,12 +53,12 @@
 
                             <!-- Số điện thoại -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
+                                <div class="form-group">
+                                    <label for="phone_number">Số điện thoại</label>
                                     <input type="text" class="form-control @error('phone_number') is-invalid @enderror"
                                         id="phone_number" name="phone_number"
                                         value="{{ old('phone_number', Auth::check() ? Auth::user()->phone : '') }}"
-                                        placeholder="Số điện thoại">
-                                    <label for="phone_number">Số điện thoại *</label>
+                                        placeholder="Số điện thoại" required>
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -67,41 +67,27 @@
 
                             <!-- Email -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         id="email" name="email"
                                         value="{{ old('email', Auth::check() ? Auth::user()->email : '') }}"
-                                        placeholder="Email">
-                                    <label for="email">Email *</label>
+                                        placeholder="Email" required>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- Địa chỉ -->
+                            
+                            <!-- Tỉnh/Thành phố -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('street_address') is-invalid @enderror"
-                                        id="street_address" name="street_address"
-                                        value="{{ old('street_address', Auth::check() ? optional(Auth::user()->defaultAddress)->street_address : '') }}"
-                                        placeholder="Địa chỉ">
-                                    <label for="street_address">Địa chỉ *</label>
-                                    @error('street_address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Phường/Xã -->
-                            <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('ward') is-invalid @enderror"
-                                        id="ward" name="ward"
-                                        value="{{ old('ward', Auth::check() ? optional(Auth::user()->defaultAddress)->ward : '') }}"
-                                        placeholder="Phường/Xã">
-                                    <label for="ward">Phường/Xã *</label>
-                                    @error('ward')
+                                <div class="form-group">
+                                    <label for="city">Tỉnh/Thành phố</label>
+                                    <select class="form-control @error('city') is-invalid @enderror" id="city" name="city" required>
+                                        <option value="">Chọn tỉnh/thành phố</option>
+                                    </select>
+                                    @error('city')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -109,27 +95,38 @@
 
                             <!-- Quận/Huyện -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('district') is-invalid @enderror"
-                                        id="district" name="district"
-                                        value="{{ old('district', Auth::check() ? optional(Auth::user()->defaultAddress)->district : '') }}"
-                                        placeholder="Quận/Huyện">
-                                    <label for="district">Quận/Huyện *</label>
+                                <div class="form-group">
+                                    <label for="district">Quận/Huyện</label>
+                                    <select class="form-control @error('district') is-invalid @enderror" id="district" name="district" required>
+                                        <option value="">Chọn quận/huyện</option>
+                                    </select>
                                     @error('district')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- Tỉnh/Thành phố -->
+                            <!-- Phường/Xã -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror"
-                                        id="city" name="city"
-                                        value="{{ old('city', Auth::check() ? optional(Auth::user()->defaultAddress)->city : '') }}"
-                                        placeholder="Tỉnh/Thành phố">
-                                    <label for="city">Tỉnh/Thành phố *</label>
-                                    @error('city')
+                                <div class="form-group">
+                                    <label for="ward">Phường/Xã</label>
+                                    <select class="form-control @error('ward') is-invalid @enderror" id="ward" name="ward" required>
+                                        <option value="">Chọn phường/xã</option>
+                                    </select>
+                                    @error('ward')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <!-- Địa chỉ -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="street_address">Địa chỉ cụ thể</label>
+                                    <input type="text" class="form-control @error('street_address') is-invalid @enderror"
+                                        id="street_address" name="street_address"
+                                        value="{{ old('street_address', Auth::check() ? optional(Auth::user()->defaultAddress)->street_address : '') }}"
+                                        placeholder="Địa chỉ" required>
+                                    @error('street_address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -137,15 +134,10 @@
 
                             <!-- Quốc gia -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('country') is-invalid @enderror"
-                                        id="country" name="country"
-                                        value="{{ old('country', Auth::check() ? optional(Auth::user()->defaultAddress)->country : '') }}"
-                                        placeholder="Quốc gia">
-                                    <label for="country">Quốc gia *</label>
-                                    @error('country')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                <div class="form-group">
+                                    <label for="country">Quốc gia</label>
+                                    <input type="text" class="form-control" id="country" name="country"
+                                        value="Việt Nam" required>
                                 </div>
                             </div>
 
@@ -379,6 +371,168 @@
         updateShipping();
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        // Load provinces
+        $.get('/api/address/provinces')
+            .done(function(provinces) {
+                var provinceSelect = $('#city');
+                provinceSelect.empty().append('<option value="">Chọn tỉnh/thành phố</option>');
+                
+                provinces.forEach(function(province) {
+                    var selected = (province.code == '{{ old('city') }}') ? 'selected' : '';
+                    provinceSelect.append(new Option(province.name, province.code, false, selected));
+                });
+    
+                // If province is selected, load districts
+                if (provinceSelect.val()) {
+                    loadDistricts(provinceSelect.val());
+                }
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Error loading provinces:', textStatus, errorThrown);
+                alert('Có lỗi xảy ra khi tải danh sách tỉnh/thành phố. Vui lòng thử lại.');
+            });
+    
+        // Load districts when province changes
+        $('#city').change(function() {
+            var provinceCode = $(this).val();
+            var districtSelect = $('#district');
+            var wardSelect = $('#ward');
+            
+            // Reset district and ward
+            districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
+            wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
+            
+            // Disable both district and ward
+            districtSelect.prop('disabled', !provinceCode);
+            wardSelect.prop('disabled', true);
+            
+            if (provinceCode) {
+                loadDistricts(provinceCode);
+            }
+        });
+    
+        // Load wards when district changes
+        $('#district').change(function() {
+            var districtCode = $(this).val();
+            var wardSelect = $('#ward');
+            
+            // Reset ward
+            wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
+            wardSelect.prop('disabled', !districtCode);
+            
+            if (districtCode) {
+                loadWards(districtCode);
+            }
+        });
+    
+        function loadDistricts(provinceCode) {
+            var districtSelect = $('#district');
+            districtSelect.prop('disabled', true);
+            
+            // Load từ API
+            $.get('/api/address/districts/' + provinceCode)
+                .done(function(districts) {
+                    console.log('Districts loaded:', districts);
+                    
+                    districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
+                    
+                    districts.forEach(function(district) {
+                        var selected = (district.code == '{{ old('district') }}') ? 'selected' : '';
+                        districtSelect.append(new Option(district.name, district.code, false, selected));
+                    });
+                    
+                    districtSelect.prop('disabled', false);
+                    
+                    // Nếu có district được chọn, load wards
+                    if (districtSelect.val()) {
+                        loadWards(districtSelect.val());
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error loading districts:', textStatus, errorThrown);
+                    alert('Có lỗi xảy ra khi tải danh sách quận/huyện. Vui lòng thử lại.');
+                });
+        }
+    
+        function loadWards(districtCode) {
+            var wardSelect = $('#ward');
+            wardSelect.prop('disabled', true);
+            
+            console.log('Loading wards for district:', districtCode);
+            
+            // Load từ API
+            $.get('/api/address/wards/' + districtCode)
+                .done(function(wards) {
+                    console.log('Wards loaded:', wards);
+                    
+                    wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
+                    
+                    if (Array.isArray(wards) && wards.length > 0) {
+                        wards.forEach(function(ward) {
+                            console.log('Adding ward:', ward);
+                            var selected = (ward.code == '{{ old('ward') }}') ? 'selected' : '';
+                            wardSelect.append($('<option>', {
+                                value: ward.code,
+                                text: ward.name,
+                                selected: selected
+                            }));
+                        });
+                        
+                        wardSelect.prop('disabled', false);
+                    } else {
+                        console.warn('No wards data available or invalid format');
+                        wardSelect.prop('disabled', true);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error loading wards:', textStatus, errorThrown);
+                    alert('Có lỗi xảy ra khi tải danh sách phường/xã. Vui lòng thử lại.');
+                });
+        }
+        
+        // Thêm sự kiện change riêng cho phường/xã
+        $('#ward').change(function() {
+            var selectedWard = $(this).val();
+            console.log('Selected ward:', selectedWard);
+            if (selectedWard) {
+                console.log('Ward name:', $(this).find('option:selected').text());
+            }
+        });
+    
+        // Form validation
+        $('form').on('submit', function(e) {
+            var city = $('#city').val();
+            var district = $('#district').val();
+            var ward = $('#ward').val();
+            
+            console.log('Form submission - City:', city, 'District:', district, 'Ward:', ward);
+            
+            if (!city) {
+                alert('Vui lòng chọn tỉnh/thành phố');
+                e.preventDefault();
+                return false;
+            }
+            
+            if (!district) {
+                alert('Vui lòng chọn quận/huyện');
+                e.preventDefault();
+                return false;
+            }
+            
+            if (!ward) {
+                alert('Vui lòng chọn phường/xã');
+                e.preventDefault();
+                return false;
+            }
+            
+            return true;
+        });
+    });
+</script>
+    
 
 @endsection
 @section('style')

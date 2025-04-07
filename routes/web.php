@@ -21,11 +21,15 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
+use App\Http\Controllers\NewsController;
 
 use App\Http\Controllers\Client\Auth\LoginController;
 use App\Http\Middleware\AdminAuth;
 
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\PaymentController;
 
 
 
@@ -92,6 +96,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         });
     });
 
+
 //Voucher
     Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
         // Resource route
@@ -102,6 +107,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore');
             Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
         });
+    // Voucher
+    Route::prefix('vouchers')->group(function () {
+        Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+
     });
 
     // người dùng
@@ -199,8 +211,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
-    Route::resource('roles', RoleController::class)->names('admin.roles');
-
     // đơn hàng
     // Route::resource('orders', OrderController::class)->names('admin.orders');
 
@@ -218,6 +228,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('admin.settings');
+
 
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::get('/settings/create', [SettingController::class, 'create'])->name('admin.settings.create');
@@ -324,4 +335,30 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('staff.settings');
+
+});
+
+Route::prefix('client')->name('client.')->group(function () {
+    // Cart routes
+    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/remove-selected', [CartController::class, 'removeSelectedItems'])->name('cart.remove-selected');
+    Route::post('/cart/check-voucher', [CartController::class, 'checkVoucher'])->name('cart.check-voucher');
+    Route::post('/cart/update-total', [CartController::class, 'updateTotal'])->name('cart.update-total');
+
+    // Checkout routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Payment routes
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::get('vnpay/{orderId}', [PaymentController::class, 'payWithVNPay'])->name('vnpay');
+        Route::get('cash/{orderId}', [PaymentController::class, 'payWithCash'])->name('cash');
+        Route::get('vnpay/callback', [PaymentController::class, 'vnPayCallback'])->name('vnpay.callback');
+    });
+
+});
 });
