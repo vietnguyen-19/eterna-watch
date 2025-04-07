@@ -6,21 +6,23 @@ use App\Http\Requests\SettingUpdateRequest;
 use App\Http\Requests\SettingStoreRequest;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Auth;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 class SettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::all(); // Lấy tất cả các cài đặt
-        //dd($settings);                   
-        return view('admin.settings.index', compact('settings'));
+
+        $setting = DB::table('settings')->get();
+
+        return view('admin.settings.index')->with(['setting' => $setting]);
+
     }
 
     public function create()
     {
         return view('admin.settings.create');
-        
+
     }
 
     public function store(SettingStoreRequest $request)
@@ -53,5 +55,5 @@ class SettingController extends Controller
         $setting->delete();
         return redirect()->route('admin.settings.index')->with('success', 'Cài đặt đã được xóa thành công!');
     }
-    
+
 }

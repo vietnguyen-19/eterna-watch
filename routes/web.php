@@ -5,21 +5,27 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderItemController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\OrderItemControlle;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VoucherController;
-use App\Http\Controllers\Admin\Auth\AdminLoginController;
 
+use App\Http\Controllers\Client\Auth\LoginController;
+use App\Http\Middleware\AdminAuth;
+
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
 
 
 
@@ -38,6 +44,7 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 // đăng nhập admin
 Route::prefix('admin')->group(function () {
 
+
     Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
     Route::post('/login', [AdminLoginController::class, 'adminLogin'])->name('login');
     Route::post('/logout', [AdminLoginController::class, 'adminLogout'])->name('logout');
@@ -49,8 +56,6 @@ Route::prefix('admin')->group(function () {
 // chức năng adminadmin
 Route::prefix('admin')->middleware('admin')->group(function () {
 
-
-    // bảng điều khiển
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
     Route::get('report_stock', [DashboardController::class, 'stock'])->name('admin.dashboard.stock');
     Route::get('report_customer', [DashboardController::class, 'customer'])->name('admin.dashboard.customer');
@@ -65,7 +70,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     });
-//});
+
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -76,11 +81,28 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
     // Banner
-    Route::resource('banners', BannerController::class)->names('admin.banners');
+    Route::prefix('banners')->name('admin.banners.')->group(function () {
+        Route::resource('/', BannerController::class)->except(['show'])->parameters(['' => 'id']);
+        // Route quản lý thùng rác
+        Route::prefix('trash')->group(function () {
+            Route::get('/', [BannerController::class, 'trash'])->name('trash');
+            Route::post('/{id}/restore', [BannerController::class, 'restore'])->name('restore');
+            Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete');
+        });
+    });
+
 
     //voucher
-    Route::resource('vouchers', VoucherController::class)->names('admin.vouchers');
-    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+       // Voucher
+       Route::prefix('vouchers')->group(function () {
+
+    // Voucher
+    Route::prefix('vouchers')->group(function () {
+        Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+    });
 
     // người dùng
     Route::resource('users', UserController::class)->names('admin.users');
@@ -129,6 +151,29 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('admin.productvariants.destroy');
     });
 
+    // Đơn Hàng
+    Route::prefix('order_items')->group(function () {
+        Route::get('users-search', [OrderItemController::class, 'search'])->name('admin.orders.user-search');
+        Route::get('products-search', [OrderItemController::class, 'searchPro'])->name('admin.products.search');
+        Route::post('add-order-item', [OrderItemController::class, 'addOrderItem'])->name('admin.order.addItem');
+        Route::post('remove-order-item', [OrderItemController::class, 'removeOrderItem'])->name('admin.order.removeItem');
+        Route::post('update-order-item', [OrderItemController::class, 'updateOrderItem'])->name('admin.order.updateItem');
+        Route::post('check-voucher', [OrderItemController::class, 'checkVoucher'])->name('admin.vouchers.check');
+    });
+
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('create', [OrderController::class, 'create'])->name('admin.orders.create');
+        Route::post('store', [OrderController::class, 'store'])->name('admin.orders.store');
+        Route::get('show/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+        Route::get('{id}/edit', [OrderController::class, 'edit'])->name('admin.orders.edit');
+        Route::put('{id}/update', [OrderController::class, 'updateStatus'])->name('admin.orders.update');
+        Route::delete('{id}/destroy', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+        Route::post('{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send');
+        Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.status');
+    });
+
+
     // Thương hiệu
     Route::resource('brands', BrandController::class)->names('admin.brands');
 
@@ -139,7 +184,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('roles', RoleController::class)->names('admin.roles');
 
     // Bình luận
-    Route::resource('comments', CommentController::class)->names('admin.comments');
+    Route::prefix('comments')->group(function () {
+        Route::get('comments', [CommentController::class, 'index'])->name('admin.comments.index');
+        Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
+        Route::put('/{id}', [CommentController::class, 'update'])->name('admin.comments.update');
+        Route::get('/comments/product', [CommentController::class, 'productComments'])->name('admin.comments.product');
+    });
 
     // Bài viết
     Route::resource('posts', PostController::class)->names('admin.posts');
@@ -149,10 +199,26 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
 
+    Route::resource('roles', RoleController::class)->names('admin.roles');
+
     // đơn hàng
-    Route::resource('orders', OrderController::class)->names('admin.orders');
+    // Route::resource('orders', OrderController::class)->names('admin.orders');
 
     //settings
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/settings', [AdminAuth::class, 'edit'])->name('admin.settings.edit');
+        Route::post('/settings', [AdminAuth::class, 'update'])->name('admin.settings.update');
+    });
+
+    //login
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    //settings
+    Route::resource('settings', SettingController::class)->names('admin.settings');
+
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::get('/settings/create', [SettingController::class, 'create'])->name('admin.settings.create');
     Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
@@ -185,9 +251,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // Banner
     Route::resource('banners', BannerController::class)->names('staff.banners');
 
-    //voucher
-    Route::resource('vouchers', VoucherController::class)->names('staff.vouchers');
-    Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('staff.vouchers.forceDelete');
 
     // người dùng
     Route::resource('users', UserController::class)->names('staff.users');
@@ -264,3 +327,4 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
 });
 
+});

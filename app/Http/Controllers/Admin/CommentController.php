@@ -15,9 +15,17 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $data = Comment::query()->with('user')->latest('id')->get();
+        $data = Comment::query()->with('user')->where('entity_type', 'post')->latest('id')->get();
 
-        return view('admin.comments.index', ['data' => $data]);
+        return view('admin.comments.index', compact('data'));
+    }
+
+    // show dữ liệu cho đánh giá sản phẩm
+    public function productComments()
+    {
+        $product = Comment::query()->with('user')->where('entity_type', 'product')->latest('id')->get();
+
+        return view('admin.comments.product', compact('product'));
     }
 
     /**
@@ -57,21 +65,68 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
+        // Lấy trạng thái mới từ request
+        $newStatus = $request->input('status');
 
+        // Danh sách trạng thái hợp lệ
+        $validStatuses = [
+            'pending' => ['approved', 'rejected'],
+            'approved' => [],
+            'rejected' => []
+        ];
+        // Kiểm tra nếu trạng thái mới hợp lệ
+        $currentStatus = $comment->status;
 
-        $comment->update([
-            'content' => $request->content ?? $comment->content,
-        ]);
+        if (!isset($validStatuses[$currentStatus]) || !in_array($newStatus, $validStatuses[$currentStatus])) {
+            return back()->with([
+                'thongbao' => [
+                    'type' => 'danger',
+                    'message' => 'Trạng thái không hợp lệ.',
+                ]
+            ]);
+        }
 
-        return redirect()->route('admin.comments.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Bình luận đã được cập nhật thành công.',
-            ]
-        ]);
+        // Kiểm tra nếu trạng thái không thay đổi
+        if ($comment->status === $newStatus) {
+            return back()->with([
+                'thongbao' => [
+                    'type' => 'info',
+                    'message' => 'Trạng thái bình luận không thay đổi.',
+                ]
+            ]);
+        }
+
+        try {
+            // Cập nhật trạng thái comment
+            $comment->update([
+                'status' => $newStatus,
+            ]);
+
+            if($comment->entity_type == 'product'){
+                return redirect()->route('admin.comments.product')->with([
+                    'thongbao' => [
+                        'type' => 'success',
+                        'message' => 'Trạng thái bình luận đã được cập nhật thành công.',
+                    ]
+                ]);
+            };
+            return redirect()->route('admin.comments.index')->with([
+                'thongbao' => [
+                    'type' => 'success',
+                    'message' => 'Trạng thái bình luận đã được cập nhật thành công.',
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return back()->with([
+                'thongbao' => [
+                    'type' => 'danger',
+                    'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+                ]
+            ]);
+        }
     }
 
     /**

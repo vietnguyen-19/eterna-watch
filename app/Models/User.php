@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles; 
 
     protected $table = 'users';
 
@@ -64,6 +64,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserAddress::class);
     }
+
+
 
     /**
      * The attributes that should be hidden for serialization.
