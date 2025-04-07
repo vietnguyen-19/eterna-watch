@@ -26,6 +26,9 @@ use App\Http\Controllers\Client\Auth\LoginController;
 use App\Http\Middleware\AdminAuth;
 
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\Client\PaymentController;
 
 
 
@@ -90,11 +93,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete');
         });
     });
-
-
-    //voucher
-       // Voucher
-       Route::prefix('vouchers')->group(function () {
 
     // Voucher
     Route::prefix('vouchers')->group(function () {
@@ -198,8 +196,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/upload-image', [ImageController::class, 'uploadImage']);
     Route::post('/remove-image', [ImageController::class, 'removeImage']);
     Route::post('/update-image/{id}', [ImageController::class, 'updateImage'])->name('admin.products.update-image');
-
-    Route::resource('roles', RoleController::class)->names('admin.roles');
 
     // đơn hàng
     // Route::resource('orders', OrderController::class)->names('admin.orders');
@@ -327,4 +323,25 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
 });
 
+Route::prefix('client')->name('client.')->group(function () {
+    // Cart routes
+    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/remove-selected', [CartController::class, 'removeSelectedItems'])->name('cart.remove-selected');
+    Route::post('/cart/check-voucher', [CartController::class, 'checkVoucher'])->name('cart.check-voucher');
+    Route::post('/cart/update-total', [CartController::class, 'updateTotal'])->name('cart.update-total');
+
+    // Checkout routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Payment routes
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::post('/vnpay', [PaymentController::class, 'vnpay'])->name('vnpay');
+        Route::get('/vnpay/return', [PaymentController::class, 'vnPayCallback'])->name('vnpay.return');
+        Route::get('/complete/{id}', [PaymentController::class, 'complete'])->name('complete');
+    });
 });
