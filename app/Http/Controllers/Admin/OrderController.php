@@ -156,12 +156,18 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with(['user', 'orderItems.productVariant.product'])->findOrFail($id);
+        try {
+            $order = Order::with(['user', 'orderItems.productVariant.product'])->findOrFail($id);
 
-        return view('admin.orders.show', [
-            'order' => $order,
-        ]);
+            return view('admin.orders.show', [
+                'order' => $order,
+            ]);
+        } catch (\Throwable $th) {
+            return redirect()->route('admin.orders.index')
+            ->with('error', 'Không tìm thấy đơn hàng hoặc đã có lỗi xảy ra.');
+        }
     }
+    
 
     /**
      * Show the form for editing the specified resource.
