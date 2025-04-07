@@ -10,10 +10,22 @@
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
                 <div class="pt-4 pt-lg-0"></div>
-                <div class="search-field__input-wrapper mb-3">
-                    <input style="border: 2px solid rgb(97, 97, 97)" type="text" name="search_text"
-                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
-                </div>
+                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4" role="search">
+                    <div class="input-group shadow-sm" style="max-width: 500px;">
+                        <input type="text" name="query" class="form-control form-control-lg" placeholder="Tìm sản phẩm..." aria-label="Search" required>
+                        <input type="hidden" name="type" value="product">
+                        <button class="btn btn-outline-secondary w-auto px-3" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
+                                    1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 
+                                    5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+                
+                
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="accordion" id="categories-list">
                     <div class="accordion-item mb-4 pb-3">
@@ -70,7 +82,7 @@
                             <div class="accordion-body px-0 pb-0 pt-3">
                                 <ul class="list list-inline mb-0">
                                     @foreach ($brands as $brand)
-                                        @if($brand->parent_id === null)
+                                        @if ($brand->parent_id === null)
                                             <li class="list-item">
                                                 <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
                                                     class="menu-link py-1">
@@ -97,32 +109,35 @@
                                     <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                                            <path d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z"/>
+                                            <path
+                                                d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
                                         </g>
                                     </svg>
                                 </button>
                             </h5>
-                
+
                             <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
                                 aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
-                                
+
                                 <!-- Nhập khoảng giá -->
                                 <div class="mb-3">
                                     <label for="min_price" class="form-label">Giá tối thiểu (₫)</label>
-                                    <input type="number" class="form-control" id="min_price" name="min_price" placeholder="Nhập giá từ..." min="0">
+                                    <input type="number" class="form-control" id="min_price" name="min_price"
+                                        placeholder="Nhập giá từ..." min="0">
                                 </div>
                                 <div class="mb-3">
                                     <label for="max_price" class="form-label">Giá tối đa (₫)</label>
-                                    <input type="number" class="form-control" id="max_price" name="max_price" placeholder="Nhập giá đến..." min="0">
+                                    <input type="number" class="form-control" id="max_price" name="max_price"
+                                        placeholder="Nhập giá đến..." min="0">
                                 </div>
-                
+
                                 <!-- Button lọc -->
                                 <button type="submit" class="w-100 btn btn-primary">Lọc theo giá</button>
                             </div>
                         </div>
                     </div>
                 </form>
-                
+
 
 
             </div><!-- /.shop-sidebar -->
@@ -189,7 +204,14 @@
                         </div><!-- /.col-size d-flex align-items-center ms-auto ms-md-3 -->
                     </div><!-- /.shop-acs -->
                 </div><!-- /.d-flex justify-content-between -->
+                @if (Route::currentRouteName() == 'client.search')
+                    <p class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
+                        Kết quả tìm kiếm cho: "{{ request('query') }}"
+                    </p>
+                @endif
+
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+
                     @foreach ($products as $product)
                         <div class="product-card-wrapper">
                             <div class="product-card product-card_style6 hover-container mb-3">
