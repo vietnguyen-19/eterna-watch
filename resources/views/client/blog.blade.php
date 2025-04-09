@@ -10,10 +10,20 @@
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
                 <div class="pt-4 pt-lg-0"></div>
-                <div class="search-field__input-wrapper mb-3">
-                    <input style="border: 2px solid rgb(97, 97, 97)" type="text" name="search_text"
-                        class="search-field__input form-control form-control-sm" placeholder="TÌM KIẾM">
-                </div>
+                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4" role="search">
+                    <div class="input-group shadow-sm" style="max-width: 500px;">
+                        <input type="text" name="query" class="form-control form-control-lg" placeholder="Tìm sản phẩm..." aria-label="Search" required>
+                        <input type="hidden" name="type" value="post">
+                        <button class="btn btn-outline-secondary w-auto px-3" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
+                                    1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 
+                                    5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
                 <div class="pt-4 pt-lg-0"></div>
 
                 <div class="accordion" id="categories-list">
@@ -141,7 +151,12 @@
                         </div><!-- /.col-size d-flex align-items-center ms-auto ms-md-3 -->
                     </div><!-- /.shop-acs -->
                 </div><!-- /.d-flex justify-content-between -->
-
+                @if (Route::currentRouteName() == 'client.search')
+                    <p
+                        class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
+                        Kết quả tìm kiếm cho: "{{ request('query') }}"
+                    </p>
+                @endif
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
                     @foreach ($posts as $post)
                         <div class="col-md-4 col-sm-6 mb-4">

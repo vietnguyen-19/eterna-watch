@@ -35,7 +35,7 @@
 
         /* Ảnh nền */
         .login-bg {
-            background: url('{{ Storage::url($settings['bg_auth_url'] ?? 'avatar/default.jpeg') }}') no-repeat center center;
+            background: url('https://images.unsplash.com/photo-1564594995086-b32b7c7f4cd6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center;
             background-size: cover;
             height: 100vh;
         }
