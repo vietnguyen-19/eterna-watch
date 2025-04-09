@@ -35,7 +35,7 @@ class LayoutServiceProvider extends ServiceProvider
             // Lấy tất cả thương hiệu
             $brands = Brand::with('children')->get();
             // $settings = Setting::get();
-           $settings = Setting::pluck('value', 'key');
+           $settings = Setting::pluck('value', 'key')->toArray();
 
             $view->with(compact('categories', 'brands', 'settings'));
         });
