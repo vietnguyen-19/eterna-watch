@@ -65,7 +65,7 @@ class AdminLoginController extends Controller
                     return redirect()->route('client.home'); // Khách hàng
                 default:
                     Auth::logout();
-                    return redirect()->route('user.login')->withErrors(['error' => 'Vai trò không hợp lệ!']);
+                    return redirect()->route('login')->withErrors(['error' => 'Vai trò không hợp lệ!']);
             }
         }
 

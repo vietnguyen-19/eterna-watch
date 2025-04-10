@@ -55,7 +55,7 @@ Route::prefix('admin')->group(function () {
     Route::get('forgot-password', [AdminLoginController::class, 'forgotPasswordForm'])
         ->name('password.forgot');
     Route::post('forgot-password', [AdminLoginController::class, 'admin.ForgotPassword'])
-        ->name('password.email');
+        ->name('password.email');   
 });
 // chức năng adminadmin
 Route::prefix('admin')->middleware('admin')->group(function () {
