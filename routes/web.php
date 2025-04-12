@@ -94,13 +94,19 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete');
         });
     });
+    //Voucher
+    Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('create');
+        Route::post('/', [VoucherController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('destroy');
 
-    // Voucher
-    Route::prefix('vouchers')->group(function () {
-        Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
-        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
-        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
-        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+        // Các route bổ sung
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
     });
 
     // người dùng
@@ -327,4 +333,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('staff.settings');
+
 });
+

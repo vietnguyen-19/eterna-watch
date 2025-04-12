@@ -60,19 +60,20 @@ class Order extends Model
         }
     
         $orderTotal = $this->orderItems()->sum('total_price');
-        
-        // Nếu không có sản phẩm nào trong đơn hàng, không có chiết khấu
-        if ($orderTotal <= 0) {
+
+
+        if ($orderTotal <= 0 || !$this->voucher) {
             return 0;
         }
     
         // Kiểm tra loại chiết khấu của voucher
         if ($this->voucher->discount_type == 'percent') {
             $discount = $orderTotal * ($this->voucher->discount_value / 100);
-        } else { // Trường hợp fixed
+        } else {
             $discount = $this->voucher->discount_value;
         }
-        return $discount; // Không vượt quá tổng tiền đơn hàng
+
+        return min($discount, $orderTotal); // Đảm bảo chiết khấu không vượt quá tổng tiền
     }
     
     public function getShippingFee()
@@ -86,5 +87,9 @@ class Order extends Model
     public function shippingAddress()
     {
         return $this->hasOne(UserAddress::class, 'user_id', 'user_id')->where('is_default', 1);
+    }
+    public function getDiscountAmountAttribute()
+    {
+        return $this->getDiscountAmount(); 
     }
 }
