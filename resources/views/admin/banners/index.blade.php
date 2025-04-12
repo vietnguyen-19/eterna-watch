@@ -27,12 +27,12 @@
                                     </div>
                                     <div class="col-sm-auto">
 
-                                            <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
-                                                <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
-                                            </a>
+                                        <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
+                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                        </a>
 
-                                            <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
-                                                    class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
+                                        <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
 
                                     </div>
                                 </div>
@@ -53,7 +53,9 @@
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
                                                         <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng</th>
+                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
+                                                        </th>
+                                                        <th class="sort" data-sort="is_active">Hiển thị</th>
                                                         <th class="sort" data-sort="action">Hành động</th>
                                                     </tr>
                                                 </thead>
@@ -81,7 +83,15 @@
                                                                         hướng</span>
                                                                 @endif
                                                             </td>
-
+                                                            <td class="is_active text-center">
+                                                                <label class="switch">
+                                                                    <input type="checkbox"
+                                                                           class="status-toggle"
+                                                                           data-id="{{ $banner->id }}"
+                                                                           {{ $banner->is_active ? 'checked' : '' }}>
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </td>
                                                             <td>
                                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                                     <!-- Edit Button -->
@@ -93,10 +103,14 @@
                                                                     </li>
                                                                     <!-- Remove Button -->
                                                                     <li class="list-inline-item delete" title="Remove">
-                                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" style="display:inline;">
+                                                                        <form
+                                                                            action="{{ route('admin.banners.destroy', $banner->id) }}"
+                                                                            method="POST" style="display:inline;">
                                                                             @csrf
                                                                             @method('DELETE')
-                                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger btn-sm"
+                                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                                                 <i class="fa-solid fa-trash"></i>
                                                                             </button>
                                                                         </form>
@@ -137,6 +151,35 @@
         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
         <script>
             $(document).ready(function() {
+
+                // Xử lý toggle trạng thái
+                $('.status-toggle').change(function() {
+                    const bannerId = $(this).data('id');
+                    const isActive = $(this).is(':checked') ? 1 : 0;
+
+                    $.ajax({
+                        url: '{{ route('admin.banners.toggle-status') }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            id: bannerId,
+                            is_active: isActive
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Cập nhật trạng thái thành công'
+                            });
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Có lỗi xảy ra'
+                            });
+                        }
+                    });
+                });
+
                 $('#danhmucTable').DataTable({
                     "paging": true, // Bật phân trang
                     "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
@@ -173,5 +216,57 @@
         </script>
     @endsection
     @section('style')
+    <style>
+        /* Switch toggle style */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0d6efd;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Optional: Add animation */
+        .slider:hover {
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+    </style>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     @endsection

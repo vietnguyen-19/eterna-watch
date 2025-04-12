@@ -87,6 +87,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // Banner
     Route::prefix('banners')->name('admin.banners.')->group(function () {
         Route::resource('/', BannerController::class)->except(['show'])->parameters(['' => 'id']);
+        Route::post('/toggle-status', [BannerController::class, 'toggleStatus'])
+        ->name('toggle-status');
         // Route quản lý thùng rác
         Route::prefix('trash')->group(function () {
             Route::get('/', [BannerController::class, 'trash'])->name('trash');

@@ -4,8 +4,22 @@
 
         <section class="position-relative">
             <div class="slideshow-bg position-absolute left-0 top-0 w-100">
-                <img loading="lazy" src="{{ asset('theme/client/images/home/demo19/slider_bg_1.jpg') }}" width="1920"
-                    height="1260" alt="Pattern" class="slideshow-bg__img object-fit-cover">
+                @if($banners->isNotEmpty())
+                    <a href="{{ $banners->first()->redirect_link ?? '#' }}"
+                       target="_blank"
+                       class="d-block w-100 h-100">
+                        <img loading="lazy"
+                             src="{{ asset($banners->first()->image_link) }}"
+                             alt="Banner"
+                             class="slideshow-bg__img w-100 h-100 object-fit-cover"
+                             style="max-height: 800px;"> 
+                    </a>
+                @else
+                    <img loading="lazy"
+                         src="{{ asset('theme/client/images/home/demo19/slider_bg_1.jpg') }}"
+                         class="slideshow-bg__img w-100 h-100 object-fit-cover"
+                         style="max-height: 800px;">
+                @endif
             </div>
             <div class="content container mb-0 position-relative pt-3 pt-xl-5">
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
@@ -49,20 +63,20 @@
           }
         }'>
                         <div class="swiper-wrapper">
-                            @foreach($categories as $index => $item)
-                            <div class="swiper-slide">
-                                 <a href="{{ route('client.shop', ['category_id' => $item->id]) }}">
-                                <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                    src="{{ asset('storage/cate/cate' . ($index + 1) . '.jpg') }}" width="330"
-                                    height="400" alt=""></a>
-                                <div class="text-center">
-                                    <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
-                                        class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
-                                        {{$item->name}}
-                                    </a>
+                            @foreach ($categories as $index => $item)
+                                <div class="swiper-slide">
+                                    <a href="{{ route('client.shop', ['category_id' => $item->id]) }}">
+                                        <img loading="lazy" class="w-100 h-auto mb-3 d-block"
+                                            src="{{ asset('storage/cate/cate' . ($index + 1) . '.jpg') }}" width="330"
+                                            height="400" alt=""></a>
+                                    <div class="text-center">
+                                        <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
+                                            class="menu-link menu-link_us-s fw-semi-bold fs-18 text-white text-uppercase d-inline-block">
+                                            {{ $item->name }}
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                          @endforeach
+                            @endforeach
                         </div><!-- /.swiper-wrapper -->
 
                     </div><!-- /.swiper-container js-swiper-slider -->
@@ -369,5 +383,24 @@
         .blog-card__read-more:hover {
             color: #e20000;
         }
+
+        <style>
+
+        /* Fix chiều cao cho section */
+        section.position-relative {
+            height: 100vh;
+            min-height: 800px;
+            overflow: hidden;
+        }
+
+        /* Đảm bảo ảnh nền phủ kín */
+        .slideshow-bg__img {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+        }
     </style>
+    </style>
+
 @endsection

@@ -15,13 +15,13 @@ class Banner extends Model
     protected $fillable = [
         'image_link',
         'redirect_link',
+        'is_active',
     ];
 
     protected $attributes = [
         'redirect_link' => '#', // Đặt link mặc định nếu không có
     ];
 
-    // Thêm thuộc tính dates để tự động xử lý trường deleted_at
     protected $dates = [
         'deleted_at',
         'created_at',
@@ -33,6 +33,5 @@ class Banner extends Model
         return url($value);
     }
 
-    // Timestamps vẫn giữ nguyên
     public $timestamps = true;
 }
