@@ -254,6 +254,11 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     // Banner
     Route::resource('banners', BannerController::class)->names('staff.banners');
+    Route::get('/', [BannerController::class, 'index'])->name('index'); // Trang danh sách banner chính
+    Route::get('/trash', [BannerController::class, 'trash'])->name('trash'); // Trang thùng rác
+    Route::post('/{id}/restore', [BannerController::class, 'restore'])->name('restore'); // Khôi phục
+    Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete'); // Xóa vĩnh viễn
+    Route::delete('/{id}', [BannerController::class, 'destroy'])->name('destroy'); // Xóa mềm (chuyển vào thùng rác)
 
 
     // người dùng
@@ -328,27 +333,5 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     //settings
     Route::resource('settings', SettingController::class)->names('staff.settings');
-});
 
-Route::prefix('client')->name('client.')->group(function () {
-    // Cart routes
-    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
-    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-    Route::post('/cart/remove-selected', [CartController::class, 'removeSelectedItems'])->name('cart.remove-selected');
-    Route::post('/cart/check-voucher', [CartController::class, 'checkVoucher'])->name('cart.check-voucher');
-    Route::post('/cart/update-total', [CartController::class, 'updateTotal'])->name('cart.update-total');
-
-    // Checkout routes
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-
-    // Payment routes
-    Route::prefix('payment')->name('payment.')->group(function () {
-        Route::get('vnpay/{orderId}', [PaymentController::class, 'payWithVNPay'])->name('vnpay');
-        Route::get('cash/{orderId}', [PaymentController::class, 'payWithCash'])->name('cash');
-        Route::get('vnpay/callback', [PaymentController::class, 'vnPayCallback'])->name('vnpay.callback');
-    });
 });
