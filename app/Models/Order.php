@@ -54,12 +54,19 @@ class Order extends Model
     }
     public function getDiscountAmount()
     {
+        // Kiểm tra nếu không có voucher
+        if (!$this->voucher) {
+            return 0; // Không có mã voucher, không có chiết khấu
+        }
+    
         $orderTotal = $this->orderItems()->sum('total_price');
         
+        // Nếu không có sản phẩm nào trong đơn hàng, không có chiết khấu
         if ($orderTotal <= 0) {
-            return 0; // Nếu không có sản phẩm nào, không có chiết khấu
+            return 0;
         }
-
+    
+        // Kiểm tra loại chiết khấu của voucher
         if ($this->voucher->discount_type == 'percent') {
             $discount = $orderTotal * ($this->voucher->discount_value / 100);
         } else { // Trường hợp fixed
@@ -67,9 +74,10 @@ class Order extends Model
         }
         return $discount; // Không vượt quá tổng tiền đơn hàng
     }
+    
     public function getShippingFee()
     {
-        return $this->shipment->shipping_method === 'fixed' ? 100000 : 0;
+        return $this->shipping_method === 'fixed' ? 100000 : 0;
     }
     public function productVariant()
     {
