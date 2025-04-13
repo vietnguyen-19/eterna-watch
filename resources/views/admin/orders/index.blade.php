@@ -124,7 +124,7 @@
                                                 <tr>
                                                     <th class="" >ID</th>
                                                     <th class="" >Mã đơn hàng</th>
-                                                    <th class="" ">Khách hàng</th>
+                                                    <th class="" >Khách hàng</th>
                                                     <th class="" >Tổng tiền</th>
                                                     <th class="" >Trang thái</th>
                                                     <th class="" > Ngày đặt</th>

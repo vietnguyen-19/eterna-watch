@@ -12,10 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('banners', function (Blueprint $table) {
-            $table->id(); // Khóa chính
-            $table->string('image_link', 255); // Đường dẫn ảnh banner
-            $table->string('redirect_link', 255)->nullable(); // Liên kết chuyển hướng (có thể null)
-            $table->timestamps(); // created_at và updated_at
+            $table->id();
+            $table->enum('position', [
+                'home_start',
+                'home_new_product',
+                'login',
+                'register',
+                'shop',
+                'blog',
+                'forward_password'
+            ]);
+            $table->string('title')->nullable();
+            $table->string('image');
+            $table->string('link')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+            $table->softDeletes(); // 👈 Soft delete
         });
     }
 

@@ -17,7 +17,6 @@ class CartController extends Controller
 {
     public function viewCart()
     {
-        // Nếu người dùng đã đăng nhập
         if (Auth::check()) {
 
             $userId = Auth::id();
@@ -62,9 +61,6 @@ class CartController extends Controller
     }
 
 
-
-
-    // Thêm sản phẩm vào giỏ hàng
     public function addToCart(Request $request)
     {
         if (!Auth::check()) {
@@ -88,7 +84,6 @@ class CartController extends Controller
         }
 
         if (Auth::check()) {
-            // Người dùng đã đăng nhập, lưu giỏ hàng vào database
             $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
             $cartDetail = CartDetail::firstOrNew([
@@ -147,7 +142,6 @@ class CartController extends Controller
 
             session()->put('cart', $cart);
         }
-
         return response()->json([
             'success' => true,
             'message' => 'Sản phẩm đã được thêm vào giỏ hàng.',
@@ -405,13 +399,13 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
-        // Lấy danh sách sản phẩm được chọn từ request
         $selectedItems = json_decode($request->order_items, true);
         
         if (empty($selectedItems)) {
             return redirect()->route('client.cart.view')->with('error', 'Vui lòng chọn sản phẩm để mua!');
         }
-
+        $voucher= Voucher::where('id', $request->voucher_id)->get();
+      
         // Tính toán tổng tiền và chi tiết sản phẩm
         $totalAmount = 0;
         $totalItems = 0;
@@ -435,12 +429,13 @@ class CartController extends Controller
             }
         }
 
+        
         // Lưu thông tin vào session để sử dụng ở trang checkout
         session([
             'checkout_data' => [
                 'variantDetails' => $variantDetails,
-                'voucher' => null,
-                'discount' => 0,
+                'voucher' => $voucher,
+                'discount' => $request->discount ?? 0,
                 'totalAmount' => $totalAmount,
                 'totalFirst' => $totalAmount,
                 'totalItems' => $totalItems

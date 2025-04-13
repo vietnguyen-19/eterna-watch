@@ -31,7 +31,7 @@
                 </a>
             </div>
 
-            <form action="{{ route('client.checkout.store') }}" method="POST">
+            <form action="{{ route('payment.checkout') }}" method="POST">
                 @csrf
                 <div class="checkout-form">
                     <div class="billing-info__wrapper col-xl-4">
@@ -39,12 +39,12 @@
                         <div class="row">
                             <!-- Họ và tên -->
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="full_name">Họ và tên</label>
+                                <div class="form-floating my-2">
                                     <input type="text" class="form-control @error('full_name') is-invalid @enderror"
                                         id="full_name" name="full_name"
                                         value="{{ old('full_name', Auth::check() ? Auth::user()->name : '') }}"
-                                        placeholder="Họ và Tên" required>
+                                        placeholder="Họ và Tên">
+                                    <label for="full_name">Họ và Tên *</label>
                                     @error('full_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -53,12 +53,12 @@
 
                             <!-- Số điện thoại -->
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="phone_number">Số điện thoại</label>
+                                <div class="form-floating my-2">
                                     <input type="text" class="form-control @error('phone_number') is-invalid @enderror"
                                         id="phone_number" name="phone_number"
                                         value="{{ old('phone_number', Auth::check() ? Auth::user()->phone : '') }}"
-                                        placeholder="Số điện thoại" required>
+                                        placeholder="Số điện thoại">
+                                    <label for="phone_number">Số điện thoại *</label>
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -67,79 +67,133 @@
 
                             <!-- Email -->
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
+                                <div class="form-floating my-2">
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         id="email" name="email"
                                         value="{{ old('email', Auth::check() ? Auth::user()->email : '') }}"
-                                        placeholder="Email" required>
+                                        placeholder="Email">
+                                    <label for="email">Email *</label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
+
+                            <!-- Chọn kiểu địa chỉ -->
+                            <div class="col-md-12">
+                                <div class="form-check my-2">
+                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_mac_dinh" value="mac_dinh" checked>
+                                    <label class="form-check-label" for="dia_chi_mac_dinh">Sử dụng địa chỉ mặc định</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_moi" value="them_moi">
+                                    <label class="form-check-label" for="dia_chi_moi">Thêm địa chỉ mới</label>
+                                </div>
+                            </div>
                             
-                            <!-- Tỉnh/Thành phố -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="city">Tỉnh/Thành phố</label>
-                                    <select class="form-control @error('city') is-invalid @enderror" id="city" name="city" required>
-                                        <option value="">Chọn tỉnh/thành phố</option>
-                                    </select>
-                                    @error('city')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                            <!-- Địa chỉ mặc định -->
+                            <div id="diaChiMacDinh" class="col-md-12">
+                                <div class="form-floating my-2">
+                                    <input type="text" class="form-control" id="dia_chi_day_du" name="dia_chi_day_du"
+                                        value="{{ old(
+                                            'dia_chi_day_du',
+                                            Auth::check()
+                                                ? trim(
+                                                    optional(Auth::user()->defaultAddress)->street_address .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->ward .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->district .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->city,
+                                                    ', ',
+                                                )
+                                                : '',
+                                        ) }}"
+                                        placeholder="Địa chỉ đầy đủ" readonly>
+                                </div>
+                            
+                                <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
+                                <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
+                                <input type="hidden" name="ward" value="{{ optional(Auth::user()->defaultAddress)->ward }}">
+                                <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
+                                <input type="hidden" name="city" value="{{ optional(Auth::user()->defaultAddress)->city }}">
+                            </div>
+                            
+                            <!-- Địa chỉ mới -->
+                            <div id="themDiaChiMoi" style="display: none;">
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <select id="city" name="city" class="form-select" disabled>
+                                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                                        </select>
+                                        <label for="city">Tỉnh/Thành phố</label>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <select id="district" name="district" class="form-select" disabled>
+                                            <option value="">-- Chọn Quận/Huyện --</option>
+                                        </select>
+                                        <label for="district">Quận/Huyện</label>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <select id="ward" name="ward" class="form-select" disabled>
+                                            <option value="">-- Chọn Phường/Xã --</option>
+                                        </select>
+                                        <label for="ward">Phường/Xã</label>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <input type="text" class="form-control" id="street_address" name="street_address"
+                                            value="{{ old('street_address') }}" placeholder="Địa chỉ" disabled>
+                                        <label for="street_address">Địa chỉ cụ thể *</label>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <!-- Script xử lý hiển thị & kích hoạt trường -->
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const macDinhRadio = document.getElementById('dia_chi_mac_dinh');
+                                    const moiRadio = document.getElementById('dia_chi_moi');
+                                    const diaChiMacDinhDiv = document.getElementById('diaChiMacDinh');
+                                    const themDiaChiMoiDiv = document.getElementById('themDiaChiMoi');
+                            
+                                    const toggleDiaChi = () => {
+                                        const isMacDinh = macDinhRadio.checked;
+                            
+                                        diaChiMacDinhDiv.style.display = isMacDinh ? 'block' : 'none';
+                                        themDiaChiMoiDiv.style.display = isMacDinh ? 'none' : 'block';
+                            
+                                        // Bật/tắt các input trong form thêm địa chỉ mới
+                                        const newAddressInputs = themDiaChiMoiDiv.querySelectorAll('select, input');
+                                        newAddressInputs.forEach(el => {
+                                            el.disabled = isMacDinh;
+                                        });
+                            
+                                        // Ẩn/hiện các input hidden nếu cần thiết
+                                        const hiddenInputs = diaChiMacDinhDiv.querySelectorAll('input[type="hidden"]');
+                                        hiddenInputs.forEach(el => {
+                                            el.disabled = !isMacDinh;
+                                        });
+                                    };
+                            
+                                    macDinhRadio.addEventListener('change', toggleDiaChi);
+                                    moiRadio.addEventListener('change', toggleDiaChi);
+                            
+                                    toggleDiaChi(); // Khởi tạo ban đầu
+                                });
+                            </script>
+                            
 
-                            <!-- Quận/Huyện -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="district">Quận/Huyện</label>
-                                    <select class="form-control @error('district') is-invalid @enderror" id="district" name="district" required>
-                                        <option value="">Chọn quận/huyện</option>
-                                    </select>
-                                    @error('district')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Phường/Xã -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="ward">Phường/Xã</label>
-                                    <select class="form-control @error('ward') is-invalid @enderror" id="ward" name="ward" required>
-                                        <option value="">Chọn phường/xã</option>
-                                    </select>
-                                    @error('ward')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <!-- Địa chỉ -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="street_address">Địa chỉ cụ thể</label>
-                                    <input type="text" class="form-control @error('street_address') is-invalid @enderror"
-                                        id="street_address" name="street_address"
-                                        value="{{ old('street_address', Auth::check() ? optional(Auth::user()->defaultAddress)->street_address : '') }}"
-                                        placeholder="Địa chỉ" required>
-                                    @error('street_address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Quốc gia -->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="country">Quốc gia</label>
-                                    <input type="text" class="form-control" id="country" name="country"
-                                        value="Việt Nam" required>
-                                </div>
-                            </div>
 
                             <!-- Ghi chú đơn hàng -->
                             <div class="col-md-12">
@@ -256,7 +310,6 @@
                                                 <span id="shipping_cost">100.000đ</span>
                                             </td>
                                         </tr>
-                                      
                                         <tr class="d-flex justify-content-between py-2">
                                             <th class="text-start">Tổng cộng</th>
                                             <td class="text-end">
@@ -291,7 +344,6 @@
                                 @error('shipping_method')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-
                             </div>
                             <div style="width:100%" class="checkout__payment-methods col-xl-6">
                                 <div class="form-check">
@@ -336,204 +388,154 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
 @endsection
 @section('script')
-   <!-- Script -->
-<script>
-    function updateShipping() {
-        let shippingMethod = document.getElementById("shipping_method").value;
-        let shippingCostEl = document.getElementById("shipping_cost");
-        let totalAmountEl = document.getElementById("total_amount");
-        let totalAmountInput = document.getElementById("totalAmount");
+    <script>
+        function updateShipping() {
+            let shippingMethod = document.getElementById("shipping_method").value;
+            let shippingCostEl = document.getElementById("shipping_cost");
+            let totalAmountEl = document.getElementById("total_amount");
+            let totalAmountInput = document.getElementById("totalAmount");
 
-        // Lấy giá trị tổng tiền gốc từ `data-default`
-        let totalAmount = Number(totalAmountInput.dataset.default) || 0;
-        let shippingCost = 0;
+            // Lấy giá trị tổng tiền gốc từ `data-default`
+            let totalAmount = Number(totalAmountInput.dataset.default) || 0;
+            let shippingCost = 0;
 
-        switch (shippingMethod) {
-            case "fixed":
-                shippingCost = 100000;
-                break;
-            case "store":
-                shippingCost = 0;
-                break;
+            switch (shippingMethod) {
+                case "fixed":
+                    shippingCost = 100000;
+                    break;
+                case "store":
+                    shippingCost = 0;
+                    break;
+            }
+
+            // Cập nhật UI
+            shippingCostEl.textContent = shippingCost.toLocaleString("vi-VN") + "đ";
+            let newTotal = totalAmount + shippingCost;
+            totalAmountEl.textContent = newTotal.toLocaleString("vi-VN") + "đ";
+
+            // Cập nhật input hidden để gửi lên server
+            totalAmountInput.value = newTotal;
         }
 
-        // Cập nhật UI
-        shippingCostEl.textContent = shippingCost.toLocaleString("vi-VN") + "đ";
-        let newTotal = totalAmount + shippingCost;
-        totalAmountEl.textContent = newTotal.toLocaleString("vi-VN") + "đ";
-
-        // Cập nhật input hidden để gửi lên server
-        totalAmountInput.value = newTotal;
-    }
-
-    // ✅ Gọi khi trang load để cập nhật mặc định
-    window.addEventListener("DOMContentLoaded", function () {
-        updateShipping();
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        // Load provinces
-        $.get('/api/address/provinces')
-            .done(function(provinces) {
-                var provinceSelect = $('#city');
-                provinceSelect.empty().append('<option value="">Chọn tỉnh/thành phố</option>');
-                
-                provinces.forEach(function(province) {
-                    var selected = (province.code == '{{ old('city') }}') ? 'selected' : '';
-                    provinceSelect.append(new Option(province.name, province.code, false, selected));
-                });
-    
-                // If province is selected, load districts
-                if (provinceSelect.val()) {
-                    loadDistricts(provinceSelect.val());
-                }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error loading provinces:', textStatus, errorThrown);
-                alert('Có lỗi xảy ra khi tải danh sách tỉnh/thành phố. Vui lòng thử lại.');
-            });
-    
-        // Load districts when province changes
-        $('#city').change(function() {
-            var provinceCode = $(this).val();
-            var districtSelect = $('#district');
-            var wardSelect = $('#ward');
-            
-            // Reset district and ward
-            districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
-            wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
-            
-            // Disable both district and ward
-            districtSelect.prop('disabled', !provinceCode);
-            wardSelect.prop('disabled', true);
-            
-            if (provinceCode) {
-                loadDistricts(provinceCode);
-            }
+        // ✅ Gọi khi trang load để cập nhật mặc định
+        window.addEventListener("DOMContentLoaded", function() {
+            updateShipping();
         });
-    
-        // Load wards when district changes
-        $('#district').change(function() {
-            var districtCode = $(this).val();
-            var wardSelect = $('#ward');
-            
-            // Reset ward
-            wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
-            wardSelect.prop('disabled', !districtCode);
-            
-            if (districtCode) {
-                loadWards(districtCode);
-            }
-        });
-    
-        function loadDistricts(provinceCode) {
-            var districtSelect = $('#district');
-            districtSelect.prop('disabled', true);
-            
-            // Load từ API
-            $.get('/api/address/districts/' + provinceCode)
-                .done(function(districts) {
-                    console.log('Districts loaded:', districts);
-                    
-                    districtSelect.empty().append('<option value="">Chọn quận/huyện</option>');
-                    
-                    districts.forEach(function(district) {
-                        var selected = (district.code == '{{ old('district') }}') ? 'selected' : '';
-                        districtSelect.append(new Option(district.name, district.code, false, selected));
+    </script>
+    <script>
+        const currentCity = @json(Auth::check() ? optional(Auth::user()->defaultAddress)->city : null);
+        const currentDistrict = @json(Auth::check() ? optional(Auth::user()->defaultAddress)->district : null);
+        const currentWard = @json(Auth::check() ? optional(Auth::user()->defaultAddress)->ward : null);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiBase = 'https://provinces.open-api.vn/api';
+            const citySelect = document.getElementById('city');
+            const districtSelect = document.getElementById('district');
+            const wardSelect = document.getElementById('ward');
+
+            // Load tỉnh
+            fetch(`${apiBase}/p`)
+                .then(res => res.json())
+                .then(cities => {
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.name;
+                        option.textContent = city.name;
+                        if (currentCity && city.name === currentCity) option.selected = true;
+                        citySelect.appendChild(option);
                     });
-                    
-                    districtSelect.prop('disabled', false);
-                    
-                    // Nếu có district được chọn, load wards
-                    if (districtSelect.val()) {
-                        loadWards(districtSelect.val());
-                    }
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error loading districts:', textStatus, errorThrown);
-                    alert('Có lỗi xảy ra khi tải danh sách quận/huyện. Vui lòng thử lại.');
-                });
-        }
-    
-        function loadWards(districtCode) {
-            var wardSelect = $('#ward');
-            wardSelect.prop('disabled', true);
-            
-            console.log('Loading wards for district:', districtCode);
-            
-            // Load từ API
-            $.get('/api/address/wards/' + districtCode)
-                .done(function(wards) {
-                    console.log('Wards loaded:', wards);
-                    
-                    wardSelect.empty().append('<option value="">Chọn phường/xã</option>');
-                    
-                    if (Array.isArray(wards) && wards.length > 0) {
-                        wards.forEach(function(ward) {
-                            console.log('Adding ward:', ward);
-                            var selected = (ward.code == '{{ old('ward') }}') ? 'selected' : '';
-                            wardSelect.append($('<option>', {
-                                value: ward.code,
-                                text: ward.name,
-                                selected: selected
-                            }));
-                        });
-                        
-                        wardSelect.prop('disabled', false);
-                    } else {
-                        console.warn('No wards data available or invalid format');
-                        wardSelect.prop('disabled', true);
-                    }
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error loading wards:', textStatus, errorThrown);
-                    alert('Có lỗi xảy ra khi tải danh sách phường/xã. Vui lòng thử lại.');
-                });
-        }
-        
-        // Thêm sự kiện change riêng cho phường/xã
-        $('#ward').change(function() {
-            var selectedWard = $(this).val();
-            console.log('Selected ward:', selectedWard);
-            if (selectedWard) {
-                console.log('Ward name:', $(this).find('option:selected').text());
-            }
-        });
-    
-        // Form validation
-        $('form').on('submit', function(e) {
-            var city = $('#city').val();
-            var district = $('#district').val();
-            var ward = $('#ward').val();
-            
-            console.log('Form submission - City:', city, 'District:', district, 'Ward:', ward);
-            
-            if (!city) {
-                alert('Vui lòng chọn tỉnh/thành phố');
-                e.preventDefault();
-                return false;
-            }
-            
-            if (!district) {
-                alert('Vui lòng chọn quận/huyện');
-                e.preventDefault();
-                return false;
-            }
-            
-            if (!ward) {
-                alert('Vui lòng chọn phường/xã');
-                e.preventDefault();
-                return false;
-            }
-            
-            return true;
-        });
-    });
-</script>
-    
 
+                    // Nếu đã có tỉnh, load huyện
+                    if (currentCity) {
+                        const selectedCity = cities.find(c => c.name === currentCity);
+                        if (selectedCity) {
+                            loadDistricts(selectedCity.code);
+                        }
+                    }
+                });
+
+            function loadDistricts(cityCode) {
+                districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+                wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                wardSelect.disabled = true;
+
+                fetch(`${apiBase}/p/${cityCode}?depth=2`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.districts.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.name;
+                            option.textContent = district.name;
+                            if (currentDistrict && district.name === currentDistrict) option.selected =
+                                true;
+                            districtSelect.appendChild(option);
+                        });
+                        districtSelect.disabled = false;
+
+                        // Nếu đã có huyện, load xã
+                        if (currentDistrict) {
+                            const selectedDistrict = data.districts.find(d => d.name === currentDistrict);
+                            if (selectedDistrict) {
+                                loadWards(selectedDistrict.code);
+                            }
+                        }
+                    });
+            }
+
+            function loadWards(districtCode) {
+                wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+                fetch(`${apiBase}/d/${districtCode}?depth=2`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.wards.forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward.name;
+                            option.textContent = ward.name;
+                            if (currentWard && ward.name === currentWard) option.selected = true;
+                            wardSelect.appendChild(option);
+                        });
+                        wardSelect.disabled = false;
+                    });
+            }
+
+            // Khi chọn tỉnh
+            citySelect.addEventListener('change', function() {
+                const selectedName = this.value;
+                const selectedOption = Array.from(this.options).find(opt => opt.value === selectedName);
+
+                fetch(`${apiBase}/p`)
+                    .then(res => res.json())
+                    .then(cities => {
+                        const selectedCity = cities.find(city => city.name === selectedName);
+                        if (selectedCity) {
+                            loadDistricts(selectedCity.code);
+                        }
+                    });
+            });
+
+            // Khi chọn huyện
+            districtSelect.addEventListener('change', function() {
+                const selectedName = this.value;
+                fetch(`${apiBase}/p`)
+                    .then(res => res.json())
+                    .then(cities => {
+                        const selectedCity = cities.find(c => c.name === citySelect.value);
+                        if (selectedCity) {
+                            fetch(`${apiBase}/p/${selectedCity.code}?depth=2`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    const selectedDistrict = data.districts.find(d => d.name ===
+                                        selectedName);
+                                    if (selectedDistrict) {
+                                        loadWards(selectedDistrict.code);
+                                    }
+                                });
+                        }
+                    });
+            });
+        });
+    </script>
 @endsection
 @section('style')
 @endsection
