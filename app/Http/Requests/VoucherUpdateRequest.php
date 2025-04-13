@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Voucher;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,13 @@ class VoucherUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $voucherId = $this->route('voucher') ? $this->route('voucher')->id : null;
+        $voucherId = $this->route('id');
+        $voucher = Voucher::find($voucherId);
+
+        // Kiểm tra nếu voucher không tồn tại
+        if (!$voucher) {
+            abort(404, 'Voucher không tồn tại');
+        }
 
         return [
             'name' => 'required|string|max:255',
@@ -30,7 +37,16 @@ class VoucherUpdateRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('vouchers')->ignore($voucherId)
+                function ($attribute, $value, $fail) use ($voucher) {
+                    // Chỉ kiểm tra unique nếu mã thay đổi
+                    if ($value === $voucher->code) {
+                        return;
+                    }
+
+                    if (Voucher::where('code', $value)->exists()) {
+                        $fail('Mã voucher ":input" đã tồn tại');
+                    }
+                }
             ],
             'discount_type' => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:0|max:99999999.99',

@@ -12,14 +12,17 @@ return new class extends Migration
     public function up()
     {
         Schema::table('banners', function (Blueprint $table) {
-            $table->softDeletes(); 
+            $table->boolean('is_active')->default(true)->after('redirect_link');
+
         });
     }
-
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::table('banners', function (Blueprint $table) {
-            $table->dropSoftDeletes();
+            //
         });
     }
 };

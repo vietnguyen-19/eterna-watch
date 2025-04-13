@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->string('sku', 100)->unique();
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 15, 2);
             $table->integer('stock')->default(0);
             $table->enum('status', ['in_stock', 'out_of_stock', 'pre_order'])->default('in_stock')->nullable(); // Thêm cột status
             $table->string('image', 255)->nullable();
@@ -27,10 +27,6 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('product_variants');

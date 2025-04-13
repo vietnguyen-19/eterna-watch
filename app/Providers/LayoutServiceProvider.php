@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Banner;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,8 +33,7 @@ class LayoutServiceProvider extends ServiceProvider
                     $category->products_count = $category->allProducts()->count();
                     return $category;
                 });
-
-            // Lấy tất cả thương hiệu
+    
             $brands = Brand::with('children')->get();
             // $settings = Setting::get();
            $settings = Setting::pluck('value', 'key')->toArray();
