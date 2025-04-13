@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('entity_type', ['order', 'payment', 'shipment']); // Loại thực thể
             $table->string('old_status', 50);
             $table->string('new_status', 50);
-            $table->unsignedBigInteger('changed_by'); // Người thực hiện thay đổi
+            $table->unsignedBigInteger('changed_by')->nullable(); // Cho phép NULL
             $table->timestamp('changed_at')->useCurrent();
             $table->timestamps();
 
@@ -25,10 +25,7 @@ return new class extends Migration
             $table->foreign('changed_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('status_history');

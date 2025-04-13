@@ -24,7 +24,7 @@
             <div class="content container mb-0 position-relative pt-3 pt-xl-5">
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
-                <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">Bộ Sưu Tập Đồng Hồ Mới<br>2025
+                <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">{{  $banners['home_start']->title ?? 'Tiêu đề mặc định' }}
                 </h2>
                 <div class="d-flex align-items-center text-center justify-content-center">
                     <a href="shop1.html" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
@@ -139,7 +139,7 @@
 
         <section class="image-banner">
             <div class="background-img"
-                style="background-image: url('{{ asset('theme/client/images/home/demo19/banner-2.jpg') }}'); background-position: center center;">
+                style="background-image: url('{{ Storage::url($banners['home_new_product']->image ?? 'avatar/default.jpeg') }}'); background-position: center center;">
             </div>
             <div class="image-banner__content container py-3">
                 <h2 class="text-white h1 fw-semi-bold mb-3 mb-xl-4">SẢN PHẨM MỚI</h2>

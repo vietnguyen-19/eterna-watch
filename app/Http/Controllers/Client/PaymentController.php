@@ -31,7 +31,6 @@ class PaymentController extends Controller
     }
     public function checkout(Request $request)
     {
-        // Xác thực dữ liệu đầu vào
         $validatedData = $request->validate([
             'full_name'       => 'required|string|max:255',
             'phone_number'    => 'required|string|max:20',
@@ -40,7 +39,7 @@ class PaymentController extends Controller
             'ward'            => 'required|string|max:255',
             'district'        => 'required|string|max:255',
             'city'            => 'required|string|max:255',
-            'country'         => 'required|string|max:255',
+            'country'         => 'nullable|string|max:255',
             'note'            => 'nullable|string|max:1000',
 
             'cart_items'                 => 'required|array|min:1',
@@ -219,11 +218,14 @@ class PaymentController extends Controller
     {
         $inputData = $request->all();
         $order_id = explode('_', $inputData['vnp_TxnRef'])[0];
-
         $order = Order::findOrFail($order_id);
 
+        $transactionId = $inputData['vnp_TransactionNo'] ?? null;
+        $userId = auth()->id() ?? 1; // Nếu không có người dùng đăng nhập
+
         if ($inputData['vnp_ResponseCode'] == '00') {
-            // Cập nhật trạng thái đơn hàng và tạo thanh toán
+            // Thành công
+            // Cập nhật trạng thái đơn hàng (nếu có thêm logic)
             $order->save();
 
             Payment::create([
@@ -231,7 +233,7 @@ class PaymentController extends Controller
                 'payment_method' => 'VNPay',
                 'amount' => $order->total_amount,
                 'payment_status' => 'completed',
-                'transaction_id' => $inputData['vnp_TransactionNo'],
+                'transaction_id' => $transactionId,
             ]);
 
             StatusHistory::create([
@@ -239,41 +241,52 @@ class PaymentController extends Controller
                 'entity_type' => 'payment',
                 'old_status' => 'pending',
                 'new_status' => 'completed',
-                'changed_by' => auth()->id() ?? 1, // ID người thay đổi
+                'changed_by' => $userId,
                 'changed_at' => now(),
             ]);
-            // Xóa session giỏ hàng
+
+            // Xoá giỏ hàng sau khi thanh toán thành công
             session()->forget('cart');
             $cart = Cart::where('user_id', Auth::id())->first();
-
             if ($cart) {
                 CartDetail::where('cart_id', $cart->id)->delete();
-                $cart->delete(); // Xóa luôn giỏ hàng nếu cần
+                $cart->delete();
             }
+
+            return redirect()
+                ->route('account.order')
+                ->with('message', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
         } else {
+            // Thất bại
+            
+            Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => 'VNPay',
+                'amount' => $order->total_amount,
+                'payment_status' => 'failed',
+                'transaction_id' => $transactionId,
+            ]);
+
             StatusHistory::create([
                 'entity_id' => $order->id,
                 'entity_type' => 'payment',
                 'old_status' => 'pending',
                 'new_status' => 'fail',
-                'changed_by' => auth()->id() ?? 1, // ID người thay đổi
+                'changed_by' => $userId,
                 'changed_at' => now(),
             ]);
+            session()->forget('cart');
+            $cart = Cart::where('user_id', Auth::id())->first();
+            if ($cart) {
+                CartDetail::where('cart_id', $cart->id)->delete();
+                $cart->delete();
+            }
+            return redirect()
+                ->route('account.order')
+                ->with('error', "Thanh toán thất bại cho đơn hàng #{$order->order_code}. Vui lòng thử lại.");
         }
-
-        StatusHistory::create([
-            'entity_id' => $order->id,
-            'entity_type' => 'payment',
-            'old_status' => 'pending',
-            'new_status' => 'completed',
-            'changed_by' => auth()->id() ?? 1,
-            'changed_at' => now(),
-        ]);
-
-        return redirect()
-            ->route('account.order')
-            ->with('message', "Đơn hàng #{$order->order_code}đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
+
     public function payWithCash($order_id)
     {
         $order = Order::findOrFail($order_id);

@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    <section class="content">
+    <section class="content pt-3">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -21,7 +21,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Ảnh</th>
-                                        <th>Link chuyển hướng</th>
+                                        <th>Tiêu để</th>
                                         <th>Ngày xóa</th>
                                         <th>Hành động</th>
                                     </tr>
@@ -29,17 +29,24 @@
                                 <tbody>
                                     @foreach($banners as $banner)
                                     <tr>
-                                        <td>{{ $banner->id }}</td>
-                                        <td>
-                                            @if($banner->image_link)
-                                                <img src="{{ $banner->image_link }}" width="100" alt="Banner">
-                                            @else
-                                                No Image
-                                            @endif
+                                        <td class="align-middle">{{ $banner->id }}</td>
+                                        <td style="width: 80px;">
+                                            <div style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 6px;">
+                                                @if ($banner->image)
+                                                    <img src="{{ Storage::url($banner->image ?? 'avatar/default.jpeg') }}"
+                                                         alt="Banner"
+                                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                @else
+                                                    <img src="{{ asset('theme/velzon/assets/images/no-img.jpg') }}"
+                                                         alt="No Image"
+                                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                @endif
+                                            </div>
                                         </td>
-                                        <td>{{ $banner->redirect_link ?? '#' }}</td>
-                                        <td>{{ $banner->deleted_at->format('d/m/Y H:i') }}</td>
-                                        <td>
+                                        
+                                        <td class="align-middle">{{ $banner->title ?? '#' }}</td>
+                                        <td class="align-middle">{{ $banner->deleted_at->format('d/m/Y H:i') }}</td>
+                                        <td class="align-middle">
                                             <form action="{{ route('admin.banners.restore', $banner->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 <button type="submit" class="btn btn-success btn-sm">Khôi phục</button>

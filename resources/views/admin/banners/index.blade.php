@@ -34,9 +34,29 @@
                                         <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
                                                 class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
 
-                                    </div>
+
+@section('content')
+    <section class="content pt-3">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="card-title mb-0">Danh sách banner</h5>
+                                
+                                <div class="d-flex ms-auto">
+                                    <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning mr-2">
+                                        <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                    </a>
+                                    <a href="{{ route('admin.banners.create') }}" class="btn btn-primary">
+                                        <i class="ri-add-line align-bottom me-1"></i> Thêm banner
+                                    </a>
                                 </div>
                             </div>
+                            
+                        </div>
+
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -116,37 +136,62 @@
                                                                         </form>
                                                                     </li>
 
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                                <thead class="text-muted">
-                                                    <tr>
-                                                        <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
-                                                        </th>
-                                                        <th class="sort" data-sort="action">Hành động</th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
 
-                                        </div>
-                                    </div>
-                                </div>
+                                                <td class="align-middle">
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ route('admin.banners.edit', $banner->id) }}"
+                                                            class="btn btn-sm btn-warning mr-1">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" class="d-inline"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?');">
+                                                          @csrf
+                                                          @method('DELETE')
+                                                          <button type="submit" class="btn btn-sm btn-danger">
+                                                              <i class="fas fa-trash"></i>
+                                                          </button>
+                                                      </form>
+                                                      
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có banner nào được tìm thấy.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+
+                                    </tbody>
+                                </table>
                             </div>
-                            <!-- /.card-body -->
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    @endsection
-    @section('script')
-        <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        </div>
+    </section>
+@endsection
 
+@section('style')
+    <style>
+        .avatar-xs {
+            height: 2.2rem;
+            width: 2.2rem;
+            object-fit: cover;
+        }
+
+        .bg-success-subtle {
+            background-color: rgba(10, 179, 156, .1);
+        }
+
+        .bg-danger-subtle {
+            background-color: rgba(240, 101, 72, .1);
+        }
+
+        .bg-warning-subtle {
+            background-color: rgba(247, 184, 75, .1);
+        }
         <!-- DataTables JS -->
         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
         <script>
@@ -198,13 +243,11 @@
                             "next": "Sau",
                             "previous": "Trước"
                         }
-                    }
-                });
-            });
-        </script>
 
-        <script>
-            // Tự động đóng thông báo sau 5 giây (5000ms)
+                    }
+                }
+            });
+
             setTimeout(function() {
                 var alert = document.getElementById('thongbao-alert');
                 if (alert) {
@@ -270,3 +313,4 @@
     </style>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     @endsection
+

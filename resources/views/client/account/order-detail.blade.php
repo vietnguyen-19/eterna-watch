@@ -69,7 +69,35 @@
                                 @endif
 
                             </div>
-                            <hr>
+                           
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Thông tin thanh toán</h5>
+                                    <p class="card-text">
+                                        <strong>Phương thức thanh toán:</strong> 
+                                        @if ($order->payment->payment_method == 'Cash')
+                                            Tiền mặt
+                                        @elseif ($order->payment->payment_method == 'vnpay')
+                                            VNPay
+                                        @else
+                                            {{ $order->payment->payment_method }}
+                                        @endif
+                                        <br>
+                                        <strong>Trạng thái thanh toán:</strong> 
+                                        <span style="background-color: 
+                                            @if ($order->payment->payment_status == 'completed') #28a745;
+                                            @elseif ($order->payment->payment_status == 'pending') #ffc107;
+                                            @elseif ($order->payment->payment_status == 'failed') #dc3545;
+                                            @else #6c757d; 
+                                            @endif
+                                            color: white; padding: 0.2em 0.6em; border-radius: 0.25rem;">
+                                            {{ $order->payment->payment_status }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                          
+                            
                             <table class="checkout-cart-items">
                                 <thead>
                                     <tr>
