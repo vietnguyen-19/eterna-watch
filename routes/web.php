@@ -348,3 +348,8 @@ Route::prefix('client')->name('client.')->group(function () {
     });
 
 });
+
+// Chatbot routes
+Route::post('/chat', [App\Http\Controllers\ChatbotController::class, 'chat'])->name('chatbot.chat');
+
+
