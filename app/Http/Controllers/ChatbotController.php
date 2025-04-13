@@ -190,118 +190,108 @@ class ChatbotController extends Controller
 
     private function getRelevantProducts($message)
     {
-        try {
-            Log::info('Processing message for product search:', ['message' => $message]);
-
-            // Khởi tạo query cơ bản với các relationship cần thiết
-            $query = Product::query()
-                ->with(['brand', 'category', 'variants'])
-                ->where('status', 'active');
-
-            // Lọc theo danh mục nữ/nam và thể thao
-            if (str_contains(mb_strtolower($message), 'nữ') && str_contains(mb_strtolower($message), 'thể thao')) {
-                $query->whereHas('category', function ($q) {
-                    $q->where(function($q) {
-                        $q->where('name', 'like', '%đồng hồ nữ thể thao%')
-                          ->orWhere('name', 'like', '%đồng hồ thể thao nữ%')
-                          ->orWhere('name', 'like', '%nữ thể thao%')
-                          ->orWhere('name', 'like', '%thể thao nữ%');
-                    })->where('status', 'active');
-                });
-                Log::info('Filtered by category: female sport watches');
-            } elseif (str_contains(mb_strtolower($message), 'nam') && str_contains(mb_strtolower($message), 'thể thao')) {
-                $query->whereHas('category', function ($q) {
-                    $q->where(function($q) {
-                        $q->where('name', 'like', '%đồng hồ nam thể thao%')
-                          ->orWhere('name', 'like', '%đồng hồ thể thao nam%')
-                          ->orWhere('name', 'like', '%nam thể thao%')
-                          ->orWhere('name', 'like', '%thể thao nam%');
-                    })->where('status', 'active');
-                });
-                Log::info('Filtered by category: male sport watches');
-            }
-
-            // Lọc theo thương hiệu
-            $brands = ['casio', 'seiko', 'citizen', 'tissot', 'fossil'];
-            foreach ($brands as $brand) {
-                if (str_contains(mb_strtolower($message), $brand)) {
-                    $query->whereHas('brand', function ($q) use ($brand) {
-                        $q->where('name', 'like', '%' . ucfirst($brand) . '%');
-                    });
-                    Log::info('Filtered by brand:', ['brand' => $brand]);
-                    break;
-                }
-            }
-
-            // Lọc theo giá
-            if (preg_match('/dưới\s*(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
-                $price = $matches[1];
-                if (isset($matches[2]) && in_array($matches[2], ['triệu', 'tr'])) {
-                    $price *= 1000000;
-                } elseif (isset($matches[2]) && in_array($matches[2], ['k', 'nghìn'])) {
-                    $price *= 1000;
-                }
-                $query->whereHas('variants', function ($q) use ($price) {
-                    $q->where('price', '<=', $price)
-                      ->where('status', 'in_stock');
-                });
-                Log::info('Filtered by price:', ['max_price' => $price]);
-            } elseif (preg_match('/trên\s*(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
-                $price = $matches[1];
-                if (isset($matches[2]) && in_array($matches[2], ['triệu', 'tr'])) {
-                    $price *= 1000000;
-                } elseif (isset($matches[2]) && in_array($matches[2], ['k', 'nghìn'])) {
-                    $price *= 1000;
-                }
-                $query->whereHas('variants', function ($q) use ($price) {
-                    $q->where('price', '>=', $price)
-                      ->where('status', 'in_stock');
-                });
-                Log::info('Filtered by price:', ['min_price' => $price]);
-            }
-
-            // Đảm bảo sản phẩm có ít nhất một biến thể còn hàng
-            $query->whereHas('variants', function ($q) {
-                $q->where('status', 'in_stock');
+        $query = Product::query()
+            ->with(['brand', 'category', 'variants'])
+            ->where('status', 'active')
+            ->whereHas('variants', function ($q) {
+                $q->where('stock', '>', 0);
             });
 
-            // Sắp xếp kết quả theo giá tăng dần
-            $query->orderBy('price_default', 'asc');
+        // Lọc theo danh mục
+        if (str_contains(mb_strtolower($message), 'thể thao')) {
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%thể thao%');
+            });
+        } elseif (str_contains(mb_strtolower($message), 'dạ hội')) {
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%dạ hội%');
+            });
+        } elseif (str_contains(mb_strtolower($message), 'nam')) {
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%nam%');
+            });
+        } elseif (str_contains(mb_strtolower($message), 'nữ')) {
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%nữ%');
+            });
+        }
 
-            // Log query và bindings
-            Log::info('Final SQL Query:', [
-                'sql' => $query->toSql(),
-                'bindings' => $query->getBindings()
-            ]);
+        // Lọc theo thương hiệu
+        $brands = ['casio', 'seiko', 'citizen', 'tissot', 'fossil'];
+        foreach ($brands as $brand) {
+            if (str_contains(mb_strtolower($message), $brand)) {
+                $query->whereHas('brand', function ($q) use ($brand) {
+                    $q->where('name', 'like', '%' . $brand . '%');
+                });
+                break;
+            }
+        }
 
-            // Thực hiện truy vấn và log kết quả
-            $products = $query->get();
-            Log::info('Raw products data:', [
-                'count' => $products->count(),
-                'products' => $products->toArray()
-            ]);
+        // Lọc theo giá
+        if (preg_match('/dưới\s+(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
+            $amount = $matches[1];
+            $unit = strtolower($matches[2]);
+            
+            // Chuyển đổi giá về VND
+            $price = match($unit) {
+                'triệu', 'tr' => $amount * 1000000,
+                'k' => $amount * 1000,
+                'nghìn' => $amount * 1000,
+                default => $amount
+            };
+            
+            $query->whereHas('variants', function ($q) use ($price) {
+                $q->where('price', '<=', $price);
+            });
+        } elseif (preg_match('/trên\s+(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
+            $amount = $matches[1];
+            $unit = strtolower($matches[2]);
+            
+            // Chuyển đổi giá về VND
+            $price = match($unit) {
+                'triệu', 'tr' => $amount * 1000000,
+                'k' => $amount * 1000,
+                'nghìn' => $amount * 1000,
+                default => $amount
+            };
+            
+            $query->whereHas('variants', function ($q) use ($price) {
+                $q->where('price', '>=', $price);
+            });
+        }
 
-            // Kiểm tra từng sản phẩm và log chi tiết
-            foreach ($products as $product) {
-                Log::info('Product details:', [
+        // Sắp xếp theo giá tăng dần từ bảng variants
+        $query->orderBy(
+            ProductVariant::select('price')
+                ->whereColumn('product_variants.product_id', 'products.id')
+                ->orderBy('price', 'asc')
+                ->limit(1),
+            'asc'
+        );
+
+        // Lấy sản phẩm
+        $products = $query->get();
+
+        // Log thông tin sản phẩm
+        Log::info('Found products:', [
+            'count' => $products->count(),
+            'products' => $products->map(function ($product) {
+                return [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'category' => $product->category ? $product->category->name : 'No category',
-                    'brand' => $product->brand ? $product->brand->name : 'No brand',
-                    'variants_count' => $product->variants ? $product->variants->count() : 0,
-                    'variants' => $product->variants ? $product->variants->toArray() : []
-                ]);
-            }
+                    'category' => $product->category->name ?? 'N/A',
+                    'brand' => $product->brand->name ?? 'N/A',
+                    'variants' => $product->variants->map(function ($variant) {
+                        return [
+                            'price' => $variant->price,
+                            'stock' => $variant->stock
+                        ];
+                    })->toArray()
+                ];
+            })->toArray()
+        ]);
 
-            return $products;
-
-        } catch (\Exception $e) {
-            Log::error('Error in getRelevantProducts:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return collect([]);
-        }
+        return $products;
     }
 
     private function formatProductData($products)
@@ -323,8 +313,12 @@ class ChatbotController extends Controller
                 // Thông tin biến thể và giá
                 if ($product->variants && $product->variants->isNotEmpty()) {
                     $formattedData .= "Giá: " . number_format($product->variants->first()->price, 0, ',', '.') . " VNĐ\n";
-                    $formattedData .= "Tình trạng: " . ($product->variants->first()->status === 'in_stock' ? 'Còn hàng' : 'Hết hàng') . "\n";
+                    $formattedData .= "Tình trạng: " . ($product->variants->first()->stock > 0 ? 'Còn hàng' : 'Hết hàng') . "\n";
                 }
+                
+                // Thêm đường dẫn sản phẩm
+                $productUrl = route('client.product.show', ['id' => $product->id]);
+                $formattedData .= "🔗 Link sản phẩm: {$productUrl}\n";
                 
                 $formattedData .= "\n========================================\n\n";
                 
@@ -338,7 +332,7 @@ class ChatbotController extends Controller
             }
         }
         
-        $formattedData .= "Bạn có thể xem chi tiết sản phẩm tại trang sản phẩm của chúng tôi. Bạn cần tôi tư vấn thêm về sản phẩm nào không?";
+        $formattedData .= "Bạn có thể xem chi tiết sản phẩm bằng cách nhấp vào link tương ứng. Bạn cần tôi tư vấn thêm về sản phẩm nào không?";
         
         return $formattedData;
     }
