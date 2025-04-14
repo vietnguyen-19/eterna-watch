@@ -60,10 +60,9 @@ class Order extends Model
         }
     
         $orderTotal = $this->orderItems()->sum('total_price');
-
-        
         // Nếu không có sản phẩm nào trong đơn hàng, không có chiết khấu
         if ($orderTotal <= 0) {
+
             return 0;
         }
     

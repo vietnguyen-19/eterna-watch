@@ -310,7 +310,6 @@
                                                 <span id="shipping_cost">100.000đ</span>
                                             </td>
                                         </tr>
-
                                         <tr class="d-flex justify-content-between py-2">
                                             <th class="text-start">Tổng cộng</th>
                                             <td class="text-end">

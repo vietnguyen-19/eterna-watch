@@ -226,4 +226,31 @@ class BannerController extends Controller
             ]);
         }
     }
+
+    public function toggleStatus(Request $request)
+    {
+        try {
+            // Validate dữ liệu đầu vào
+            $request->validate([
+                'id' => 'required|exists:banners,id',
+                'is_active' => 'required|boolean'
+            ]);
+
+            // Tìm và cập nhật banner
+            $banner = Banner::findOrFail($request->id);
+            $banner->update(['is_active' => $request->is_active]);
+
+            // Trả về response JSON
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật trạng thái thành công',
+                'is_active' => $banner->is_active
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
+
     <section class="content pt-3">
         <div class="container-fluid">
             <div class="row">
@@ -9,7 +10,7 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h5 class="card-title mb-0">Danh sách banner</h5>
-                                
+
                                 <div class="d-flex ms-auto">
                                     <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning mr-2">
                                         <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
@@ -19,10 +20,9 @@
                                     </a>
                                 </div>
                             </div>
-                            
-                        </div>
 
-                        <div class="card-body">
+                        </div>
+                        <<<<<<< HEAD <div class="card-body">
                             @if (session('success'))
                                 <div class="alert alert-success alert-border-left alert-dismissible fade show"
                                     role="alert">
@@ -60,20 +60,21 @@
                                             <tr>
                                                 <td class="align-middle">{{ $banner->id }}</td>
                                                 <td style="width: 80px;">
-                                                    <div style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 6px;">
+                                                    <div
+                                                        style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 6px;">
                                                         @if ($banner->image)
                                                             <img src="{{ Storage::url($banner->image ?? 'avatar/default.jpeg') }}"
-                                                                 alt="Banner"
-                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                                alt="Banner"
+                                                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
                                                         @else
                                                             <img src="{{ asset('theme/velzon/assets/images/no-img.jpg') }}"
-                                                                 alt="No Image"
-                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                                alt="No Image"
+                                                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
                                                         @endif
                                                     </div>
                                                 </td>
-                                                
-                                                
+
+
                                                 <td class="align-middle">{{ $banner->title ?? 'Không có tiêu đề' }}</td>
                                                 <td class="align-middle">{{ $banner->position ?? 'Không rõ' }}</td>
                                                 <td class="align-middle">
@@ -87,21 +88,23 @@
                                                     @endif
                                                 </td>
 
+
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                             class="btn btn-sm btn-warning mr-1">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" class="d-inline"
+                                                        <form action="{{ route('admin.banners.destroy', $banner->id) }}"
+                                                            method="POST" class="d-inline"
                                                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?');">
-                                                          @csrf
-                                                          @method('DELETE')
-                                                          <button type="submit" class="btn btn-sm btn-danger">
-                                                              <i class="fas fa-trash"></i>
-                                                          </button>
-                                                      </form>
-                                                      
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -115,10 +118,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </section>
 @endsection
@@ -143,7 +146,7 @@
             background-color: rgba(247, 184, 75, .1);
         }
 
-        .bg-primary-subtle {
+        <<<<<<< HEAD .bg-primary-subtle {
             background-color: rgba(64, 81, 137, .1);
         }
 
@@ -190,3 +193,127 @@
         });
     </script>
 @endsection
+=======
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+                // Xử lý toggle trạng thái
+                $('.status-toggle').change(function() {
+                    const bannerId = $(this).data('id');
+                    const isActive = $(this).is(':checked') ? 1 : 0;
+
+                    $.ajax({
+                        url: '{{ route('admin.banners.toggle-status') }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            id: bannerId,
+                            is_active: isActive
+                        },
+                        success: function(response) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Cập nhật trạng thái thành công'
+                            });
+                        },
+                        error: function() {
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Có lỗi xảy ra'
+                            });
+                        }
+                    });
+                });
+
+                $('#danhmucTable').DataTable({
+                        "paging": true, // Bật phân trang
+                        "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
+                        "searching": true, // Bật ô tìm kiếm
+                        "ordering": true, // Bật sắp xếp cột
+                        "info": true, // Hiển thị thông tin tổng số dòng
+                        "language": {
+                            "lengthMenu": "Hiển thị _MENU_ dòng",
+                            "zeroRecords": "Không tìm thấy dữ liệu",
+                            "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
+                            "infoEmpty": "Không có dữ liệu",
+                            "search": "Tìm kiếm:",
+                            "paginate": {
+                                "first": "Trang đầu",
+                                "last": "Trang cuối",
+                                "next": "Sau",
+                                "previous": "Trước"
+                            }
+
+                        }
+                    }
+                });
+
+            setTimeout(function() {
+                var alert = document.getElementById('thongbao-alert');
+                if (alert) {
+                    // Sử dụng Bootstrap để đóng alert
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000); // 5000ms = 5 giây
+</script>
+@endsection
+@section('style')
+<style>
+    /* Switch toggle style */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked+.slider {
+        background-color: #0d6efd;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+
+    /* Optional: Add animation */
+    .slider:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+@endsection
+
+>>>>>>> f93b9de490870eb096f87c7400725102884853c6

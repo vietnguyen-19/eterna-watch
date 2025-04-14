@@ -6,6 +6,7 @@
             <div class="slideshow-bg position-absolute left-0 top-0 w-100">
                 <img loading="lazy" src="{{ Storage::url($banners['home_start']->image ?? 'avatar/default.jpeg') }}" width="1920"
                     height="1260" alt="Pattern" class="slideshow-bg__img object-fit-cover">
+
             </div>
             <div class="content container mb-0 position-relative pt-3 pt-xl-5">
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
@@ -369,5 +370,24 @@
         .blog-card__read-more:hover {
             color: #e20000;
         }
+
+        <style>
+
+        /* Fix chiều cao cho section */
+        section.position-relative {
+            height: 100vh;
+            min-height: 800px;
+            overflow: hidden;
+        }
+
+        /* Đảm bảo ảnh nền phủ kín */
+        .slideshow-bg__img {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+        }
     </style>
+    </style>
+
 @endsection
