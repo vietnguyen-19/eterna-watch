@@ -21,7 +21,7 @@ class ChatbotController extends Controller
 
     public function index()
     {
-        return view('client.contact_us');
+        return view('client.chatbot');
     }
 
     public function chat(Request $request)
