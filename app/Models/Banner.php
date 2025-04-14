@@ -35,7 +35,6 @@ protected $dates = [
     'updated_at',
 ];
 
-    ];
     public static function getByPosition(string $position)
     {
         return static::where('position', $position)

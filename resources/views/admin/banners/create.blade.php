@@ -89,24 +89,8 @@
                         </form>
                     </div>
                 </div>
-<<<<<<< HEAD
             </div>
             
-=======
-
-                <div class="form-group">
-                    <label for="redirect_link">Đường dẫn chuyển hướng</label>
-                    <input type="text" name="redirect_link" id="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" value="{{ old('redirect_link') }}" placeholder="Nhập URL chuyển hướng">
-                    @error('redirect_link')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-
-                <button type="submit" class="btn btn-success">Thêm mới</button>
-                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
-            </form>
->>>>>>> eb64046b9cc271ba1aa6137d987803997f8c4362
         </div>
     </div>
 </section>
