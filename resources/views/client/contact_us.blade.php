@@ -22,14 +22,14 @@
                                 Xin chào! Tôi là trợ lý ảo của Eterna Watch. Tôi có thể giúp gì cho bạn?
                             </div>
                             <div class="message-time">Hôm nay</div>
-                        </div>
-                    </div>
+                            </div>
+                            </div>
                     <div class="chat-input">
                         <form id="chatForm" class="d-flex align-items-center">
                             <input type="text" id="userMessage" class="form-control" placeholder="Nhập tin nhắn của bạn..." maxlength="500" required>
                             <button type="submit" class="btn btn-primary ms-2" id="sendButton">
                                 <i class="fas fa-paper-plane"></i>
-                            </button>
+                                </button>
                         </form>
                         <div class="text-end mt-1">
                             <small class="text-muted" id="charCount">0/500</small>

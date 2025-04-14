@@ -58,30 +58,13 @@ class ChatbotController extends Controller
                     $productData = $this->formatProductData($products);
                     Log::info('Formatted product data:', ['data' => $productData]);
 
-                    try {
-                        $response = $this->geminiService->generateResponse($message, $productData);
-                        Log::info('Generated Gemini response:', ['response' => $response]);
+                    // Trả về dữ liệu sản phẩm với HTML được render
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => $productData,
+                        'is_html' => true // Thêm flag để frontend biết cần render HTML
+                    ]);
 
-                        // Kiểm tra và sửa lỗi encoding nếu cần
-                        if (mb_detect_encoding($response, 'UTF-8', true) === false) {
-                            $response = mb_convert_encoding($response, 'UTF-8', 'auto');
-                        }
-
-                        return response()->json([
-                            'status' => 'success',
-                            'message' => $response
-                        ]);
-                    } catch (\Exception $e) {
-                        Log::error('Error generating Gemini response:', [
-                            'message' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString()
-                        ]);
-                        // Trả về dữ liệu sản phẩm thô nếu không thể tạo response từ Gemini
-                        return response()->json([
-                            'status' => 'success',
-                            'message' => $productData
-                        ]);
-                    }
                 } catch (\Exception $e) {
                     Log::error('Error processing product query:', [
                         'message' => $e->getMessage(),
@@ -98,11 +81,6 @@ class ChatbotController extends Controller
             try {
                 $response = $this->handleGeneralQuestions($message);
                 Log::info('Handled general question:', ['response' => $response]);
-                
-                // Kiểm tra và sửa lỗi encoding nếu cần
-                if (mb_detect_encoding($response, 'UTF-8', true) === false) {
-                    $response = mb_convert_encoding($response, 'UTF-8', 'auto');
-                }
                 
                 return response()->json([
                     'status' => 'success',
@@ -197,70 +175,113 @@ class ChatbotController extends Controller
                 $q->where('stock', '>', 0);
             });
 
-        // Lọc theo danh mục
-        if (str_contains(mb_strtolower($message), 'thể thao')) {
-            $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%thể thao%');
-            });
-        } elseif (str_contains(mb_strtolower($message), 'dạ hội')) {
-            $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%dạ hội%');
-            });
-        } elseif (str_contains(mb_strtolower($message), 'nam')) {
-            $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%nam%');
-            });
-        } elseif (str_contains(mb_strtolower($message), 'nữ')) {
-            $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%nữ%');
-            });
-        }
+        // Log tin nhắn gốc
+        Log::info('Processing message:', ['message' => $message]);
+        
+        $message = mb_strtolower($message, 'UTF-8');
 
-        // Lọc theo thương hiệu
-        $brands = ['casio', 'seiko', 'citizen', 'tissot', 'fossil'];
-        foreach ($brands as $brand) {
-            if (str_contains(mb_strtolower($message), $brand)) {
-                $query->whereHas('brand', function ($q) use ($brand) {
-                    $q->where('name', 'like', '%' . $brand . '%');
-                });
+        // Lấy tất cả thương hiệu từ database và log
+        $allBrands = Brand::all();
+        Log::info('All available brands:', ['brands' => $allBrands->pluck('name')->toArray()]);
+
+        // Tìm kiếm thương hiệu trong tin nhắn
+        $foundBrandId = null;
+        foreach ($allBrands as $brand) {
+            $brandName = mb_strtolower($brand->name, 'UTF-8');
+            // Kiểm tra cả tên đầy đủ và tên viết tắt của thương hiệu
+            if (str_contains($message, $brandName) || 
+                str_contains($message, str_replace(' ', '', $brandName)) ||
+                str_contains($message, str_replace('-', '', $brandName))) {
+                
+                $foundBrandId = $brand->id;
+                Log::info('Found brand in message:', [
+                    'message' => $message,
+                    'brand_name' => $brand->name,
+                    'brand_id' => $brand->id
+                ]);
                 break;
             }
         }
 
-        // Lọc theo giá
-        if (preg_match('/dưới\s+(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
-            $amount = $matches[1];
-            $unit = strtolower($matches[2]);
+        // Nếu tìm thấy thương hiệu, thêm vào query
+        if ($foundBrandId) {
+            $query->where('brand_id', $foundBrandId);
             
-            // Chuyển đổi giá về VND
-            $price = match($unit) {
-                'triệu', 'tr' => $amount * 1000000,
-                'k' => $amount * 1000,
-                'nghìn' => $amount * 1000,
-                default => $amount
-            };
-            
-            $query->whereHas('variants', function ($q) use ($price) {
-                $q->where('price', '<=', $price);
+            // Log số lượng sản phẩm của thương hiệu
+            $brandProductCount = Product::where('brand_id', $foundBrandId)->count();
+            Log::info('Products count for brand:', [
+                'brand_id' => $foundBrandId,
+                'product_count' => $brandProductCount
+            ]);
+        } else {
+            Log::info('No brand found in message');
+        }
+
+        // Lọc theo các danh mục đặc biệt
+        $categoryFilters = [
+            'thể thao' => ['thể thao', 'sport'],
+            'đôi' => ['đôi', 'cặp', 'couple'],
+            'cao cấp' => ['cao cấp', 'luxury'],
+            'thời trang' => ['thời trang', 'fashion']
+        ];
+
+        foreach ($categoryFilters as $type => $keywords) {
+            foreach ($keywords as $keyword) {
+                if (str_contains($message, $keyword)) {
+                    Log::info("Filtering by category: {$type}", ['keyword' => $keyword]);
+                    $query->whereHas('category', function ($q) use ($type) {
+                        $q->where('name', 'like', '%' . $type . '%');
+                    });
+                    break 2;
+                }
+            }
+        }
+
+        // Lọc theo giới tính trong danh mục
+        if (str_contains($message, 'nam')) {
+            Log::info('Filtering by category: nam');
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%nam%')
+                  ->orWhere('name', 'like', '%men%');
             });
-        } elseif (preg_match('/trên\s+(\d+)\s*(triệu|tr|k|nghìn)/i', $message, $matches)) {
-            $amount = $matches[1];
-            $unit = strtolower($matches[2]);
-            
-            // Chuyển đổi giá về VND
-            $price = match($unit) {
-                'triệu', 'tr' => $amount * 1000000,
-                'k' => $amount * 1000,
-                'nghìn' => $amount * 1000,
-                default => $amount
-            };
-            
-            $query->whereHas('variants', function ($q) use ($price) {
-                $q->where('price', '>=', $price);
+        } elseif (str_contains($message, 'nữ')) {
+            Log::info('Filtering by category: nữ');
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%nữ%')
+                  ->orWhere('name', 'like', '%women%');
             });
         }
 
-        // Sắp xếp theo giá tăng dần từ bảng variants
+        // Lọc theo giá
+        if (preg_match('/(\d+)\s*(triệu|tr)/i', $message, $matches)) {
+            $amount = $matches[1];
+            $price = $amount * 1000000;
+            
+            $minPrice = $price * 0.8;
+            $maxPrice = $price * 1.2;
+            
+            Log::info('Price filtering details:', [
+                'original_message' => $message,
+                'amount' => $amount,
+                'converted_price' => $price,
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice
+            ]);
+            
+            $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
+                $q->whereBetween('price', [$minPrice, $maxPrice]);
+            });
+        }
+
+        // Log SQL query trước khi thực thi
+        $sqlQuery = $query->toSql();
+        $bindings = $query->getBindings();
+        Log::info('Final SQL Query:', [
+            'query' => $sqlQuery,
+            'bindings' => $bindings
+        ]);
+
+        // Sắp xếp theo giá tăng dần
         $query->orderBy(
             ProductVariant::select('price')
                 ->whereColumn('product_variants.product_id', 'products.id')
@@ -269,20 +290,26 @@ class ChatbotController extends Controller
             'asc'
         );
 
-        // Lấy sản phẩm
+        // Lấy sản phẩm và log chi tiết
         $products = $query->get();
-
-        // Log thông tin sản phẩm
-        Log::info('Found products:', [
-            'count' => $products->count(),
+        
+        // Log danh mục của các sản phẩm tìm thấy
+        Log::info('Found products categories:', [
+            'categories' => $products->pluck('category.name')->unique()->toArray()
+        ]);
+        
+        Log::info('Query results:', [
+            'total_products' => $products->count(),
             'products' => $products->map(function ($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'category' => $product->category->name ?? 'N/A',
-                    'brand' => $product->brand->name ?? 'N/A',
+                    'brand' => $product->brand ? $product->brand->name : 'N/A',
+                    'category' => $product->category ? $product->category->name : 'N/A',
+                    'variants_count' => $product->variants->count(),
                     'variants' => $product->variants->map(function ($variant) {
                         return [
+                            'id' => $variant->id,
                             'price' => $variant->price,
                             'stock' => $variant->stock
                         ];
@@ -316,9 +343,9 @@ class ChatbotController extends Controller
                     $formattedData .= "Tình trạng: " . ($product->variants->first()->stock > 0 ? 'Còn hàng' : 'Hết hàng') . "\n";
                 }
                 
-                // Thêm đường dẫn sản phẩm
-                $productUrl = route('client.product.show', ['id' => $product->id]);
-                $formattedData .= "🔗 Link sản phẩm: {$productUrl}\n";
+                // Thêm đường dẫn sản phẩm với HTML link
+                $productUrl = route('client.shop.show', $product->id);
+                $formattedData .= "🔗 <a href='{$productUrl}' style='color: #007bff; text-decoration: underline;'>Xem chi tiết sản phẩm</a>\n";
                 
                 $formattedData .= "\n========================================\n\n";
                 
