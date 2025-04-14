@@ -160,6 +160,7 @@
             z-index: 9999;
         }
     </style>
+    @include('client.layouts.messenger')
 </body>
 
 <!-- Mirrored from uomo-html.flexkitux.com/Demo19/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 07 Mar 2025 02:20:34 GMT -->
