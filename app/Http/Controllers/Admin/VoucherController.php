@@ -6,96 +6,137 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\VoucherStoreRequest;
 use App\Http\Requests\VoucherUpdateRequest;
 use App\Models\Voucher;
+use Illuminate\Http\Request;
 
 class VoucherController extends Controller
 {
-    //index
     public function index()
     {
-        $vouchers = Voucher::all();
+        $vouchers = Voucher::latest()->get();
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
-   //create
     public function create()
     {
         return view('admin.vouchers.create');
     }
 
-   //store
     public function store(VoucherStoreRequest $request)
     {
-        Voucher::create($request->validated());
+        try {
+            Voucher::create($request->validated());
 
-        return redirect()->route('admin.vouchers.index')
-        ->with('thongbao', [
-            'type' => 'success',
-            'message' => 'Voucher đã được tạo thành công!'
-        ]);
+            return redirect()->route('admin.vouchers.index')
+                   ->with('thongbao', [
+                       'type' => 'success',
+                       'message' => 'Thêm voucher thành công!'
+                   ]);
+
+        } catch (\Exception $e) {
+            return back()->withInput()
+                   ->with('thongbao', [
+                       'type' => 'danger',
+                       'message' => 'Lỗi: '.$e->getMessage()
+                   ]);
+        }
     }
 
-  //edit
-    public function edit(Voucher $voucher)
+    public function edit($id) // Thay đổi từ Route Model Binding sang $id
     {
+        $voucher = Voucher::findOrFail($id);
         return view('admin.vouchers.edit', compact('voucher'));
     }
 
-   //update
-    public function update(VoucherUpdateRequest $request, Voucher $voucher)
+    public function update(VoucherUpdateRequest $request, $id)
     {
-        $voucher->update($request->validated());
+        try {
+            $voucher = Voucher::findOrFail($id);
 
+            // Kiểm tra thủ công nếu cần
+            if ($voucher->code !== $request->code &&
+                Voucher::where('code', $request->code)->where('id', '!=', $id)->exists()) {
+                throw new \Exception('Mã voucher đã tồn tại');
+            }
 
-        return redirect()->route('admin.vouchers.index')
-        ->with('thongbao', [
-            'type' => 'success',
-            'message' => 'Voucher đã được cập nhật thành công!'
-        ]);
+            $voucher->update($request->validated());
+
+            return redirect()->route('admin.vouchers.index')
+                   ->with('thongbao', [
+                       'type' => 'success',
+                       'message' => 'Cập nhật voucher thành công!'
+                   ]);
+
+        } catch (\Exception $e) {
+            return back()->withInput()
+                   ->with('thongbao', [
+                       'type' => 'danger',
+                       'message' => 'Lỗi: '.$e->getMessage()
+                   ]);
+        }
     }
-//destroy
     public function destroy($id)
     {
-        $voucher = Voucher::findOrFail($id);
-        $voucher->delete(); // Xóa mềm
+        try {
+            $voucher = Voucher::findOrFail($id);
+            $voucher->delete();
 
-        return redirect()
-            ->route('admin.vouchers.index')
-            ->with('thongbao', [
-                'type' => 'success',
-                'message' => 'Voucher đã được đưa vào thùng rác!'
+            return redirect()->route('admin.vouchers.index')
+                   ->with('thongbao', [
+                       'type' => 'success',
+                       'message' => 'Đã chuyển vào thùng rác!'
+                   ]);
+
+        } catch (\Exception $e) {
+            return back()->with('thongbao', [
+                'type' => 'danger',
+                'message' => 'Lỗi: '.$e->getMessage()
             ]);
+        }
     }
 
-    // Thêm phương thức khôi phục
-    public function restore($id)
-{
-    $voucher = Voucher::onlyTrashed()->findOrFail($id);
-    $voucher->restore();
-
-    return redirect()->route('admin.vouchers.trash')->with('thongbao', [
-        'type' => 'success',
-        'message' => 'Voucher đã được khôi phục!'
-    ]);
-}
-
-
-    // Thêm phương thức xóa vĩnh viễn
-    public function forceDelete($id)
-    {
-        $voucher = Voucher::onlyTrashed()->findOrFail($id);
-        $voucher->forceDelete();
-
-        return redirect()->route('admin.vouchers.trash')->with('thongbao', [
-            'type' => 'success',
-            'message' => 'Voucher đã bị xóa vĩnh viễn!'
-        ]);
-    }
-
-
-    // Danh sách voucher đã xóa
     public function trash()
     {
-        $vouchers = Voucher::onlyTrashed()->get();
+        $vouchers = Voucher::onlyTrashed()->latest()->get();
         return view('admin.vouchers.trash', compact('vouchers'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            $voucher = Voucher::onlyTrashed()->findOrFail($id);
+            $voucher->restore();
+
+            return redirect()->route('admin.vouchers.trash')
+                   ->with('thongbao', [
+                       'type' => 'success',
+                       'message' => 'Khôi phục thành công!'
+                   ]);
+
+        } catch (\Exception $e) {
+            return back()->with('thongbao', [
+                'type' => 'danger',
+                'message' => 'Lỗi: '.$e->getMessage()
+            ]);
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            $voucher = Voucher::onlyTrashed()->findOrFail($id);
+            $voucher->forceDelete();
+
+            return redirect()->route('admin.vouchers.trash')
+                   ->with('thongbao', [
+                       'type' => 'success',
+                       'message' => 'Xóa vĩnh viễn thành công!'
+                   ]);
+
+        } catch (\Exception $e) {
+            return back()->with('thongbao', [
+                'type' => 'danger',
+                'message' => 'Lỗi: '.$e->getMessage()
+            ]);
+        }
     }
 }

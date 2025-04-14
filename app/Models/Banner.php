@@ -10,29 +10,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Banner extends Model
 {
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
+
 
     protected $fillable = [
-        'image_link',
-        'redirect_link',
+        'position',
+        'title',
+        'image',
+        'link',
+        'description',
+        'is_active',
+    ];
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
-    protected $attributes = [
-        'redirect_link' => '#', // Đặt link mặc định nếu không có
-    ];
-
-    // Thêm thuộc tính dates để tự động xử lý trường deleted_at
-    protected $dates = [
-        'deleted_at',
-        'created_at',
-        'updated_at'
-    ];
-
-    public function getImageLinkAttribute($value)
+    public static function getByPosition(string $position)
     {
-        return url($value);
+        return static::where('position', $position)
+            ->where('is_active', true)
+            ->latest() // sắp xếp mới nhất lên trước
+            ->get();
     }
-
-    // Timestamps vẫn giữ nguyên
-    public $timestamps = true;
 }

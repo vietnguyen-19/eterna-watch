@@ -87,6 +87,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // Banner
     Route::prefix('banners')->name('admin.banners.')->group(function () {
         Route::resource('/', BannerController::class)->except(['show'])->parameters(['' => 'id']);
+        Route::post('/toggle-status', [BannerController::class, 'toggleStatus'])
+        ->name('toggle-status');
         // Route quản lý thùng rác
         Route::prefix('trash')->group(function () {
             Route::get('/', [BannerController::class, 'trash'])->name('trash');
@@ -94,13 +96,19 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete');
         });
     });
+    //Voucher
+    Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
+        Route::get('/', [VoucherController::class, 'index'])->name('index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('create');
+        Route::post('/', [VoucherController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('destroy');
 
-    // Voucher
-    Route::prefix('vouchers')->group(function () {
-        Route::resource('/', VoucherController::class)->except(['show'])->names('admin.vouchers');
-        Route::get('/trash', [VoucherController::class, 'trash'])->name('admin.vouchers.trash');
-        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('admin.vouchers.restore');
-        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('admin.vouchers.forceDelete');
+        // Các route bổ sung
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
     });
 
     // người dùng
@@ -248,6 +256,11 @@ Route::prefix('staff')->middleware('staff')->group(function () {
 
     // Banner
     Route::resource('banners', BannerController::class)->names('staff.banners');
+    Route::get('/', [BannerController::class, 'index'])->name('index'); // Trang danh sách banner chính
+    Route::get('/trash', [BannerController::class, 'trash'])->name('trash'); // Trang thùng rác
+    Route::post('/{id}/restore', [BannerController::class, 'restore'])->name('restore'); // Khôi phục
+    Route::delete('/{id}/force-delete', [BannerController::class, 'forceDelete'])->name('forceDelete'); // Xóa vĩnh viễn
+    Route::delete('/{id}', [BannerController::class, 'destroy'])->name('destroy'); // Xóa mềm (chuyển vào thùng rác)
 
 
     // người dùng
@@ -324,32 +337,3 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::resource('settings', SettingController::class)->names('staff.settings');
 
 });
-
-Route::prefix('client')->name('client.')->group(function () {
-    // Cart routes
-    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
-    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-    Route::post('/cart/remove-selected', [CartController::class, 'removeSelectedItems'])->name('cart.remove-selected');
-    Route::post('/cart/check-voucher', [CartController::class, 'checkVoucher'])->name('cart.check-voucher');
-    Route::post('/cart/update-total', [CartController::class, 'updateTotal'])->name('cart.update-total');
-
-    // Checkout routes
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-
-    // Payment routes
-    Route::prefix('payment')->name('payment.')->group(function () {
-        Route::get('vnpay/{orderId}', [PaymentController::class, 'payWithVNPay'])->name('vnpay');
-        Route::get('cash/{orderId}', [PaymentController::class, 'payWithCash'])->name('cash');
-        Route::get('vnpay/callback', [PaymentController::class, 'vnPayCallback'])->name('vnpay.callback');
-    });
-
-});
-
-// Chatbot routes
-Route::post('/chat', [App\Http\Controllers\ChatbotController::class, 'chat'])->name('chatbot.chat');
-
-
