@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('order_code', 50)->unique();
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();
-            $table->decimal('total_amount', 10, 2)->default(0.00);
+            $table->decimal('total_amount', 15, 2)->default(0.00);
             $table->enum('status', ['pending', 'confirmed', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->enum('shipping_method', ['fixed', 'store', 'free'])->default('fixed');
             $table->timestamps();

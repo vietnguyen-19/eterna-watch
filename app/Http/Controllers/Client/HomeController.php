@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Post;
@@ -74,7 +75,7 @@ class HomeController extends Controller
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_items', 'product_variants.id', '=', 'order_items.variant_id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'completed') // Chỉ tính đơn đã hoàn thành
+            ->where('orders.status', 'completed')
             ->groupBy('products.id')
             ->orderByRaw('SUM(order_items.quantity) DESC')
             ->limit(8)
@@ -84,15 +85,26 @@ class HomeController extends Controller
         $trendingProducts = Product::orderBy('view_count', 'DESC')
             ->limit(8)
             ->get();
-        $posts = Post::with(['user', 'tags', 'categories'])->inRandomOrder()
+        $posts = Post::with(['user', 'tags', 'categories'])
+            ->inRandomOrder()
             ->limit(8)
-            ->get(); // Lấy 8 bài post ngẫu nhiên
+            ->get();
 
+        $banners = Banner::where('is_active', true)
+                   ->orderBy('id', 'desc')
+                   ->get();
 
         $settings = Setting::pluck('value', 'key')->toArray();
-        return view('client.home', compact('bestSellingProducts', 'trendingProducts', 'posts', 'categories'));
-    }
 
+        return view('client.home', compact(
+            'bestSellingProducts',
+            'trendingProducts',
+            'posts',
+            'categories',
+            'banners',
+            'settings'
+        ));
+    }
     public function notFound()
     {
         return view('client.404');

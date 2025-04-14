@@ -11,13 +11,12 @@ return new class extends Migration {
             $table->id('id');
             $table->foreignId('order_id')->constrained('orders', 'id')->onDelete('cascade');
             $table->foreignId('variant_id')->constrained('product_variants', 'id')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-
             $table->integer('quantity')->default(1);
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('total_price', 10, 2);
+            $table->decimal('unit_price', 15, 2);
+            $table->decimal('total_price', 15, 2);
             $table->timestamps();
         });
+        
     }
 
     public function down(): void
