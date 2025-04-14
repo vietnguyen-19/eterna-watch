@@ -11,7 +11,7 @@ class Setting extends Model
     protected $fillable = [
         'id',
         'key',
-        'value',
+        'value'
     ];
     public function getValueAttribute($value)
     {

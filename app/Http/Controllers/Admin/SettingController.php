@@ -14,14 +14,18 @@ class SettingController extends Controller
     {
 
         $setting = DB::table('settings')->get();
-
+         //$setting = Setting::all();
+         //return view('admin.settings.index', compact('settings'));
         return view('admin.settings.index')->with(['setting' => $setting]);
 
     }
 
     public function create()
-    {
-        return view('admin.settings.create');
+    {   
+        $settings = Setting::all();
+        
+        return view('admin.settings.create', compact('settings'));
+        //return redirect()->route('admin.settings.index')->with('success', 'Thêm cài đặt thành công!');
 
     }
 

@@ -52,6 +52,7 @@
                                                     <th class="sort" data-sort="value">Nội dung</th>
                                                     <th class="sort" data-sort="value">Kiểu dữ liệu</th>
                                                     <th class="sort" data-sort="action">Action</th>
+                                                    <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="list form-check-all">
@@ -72,6 +73,14 @@
                                                                     </a>
                                                                 </li>
                                                             </ul>
+                                                            <td>
+                                                            <!-- Xóa -->
+                                                            <form action="{{ route('admin.settings.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa không?');" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                                            </form>
+                                                        </td>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -82,6 +91,7 @@
                                                     <th class="sort" data-sort="key">Tên cài đặt</th>
                                                     <th class="sort" data-sort="value">Nội dung</th>
                                                     <th class="sort" data-sort="value">Kiểu dữ liệu</th>
+                                                    <th class="sort" data-sort="action">Action</th>
                                                     <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>

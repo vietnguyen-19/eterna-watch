@@ -31,7 +31,7 @@
                             <select name="parent_id" class="form-control">
                                 <option value="">Chọn danh mục cha</option>
                                 @foreach ($settings as $setting)
-                                    <option value="{{ $setting->id }}">{{ $setting->name }}</option>
+                                    <option value="{{ $setting->id ?? '' }}">{{ $setting->name ?? '' }}</option>
                                 @endforeach
                             </select>
                             @error('slug')
@@ -53,8 +53,8 @@
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-                        <button type="submit" class="btn btn-success" id="add-btn">Thêm danh mục</button>
-                        <a href="{{ route('admin.setting.index') }}" class="btn btn-light">Đóng</a>
+                        <a href="{{ route('admin.settings.create') }}" class="btn btn-success" id="add-btn">Thêm cài đặt</a>
+                        <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                     </div>
                 </div>
