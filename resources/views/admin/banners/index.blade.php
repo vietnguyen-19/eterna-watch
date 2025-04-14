@@ -1,39 +1,4 @@
 @extends('admin.layouts.master')
-@section('content')
-    <div class="container mt-4">
-        <section class="content pt-3">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        @if (session('thongbao'))
-                            <div id="thongbao-alert"
-                                class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                                role="alert">
-                                <i class="ri-notification-off-line label-icon"></i><strong>
-                                    {{ session('thongbao.message') }}</strong>
-
-                            </div>
-                            @php
-                                session()->forget('thongbao');
-                            @endphp
-                        @endif
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row g-4 align-items-center">
-                                    <div class="col-sm">
-                                        <div>
-                                            <h5 class="card-title mb-0">Danh sách banner</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-auto">
-
-                                        <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
-                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
-                                        </a>
-
-                                        <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
-
 
 @section('content')
     <section class="content pt-3">
@@ -57,85 +22,70 @@
                             
                         </div>
 
+                        <div class="card-body">
+                            @if (session('success'))
+                                <div class="alert alert-success alert-border-left alert-dismissible fade show"
+                                    role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Thành công!</strong> {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
 
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6"></div>
-                                        <div class="col-sm-12 col-md-6"></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <table class="table table-bordered" aria-describedby="example2_info"
-                                                id="danhmucTable">
-                                                <thead class="text-muted">
-                                                    <tr>
-                                                        <th class="sort" data-sort="id">ID</th>
-                                                        <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
-                                                        </th>
-                                                        <th class="sort" data-sort="is_active">Hiển thị</th>
-                                                        <th class="sort" data-sort="action">Hành động</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="list form-check-all">
-                                                    @foreach ($banners as $banner)
-                                                        <tr>
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-border-left alert-dismissible fade show"
+                                    role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <strong>Lỗi!</strong> {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
 
-                                                            <td class="id">{{ $banner->id }}</td>
-                                                            <td class="image_link">
-                                                                @if ($banner->image_link)
-                                                                    <img src="{{ asset($banner->image_link) }}"
-                                                                        alt="Banner" width="100" height="60"
-                                                                        style="object-fit: cover; border-radius: 5px;">
-                                                                @else
-                                                                    <span class="text-muted">Không có ảnh</span>
-                                                                @endif
-                                                            </td>
-
-                                                            <td class="redirect_link">
-                                                                @if ($banner->redirect_link)
-                                                                    <a href="{{ $banner->redirect_link }}"
-                                                                        target="_blank">{{ $banner->redirect_link }}</a>
-                                                                @else
-                                                                    <span class="text-muted">Không có liên kết chuyển
-                                                                        hướng</span>
-                                                                @endif
-                                                            </td>
-                                                            <td class="is_active text-center">
-                                                                <label class="switch">
-                                                                    <input type="checkbox"
-                                                                           class="status-toggle"
-                                                                           data-id="{{ $banner->id }}"
-                                                                           {{ $banner->is_active ? 'checked' : '' }}>
-                                                                    <span class="slider round"></span>
-                                                                </label>
-                                                            </td>
-                                                            <td>
-                                                                <ul class="list-inline hstack gap-2 mb-0">
-                                                                    <!-- Edit Button -->
-                                                                    <li class="list-inline-item edit" title="Edit">
-                                                                        <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                                            class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
-                                                                            <i class="fa-solid fa-edit"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <!-- Remove Button -->
-                                                                    <li class="list-inline-item delete" title="Remove">
-                                                                        <form
-                                                                            action="{{ route('admin.banners.destroy', $banner->id) }}"
-                                                                            method="POST" style="display:inline;">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger btn-sm"
-                                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                                                                <i class="fa-solid fa-trash"></i>
-                                                                            </button>
-                                                                        </form>
-                                                                    </li>
-
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle" id="bannerTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 5%">ID</th>
+                                            <th style="width: 20%">Hình ảnh</th>
+                                            <th style="width: 30%">Tiêu đề</th>
+                                            <th style="width: 15%">Vị trí</th>
+                                            <th style="width: 10%">Trạng thái</th>
+                                            <th style="width: 20%">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($banners as $banner)
+                                            <tr>
+                                                <td class="align-middle">{{ $banner->id }}</td>
+                                                <td style="width: 80px;">
+                                                    <div style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 6px;">
+                                                        @if ($banner->image)
+                                                            <img src="{{ Storage::url($banner->image ?? 'avatar/default.jpeg') }}"
+                                                                 alt="Banner"
+                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                        @else
+                                                            <img src="{{ asset('theme/velzon/assets/images/no-img.jpg') }}"
+                                                                 alt="No Image"
+                                                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                
+                                                
+                                                <td class="align-middle">{{ $banner->title ?? 'Không có tiêu đề' }}</td>
+                                                <td class="align-middle">{{ $banner->position ?? 'Không rõ' }}</td>
+                                                <td class="align-middle">
+                                                    @if ($banner->is_active == 1)
+                                                        <span class="badge bg-success-subtle text-success">Hiển thị</span>
+                                                    @elseif ($banner->is_active == 0)
+                                                        <span class="badge bg-secondary-subtle text-secondary">Ẩn</span>
+                                                    @else
+                                                        <span class="badge bg-warning-subtle text-warning">Không xác
+                                                            định</span>
+                                                    @endif
+                                                </td>
 
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2">
@@ -192,125 +142,51 @@
         .bg-warning-subtle {
             background-color: rgba(247, 184, 75, .1);
         }
-        <!-- DataTables JS -->
-        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-        <script>
-            $(document).ready(function() {
 
-                // Xử lý toggle trạng thái
-                $('.status-toggle').change(function() {
-                    const bannerId = $(this).data('id');
-                    const isActive = $(this).is(':checked') ? 1 : 0;
+        .bg-primary-subtle {
+            background-color: rgba(64, 81, 137, .1);
+        }
 
-                    $.ajax({
-                        url: '{{ route('admin.banners.toggle-status') }}',
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            id: bannerId,
-                            is_active: isActive
-                        },
-                        success: function(response) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Cập nhật trạng thái thành công'
-                            });
-                        },
-                        error: function() {
-                            Toast.fire({
-                                icon: 'error',
-                                title: 'Có lỗi xảy ra'
-                            });
-                        }
-                    });
-                });
+        .bg-secondary-subtle {
+            background-color: rgba(116, 120, 141, .1);
+        }
 
-                $('#danhmucTable').DataTable({
-                    "paging": true, // Bật phân trang
-                    "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
-                    "searching": true, // Bật ô tìm kiếm
-                    "ordering": true, // Bật sắp xếp cột
-                    "info": true, // Hiển thị thông tin tổng số dòng
-                    "language": {
-                        "lengthMenu": "Hiển thị _MENU_ dòng",
-                        "zeroRecords": "Không tìm thấy dữ liệu",
-                        "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
-                        "infoEmpty": "Không có dữ liệu",
-                        "search": "Tìm kiếm:",
-                        "paginate": {
-                            "first": "Trang đầu",
-                            "last": "Trang cuối",
-                            "next": "Sau",
-                            "previous": "Trước"
-                        }
+        .bg-dark-subtle {
+            background-color: rgba(33, 37, 41, .1);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+@endsection
 
+@section('script')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#bannerTable').DataTable({
+                "pageLength": 10,
+                "lengthMenu": [10, 25, 50],
+                "order": [
+                    [0, 'desc']
+                ],
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Trang _PAGE_ / _PAGES_",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
                     }
                 }
             });
 
             setTimeout(function() {
-                var alert = document.getElementById('thongbao-alert');
-                if (alert) {
-                    // Sử dụng Bootstrap để đóng alert
-                    var bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }
-            }, 5000); // 5000ms = 5 giây
-        </script>
-    @endsection
-    @section('style')
-    <style>
-        /* Switch toggle style */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #0d6efd;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        /* Optional: Add animation */
-        .slider:hover {
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-    </style>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    @endsection
-
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
+@endsection

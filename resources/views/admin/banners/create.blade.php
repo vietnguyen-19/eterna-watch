@@ -1,150 +1,152 @@
 @extends('admin.layouts.master')
 @section('content')
-<section class="content pt-3">
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-lg-12">
-                <div class="card" id="bannerCreate">
-                    <div class="card-header border-bottom-dashed">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h5 class="card-title mb-0">Tạo mới Banner</h5>
-                            <a href="{{ route('admin.banners.index') }}" class="btn btn-outline-secondary btn-sm">
-                                <i class="ri-arrow-go-back-line"></i> Quay lại
-                            </a>
+    <section class="content pt-3">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="card" id="bannerCreate">
+                        <div class="card-header border-bottom-dashed">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="card-title mb-0">Tạo mới Banner</h5>
+                                <a href="{{ route('admin.banners.index') }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="ri-arrow-go-back-line"></i> Quay lại
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+
+                                {{-- Tiêu đề --}}
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Tiêu đề</label>
+                                    <input type="text" name="title" id="title" class="form-control"
+                                        value="{{ old('title') }}" required>
+                                </div>
+
+                                {{-- Vị trí --}}
+                                <div class="mb-3">
+                                    <label for="position" class="form-label">Vị trí hiển thị</label>
+                                    <select name="position" id="position" class="form-select form-control" required>
+                                        @foreach ([
+            'home_start' => 'Trang chủ - Phần đầu',
+            'home_new_product' => 'Trang chủ - Sản phẩm mới',
+            'login' => 'Trang đăng nhập',
+            'register' => 'Trang đăng ký',
+            'shop' => 'Trang cửa hàng',
+            'blog' => 'Trang blog',
+            'forward_password' => 'Trang quên mật khẩu',
+        ] as $value => $label)
+                                            <option value="{{ $value }}"
+                                                {{ old('position') === $value ? 'selected' : '' }}>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Hình ảnh --}}
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Chọn ảnh</label>
+                                    <input type="file" name="image" id="image" class="form-control" required>
+                                </div>
+
+                                {{-- Liên kết --}}
+                                <div class="mb-3">
+                                    <label for="link" class="form-label">Liên kết</label>
+                                    <input type="text" name="link" id="link" class="form-control"
+                                        value="{{ old('link') }}">
+                                </div>
+
+                                {{-- Mô tả --}}
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Mô tả</label>
+                                    <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
+                                </div>
+
+                                {{-- Trạng thái --}}
+                                <div class="mb-3">
+                                    <label class="form-label d-block">Trạng thái</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="is_active" id="active"
+                                            value="1" {{ old('is_active', '1') == '1' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="active">Hiển thị</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="is_active" id="inactive"
+                                            value="0" {{ old('is_active') == '0' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="inactive">Ẩn</label>
+                                    </div>
+                                </div>
+
+                                {{-- Nút lưu --}}
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="ri-add-line"></i> Tạo mới
+                                    </button>
+                                    <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary ms-2">Hủy</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
-            
-                    <div class="card-body">
-                        <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-            
-                            {{-- Tiêu đề --}}
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Tiêu đề</label>
-                                <input type="text" name="title" id="title" class="form-control"
-                                    value="{{ old('title') }}" required>
-                            </div>
-            
-                            {{-- Vị trí --}}
-                            <div class="mb-3">
-                                <label for="position" class="form-label">Vị trí hiển thị</label>
-                                <select name="position" id="position" class="form-select form-control" required>
-                                    @foreach ([
-                                        'home_start' => 'Trang chủ - Phần đầu',
-                                        'home_new_product' => 'Trang chủ - Sản phẩm mới',
-                                        'login' => 'Trang đăng nhập',
-                                        'register' => 'Trang đăng ký',
-                                        'shop' => 'Trang cửa hàng',
-                                        'blog' => 'Trang blog',
-                                        'forward_password' => 'Trang quên mật khẩu',
-                                    ] as $value => $label)
-                                        <option value="{{ $value }}" {{ old('position') === $value ? 'selected' : '' }}>
-                                            {{ $label }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-            
-                            {{-- Hình ảnh --}}
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Chọn ảnh</label>
-                                <input type="file" name="image" id="image" class="form-control" required>
-                            </div>
-            
-                            {{-- Liên kết --}}
-                            <div class="mb-3">
-                                <label for="link" class="form-label">Liên kết</label>
-                                <input type="text" name="link" id="link" class="form-control"
-                                    value="{{ old('link') }}">
-                            </div>
-            
-                            {{-- Mô tả --}}
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Mô tả</label>
-                                <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
-                            </div>
-            
-                            {{-- Trạng thái --}}
-                            <div class="mb-3">
-                                <label class="form-label d-block">Trạng thái</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="is_active" id="active" value="1"
-                                        {{ old('is_active', '1') == '1' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="active">Hiển thị</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="is_active" id="inactive" value="0"
-                                        {{ old('is_active') == '0' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="inactive">Ẩn</label>
-                                </div>
-                            </div>
-            
-                            {{-- Nút lưu --}}
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="ri-add-line"></i> Tạo mới
-                                </button>
-                                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary ms-2">Hủy</a>
-                            </div>
-                        </form>
-                    </div>
+
                 </div>
-<<<<<<< HEAD
+
+
             </div>
-            
-=======
-
-                <div class="form-group">
-                    <label for="redirect_link">Đường dẫn chuyển hướng</label>
-                    <input type="text" name="redirect_link" id="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" value="{{ old('redirect_link') }}" placeholder="Nhập URL chuyển hướng">
-                    @error('redirect_link')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-
-                <button type="submit" class="btn btn-success">Thêm mới</button>
-                <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Hủy</a>
-            </form>
->>>>>>> eb64046b9cc271ba1aa6137d987803997f8c4362
         </div>
-    </div>
-</section>
+    </section>
 
-<style>
-    .card {
-        border-radius: 4px; /* Giảm bo góc */
-        transition: all 0.3s ease;
-    }
-    .card:hover {
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-    .form-control, .form-select {
-        border-radius: 4px; /* Giảm bo góc */
-        transition: border-color 0.2s ease;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-    }
-    .btn-primary {
-        background-color: #4a90e2;
-        border: none;
-        border-radius: 4px; /* Giảm bo góc */
-    }
-    .btn-primary:hover {
-        background-color: #357abd;
-    }
-    .btn-outline-secondary {
-        border-radius: 4px; /* Giảm bo góc */
-    }
-    .btn-outline-secondary:hover {
-        background-color: #f8f9fa;
-    }
-    .bg-light {
-        border-radius: 4px; /* Giảm bo góc */
-    }
-</style>
+    <style>
+        .card {
+            border-radius: 4px;
+            /* Giảm bo góc */
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 4px;
+            /* Giảm bo góc */
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 4px;
+            /* Giảm bo góc */
+        }
+
+        .btn-primary:hover {
+            background-color: #357abd;
+        }
+
+        .btn-outline-secondary {
+            border-radius: 4px;
+            /* Giảm bo góc */
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+        }
+
+        .bg-light {
+            border-radius: 4px;
+            /* Giảm bo góc */
+        }
+    </style>
 @endsection
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>

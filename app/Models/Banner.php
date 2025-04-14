@@ -12,30 +12,19 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-   protected $fillable = [
-    'position',
-    'title',
-    'image',
-    'link',
-    'description',
-    'is_active',
-];
 
-protected $attributes = [
-    'link' => '#', // Đặt link mặc định nếu không có
-];
-
-protected $casts = [
-    'is_active' => 'boolean',
-];
-
-protected $dates = [
-    'deleted_at',
-    'created_at',
-    'updated_at',
-];
-
+    protected $fillable = [
+        'position',
+        'title',
+        'image',
+        'link',
+        'description',
+        'is_active',
     ];
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     public static function getByPosition(string $position)
     {
         return static::where('position', $position)
@@ -43,7 +32,4 @@ protected $dates = [
             ->latest() // sắp xếp mới nhất lên trước
             ->get();
     }
-
-    public $timestamps = true;
-
 }

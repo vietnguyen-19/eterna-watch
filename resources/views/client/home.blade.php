@@ -4,22 +4,9 @@
 
         <section class="position-relative">
             <div class="slideshow-bg position-absolute left-0 top-0 w-100">
-                @if($banners->isNotEmpty())
-                    <a href="{{ $banners->first()->redirect_link ?? '#' }}"
-                       target="_blank"
-                       class="d-block w-100 h-100">
-                        <img loading="lazy"
-                             src="{{ asset($banners->first()->image_link) }}"
-                             alt="Banner"
-                             class="slideshow-bg__img w-100 h-100 object-fit-cover"
-                             style="max-height: 800px;"> 
-                    </a>
-                @else
-                    <img loading="lazy"
-                         src="{{ asset('theme/client/images/home/demo19/slider_bg_1.jpg') }}"
-                         class="slideshow-bg__img w-100 h-100 object-fit-cover"
-                         style="max-height: 800px;">
-                @endif
+                <img loading="lazy" src="{{ Storage::url($banners['home_start']->image ?? 'avatar/default.jpeg') }}" width="1920"
+                    height="1260" alt="Pattern" class="slideshow-bg__img object-fit-cover">
+
             </div>
             <div class="content container mb-0 position-relative pt-3 pt-xl-5">
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
