@@ -4,21 +4,18 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    @php
-                        $thongbao = session('thongbao');
-                    @endphp
-                    @if ($thongbao)
+                    @if (session('thongbao'))
                         <div id="thongbao-alert"
-                            class="alert alert-{{ $thongbao['type'] }} alert-dismissible bg-{{ $thongbao['type'] }} text-white alert-label-icon fade show"
+                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
                             role="alert">
-                            <i class="ri-notification-off-line label-icon"></i>
-                            <strong>{{ $thongbao['message'] }}</strong>
+                            <i class="ri-notification-off-line label-icon"></i><strong>
+                                {{ session('thongbao.message') }}</strong>
+
                         </div>
                         @php
                             session()->forget('thongbao');
                         @endphp
                     @endif
-
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
                             <div class="row g-4 align-items-center">
@@ -60,26 +57,43 @@
                         <div class="card-body">
                             <div class="row invoice-info">
                                 <div class="col-sm-6 invoice-col">
-                                    Trạng thái đơn hàng: <span class="badge bg-success">{{ $order->status }}</span><br>
+                                    @php
+                                        $paymentStatus = strtolower($order->payment->payment_status);
+                                        $orderStatus = strtolower($order->status);
 
-                                    Phương thức thanh toán:
+                                        function getBadgeColor($status)
+                                        {
+                                            return match ($status) {
+                                                'pending' => 'warning',
+                                                'confirmed' => 'info',
+                                                'processing' => 'primary',
+                                                'completed' => 'success',
+                                                'failed', 'cancelled' => 'danger',
+                                                default => 'secondary',
+                                            };
+                                        }
+
+                                        $paymentBadge = getBadgeColor($paymentStatus);
+                                        $orderBadge = getBadgeColor($orderStatus);
+                                    @endphp
+                                    <strong>Trạng thái đơn hàng:</strong>
+                                    <span class="badge bg-{{ $orderBadge }} text-dark">
+                                        {{ ucfirst($orderStatus) }}
+                                    </span><br>
+
+                                    {{-- Phương thức và Trạng thái thanh toán --}}
+                                    <strong>Phương thức thanh toán:</strong>
                                     <span class="badge bg-success">
-                                        {{ optional($order->payment)->payment_method ?? 'Chưa có phương thức thanh toán' }}
-
+                                        {{ $order->payment->payment_method }}
                                     </span>
+                                    |
+                                    <strong>Trạng thái:</strong>
+                                    <span class="badge bg-{{ $paymentBadge }} text-dark">
+                                        {{ ucfirst($paymentStatus) }}
+                                    </span><br>
 
-                                    | Trạng thái:
-                                    {{-- <span
-                                        class="badge bg-warning text-dark">{{ $order->payment->payment_status }}
-                                    </span> --}}
-
-                                    <span class="badge bg-warning text-dark">
-                                        {{ optional($order->payment)->payment_status ?? 'Chưa thanh toán' }}
-                                    </span>
-
-                                    <br>
-
-                                    Nhà vận chuyển: <b>968-34567</b><br>
+                                    Hình thức vận chuyển:
+                                    <b>{{ $order->shipment_method == 'fixed' ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng' }}</b><br>
 
                                     Giá trị đơn hàng:
                                     <b> <span
@@ -106,17 +120,10 @@
                                     To
                                     <address>
                                         <strong>{{ $order->user->name }}</strong><br>
-                                        @php
-                                            $address = $order->user->addresses->first();
-                                        @endphp
-                                        @if ($address)
-                                            {{ $address->specific_address }},
-                                            P.{{ $address->ward }}<br>
-                                            Q. {{ $address->district }}, TP.{{ $address->city }} <br>
-                                        @else
-                                            <span class="text-danger">Chưa có địa chỉ</span>
-                                        @endif
-
+                                        {{ $order->address->street_address }},
+                                        P.{{ $order->address->ward }}<br>
+                                        Q. {{ $order->address->district }}, TP.
+                                        {{ $order->address->city }}, Việt Nam<br>
                                         Phone: {{ $order->user->phone }}<br>
                                         Email: {{ $order->user->email }}
                                     </address>
@@ -127,9 +134,6 @@
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="card" id="customerList">
-                        
-                    </div>
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
                             <h5 class="card-title mb-0"><b>Lịch sử trạng thái đơn hàng</b></h5>
@@ -181,6 +185,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
                 <div class="col-lg-9">
                     <div class="card" id="customerList">
@@ -201,11 +207,9 @@
                                 <thead class="text-muted">
                                     <tr>
                                         <th style="width:5%" class="sort" data-sort="id">STT</th>
-                                        <th class="sort" data-sort="ten_danh_muc">Ảnh sản phẩm</th>
                                         <th class="sort" data-sort="ten_danh_muc">Sản phẩm</th>
-                                        <th class="sort" data-sort="mo_ta">Biến Thể</th>
-                                        <th class="sort" data-sort="mo_ta">Giá</th>
                                         <th class="sort" data-sort="mo_ta">Số lượng</th>
+                                        <th class="sort" data-sort="mo_ta">Giá</th>
                                         <th class="sort" data-sort="action">Tổng</th>
                                     </tr>
                                 </thead>
@@ -219,35 +223,18 @@
                                             $subtotal += $item->total_price;
                                         @endphp
                                         <tr>
-
-                                            <td class="align-middle">{{ $loop->iteration }}</td>
+                                            <td class="align-middle">{{ $item->id }}</td>
                                             <td class="align-middle">
                                                 <img src="{{ Storage::url($item->productVariant->product->avatar ?? 'default-avatar.png') }}"
                                                     alt="product Avatar" class="me-2" width="40" height="40">
-                                            </td>
-
-                                            <td class="align-middle">  
-                                                <a href="{{ route('admin.products.show', $item->productVariant->product->id) }}" class="text-decoration-none ">
-                                                    {{ $item->productVariant->product->name ?? 'N/A' }}
-
-                                                </a>
-                                            </td>
-
-                                            
-                                            <td>
-                                                @foreach ($item->productVariant->attributeValues as $value)
-                                                    <small>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
-                                                        {{ $value->nameValue->value_name ?? 'Không xác định' }}
-                                                    </small><br>
-                                                @endforeach
-                                            </td>
-                                            <td class="align-middle">
-                                                {{ number_format($item->unit_price, 0, ',', '.') }}&nbsp; VND
+                                                {{ $item->productVariant->product->name }}
                                             </td>
                                             <td class="align-middle">{{ $item->quantity }}</td>
-                                            
                                             <td class="align-middle">
-                                                {{ number_format($item->total_price, 0, ',', '.') }}&nbsp; VND
+                                                {{ number_format($item->unit_price, 0, ',', '.') }} VND
+                                            </td>
+                                            <td class="align-middle">
+                                                {{ number_format($item->total_price, 0, ',', '.') }} VND
                                             </td>
                                         </tr>
                                     @endforeach
@@ -270,27 +257,27 @@
                                     @endphp
 
                                     <tr>
-                                        <th colspan="6" class="text-end">Tạm tính</th>
+                                        <th colspan="4" class="text-end">Tạm tính</th>
                                         <td class="text-end">{{ number_format($subtotal, 0, ',', '.') }}
                                             VND</td>
                                     </tr>
 
                                     @if ($order->voucher)
                                         <tr>
-                                            <th colspan="6" class="text-end">Mã giảm giá</th>
+                                            <th colspan="4" class="text-end">Mã giảm giá</th>
                                             <td class="text-end"><span
                                                     class="badge bg-success">{{ $order->voucher->code }}</span></td>
                                         </tr>
                                         <tr>
-                                            <th colspan="6" class="text-end">Giảm giá</th>
+                                            <th colspan="4" class="text-end">Giảm giá</th>
                                             <td class="text-end">-{{ number_format($discountAmount, 0, ',', '.') }}
                                                 VND</td>
                                         </tr>
                                     @endif
 
                                     <tr>
-                                        <th colspan="6" class="text-end"><strong>Tổng thanh toán</strong></th>
-                                        <td class="text-end text-danger">
+                                        <th colspan="4" class="text-end"><strong>Tổng thanh toán</strong></th>
+                                        <td class="text-end">
                                             <strong>{{ number_format($totalPayment, 0, ',', '.') }} VND</strong>
                                         </td>
                                     </tr>
@@ -334,7 +321,7 @@
                 var bsAlert = new bootstrap.Alert(alert);
                 bsAlert.close();
             }
-        }, 10000); // 5000ms = 5 giây
+        }, 5000); // 5000ms = 5 giây
     </script>
 @endsection
 @section('style')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
@@ -11,8 +12,11 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::all();
-        return view('admin.roles.index', compact('roles'));
+        $permissions = Permission::latest('id')->get();
+    
+        return view('admin.roles.index', compact('roles', 'permissions'));
     }
+    
 
     public function create()
     {
@@ -27,16 +31,35 @@ class RoleController extends Controller
 
         Role::create($request->all());
 
-        return redirect()->route('roles.index')->with('success','role đã được thêm thành công');
+        return redirect()->route('roles.index')->with('success', 'role đã được thêm thành công');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Role $role)
+    public function show(Request $request, $id)
     {
-        //$role = Role::findOrFail($id);
-        return view('admin.roles.show',compact('role'));
+        // Lấy role theo ID và kèm theo các quyền đã gán
+        $role = Role::with('permissions')->findOrFail($id);
+
+        // Lấy tất cả permission và nhóm theo module (phần sau dấu gạch dưới đầu tiên)
+        $permissions = \Spatie\Permission\Models\Permission::all()->groupBy(function ($permission) {
+            $parts = explode('_', $permission->name);
+            return $parts[1] ?? 'khac'; // ví dụ: view_users => 'users'
+        });
+
+        // Truyền role và permissions sang view
+        return view('admin.roles.show', compact('role', 'permissions'));
+    }
+
+    // Controller
+    public function updatePermissions(Request $request, Role $role)
+    {
+        $role->syncPermissions($request->permissions ?? []);
+        return back()->with('thongbao', [
+            'type' => 'success',
+            'message' => 'Cập nhật quyền thành công!'
+        ]);
     }
 
     /**
@@ -44,7 +67,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('admin.roles.edit',compact('role'));
+        return view('admin.roles.edit', compact('role'));
     }
 
     /**
@@ -53,19 +76,19 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
 
     {
-        
+
         $request->validate([
             'name' => 'required|string|max:225|unique:roles,name,' . $role->id,
         ]);
 
-        try{
-            $role -> name = $request->input('name');
-            $role -> save();
+        try {
+            $role->name = $request->input('name');
+            $role->save();
             $roleId = $role->id;
-            return redirect()->route('roles.index')->with('success','Role đã được cập nhật!');
-        } catch (\Exception $e){
+            return redirect()->route('roles.index')->with('success', 'Role đã được cập nhật!');
+        } catch (\Exception $e) {
             //xử lis lỗi nếu có
-            return redirect()->back()->with('error','đã có lỗi xảy ra');
+            return redirect()->back()->with('error', 'đã có lỗi xảy ra');
         }
     }
     // public function show($id)
