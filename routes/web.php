@@ -337,4 +337,3 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::resource('settings', SettingController::class)->names('staff.settings');
 
 });
-
