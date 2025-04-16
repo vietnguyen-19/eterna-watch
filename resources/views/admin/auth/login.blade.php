@@ -28,7 +28,7 @@
             <div class="card-body">
                 <p class="login-box-msg">Đăng nhập với tư cách quản trị viên</p>
 
-                <form action="{{ route('login') }}" method="post">
+                <form action="{{ route('admin.login.submit') }}" method="post">
                     @csrf
                     <div class="input-group mb-3">
                         <input type="email" class="form-control" name="email" placeholder="Email *">
@@ -56,15 +56,15 @@
                             </div>
                         </div> --}}
                         <!-- /.col -->
-                        <div class="col-8 mx-auto">
+                        <div class="col-12 mx-auto">
                             <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
                         </div>
                         <!-- /.col -->
                     </div>
                 </form>
 
-                <p class="my-1">
-                    <a href="{{ route('password.forgot') }}">Quên mật khẩu!</a>
+                <p class="my-1 text-center">
+                    <a href="{{ route('admin.password.request') }}">Quên mật khẩu!</a>
                 </p>
 
             </div>

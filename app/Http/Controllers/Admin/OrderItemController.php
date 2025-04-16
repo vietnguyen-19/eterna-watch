@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrderItem;
-use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use App\Models\Voucher;
@@ -19,8 +18,8 @@ class OrderItemController extends Controller
 
         $users = User::with('address')
             ->where('name', 'like', "%$search%")
-            // ->orWhere('email', 'like', "%$search%")
-            // ->limit(10)
+            ->orWhere('email', 'like', "%$search%")
+            ->limit(10)
             ->get();
 
         $filteredUsers = $users->map(function ($user) {
@@ -184,7 +183,7 @@ class OrderItemController extends Controller
         $newTotal = $orderTotal - $discount;
 
         return response()->json([
-            'voucher_id' => $voucher->id,
+            'voucher_id'=> $voucher->id,
             'valid'    => true,
             'message'  => 'Voucher hợp lệ.',
             'discount' => $discount,

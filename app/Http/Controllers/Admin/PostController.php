@@ -46,7 +46,7 @@ class PostController extends Controller
         $data['user_id'] = $user ? $user->id : null;
         // Xử lý file upload ảnh (nếu có)
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('posts', 'public');
+            $data['image'] = $request->file('image')->store('blogs', 'public');
         }
 
         // Chuyển đổi published_at về dạng Carbon nếu có giá trị

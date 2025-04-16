@@ -90,6 +90,7 @@ class OrderSeeder extends Seeder
                 $orders[] = [
                     'order_code' => $order_code,
                     'user_id' => $user_id,
+                    'address_id' => $user_id*2-1,
                     'status' => $latest_status,
                     'total_amount' => $total_amount,
                     'shipping_method' => ['fixed', 'store'][rand(0, 1)],

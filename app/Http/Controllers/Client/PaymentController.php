@@ -31,6 +31,7 @@ class PaymentController extends Controller
     }
     public function checkout(Request $request)
     {
+       
         $validatedData = $request->validate([
             'full_name'       => 'required|string|max:255',
             'phone_number'    => 'required|string|max:20',
@@ -55,18 +56,30 @@ class PaymentController extends Controller
 
         DB::beginTransaction();
         try {
-            // Kiểm tra hoặc tạo user
-            if (!Auth::check()) {
-                $user = $this->createUser($validatedData);
-                $userId = $user->id;
+
+            if ($request->input('type_address') == 'new') {
+                $address = UserAddress::create([
+                    'user_id'        => Auth::user()->id,
+                    'full_name'      => $validatedData['full_name'],
+                    'phone_number'   => $validatedData['phone_number'],
+                    'email'          => $validatedData['email'],
+                    'street_address' => $validatedData['street_address'],
+                    'ward'           => $validatedData['ward'],
+                    'district'       => $validatedData['district'],
+                    'city'           => $validatedData['city'],
+                    'country'        => 'Việt Nam',
+                    'is_default'     => 1,
+                    'note'           => $validatedData['note'] ?? null,
+                ]);
             } else {
-                $userId = Auth::id();
+                $address = Auth::user()->defaultAddress;
             }
 
             // Tạo đơn hàng
             $order = Order::create([
-                'user_id'      => $userId,
+                'user_id'      => Auth::id(),
                 'voucher_id'   => $validatedData['voucher_id'] ?? null,
+                'address_id' =>  $address->id,
                 'total_amount' => $validatedData['total_amount'],
                 'status'       => 'pending',
                 'order_code'   => 'ORD-' . time() . '-' . Str::upper(Str::random(4)),
@@ -128,33 +141,6 @@ class PaymentController extends Controller
     /**
      * Tạo user mới nếu chưa có
      */
-    private function createUser($data)
-    {
-        $user = User::create([
-            'name'     => $data['full_name'],
-            'email'    => $data['email'],
-            'phone'    => $data['phone_number'],
-            'password' => Hash::make(Str::random(10)), // Tạo mật khẩu ngẫu nhiên
-            'role_id'  => 3,  // Mặc định role user
-            'status'   => 'active'
-        ]);
-
-        UserAddress::create([
-            'user_id'        => $user->id,
-            'full_name'      => $data['full_name'],
-            'phone_number'   => $data['phone_number'],
-            'email'          => $data['email'],
-            'street_address' => $data['street_address'],
-            'ward'           => $data['ward'],
-            'district'       => $data['district'],
-            'city'           => $data['city'],
-            'country'        => $data['country'],
-            'is_default'     => 1,
-            'note'           => $data['note'] ?? null,
-        ]);
-
-        return $user;
-    }
 
     public function payWithVNPay($orderId)
     {
