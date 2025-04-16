@@ -4,7 +4,7 @@
 
         <section class="position-relative">
             <div class="slideshow-bg position-absolute left-0 top-0 w-100">
-                <img loading="lazy" src="{{ Storage::url($banners['home_start']->image ?? 'avatar/default.jpeg') }}" width="1920"
+                <img loading="lazy" src="{{ Storage::url($banners['home_start']->image ?? 'banners/home_bg.jpg') }}" width="1920"
                     height="1260" alt="Pattern" class="slideshow-bg__img object-fit-cover">
 
             </div>
@@ -126,7 +126,7 @@
 
         <section class="image-banner">
             <div class="background-img"
-                style="background-image: url('{{ Storage::url($banners['home_new_product']->image ?? 'avatar/default.jpeg') }}'); background-position: center center;">
+                style="background-image: url('{{ Storage::url($banners['home_new_product']->image ?? 'banners/new_watches.jpg') }}'); background-position: center center;">
             </div>
             <div class="image-banner__content container py-3">
                 <h2 class="text-white h1 fw-semi-bold mb-3 mb-xl-4">SẢN PHẨM MỚI</h2>

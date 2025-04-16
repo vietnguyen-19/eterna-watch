@@ -35,7 +35,7 @@
 
         /* Ảnh nền */
         .login-bg {
-            background: url('{{ Storage::url($banners['login']->image ?? 'avatar/default.jpeg') }}') no-repeat center center;
+            background: url('{{ Storage::url($banners['login']->image ?? 'banners/login.jpg') }}') no-repeat center center;
             background-size: cover;
             height: 100vh;
         }
@@ -92,7 +92,7 @@
                 <!-- Form đăng nhập -->
                 <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
                     <div class="login-form">
-                        <img width="100%" src="{{ Storage::url($settings['logo_url'] ?? 'avatar/default.jpeg') }}"
+                        <img width="100%" src="{{ Storage::url($settings['logo_url'] ?? 'banners/login.jpg') }}"
                             alt="Uomo" class="mb-5">
                         <h3 class="text-uppercase text-center mb-4">Đăng nhập</h3>
 

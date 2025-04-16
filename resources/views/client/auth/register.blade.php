@@ -35,7 +35,7 @@
 
         /* Ảnh nền */
         .login-bg {
-            background: url('{{ Storage::url($banners['register']->image ?? 'avatar/default.jpeg') }}') no-repeat center center;
+            background: url('{{ Storage::url($banners['register']->image ?? 'banners/register.jpg') }}') no-repeat center center;
             background-size: cover;
             height: 100vh;
         }
