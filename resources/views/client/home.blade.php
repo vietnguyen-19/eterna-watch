@@ -11,7 +11,7 @@
             <div class="content container mb-0 position-relative pt-3 pt-xl-5">
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
                 <div class="pt-3 pb-3 pt-xl-5 pb-xl-5 mt-3 mt-xl-5"></div>
-                <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">{{  $banners['home_start']->title ?? 'Tiêu đề mặc định' }}
+                <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">{{  $banners['home_start']->title ?? '' }}
                 </h2>
                 <div class="d-flex align-items-center text-center justify-content-center">
                     <a href="shop1.html" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
