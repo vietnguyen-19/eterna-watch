@@ -115,6 +115,7 @@
                                 </div>
                             
                                 <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
+                                <input type="hidden" name="type_address" value="default">
                                 <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
                                 <input type="hidden" name="ward" value="{{ optional(Auth::user()->defaultAddress)->ward }}">
                                 <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
@@ -123,6 +124,7 @@
                             
                             <!-- Địa chỉ mới -->
                             <div id="themDiaChiMoi" style="display: none;">
+                                <input type="hidden" name="type_address" value="new">
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
                                         <select id="city" name="city" class="form-select" disabled>

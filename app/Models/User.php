@@ -13,6 +13,9 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property \App\Models\Role $role
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
 
@@ -40,10 +43,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     // Mối quan hệ với Role
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
+    
     public function cart()
     {
         return $this->hasOne(Cart::class, 'user_id');
@@ -69,6 +69,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserAddress::class);
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasPermission($permissionName)
+    {
+        return $this->role
+            && $this->role->permissions
+            && $this->role->permissions->contains('name', $permissionName);
+    }
 
 
     /**

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
@@ -13,18 +11,14 @@ use App\Models\StatusHistory;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Voucher;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Stringable;
 use Illuminate\Support\Str;
-
-
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
     public function index(Request $request)
     {
         $status = $request->input('status', 'all');
@@ -45,36 +39,35 @@ class OrderController extends Controller
         $statusCounts['all'] = array_sum($statusCounts);
 
         // Lấy danh sách đơn hàng theo trạng thái
-        $orders = Order::with('orderItems.productVariant.product' )
+        $orders = Order::with('orderItems')
             ->when($status !== 'all', function ($query) use ($status) {
                 $query->where('status', $status);
             })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view(
-            'admin.orders.index',
-            compact('orders', 'statusCounts', 'status')
-        );
+        return view('admin.orders.index', compact('orders', 'statusCounts', 'status'));
     }
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $productVariants = ProductVariant::all(); // Lấy danh sách biến thể sản phẩm
 
         return view('admin.orders.create', compact('productVariants'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    
+    public function edit($id)
+    {
+        $order = Order::with(['orderItems.productVariant.product', 'address', 'entity', 'payment', 'voucher'])->findOrFail($id);
+       
+        $statusHistories = StatusHistory::where('entity_id', $order->id)
+            ->where('entity_type', 'order')
+            ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
+            ->get();
+        return view('admin.orders.edit', compact('order', 'statusHistories'));
+    }
     public function store(Request $request)
     {
-
+       
         DB::beginTransaction();
 
         // Kiểm tra nếu user_id = null, thì tạo user mới
@@ -151,56 +144,12 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.edit', $order->id)
             ->with('success', 'Đặt hàng thành công! Mã đơn: ' . $order->order_code);
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        try {
-            $order = Order::with(['user', 'orderItems.productVariant.product'])->findOrFail($id);
 
-            return view('admin.orders.show', [
-                'order' => $order,
-            ]);
-        } catch (\Throwable $th) {
-            return redirect()->route('admin.orders.index')
-            ->with('error', 'Không tìm thấy đơn hàng hoặc đã có lỗi xảy ra.');
-        }
-    }
-    
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $order = Order::with(['orderItems.productVariant.product', 'user.addresses', 'entity', 'payment', 'voucher'])->findOrFail($id);
-        $statusHistories = StatusHistory::where('entity_id', $order->id)
-            ->where('entity_type', 'order')
-            ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
-            ->get();
-        return view('admin.orders.edit', compact('order', 'statusHistories'));
-    }
-    /**
-     * Update the specified resource in storage.
-     */
     public function updateStatus(Request $request, Order $order)
     {
 
         $newStatus = $request->input('status');
-
-        // Kiểm tra nếu không có trạng thái mới hoặc trạng thái không hợp lệ
-        if (!$newStatus || !is_string($newStatus)) {
-            return redirect()->route('admin.orders.edit', $order->id)->with([
-                'thongbao' => [
-                    'type' => 'danger',
-                    'message' => 'Trạng thái không hợp lệ hoặc không được cung cấp.',
-                ]
-            ]);
-        }
-
         $currentStatus = $order->status;
-        $userId = auth()->id(); // Lấy ID của user hiện tại
 
         // Danh sách trạng thái hợp lệ và điều kiện chuyển đổi
         $validTransitions = [
@@ -216,61 +165,28 @@ class OrderController extends Controller
             return redirect()->route('admin.orders.edit', $order->id)->with([
                 'thongbao' => [
                     'type' => 'danger',
-                    'message' => 'Chuyển đổi Trạng thái không hợp lệ.',
+                    'message' => 'Trạng thái không hợp lệ.',
                 ]
             ]);
         }
+        StatusHistory::create([
+            'entity_id' => $order->id,
+            'entity_type' => 'order',
+            'old_status' => $currentStatus,
+            'new_status' => $newStatus,
+            'changed_by' => auth()->user()->id, // Giả sử có người dùng đăng nhập
+            'changed_at' => now(), // Thời gian thay đổi
+        ]);
 
-        // Kiểm tra nếu trạng thái không thay đổi
-        if ($newStatus === $currentStatus) {
-            return redirect()->route('admin.orders.edit', $order->id)->with([
-                'thongbao' => [
-                    'type' => 'info',
-                    'message' => 'Trạng thái đơn hàng không thay đổi.',
-                ]
-            ]);
-        }
+        // Cập nhật trạng thái
+        $order->status = $newStatus;
+        $order->save();
 
-        try {
-            DB::beginTransaction();
-
-            // Lưu lịch sử trạng thái
-            StatusHistory::create([
-                'entity_id' => $order->id,
-                'entity_type' => 'order',
-                'old_status' => $currentStatus,
-                'new_status' => $newStatus,
-                'changed_by' => auth()->id() ?? 1, // Kiểm tra có user đăng nhập không
-                'changed_at' => now(),
-            ]);
-
-            // Cập nhật trạng thái đơn hàng
-            $order->status = $newStatus;
-            $order->save();
-
-            DB::commit();
-
-            return redirect()->route('admin.orders.edit', $order->id)->with([
-                'thongbao' => [
-                    'type' => 'success',
-                    'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
-                ]
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('admin.orders.edit', $order->id)->with([
-                'thongbao' => [
-                    'type' => 'danger',
-                    'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-                ]
-            ]);
-        }
-
-       
+        return redirect()->route('admin.orders.edit', $order->id)->with([
+            'thongbao' => [
+                'type' => 'success',
+                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
+            ]
+        ]);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order) {}
 }
