@@ -93,10 +93,16 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // VOUCHER
     Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
-        Route::resource('/', VoucherController::class)->except(['show'])->middleware('permission:view_vouchers');
-        Route::get('/trash', [VoucherController::class, 'trash'])->name('trash')->middleware('permission:view_vouchers');
-        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore')->middleware('permission:restore_vouchers');
-        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_vouchers');
+        Route::get('/', [VoucherController::class, 'index'])->name('index');
+        Route::get('/create', [VoucherController::class, 'create'])->name('create');
+        Route::post('/', [VoucherController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [VoucherController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [VoucherController::class, 'update'])->name('update');
+        Route::delete('/{id}', [VoucherController::class, 'destroy'])->name('destroy');
+
+        Route::get('/trash', [VoucherController::class, 'trash'])->name('trash');
+        Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
     });
 
     // NGƯỜI DÙNG
