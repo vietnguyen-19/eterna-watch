@@ -36,6 +36,15 @@ class UserController extends Controller
     }
 
     /**
+     * Hiển thị danh sách người dùng đã xóa.
+     */
+    public function trash()
+    {
+        $data = User::onlyTrashed()->with('role')->orderBy('deleted_at', 'desc')->get();
+        return view('admin.users.trash', compact('data'));
+    }
+
+    /**
      * Hiển thị form tạo mới người dùng.
      */
     public function create()
@@ -191,36 +200,47 @@ class UserController extends Controller
     }
 
     /**
-     * Xóa người dùng.
+     * Xóa mềm người dùng.
      */
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
-
             $user = User::findOrFail($id);
-            
-            // Xóa avatar nếu có
-            if ($user->avatar) {
-                $avatarPath = public_path('storage/' . $user->avatar);
-                if (file_exists($avatarPath)) {
-                    unlink($avatarPath);
-                }
-            }
-
-            // Xóa tất cả địa chỉ của người dùng
-            UserAddress::where('user_id', $id)->delete();
-            
-            // Xóa người dùng
             $user->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công!');
+            
+            return redirect()->route('admin.users.index')->with('success', 'Đã xóa người dùng vào thùng rác!');
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error deleting user: ' . $e->getMessage());
-            return redirect()->route('admin.users.index')->with('error', 'Có lỗi xảy ra khi xóa tài khoản: ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Khôi phục người dùng từ thùng rác.
+     */
+    public function restore($id)
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($id);
+            $user->restore();
+            
+            return redirect()->route('admin.users.trash')->with('success', 'Đã khôi phục người dùng thành công!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn người dùng.
+     */
+    public function forceDelete($id)
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($id);
+            $user->forceDelete();
+            
+            return redirect()->route('admin.users.trash')->with('success', 'Đã xóa vĩnh viễn người dùng!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 }

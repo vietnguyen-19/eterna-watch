@@ -20,6 +20,7 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ChatbotController;
 
 
 
@@ -125,4 +126,7 @@ Route::post('contact_us/store', [SettingController::class, 'contactStore'])->nam
 
 Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
 Route::get('privacy', [SettingController::class, 'privacy'])->name('client.privacy');
+
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('client.chatbot.index');
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('client.chatbot.chat');
 

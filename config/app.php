@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\LayoutServiceProvider::class,
+        App\Providers\GeminiServiceProvider::class,
 
     ])->toArray(),
 

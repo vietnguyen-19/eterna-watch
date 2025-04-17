@@ -223,6 +223,11 @@
                     </li>
 
                     <li class="navigation__item">
+                        <a href="{{ route('client.chatbot.index') }}" class="navigation__link"
+                        style="font-weight:bold;{{ Request::is('chatbot') ? 'color: #c20f0f;font-size: 17px' : '' }}">Hỗ trợ</a>
+                    </li>
+
+                    <li class="navigation__item">
                         <a href="#" class="navigation__link js-nav-right d-flex align-items-center">Pages<svg
                                 class="ms-auto" width="7" height="11" viewBox="0 0 7 11"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -557,6 +562,10 @@
                             <a href="{{ route('client.blog') }}" class="navigation__link"
                             style="font-weight:bold;{{ Request::is('blog') ? 'color: #c20f0f;font-size: 17px' : '' }}">Blog</a>
 
+                        </li>
+                        <li class="navigation__item">
+                            <a href="{{ route('client.chatbot.index') }}" class="navigation__link"
+                            style="font-weight:bold;{{ Request::is('chatbot') ? 'color: #c20f0f;font-size: 17px' : '' }}">Hỗ trợ</a>
                         </li>
                         <li class="navigation__item">
                             <a href="{{ route('client.about_us') }}" class="navigation__link"
