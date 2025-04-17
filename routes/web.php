@@ -111,8 +111,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete');
     });
 
-    // người dùng
-    Route::resource('users', UserController::class)->names('admin.users');
+    // // người dùng
+    // Route::resource('users', UserController::class)->names('admin.users');
 
     // thuộc tính sản phẩm
     Route::prefix('attributes')->group(function () {
@@ -231,6 +231,20 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/settings/{id}/edit', [SettingController::class, 'edit'])->name('admin.settings.edit');
     Route::put('/settings/{id}', [SettingController::class, 'update'])->name('admin.settings.update');
     Route::delete('/settings/{id}', [SettingController::class, 'destroy'])->name('admin.settings.destroy');
+
+    // User routes
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('admin.users.index');
+        Route::get('/trash', [UserController::class, 'trash'])->name('admin.users.trash');
+        Route::get('/create', [UserController::class, 'create'])->name('admin.users.create');
+        Route::post('/store', [UserController::class, 'store'])->name('admin.users.store');
+        Route::get('/{id}', [UserController::class, 'show'])->name('admin.users.show');
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/{id}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::post('/{id}/restore', [UserController::class, 'restore'])->name('admin.users.restore');
+        Route::delete('/{id}/force-delete', [UserController::class, 'forceDelete'])->name('admin.users.force-delete');
+    });
 });
 
 // phần Staff

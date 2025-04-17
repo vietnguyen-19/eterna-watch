@@ -12,9 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Chắc chắn rằng role_id có thể nullable để tránh lỗi
-            $table->unsignedBigInteger('role_id')->nullable()->change();
-            // Thêm cột deleted_at cho xóa mềm
             $table->softDeletes();
         });
     }
@@ -25,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('role_id')->change();
             $table->dropSoftDeletes();
         });
     }
-};
+}; 

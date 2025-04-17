@@ -1,5 +1,7 @@
 @extends('admin.layouts.master')
 
+@section('title', 'Thùng rác - Người dùng')
+
 @section('content')
     <section class="content pt-3">
         <div class="container-fluid">
@@ -9,22 +11,11 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
-                                    <h5 style="margin-right: 5px" class="card-title mb-0 me-3">Danh sách tài khoản</h5>
-                                    <select name="role_id" class="form-select" style="width: 200px;" onchange="window.location.href='{{ route('admin.users.index') }}?role_id=' + this.value">
-                                        <option value=""> Tất cả vai trò</option>
-                                        @foreach($roles as $role)
-                                            <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>
-                                                {{ $role->name == 'employee' ? 'Nhân viên' : ($role->name == 'user' ? 'Khách hàng' : $role->name) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <h5 class="card-title mb-0 me-3">Thùng rác tài khoản</h5>
                                 </div>
                                 <div>
-                                    <a href="{{ route('admin.users.trash') }}" class="btn btn-danger">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thùng rác
-                                    </a>
-                                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thêm tài khoản
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-primary">
+                                        <i class="ri-arrow-left-line align-bottom me-1"></i>Quay lại
                                     </a>
                                 </div>
                             </div>
@@ -111,18 +102,18 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex gap-2">
-                                                        <a href="{{ route('admin.users.show', $user->id) }}" 
-                                                           class="btn btn-sm btn-primary">
-                                                            <i class="fas fa-info-circle"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.users.edit', $user->id) }}" 
-                                                           class="btn btn-sm btn-warning">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin.users.destroy', $user->id) }}" 
+                                                        <form action="{{ route('admin.users.restore', $user->id) }}" 
+                                                              method="POST" 
+                                                              class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-success">
+                                                                <i class="fas fa-undo"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('admin.users.force-delete', $user->id) }}" 
                                                               method="POST" 
                                                               class="d-inline"
-                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này?');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger">
@@ -134,7 +125,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center text-muted">Không có tài khoản nào.</td>
+                                                <td colspan="7" class="text-center text-muted">Thùng rác trống.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -194,4 +185,4 @@
             }, 5000);
         });
     </script>
-@endsection
+@endsection 

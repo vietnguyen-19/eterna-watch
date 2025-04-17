@@ -238,18 +238,45 @@ class ChatbotController extends Controller
         }
 
         // Lọc theo giới tính trong danh mục
-        if (str_contains($message, 'nam')) {
+        if (str_contains($message, 'nam') || str_contains($message, 'men') || str_contains($message, 'male')) {
             Log::info('Filtering by category: nam');
             $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%nam%')
-                  ->orWhere('name', 'like', '%men%');
+                $q->where(function($q) {
+                    $q->where('name', 'like', '%nam%')
+                      ->orWhere('name', 'like', '%men%')
+                      ->orWhere('name', 'like', '%male%')
+                      ->orWhere('name', 'like', '%đồng hồ nam%')
+                      ->orWhere('name', 'like', '%nam giới%')
+                      ->orWhere('name', 'like', '%đồng hồ nam giới%');
+                });
             });
-        } elseif (str_contains($message, 'nữ')) {
+            
+            // Log tất cả các danh mục nam
+            $maleCategories = Category::where('name', 'like', '%nam%')
+                ->orWhere('name', 'like', '%men%')
+                ->orWhere('name', 'like', '%male%')
+                ->get();
+            Log::info('Male categories found:', ['categories' => $maleCategories->pluck('name')->toArray()]);
+            
+        } elseif (str_contains($message, 'nữ') || str_contains($message, 'women') || str_contains($message, 'female')) {
             Log::info('Filtering by category: nữ');
             $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%nữ%')
-                  ->orWhere('name', 'like', '%women%');
+                $q->where(function($q) {
+                    $q->where('name', 'like', '%nữ%')
+                      ->orWhere('name', 'like', '%women%')
+                      ->orWhere('name', 'like', '%female%')
+                      ->orWhere('name', 'like', '%đồng hồ nữ%')
+                      ->orWhere('name', 'like', '%nữ giới%')
+                      ->orWhere('name', 'like', '%đồng hồ nữ giới%');
+                });
             });
+            
+            // Log tất cả các danh mục nữ
+            $femaleCategories = Category::where('name', 'like', '%nữ%')
+                ->orWhere('name', 'like', '%women%')
+                ->orWhere('name', 'like', '%female%')
+                ->get();
+            Log::info('Female categories found:', ['categories' => $femaleCategories->pluck('name')->toArray()]);
         }
 
         // Lọc theo giá
