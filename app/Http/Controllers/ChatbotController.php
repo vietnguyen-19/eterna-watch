@@ -219,140 +219,64 @@ class ChatbotController extends Controller
 
         // Lọc theo các danh mục đặc biệt
         $categoryFilters = [
-            'thể thao' => ['thể thao', 'sport', 'sports', 'đồng hồ thể thao'],
-            'đôi' => ['đôi', 'cặp', 'couple', 'đồng hồ đôi'],
-            'cao cấp' => ['cao cấp', 'luxury', 'đồng hồ cao cấp'],
-            'thời trang' => ['thời trang', 'fashion', 'đồng hồ thời trang'],
-            'nam' => ['nam', 'men', 'male', 'đồng hồ nam', 'nam giới', 'đồng hồ nam giới'],
-            'nữ' => ['nữ', 'women', 'female', 'đồng hồ nữ', 'nữ giới', 'đồng hồ nữ giới'],
-            'thông minh' => ['thông minh', 'smart', 'smartwatch', 'đồng hồ thông minh'],
-            'cơ' => ['cơ', 'automatic', 'đồng hồ cơ', 'đồng hồ automatic'],
-            'pin' => ['pin', 'quartz', 'đồng hồ pin', 'đồng hồ quartz'],
-            'dạ hội' => ['dạ hội', 'formal', 'đồng hồ dạ hội', 'đồng hồ formal'],
-            'công sở' => ['công sở', 'office', 'đồng hồ công sở', 'đồng hồ office'],
-            'lịch sự' => ['lịch sự', 'elegant', 'đồng hồ lịch sự', 'đồng hồ elegant']
+            'thể thao' => ['thể thao', 'sport'],
+            'đôi' => ['đôi', 'cặp', 'couple'],
+            'cao cấp' => ['cao cấp', 'luxury'],
+            'thời trang' => ['thời trang', 'fashion']
         ];
 
-        // Lấy tất cả danh mục từ database
-        $allCategories = Category::where('status', 'active')->get();
-        Log::info('All active categories:', ['categories' => $allCategories->pluck('name')->toArray()]);
-
-        // Xác định giới tính từ tin nhắn
-        $gender = null;
-        if (str_contains($message, 'nam') || str_contains($message, 'men') || str_contains($message, 'male')) {
-            $gender = 'nam';
-        } elseif (str_contains($message, 'nữ') || str_contains($message, 'women') || str_contains($message, 'female')) {
-            $gender = 'nữ';
-        }
-
-        // Tìm danh mục theo loại và giới tính
-        $matchingCategories = collect();
         foreach ($categoryFilters as $type => $keywords) {
             foreach ($keywords as $keyword) {
                 if (str_contains($message, $keyword)) {
-                    // Tìm danh mục phù hợp với từ khóa
-                    $typeCategories = $allCategories->filter(function($category) use ($keywords) {
-                        foreach ($keywords as $kw) {
-                            if (str_contains(mb_strtolower($category->name, 'UTF-8'), $kw)) {
-                                return true;
-                            }
-                        }
-                        return false;
+                    Log::info("Filtering by category: {$type}", ['keyword' => $keyword]);
+                    $query->whereHas('category', function ($q) use ($type) {
+                        $q->where('name', 'like', '%' . $type . '%');
                     });
-
-                    if ($typeCategories->isNotEmpty()) {
-                        $matchingCategories = $matchingCategories->concat($typeCategories);
-                    }
+                    break 2;
                 }
             }
         }
 
-        // Nếu có giới tính, lọc theo giới tính
-        if ($gender) {
-            $genderKeywords = $gender === 'nam' ? 
-                ['nam', 'men', 'male', 'đồng hồ nam', 'nam giới'] : 
-                ['nữ', 'women', 'female', 'đồng hồ nữ', 'nữ giới'];
-
-            // Tìm danh mục gốc theo giới tính
-            $genderCategories = $allCategories->filter(function($category) use ($genderKeywords) {
-                $name = mb_strtolower($category->name, 'UTF-8');
-                foreach ($genderKeywords as $keyword) {
-                    if (str_contains($name, $keyword)) {
-                        return true;
-                    }
-                }
-                return false;
-            });
-
-            if ($genderCategories->isNotEmpty()) {
-                // Lấy ID của các danh mục giới tính và danh mục con của chúng
-                $genderCategoryIds = $genderCategories->pluck('id')->toArray();
-                
-                // Lấy tất cả danh mục con và cháu của danh mục giới tính
-                $childCategoryIds = [];
-                $queue = $genderCategoryIds;
-                
-                while (!empty($queue)) {
-                    $currentParentIds = $queue;
-                    $queue = [];
-                    
-                    $children = $allCategories->whereIn('parent_id', $currentParentIds);
-                    if ($children->isNotEmpty()) {
-                        $childIds = $children->pluck('id')->toArray();
-                        $childCategoryIds = array_merge($childCategoryIds, $childIds);
-                        $queue = array_merge($queue, $childIds);
-                    }
-                }
-                
-                $allGenderCategoryIds = array_merge($genderCategoryIds, $childCategoryIds);
-                Log::info("Found categories for gender {$gender}:", [
-                    'root_categories' => $genderCategories->pluck('name')->toArray(),
-                    'child_categories' => $allCategories->whereIn('id', $childCategoryIds)->pluck('name')->toArray()
-                ]);
-
-                // Nếu có danh mục phù hợp khác (thể thao, thời trang, etc.)
-                if ($matchingCategories->isNotEmpty()) {
-                    // Chỉ giữ lại các danh mục thuộc cây danh mục giới tính
-                    $matchingCategories = $matchingCategories->filter(function($category) use ($allGenderCategoryIds) {
-                        // Kiểm tra toàn bộ chuỗi cha của danh mục
-                        $currentCategory = $category;
-                        while ($currentCategory) {
-                            if (in_array($currentCategory->id, $allGenderCategoryIds)) {
-                                return true;
-                            }
-                            // Lấy danh mục cha
-                            $currentCategory = $currentCategory->parent_id ? 
-                                Category::find($currentCategory->parent_id) : null;
-                        }
-                        return false;
-                    });
-                } else {
-                    // Nếu không có danh mục khác, sử dụng tất cả danh mục của giới tính đó
-                    $matchingCategories = $genderCategories->concat(
-                        $allCategories->whereIn('id', $childCategoryIds)
-                    );
-                }
-            }
-        }
-
-        // Áp dụng bộ lọc danh mục vào query
-        if ($matchingCategories->isNotEmpty()) {
-            $categoryIds = $matchingCategories->pluck('id')->unique()->toArray();
-            Log::info('Filtering by categories:', [
-                'categories' => $matchingCategories->pluck('name')->toArray(),
-                'category_ids' => $categoryIds,
-                'gender' => $gender ?? 'not specified'
-            ]);
-
-            $query->whereHas('category', function ($q) use ($categoryIds, $allCategories) {
-                $q->where(function($subQ) use ($categoryIds, $allCategories) {
-                    // Lấy sản phẩm thuộc trực tiếp các danh mục đã tìm thấy
-                    $subQ->whereIn('id', $categoryIds);
+        // Lọc theo giới tính trong danh mục
+        if (str_contains($message, 'nam') || str_contains($message, 'men') || str_contains($message, 'male')) {
+            Log::info('Filtering by category: nam');
+            $query->whereHas('category', function ($q) {
+                $q->where(function($q) {
+                    $q->where('name', 'like', '%nam%')
+                      ->orWhere('name', 'like', '%men%')
+                      ->orWhere('name', 'like', '%male%')
+                      ->orWhere('name', 'like', '%đồng hồ nam%')
+                      ->orWhere('name', 'like', '%nam giới%')
+                      ->orWhere('name', 'like', '%đồng hồ nam giới%');
                 });
             });
             
-            // Log chi tiết về cây danh mục
-            $this->logCategoryTree($matchingCategories->first(), $allCategories);
+            // Log tất cả các danh mục nam
+            $maleCategories = Category::where('name', 'like', '%nam%')
+                ->orWhere('name', 'like', '%men%')
+                ->orWhere('name', 'like', '%male%')
+                ->get();
+            Log::info('Male categories found:', ['categories' => $maleCategories->pluck('name')->toArray()]);
+            
+        } elseif (str_contains($message, 'nữ') || str_contains($message, 'women') || str_contains($message, 'female')) {
+            Log::info('Filtering by category: nữ');
+            $query->whereHas('category', function ($q) {
+                $q->where(function($q) {
+                    $q->where('name', 'like', '%nữ%')
+                      ->orWhere('name', 'like', '%women%')
+                      ->orWhere('name', 'like', '%female%')
+                      ->orWhere('name', 'like', '%đồng hồ nữ%')
+                      ->orWhere('name', 'like', '%nữ giới%')
+                      ->orWhere('name', 'like', '%đồng hồ nữ giới%');
+                });
+            });
+            
+            // Log tất cả các danh mục nữ
+            $femaleCategories = Category::where('name', 'like', '%nữ%')
+                ->orWhere('name', 'like', '%women%')
+                ->orWhere('name', 'like', '%female%')
+                ->get();
+            Log::info('Female categories found:', ['categories' => $femaleCategories->pluck('name')->toArray()]);
         }
 
         // Lọc theo giá
@@ -480,7 +404,7 @@ class ChatbotController extends Controller
         }
         
         if (mb_strpos($message, 'vận chuyển') !== false || mb_strpos($message, 'ship') !== false) {
-            return "Chúng tôi giao hàng toàn quốc với phí vận chuyển từ 20.000 - 50.000 VNĐ tùy khu vực. Thời gian giao hàng dự kiến 2-5 ngày làm việc.";
+            return "Chúng tôi giao hàng toàn quốc với phí vận chuyển từ 100.000 VNĐ . Thời gian giao hàng dự kiến 2-4 ngày làm việc.";
         }
         
         if (mb_strpos($message, 'thanh toán') !== false) {
@@ -488,20 +412,5 @@ class ChatbotController extends Controller
         }
         
         return "Tôi có thể giúp gì cho bạn? Bạn có thể hỏi về sản phẩm, đặt hàng, vận chuyển hoặc thanh toán.";
-    }
-
-    // Thêm phương thức mới để log cây danh mục
-    private function logCategoryTree($category, $allCategories, $level = 0)
-    {
-        if (!$category) return;
-
-        $prefix = str_repeat('--', $level);
-        Log::info("{$prefix} Category: {$category->name} (ID: {$category->id})");
-
-        // Tìm các danh mục con
-        $children = $allCategories->where('parent_id', $category->id);
-        foreach ($children as $child) {
-            $this->logCategoryTree($child, $allCategories, $level + 1);
-        }
     }
 } 
