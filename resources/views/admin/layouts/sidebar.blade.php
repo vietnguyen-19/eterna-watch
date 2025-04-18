@@ -251,10 +251,17 @@
                     </a>
                     <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.comments.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.comments.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.comments.posts') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.posts') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Danh sách</p>
+                                <p>Bình luận bài viết</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.comments.products') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.products') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Đánh giá sản phẩm</p>
                             </a>
                         </li>
                     </ul>

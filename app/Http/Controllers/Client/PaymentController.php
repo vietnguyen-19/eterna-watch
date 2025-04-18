@@ -68,7 +68,7 @@ class PaymentController extends Controller
                     'district'       => $validatedData['district'],
                     'city'           => $validatedData['city'],
                     'country'        => 'Việt Nam',
-                    'is_default'     => 1,
+                    'is_default'     => 0,
                     'note'           => $validatedData['note'] ?? null,
                 ]);
             } else {

@@ -22,27 +22,22 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $roleId = $request->input('role_id');
-        
+
         $query = User::with('role');
-        
+
         if ($roleId) {
             $query->where('role_id', $roleId);
         }
-        
+
         $data = $query->orderBy('created_at', 'desc')->get();
         $roles = Role::all();
-        
+
         return view('admin.users.index', compact('data', 'roles'));
     }
 
     /**
      * Hiển thị danh sách người dùng đã xóa.
      */
-    public function trash()
-    {
-        $data = User::onlyTrashed()->with('role')->orderBy('deleted_at', 'desc')->get();
-        return view('admin.users.trash', compact('data'));
-    }
 
     /**
      * Hiển thị form tạo mới người dùng.
@@ -62,7 +57,7 @@ class UserController extends Controller
     {
         $user = User::with('role')->findOrFail($id);
         $address = UserAddress::where('user_id', $id)->where('is_default', true)->first();
-        
+
         return view('admin.users.show', compact('user', 'address'));
     }
 
@@ -106,7 +101,7 @@ class UserController extends Controller
                 'note' => $request->input('note'),
                 'avatar' => $avatarPath,
             ]);
-        
+
             // Tạo địa chỉ mặc định cho người dùng
             UserAddress::create([
                 'user_id' => $user->id,
@@ -122,14 +117,14 @@ class UserController extends Controller
             ]);
 
             DB::commit();
-        
+
             return redirect()->route('admin.users.index')->with('success', 'Thêm tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();
         }
     }
-    
+
 
 
     /**
@@ -141,7 +136,7 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $user = User::findOrFail($id);
-            
+
             // Cập nhật thông tin cơ bản
             $user->name = $request->input('name');
             $user->email = $request->input('email');
@@ -169,7 +164,7 @@ class UserController extends Controller
                 $path = $avatar->storeAs('avatar', $fileName, 'public');
                 $user->avatar = $path;
             }
-            
+
             $user->save();
 
             // Cập nhật hoặc tạo mới địa chỉ
@@ -206,41 +201,66 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+
+            UserAddress::where('user_id', $id)->delete();
+
+            // Xóa mềm user
             $user->delete();
-            
-            return redirect()->route('admin.users.index')->with('success', 'Đã xóa người dùng vào thùng rác!');
+
+            DB::commit();
+
+            return redirect()->route('admin.users.index')->with('success', 'Tài khoản đã được xóa mềm thành công!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Lỗi khi xóa mềm user: ' . $e->getMessage());
+            return redirect()->route('admin.users.index')->with('error', 'Đã xảy ra lỗi khi xóa tài khoản: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Khôi phục người dùng từ thùng rác.
-     */
     public function restore($id)
     {
         try {
-            $user = User::onlyTrashed()->findOrFail($id);
+            $user = User::withTrashed()->findOrFail($id);
             $user->restore();
-            
-            return redirect()->route('admin.users.trash')->with('success', 'Đã khôi phục người dùng thành công!');
+
+            return redirect()->route('admin.users.index')->with('success', 'Khôi phục tài khoản thành công!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            Log::error('Lỗi khi khôi phục user: ' . $e->getMessage());
+            return redirect()->route('admin.users.index')->with('error', 'Không thể khôi phục tài khoản!');
         }
     }
-
-    /**
-     * Xóa vĩnh viễn người dùng.
-     */
     public function forceDelete($id)
     {
         try {
-            $user = User::onlyTrashed()->findOrFail($id);
+            DB::beginTransaction();
+
+            $user = User::withTrashed()->findOrFail($id);
+
+            // XÓA ẢNH vật lý
+            if ($user->avatar) {
+                $avatarPath = public_path('storage/' . $user->avatar);
+                if (file_exists($avatarPath)) {
+                    unlink($avatarPath);
+                }
+            }
+
+            // XÓA ĐỊA CHỈ liên quan
+            UserAddress::where('user_id', $id)->forceDelete();
+
+            // XÓA VĨNH VIỄN
             $user->forceDelete();
-            
-            return redirect()->route('admin.users.trash')->with('success', 'Đã xóa vĩnh viễn người dùng!');
+
+            DB::commit();
+
+            return redirect()->route('admin.users.trash')->with('success', 'Đã xóa vĩnh viễn tài khoản!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Lỗi khi xóa vĩnh viễn user: ' . $e->getMessage());
+            return redirect()->route('admin.users.trash')->with('error', 'Không thể xóa vĩnh viễn tài khoản!');
         }
+    }
+    public function trash()
+    {
+        $users = User::with('role')->onlyTrashed()->get(); // Phân trang nếu muốn
+        return view('admin.users.trash', compact('users'));
     }
 }

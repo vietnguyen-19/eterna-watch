@@ -18,20 +18,23 @@
                     @endif
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
-                            <div class="row g-4 align-items-center">
+                            <div class="row g-4 align-items-center justify-content-between">
                                 <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
-                                    </div>
+                                    <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.products.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm sản phẩm mới</a>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="{{ route('admin.products.trash') }}" class="btn btn-danger">
+                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                        </a>
+                                        <a href="{{ route('admin.products.create') }}" class="btn btn-success ml-1">
+                                            <i class="ri-add-line align-bottom me-1"></i> Thêm sản phẩm mới
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="card-body">
                             <div>
                                 <div class="table-responsive table-card mb-1 mt-2">
@@ -53,18 +56,22 @@
                                                     <td class="align-middle">
                                                         <div class="d-flex align-items-center">
                                                             <img src="{{ Storage::url($product->avatar ?? 'default-avatar.png') }}"
-                                                                alt="product Avatar" class="me-3 rounded" width="50" height="50">
+                                                                alt="product Avatar" class="me-3 rounded" width="50"
+                                                                height="50">
                                                             <div class="ml-3">
-                                                                <a href="{{ route('admin.products.show', $product->id) }}" class="text-decoration-none fw-bold">
+                                                                <a href="{{ route('admin.products.show', $product->id) }}"
+                                                                    class="text-decoration-none fw-bold">
                                                                     {{ $product->name }}
                                                                 </a><br>
-                                                                <small class="text-muted mb-0">Danh mục | <b>{{ $product->category->name }}</b></small>
+                                                                <small class="text-muted mb-0">Danh mục |
+                                                                    <b>{{ $product->category->name }}</b></small>
                                                             </div>
                                                         </div>
                                                     </td>
 
                                                     <td class="align-middle"> {{ $product->brand->name }}</td>
-                                                    <td class="align-middle">{{ number_format($product->price_default, 0, ',', '.') }} VND</td>
+                                                    <td class="align-middle">
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND</td>
                                                     <td class="align-middle">
                                                         <span
                                                             class="badge
@@ -75,12 +82,12 @@
                                                         </span>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <ul class="list-inline hstack gap-2 mb-0">
+                                                        <ul class="list-inline hstack mb-0">
                                                             <!-- Edit Button -->
                                                             <li class="list-inline-item edit" title="Xem chi tiết sản phẩm">
                                                                 <a href="{{ route('admin.products.show', $product->id) }}"
                                                                     class="btn btn-info btn-icon waves-effect waves-light btn-sm">
-                                                                    <i class="fa-solid fa-circle-info"></i>
+                                                                    <i class="fas fa-eye"></i>
                                                                 </a>
                                                             </li>
                                                             <!-- Remove Button -->
@@ -176,6 +183,60 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 @endsection
 
 @section('style')

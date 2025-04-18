@@ -232,7 +232,7 @@
                                                 {{ $order->created_at->format('d/m/Y H:i') }}</td>
                                             <td class="align-middle">
                                                 <div class="btn-group">
-                                                    <a href="#" class="btn btn-info btn-sm">
+                                                    <a href="{{route('admin.orders.edit', $order->id)}}" class="btn btn-info btn-sm">
                                                         Chi tiết
                                                     </a>
 

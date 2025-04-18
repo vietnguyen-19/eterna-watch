@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'name',
         'price_default',
@@ -19,6 +20,9 @@ class Product extends Model
         'status',
         'view_count'
     ];
+    // Trong model Product
+
+
 
     public function category()
     {
@@ -62,14 +66,11 @@ class Product extends Model
         return $this->variants()
             ->max('price') ?? $this->price;
     }
-    protected static function booted()
+    // Trong model Product
+    public function orderItems()
     {
-        static::deleting(function ($product) {
-            // Xóa các đơn hàng chứa sản phẩm này
-            OrderItem::where('product_id', $product->id)->delete();
-
-            // Optionally: nếu muốn xóa cả Order không còn OrderItem nào
-            Order::doesntHave('orderItems')->delete();
-        });
+        return $this->hasMany(OrderItem::class);
     }
+
+   
 }

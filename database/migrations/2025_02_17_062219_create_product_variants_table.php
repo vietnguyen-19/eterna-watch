@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->enum('status', ['in_stock', 'out_of_stock', 'pre_order'])->default('in_stock')->nullable(); // Thêm cột status
             $table->string('image', 255)->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('product_id')

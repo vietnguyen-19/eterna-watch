@@ -109,10 +109,9 @@
 
                                     <div class="mb-3 col-12">
                                         <label for="detailed-address" class="form-label">Địa chỉ chi tiết</label>
-                                        <input value="{{ old('specific_address') }}" name="specific_address"
-                                            type="text" id="specific_address" class="form-control"
-                                            placeholder="Nhập địa chỉ chi tiết">
-                                        @error('specific_address')
+                                        <input value="{{ old('street_address') }}" name="street_address" type="text"
+                                            id="street_address" class="form-control" placeholder="Nhập địa chỉ chi tiết">
+                                        @error('street_address')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -178,6 +177,10 @@
                             <div class="card-body">
                                 <div class="body row">
                                     <div class="col-12">
+                                        @if ($errors->has('order_items'))
+                                            <div class="text-danger">{{ $errors->first('order_items') }}</div>
+                                        @endif
+
                                         <table class="table table-bordered align-middle shadow-sm rounded"
                                             id="order-items">
                                             <thead class="table">
@@ -198,16 +201,22 @@
                                                                 id="total-price">0</span></strong></td>
                                                 </tr>
                                                 <tr>
+                                                    <td colspan="3" class="text-end fw-bold"><b>Vận chuyển</b></td>
+                                                    <td colspan="2" class="text-end"><strong><span
+                                                                id="shipping_price">0</span></strong></td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="3" class="text-end fw-bold"><b>Khuyến mãi</b></td>
                                                     <td colspan="2" class="text-end"><strong><span
                                                                 id="discount-price">0</span></strong></td>
                                                 </tr>
+
                                                 <tr class="">
                                                     <td colspan="3" class="text-end fw-bold"><b>Tổng thanh toán</b>
                                                     </td>
                                                     <td colspan="2" class="text-end"><strong><span
                                                                 id="total_amount">0</span></strong></td>
-                                                    
+
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -216,6 +225,26 @@
 
                                     </div>
 
+                                </div>
+                            </div>
+                            <div class="card-header border-bottom-dashed" style="border-top: 1px solid #dee2e6;">
+                                <div class="row g-4 align-items-center justify-content-between">
+                                    <div class="col-sm">
+                                        <h5 class="card-title mb-0">Phương thức vận chuyển</h5>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <select name="shipping_method" id="shipping-method"
+                                                class="form-select form-control" style="width: 288px;">
+                                                <option value="">*Chọn hình thức vận chuyển</option>
+                                                <option value="fixed">Giao hàng</option>
+                                                <option value="store">Nhận tại cửa hàng</option>
+                                            </select>
+                                        </div>
+                                        @error('shipping_method')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-header border-bottom-dashed" style="border-top: 1px solid #dee2e6;">
@@ -232,6 +261,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="card-header border-bottom-dashed" style="border-top: 1px solid #dee2e6;">
                                 <div class="row g-4 align-items-center justify-content-between">
                                     <div class="col-sm">
@@ -248,6 +278,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="card-header border-bottom-dashed" style="border-top: 1px solid #dee2e6;">
                                 <div class="row g-4 align-items-center justify-content-between">
                                     <div class="col-sm">
@@ -284,6 +315,9 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 @section('script')
+    <!-- Thêm vào cuối body hoặc layout master -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script>
         document.querySelector('.close').addEventListener('click', function(event) {
@@ -320,8 +354,8 @@
                                             .district ?? "") : "",
                                         ward: user.address ? (user.address.ward ?? "") :
                                             "",
-                                        specific_address: user.address ? (user.address
-                                            .specific_address ?? "") : ""
+                                        street_address: user.address ? (user.address
+                                            .street_address ?? "") : ""
                                     };
                                 })
                             };
@@ -342,7 +376,7 @@
                 $('#city').val(data.city || "Không có thông tin");
                 $('#district').val(data.district || "Không có thông tin");
                 $('#ward').val(data.ward || "Không có thông tin");
-                $('#specific_address').val(data.specific_address || "Không có thông tin");
+                $('#street_address').val(data.street_address || "Không có thông tin");
 
                 $('#addUserModal').modal('hide');
             });
@@ -350,10 +384,37 @@
     </script>
     <script>
         $(document).ready(function() {
-            // Biến toàn cục để lưu giá trị khuyến mãi (có thể cập nhật khi áp voucher)
-            var appliedDiscount = 0;
+            let appliedDiscount = 0;
+            let shippingFee = 0;
 
-            // Khởi tạo Select2 khi modal "Thêm sản phẩm" được hiển thị
+            // Định dạng tiền tệ
+            function formatCurrency(amount) {
+                return Number(amount).toLocaleString('vi-VN', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }) + " VND";
+            }
+
+            // Chuyển chuỗi định dạng tiền tệ về số
+            function parseCurrency(str) {
+                return parseFloat(str.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(/,/g, '.')) || 0;
+            }
+
+            // Hiển thị sản phẩm trong dropdown Select2
+            function formatProduct(product) {
+                if (!product.id) return product.text;
+                return $(`
+                    <div class="d-flex align-items-center">
+                        <img src="${product.image}" class="rounded me-2" width="50" height="50">
+                        <span>${product.text} - ${formatCurrency(product.price)}</span>
+                    </div>
+                `);
+            }
+
+            function formatProductSelection(product) {
+                return product.text || product.id;
+            }
+
             $('#addProductModal').on('shown.bs.modal', function() {
                 $('#productSelect').select2({
                     dropdownParent: $('#addProductModal'),
@@ -363,16 +424,12 @@
                         url: "{{ route('admin.products.search') }}",
                         dataType: 'json',
                         delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: data.results
-                            };
-                        },
+                        data: params => ({
+                            search: params.term
+                        }),
+                        processResults: data => ({
+                            results: data.results
+                        }),
                         cache: true
                     },
                     templateResult: formatProduct,
@@ -380,30 +437,9 @@
                 });
             });
 
-            // Hiển thị sản phẩm kèm ảnh trong dropdown
-            function formatProduct(product) {
-                if (!product.id) {
-                    return product.text;
-                }
-                let formattedPrice = Number(product.price).toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-                return $(`
-            <div class="d-flex align-items-center">
-                <img src="${product.image}" class="rounded me-2" width="50" height="50">
-                <span>${product.text} - ${formattedPrice} VND</span>
-            </div>
-        `);
-            }
-
-            function formatProductSelection(product) {
-                return product.text || product.id;
-            }
-
-            // Thêm sản phẩm vào bảng đơn hàng
+            // Thêm sản phẩm vào bảng
             $('#addProductBtn').click(function() {
-                let product = $('#productSelect').select2('data')[0]; // Lấy sản phẩm đã chọn
+                let product = $('#productSelect').select2('data')[0];
                 let quantity = parseInt($('#quantity').val());
 
                 if (!product || quantity <= 0) {
@@ -413,163 +449,108 @@
 
                 let price = Number(product.price);
                 let total = price * quantity;
-                let formattedPrice = price.toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-                let formattedTotal = total.toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
-
-                // Xác định index của hàng mới dựa trên số hàng hiện có
                 let index = $('#order-items tbody tr').length;
 
-                // Mỗi hàng chứa thông tin sản phẩm và các input ẩn để gửi lên server
                 let row = `
-            <tr data-id="${product.id}" data-index="${index}">
-                <td>
-                    <img src="${product.image}" alt="${product.text}" width="60" style="margin-right: 10px;">
-                    ${product.text}
-                    <input type="hidden" name="order_items[${index}][id]" value="${product.id}">
-                </td>
-                <td class="align-middle">${formattedPrice} VND</td>
-                <td class="align-middle">
-                    <input type="number" name="order_items[${index}][quantity]" class="form-control text-center update-quantity" 
-                           value="${quantity}" min="1" data-price="${product.price}" style="width: 60px;">
-                </td>
-                <td class="total-price align-middle">${formattedTotal} VND</td>
-                <td class="align-middle">
-                    <button type="button" class="btn btn-danger btn-sm remove-product">Xóa</button>
-                </td>
-            </tr>
-        `;
-
+                    <tr data-id="${product.id}" data-index="${index}">
+                        <td>
+                            <img src="${product.image}" alt="${product.text}" width="60" style="margin-right: 10px;">
+                            ${product.text}
+                            <input type="hidden" name="order_items[${index}][id]" value="${product.id}">
+                        </td>
+                        <td class="align-middle">${formatCurrency(price)}</td>
+                        <td class="align-middle">
+                            <input type="number" name="order_items[${index}][quantity]"
+                                class="form-control text-center update-quantity"
+                                value="${quantity}" min="1" data-price="${price}" style="width: 60px;">
+                        </td>
+                        <td class="total-price align-middle">${formatCurrency(total)}</td>
+                        <td class="align-middle">
+                            <button type="button" class="btn btn-danger btn-sm remove-product">Xóa</button>
+                        </td>
+                    </tr>`;
                 $('#order-items tbody').append(row);
                 updateTotalPrice();
-                $('#addProductModal').modal('hide'); // Đóng modal
+                $('#addProductModal').modal('hide');
             });
 
-            // Cập nhật tổng tiền khi thay đổi số lượng
-            $(document).on('input', '.update-quantity', function() {
-                let quantity = parseInt($(this).val());
-                let price = parseFloat($(this).data('price'));
-                let total = quantity * price;
-                $(this).closest('tr').find('.total-price').text(
-                    total.toLocaleString('vi-VN', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    }) + " VND"
-                );
+            // Thay đổi phương thức vận chuyển
+            $('#shipping-method').on('change', function() {
+                shippingFee = $(this).val() === 'fixed' ? 100000 : 0;
                 updateTotalPrice();
             });
 
-            // Xóa sản phẩm khỏi đơn hàng
+            // Thay đổi số lượng sản phẩm
+            $(document).on('input', '.update-quantity', function() {
+                let qty = parseInt($(this).val()) || 0;
+                let price = parseFloat($(this).data('price')) || 0;
+                let total = qty * price;
+                $(this).closest('tr').find('.total-price').text(formatCurrency(total));
+                updateTotalPrice();
+            });
+
+            // Xóa sản phẩm
             $(document).on('click', '.remove-product', function() {
                 $(this).closest('tr').remove();
                 updateTotalPrice();
             });
 
-            // Hàm cập nhật tổng tiền (tạm tính, khuyến mãi và tổng thanh toán)
+            // Tính toán và cập nhật giá trị hiển thị
             function updateTotalPrice() {
                 let subTotal = 0;
+
                 $('#order-items tbody tr').each(function() {
-                    let qty = parseInt($(this).find('.update-quantity').val());
-                    let price = parseFloat($(this).find('.update-quantity').data('price'));
+                    let qty = parseInt($(this).find('.update-quantity').val()) || 0;
+                    let price = parseFloat($(this).find('.update-quantity').data('price')) || 0;
                     subTotal += qty * price;
                 });
 
-                // Hiển thị tạm tính
-                let formattedSubTotal = subTotal.toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }) + " VND";
-                $('#total-price').text(formattedSubTotal);
-
-                // Khuyến mãi (ở đây dùng appliedDiscount; nếu chưa áp voucher thì = 0)
-                let discount = appliedDiscount;
-                let formattedDiscount = discount.toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }) + " VND";
-                $('#discount-price').text(formattedDiscount);
-
-                // Tổng thanh toán = Tạm tính - Khuyến mãi
-                let finalTotal = subTotal - discount;
+                let finalTotal = subTotal - appliedDiscount + shippingFee;
                 if (finalTotal < 0) finalTotal = 0;
-                let formattedFinalTotal = finalTotal.toLocaleString('vi-VN', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }) + " VND";
-                $('#total_amount').text(formattedFinalTotal);
 
-                // Cập nhật input ẩn gửi lên server
+                $('#total-price').text(formatCurrency(subTotal));
+                $('#discount-price').text(formatCurrency(appliedDiscount));
+                $('#shipping_price').text(formatCurrency(shippingFee));
+                $('#total_amount').text(formatCurrency(finalTotal));
                 $('#total_amount_field').val(finalTotal);
-                
-            }
-        });
-    </script>
-    <script>
-        $('#checkVoucher').on('click', function(event) {
-            event.preventDefault(); // Ngăn không cho form submit
-
-            // Lấy mã giảm giá từ input
-            var discountCode = $('#discount-code').val();
-
-            // Lấy giá trị tổng thanh toán ban đầu (Tạm tính)
-            var totalStr = $('#total-price').text();
-
-            // Loại bỏ ký tự không phải số, xử lý định dạng vi-VN
-            var totalClean = totalStr.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(/,/g, '.');
-            var total = parseFloat(totalClean);
-
-            // Kiểm tra nếu người dùng chưa nhập mã giảm giá
-            if (!discountCode) {
-                alert('Vui lòng nhập mã giảm giá.');
-                return;
             }
 
-            // Gửi yêu cầu Ajax tới backend
-            $.ajax({
-                url: '{{ route('admin.vouchers.check') }}',
-                method: 'POST',
-                data: {
-                    code: discountCode,
-                    total: total,
-                    _token: '{{ csrf_token() }}' // Đảm bảo có token CSRF
-                },
-                success: function(response) {
-                    if (response.valid) {
-                        // Hiển thị thông báo thành công
-                        alert(response.message);
-                        var voucher_id = response.voucher_id;
-                        // Định dạng số theo vi-VN
-                        var formattedDiscount = Number(response.discount).toLocaleString('vi-VN', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        }) + " VND";
-
-                        var formattedNewTotal = Number(response.newTotal).toLocaleString('vi-VN', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        }) + " VND";
-
-                        // Cập nhật giá trị trên giao diện
-                        $('#discount-price').text(formattedDiscount); // Cập nhật khuyến mãi
-                        $('#total_amount').text(formattedNewTotal); // Cập nhật tổng thanh toán
-                        $('#total_amount_field').val(total);
-                        $('#voucher_id').val(voucher_id);
-
-                    } else {
-                        // Hiển thị thông báo lỗi
-                        alert(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Đã xảy ra lỗi:', error);
-                    alert('Lỗi kiểm tra mã giảm giá. Vui lòng thử lại sau.');
+            // Áp dụng mã giảm giá
+            $('#checkVoucher').on('click', function(event) {
+                event.preventDefault();
+                let discountCode = $('#discount-code').val().trim();
+                if (!discountCode) {
+                    alert('Vui lòng nhập mã giảm giá.');
+                    return;
                 }
+
+                let total = parseCurrency($('#total-price').text());
+
+                $.ajax({
+                    url: '{{ route('admin.vouchers.check') }}',
+                    method: 'POST',
+                    data: {
+                        code: discountCode,
+                        total: total,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.valid) {
+                            alert(response.message);
+                            appliedDiscount = response.discount || 0;
+                            $('#voucher_id').val(response.voucher_id);
+                            updateTotalPrice(); // Tự động cập nhật lại tổng tiền
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi:', error);
+                        alert('Lỗi kiểm tra mã giảm giá. Vui lòng thử lại sau.');
+                    }
+                });
             });
+
         });
     </script>
 @endsection

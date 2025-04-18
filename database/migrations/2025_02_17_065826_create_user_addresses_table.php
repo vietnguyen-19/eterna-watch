@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('country', 100)->default('Việt Nam');
             $table->boolean('is_default')->default(true);
             $table->text('note')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -2,148 +2,135 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CommentUpdateRequest;
-use App\http\Requests\CommentStoreRequest;
 use App\Models\Comment;
+use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function indexPost(Request $request)
     {
-        $data = Comment::query()->with('user')->where('entity_type', 'post')->latest('id')->get();
+        $status = $request->input('status', 'all');
 
-        return view('admin.comments.index', compact('data'));
+        // Đếm số lượng theo trạng thái cho bài viết
+        $postStatusCounts = [
+            'all' => Comment::where('entity_type', 'post')->count(),
+            'pending' => Comment::where('entity_type', 'post')->where('status', 'pending')->count(),
+            'approved' => Comment::where('entity_type', 'post')->where('status', 'approved')->count(),
+            'rejected' => Comment::where('entity_type', 'post')->where('status', 'rejected')->count(),
+        ];
+
+        $comments = Comment::with(['user', 'entity'])
+            ->where('entity_type', 'post')
+            ->when($status !== 'all', function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.comments.index-post', compact('comments', 'postStatusCounts', 'status'));
+    }
+    public function indexProduct(Request $request)
+    {
+        $status = $request->input('status', 'all');
+
+        // Đếm số lượng theo trạng thái cho sản phẩm
+        $productStatusCounts = [
+            'all' => Comment::where('entity_type', 'product')->count(),
+            'pending' => Comment::where('entity_type', 'product')->where('status', 'pending')->count(),
+            'approved' => Comment::where('entity_type', 'product')->where('status', 'approved')->count(),
+            'rejected' => Comment::where('entity_type', 'product')->where('status', 'rejected')->count(),
+        ];
+
+        $comments = Comment::with(['user', 'entity'])
+            ->where('entity_type', 'product')
+            ->when($status !== 'all', function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.comments.index-product', compact('comments', 'productStatusCounts', 'status'));
     }
 
-    // show dữ liệu cho đánh giá sản phẩm
-    public function productComments()
-    {
-        $product = Comment::query()->with('user')->where('entity_type', 'product')->latest('id')->get();
 
-        return view('admin.comments.product', compact('product'));
+    public function edit($id)
+    {
+        $comment = Comment::findOrFail($id);
+        return view('admin.comments.edit', compact('comment'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+    public function destroy($id)
     {
-        //
+        Comment::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Bình luận đã bị xóa.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function deleteMultiple(Request $request)
     {
-        //
+        $ids = $request->ids;
+        if ($ids) {
+            DB::table("comments")->whereIn('id', explode(",", $ids))->delete();
+            return response()->json(['success' => "Đã xóa thành công!"]);
+        } else {
+            return response()->json(['error' => "Không có mục nào được chọn!"]);
+        }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $comments = Comment::whereNull('parent_id')->get();
-        $item = Comment::findOrFail($id);  // Lấy danh mục theo ID
-        return view('admin.comments.edit', compact('comments', 'item'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    // app/Http/Controllers/CommentController.php
     public function update(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
-        // Lấy trạng thái mới từ request
-        $newStatus = $request->input('status');
+        $comment->content = $request->input('content');
+        $comment->save();
 
-        // Danh sách trạng thái hợp lệ
-        $validStatuses = [
-            'pending' => ['approved', 'rejected'],
-            'approved' => [],
-            'rejected' => []
-        ];
-        // Kiểm tra nếu trạng thái mới hợp lệ
-        $currentStatus = $comment->status;
+        return response()->json(['message' => 'Cập nhật bình luận thành công!']);
+    }
+    public function reply(Request $request)
+    {
+        Comment::create([
+            'content' => $request->input('content'),
+            'parent_id' => $request->input('parent_id'),
+            'user_id' => auth()->id(),
+            'entity_id' => $request->input('entity_id'),
+            'entity_type' => $request->input('entity_type'),
+            'status' => 'pending',
+        ]);
 
-        if (!isset($validStatuses[$currentStatus]) || !in_array($newStatus, $validStatuses[$currentStatus])) {
-            return back()->with([
-                'thongbao' => [
-                    'type' => 'danger',
-                    'message' => 'Trạng thái không hợp lệ.',
-                ]
-            ]);
+        return response()->json(['message' => 'Trả lời bình luận thành công!']);
+    }
+    public function approve($id)
+    {
+        $comment = Comment::find($id);
+        if ($comment) {
+            $comment->status = 'approved';
+            $comment->save();
+            return response()->json(['message' => 'Đã chấp nhận bình luận!']);
         }
-
-        // Kiểm tra nếu trạng thái không thay đổi
-        if ($comment->status === $newStatus) {
-            return back()->with([
-                'thongbao' => [
-                    'type' => 'info',
-                    'message' => 'Trạng thái bình luận không thay đổi.',
-                ]
-            ]);
-        }
-
-        try {
-            // Cập nhật trạng thái comment
-            $comment->update([
-                'status' => $newStatus,
-            ]);
-
-            if($comment->entity_type == 'product'){
-                return redirect()->route('admin.comments.product')->with([
-                    'thongbao' => [
-                        'type' => 'success',
-                        'message' => 'Trạng thái bình luận đã được cập nhật thành công.',
-                    ]
-                ]);
-            };
-            return redirect()->route('admin.comments.index')->with([
-                'thongbao' => [
-                    'type' => 'success',
-                    'message' => 'Trạng thái bình luận đã được cập nhật thành công.',
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return back()->with([
-                'thongbao' => [
-                    'type' => 'danger',
-                    'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-                ]
-            ]);
-        }
+        return response()->json(['message' => 'Không tìm thấy bình luận!'], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function reject($id)
     {
-        $comment = Comment::findOrFail($id);  // Tìm danh mục theo ID
+        $comment = Comment::find($id);
+        if ($comment) {
+            $comment->status = 'rejected';
+            $comment->save();
+            return response()->json(['message' => 'Bình luận đã bị từ chối!']);
+        }
+        return response()->json(['message' => 'Không tìm thấy bình luận!'], 404);
+    }
 
-        // Xóa danh mục
-        $comment->delete();
-
-        return redirect()->route('admin.comments.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Bình luận đã được xóa thành công.',
-            ]
-        ]);
+    public function delete($id)
+    {
+        $comment = Comment::find($id);
+        if ($comment) {
+            $comment->delete();
+            return response()->json(['message' => 'Đã xóa bình luận!']);
+        }
+        return response()->json(['message' => 'Không tìm thấy bình luận!'], 404);
     }
 }
