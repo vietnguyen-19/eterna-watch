@@ -93,14 +93,33 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // VOUCHER
     Route::prefix('vouchers')->name('admin.vouchers.')->group(function () {
-        Route::resource('/', VoucherController::class)->except(['show'])->middleware('permission:view_vouchers');
+        Route::get('/', [VoucherController::class, 'index'])->name('index')->middleware('permission:view_vouchers');
+        Route::get('/create', [VoucherController::class, 'create'])->name('create')->middleware('permission:create_vouchers');
+        Route::post('', [VoucherController::class, 'store'])->name('store')->middleware('permission:create_vouchers');
+        Route::get('/{voucher}/edit', [VoucherController::class, 'edit'])->name('edit')->middleware('permission:edit_vouchers');
+        Route::put('/{voucher}', [VoucherController::class, 'update'])->name('update')->middleware('permission:edit_vouchers');
+        Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('destroy')->middleware('permission:delete_vouchers');
         Route::get('/trash', [VoucherController::class, 'trash'])->name('trash')->middleware('permission:view_vouchers');
         Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore')->middleware('permission:restore_vouchers');
         Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_vouchers');
     });
 
+
+
     // NGƯỜI DÙNG
-    Route::resource('users', UserController::class)->names('admin.users')->middleware('permission:view_users');
+    Route::prefix('users')->name('admin.users.')->middleware('permission:view_users')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/trash', [UserController::class, 'trash'])->name('trash');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('{user}', [UserController::class, 'show'])->name('show');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
+        Route::delete('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+    });
+    
 
     // THUỘC TÍNH SẢN PHẨM
     Route::prefix('attributes')->name('admin.attributes.')->group(function () {
@@ -133,8 +152,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('{id}/edit', [ProductController::class, 'edit'])->name('edit')->middleware('permission:edit_products');
         Route::put('{id}/update', [ProductController::class, 'update'])->name('update')->middleware('permission:edit_products');
         Route::delete('destroy/{id}', [ProductController::class, 'destroy'])->name('destroy')->middleware('permission:delete_products');
+
         Route::get('/get-values/{id}', [AttributeController::class, 'getAttributeValues']);
         Route::get('/get-subcategories/{parent_id}', [ProductController::class, 'getSubcategories']);
+
+        Route::get('trash', [ProductController::class, 'trash'])->name('trash')->middleware('permission:delete_products');
+        Route::put('restore/{id}', [ProductController::class, 'restore'])->name('restore')->middleware('permission:delete_products');
+        Route::delete('force-delete/{id}', [ProductController::class, 'forceDelete'])->name('force-delete')->middleware('permission:delete_products');
     });
 
     // PHIÊN BẢN SẢN PHẨM
@@ -142,6 +166,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('index')->middleware('permission:view_products');
         Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
         Route::post('store', [ProductVariantController::class, 'store'])->name('store')->middleware('permission:create_products');
+        Route::post('store-many', [ProductVariantController::class, 'storeMany'])->name('store-many');
         Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('edit')->middleware('permission:edit_products');
         Route::put('{id}/update', [ProductVariantController::class, 'update'])->name('update')->middleware('permission:edit_products');
         Route::delete('destroy/{id}', [ProductVariantController::class, 'destroy'])->name('destroy')->middleware('permission:delete_products');
@@ -155,9 +180,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [OrderController::class, 'show'])->name('show')->middleware('permission:view_orders');
         Route::get('{id}/edit', [OrderController::class, 'edit'])->name('edit')->middleware('permission:edit_orders');
         Route::put('{id}/update', [OrderController::class, 'updateStatus'])->name('update')->middleware('permission:edit_orders');
-        Route::delete('{id}/destroy', [OrderController::class, 'destroy'])->name('destroy')->middleware('permission:delete_orders');
         Route::post('{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send')->middleware('permission:edit_orders');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('status')->middleware('permission:edit_orders');
+
+        Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy'); // Xoá mềm
+        Route::get('/trash', [OrderController::class, 'trash'])->name('trash'); // Danh sách đã xoá
+        Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore'); // Khôi phục
+        Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
     });
 
     Route::prefix('order_items')->group(function () {
@@ -178,12 +207,21 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::put('/roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('admin.roles.update_permissions')->middleware('permission:manage_roles');
 
     // BÌNH LUẬN
-    Route::prefix('comments')->name('admin.comments.')->group(function () {
-        Route::get('/', [CommentController::class, 'index'])->name('index')->middleware('permission:view_comments');
-        Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('edit')->middleware('permission:edit_comments');
-        Route::put('/{id}', [CommentController::class, 'update'])->name('update')->middleware('permission:edit_comments');
-        Route::get('/comments/product', [CommentController::class, 'productComments'])->name('product')->middleware('permission:view_comments');
+
+    Route::put('{id}/approve', [CommentController::class, 'approve'])->name('admin.comments.approve');
+    Route::post('comments/delete-multiple', [CommentController::class, 'deleteMultiple'])->name('admin.comments.deleteMultiple');
+    Route::prefix('comments')->group(function () {
+        Route::get('/posts', [CommentController::class, 'indexPost'])->name('admin.comments.posts');
+        Route::get('/products', [CommentController::class, 'indexProduct'])->name('admin.comments.products');
+
+        Route::post('reply', [CommentController::class, 'reply'])->name('admin.comments.reply');
+        Route::put('update/{id}', [CommentController::class, 'update'])->name('admin.comments.update');
+        Route::post('approve/{id}', [CommentController::class, 'approve'])->name('admin.comments.approve');
+        Route::post('reject/{id}', [CommentController::class, 'reject'])->name('admin.comments.reject');
+        Route::post('delete/{id}', [CommentController::class, 'delete'])->name('admin.comments.delete');
     });
+
+
 
     // BÀI VIẾT
     Route::prefix('posts')->name('admin.posts.')->group(function () {

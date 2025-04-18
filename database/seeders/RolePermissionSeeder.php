@@ -37,8 +37,11 @@ class RolePermissionSeeder extends Seeder
 
             // ===== Vouchers =====
             'view_vouchers',
+            'create_vouchers',
+            'edit_vouchers',
             'restore_vouchers',
             'delete_vouchers',
+            
 
             // ===== Users =====
             'view_users',
@@ -60,6 +63,7 @@ class RolePermissionSeeder extends Seeder
             'create_orders',
             'edit_orders',
             'delete_orders',
+            'restore_orders',
 
             // ===== Brands (Thương hiệu) =====
             'view_brands',

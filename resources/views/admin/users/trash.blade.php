@@ -10,31 +10,17 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
                                     <h5 class="card-title mb-0 mr-3"><strong>Danh sách tài khoản</strong></h5>
-                                    <select name="role_id" class="form-select form-control" style="width: 200px;"
-                                        onchange="window.location.href='{{ route('admin.users.index') }}?role_id=' + this.value">
-                                        <option value="">Tất cả vai trò</option>
-                                        @foreach ($roles as $role)
-                                            <option value="{{ $role->id }}"
-                                                {{ request('role_id') == $role->id ? 'selected' : '' }}>
-                                                {{ $role->name == 'employee' ? 'Nhân viên' : ($role->name == 'user' ? 'Khách hàng' : $role->name) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
                                 </div>
                                 <div>
-                                    <a href="{{ route('admin.users.trash') }}" class="btn btn-danger">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thùng rác
-                                    </a>
+
                                     <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                                        <i class="ri-add-line align-bottom me-1"></i>Thêm tài khoản
+                                        <i class="ri-add-line align-bottom me-1"></i>Quay lại trang danh sách
                                     </a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card-body">
-                         
-
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered align-middle" id="userTable">
                                     <thead class="table-light">
@@ -44,12 +30,13 @@
                                             <th style="width: 20%">Email</th>
                                             <th style="width: 15%">Số điện thoại</th>
                                             <th style="width: 10%">Trạng thái</th>
+                                            <th style="width: 10%">Thời gian xóa</th>
                                             <th style="width: 10%">Vai trò</th>
                                             <th style="width: 15%">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($data as $user)
+                                        @forelse ($users as $user)
                                             <tr>
                                                 <td>{{ $user->id }}</td>
                                                 <td>
@@ -88,6 +75,7 @@
                                                                 định</span>
                                                     @endswitch
                                                 </td>
+                                                <td class="align-middle">{{ $user->updated_at }}</td>
                                                 <td class="align-middle">
                                                     @if ($user->role)
                                                         <span class="badge bg-primary-subtle text-primary">
@@ -100,25 +88,29 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2">
-                                                        <a href="{{ route('admin.users.show', $user->id) }}"
-                                                            class="btn btn-sm btn-info">
-                                                            <i class="fas fa-info-circle"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                            class="btn btn-sm btn-warning">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin.users.destroy', $user->id) }}"
+                                                        {{-- Nút khôi phục --}}
+                                                        <form action="{{ route('admin.users.restore', $user->id) }}"
                                                             method="POST" class="d-inline"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn khôi phục tài khoản này?');">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-sm btn-info mr-1">
+                                                                <i class="fas fa-undo-alt"></i> {{-- Biểu tượng khôi phục --}}
+                                                            </button>
+                                                        </form>
+
+                                                        {{-- Nút xóa vĩnh viễn --}}
+                                                        <form action="{{ route('admin.users.force-delete', $user->id) }}"
+                                                            method="POST" class="d-inline"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này? Hành động này không thể hoàn tác.');">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-danger">
-                                                                <i class="fas fa-trash"></i>
+                                                                <i class="fas fa-trash-alt"></i> {{-- Biểu tượng xóa vĩnh viễn --}}
                                                             </button>
                                                         </form>
                                                     </div>
                                                 </td>
+
                                             </tr>
                                             @empty
                                                 <tr>

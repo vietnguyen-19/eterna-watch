@@ -22,20 +22,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            @if (session('thongbao'))
-                                <div id="thongbao-alert"
-                                    class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white fade show"
-                                    role="alert">
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                                        aria-label="Đóng"></button>
-                                    <i class="ri-notification-off-line label-icon me-2"></i>
-                                    <strong>{{ session('thongbao.message') }}</strong>
-                                </div>
-                            @endif
-
+                           
 
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="roleTable">
+                                <table class="table table-hover table-bordered align-middle" id="roleTable">
                                     <thead>
                                         <tr>
                                             <th>STT</th>
@@ -52,18 +42,24 @@
 
                                                 <td>{{ $role->users->count() ?? 0 }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.roles.show', $role->id) }}"
-                                                        class="btn btn-info btn-sm">Chi tiết</a>
-                                                    <a href="{{ route('admin.roles.edit', $role->id) }}"
-                                                        class="btn btn-warning btn-sm">Sửa</a>
-                                                    <form action="{{ route('admin.roles.destroy', $role->id) }}"
-                                                        method="POST" style="display: inline-block;"
+                                                    <a href="{{ route('admin.roles.show', $role->id) }}" class="btn btn-info btn-sm" title="Xem chi tiết">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                
+                                                    <a href="{{ route('admin.roles.edit', $role->id) }}" class="btn btn-warning btn-sm" title="Sửa vai trò">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                
+                                                    <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" style="display: inline-block;"
                                                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm" title="Xóa vai trò">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
                                                     </form>
                                                 </td>
+                                                
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -99,7 +95,7 @@
                                 </div>
                             @endif
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="permissionTable">
+                                <table class="table table-hover table-bordered align-middle" id="permissionTable">
                                     <thead>
                                         <tr>
                                             <th>STT</th>
@@ -113,17 +109,22 @@
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $permission->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.permissions.edit', $permission->id) }}"
-                                                        class="btn btn-warning btn-sm">Sửa</a>
-                                                    <form
-                                                        action="{{ route('admin.permissions.destroy', $permission->id) }}"
+                                                    <a href="{{ route('admin.permissions.edit', $permission->id) }}" 
+                                                        class="btn btn-warning btn-sm" title="Sửa phân quyền">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                
+                                                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" 
                                                         method="POST" style="display: inline-block;"
                                                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm" title="Xóa phân quyền">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
                                                     </form>
                                                 </td>
+                                                
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -171,6 +172,33 @@
 
         });
     </script>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     @if (session('success'))
+         <script>
+             Swal.fire({
+                 icon: 'success',
+                 title: 'Thành công!',
+                 text: '{{ session('success') }}',
+                 confirmButtonText: 'OK',
+                 timer: 3000,
+                 timerProgressBar: true,
+                 showConfirmButton: false
+             });
+         </script>
+     @endif
+     @if (session('error'))
+         <script>
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Lỗi!',
+                 text: '{{ session('error') }}',
+                 confirmButtonText: 'OK',
+                 timer: 3000,
+                 timerProgressBar: true,
+                 showConfirmButton: false
+             });
+         </script>
+     @endif
     <script>
         $(document).ready(function() {
             // Tự động ẩn thông báo sau 5 giây (5000ms)

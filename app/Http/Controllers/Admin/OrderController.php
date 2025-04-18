@@ -54,11 +54,11 @@ class OrderController extends Controller
 
         return view('admin.orders.create', compact('productVariants'));
     }
-    
+
     public function edit($id)
     {
         $order = Order::with(['orderItems.productVariant.product', 'address', 'entity', 'payment', 'voucher'])->findOrFail($id);
-       
+
         $statusHistories = StatusHistory::where('entity_id', $order->id)
             ->where('entity_type', 'order')
             ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
@@ -67,51 +67,83 @@ class OrderController extends Controller
     }
     public function store(Request $request)
     {
-       
         DB::beginTransaction();
 
-        // Kiểm tra nếu user_id = null, thì tạo user mới
-        if ($request->user_id == null) {
-            $user = User::create([
-                'name'     => $request->name,
-                'email'    => $request->email,
-                'phone'    => $request->phone,
-                'password' => Hash::make(Str::random(10)), // Mật khẩu ngẫu nhiên
-                'gender'   => null,
-                'avatar'   => null,
-                'note'     => null,
-                'role_id'  => 2,  // Mặc định role user
-                'status'   => 'active'
-            ]);
+        $request->validate([
+            'user_id'            => 'required|integer|exists:users,id',
+            'name'               => 'required|string|max:255',
+            'email'              => 'nullable|email|max:255',
+            'phone'              => 'required|string|max:20',
+            'city'               => 'required|string|max:100',
+            'district'           => 'required|string|max:100',
+            'ward'               => 'required|string|max:100',
+            'street_address'     => 'required|string|max:255',
 
-            // Tạo địa chỉ cho user
-            UserAddress::create([
-                'user_id'          => $user->id,
-                'city'             => $request->city,
-                'district'         => $request->district,
-                'ward'             => $request->ward,
-                'specific_address' => $request->specific_address
-            ]);
+            'order_items'        => 'required|array|min:1',
+            'order_items.*.id'       => 'required|integer|exists:product_variants,id',
+            'order_items.*.quantity' => 'required|integer|min:1',
 
-            // Gán user_id mới vào đơn hàng
-            $userId = $user->id;
-        } else {
-            $userId = $request->user_id;
+            'total_amount'       => 'required|numeric|min:0',
+            'voucher_id'         => 'nullable|integer|exists:vouchers,id',
+            'shipping_method'    => 'required|string',
+            'payment_method'     => 'required|string|in:cash,vnpay',
+            'payment_status'     => 'required|string|in:pending,completed,failed',
+        ]);
+
+
+        $userId = $request->user_id;
+
+        // Kiểm tra xem địa chỉ mới có giống với địa chỉ mặc định không
+        $needCreateAddress = true;
+        $defaultAddress = UserAddress::where('user_id', $userId)->where('is_default', true)->first();
+
+        if ($defaultAddress) {
+            $sameInfo = $defaultAddress->full_name === $request->name &&
+                $defaultAddress->phone_number === $request->phone &&
+                $defaultAddress->street_address === $request->specific_address &&
+                $defaultAddress->ward === $request->ward &&
+                $defaultAddress->district === $request->district &&
+                $defaultAddress->city === $request->city;
+
+            if ($sameInfo) {
+                $needCreateAddress = false;
+                $address_id = $defaultAddress->id;
+            }
+        }
+
+        if ($needCreateAddress) {
+            $address =  UserAddress::create([
+                'user_id'        => $userId,
+                'full_name'      => $request->name,
+                'phone_number'   => $request->phone,
+                'email'          => $request->email,
+                'street_address' => $request->street_address,
+                'ward'           => $request->ward,
+                'district'       => $request->district,
+                'city'           => $request->city,
+                'country'        => 'Việt Nam',
+                'is_default'     => false,
+                'note'           => null,
+            ]);
+            $address_id = $address->id;
         }
 
         // Tạo đơn hàng
         $order = new Order();
         $order->user_id      = $userId;
         $order->voucher_id   = $request->voucher_id;
+        $order->address_id   = $address_id;
         $order->total_amount = $request->total_amount;
         $order->status       = 'pending';
-        $order->order_code = 'ORD-' . $order->id . '-' . Str::random(5);
+        $order->order_code   = 'ORD-' . time() . '-' . Str::upper(Str::random(5));
         $order->save();
 
-        // Xử lý danh sách sản phẩm trong đơn hàng
+        // Thêm các sản phẩm vào đơn hàng
         foreach ($request->order_items as $item) {
             $variant = ProductVariant::find($item['id']);
+
             if (!$variant || $variant->stock < $item['quantity']) {
+                DB::rollBack();
                 return redirect()->back()->with('error', 'Sản phẩm không đủ hàng');
             }
 
@@ -126,24 +158,27 @@ class OrderController extends Controller
             $variant->decrement('stock', $item['quantity']);
         }
 
+        // Tăng số lần dùng của voucher nếu có
         if ($request->voucher_id) {
             Voucher::where('id', $request->voucher_id)->increment('used_count');
         }
+
+        // Tạo thanh toán
         Payment::create([
             'order_id'        => $order->id,
             'payment_method'  => $request->payment_method,
             'amount'          => $request->total_amount,
             'payment_status'  => $request->payment_status,
-            'transaction_id'  => '', // Mã giao dịch ngẫu nhiên
+            'transaction_id'  => '', // có thể generate mã nếu cần
             'payment_date'    => now()
         ]);
 
         DB::commit();
 
-        // Điều hướng đến trang chi tiết đơn hàng
         return redirect()->route('admin.orders.edit', $order->id)
             ->with('success', 'Đặt hàng thành công! Mã đơn: ' . $order->order_code);
     }
+
 
     public function updateStatus(Request $request, Order $order)
     {
@@ -162,12 +197,7 @@ class OrderController extends Controller
 
         // Kiểm tra nếu trạng thái mới có trong danh sách hợp lệ
         if (!isset($validTransitions[$currentStatus]) || !in_array($newStatus, $validTransitions[$currentStatus])) {
-            return redirect()->route('admin.orders.edit', $order->id)->with([
-                'thongbao' => [
-                    'type' => 'danger',
-                    'message' => 'Trạng thái không hợp lệ.',
-                ]
-            ]);
+            return redirect()->route('admin.orders.edit', $order->id)->with('error', 'Trạng thái không hợp lệ.');
         }
         StatusHistory::create([
             'entity_id' => $order->id,
@@ -182,11 +212,61 @@ class OrderController extends Controller
         $order->status = $newStatus;
         $order->save();
 
-        return redirect()->route('admin.orders.edit', $order->id)->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công.',
-            ]
-        ]);
+        return redirect()->route('admin.orders.edit', $order->id)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
+        return redirect()->route('admin.orders.index')->with('success', 'Đã xoá đơn hàng tạm thời.');
+    }
+
+    // Danh sách đã xoá
+    public function trash(Request $request)
+    {
+        $status = $request->input('status', 'all');
+
+        // Đếm số lượng đơn hàng theo trạng thái
+        $statusCounts = Order::selectRaw("status, COUNT(*) as count")
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // Đảm bảo tất cả trạng thái đều có giá trị
+        $allStatuses = ['pending', 'confirmed', 'processing', 'completed', 'cancelled'];
+        foreach ($allStatuses as $s) {
+            $statusCounts[$s] = $statusCounts[$s] ?? 0;
+        }
+
+        // Đếm tổng số đơn hàng
+        $statusCounts['all'] = array_sum($statusCounts);
+
+        // Lấy danh sách đơn hàng theo trạng thái
+        $orders = Order::onlyTrashed()
+            ->with('orderItems')
+            ->when($status !== 'all', function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $orders = Order::onlyTrashed()->latest()->get();
+        return view('admin.orders.trash', compact('orders', 'statusCounts', 'status'));
+    }
+
+    // Khôi phục
+    public function restore($id)
+    {
+        $order = Order::withTrashed()->findOrFail($id);
+        $order->restore();
+        return redirect()->route('admin.orders.trash')->with('success', 'Đã khôi phục đơn hàng.');
+    }
+
+    // Xoá vĩnh viễn
+    public function forceDelete($id)
+    {
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->forceDelete();
+        return redirect()->route('admin.orders.trashed')->with('success', 'Đã xoá vĩnh viễn đơn hàng.');
     }
 }

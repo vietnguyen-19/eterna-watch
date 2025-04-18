@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('total_amount', 15, 2)->default(0.00);
             $table->enum('status', ['pending', 'confirmed', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->enum('shipping_method', ['fixed', 'store', 'free'])->default('fixed');
+            $table->softDeletes();
             $table->timestamps();
             
         });

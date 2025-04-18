@@ -5,34 +5,25 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    @if (session('thongbao'))
-                        <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                            role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
-
-                        </div>
-                        @php
-                            session()->forget('thongbao');
-                        @endphp
-                    @endif
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0"><b>Danh sách đơn hàng</b></h5>
+                                    <h5 class="card-title mb-0"><b>Danh sách đơn hàng</b></h5>
+                                </div>
+                                <div class="col-sm-auto">
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        <a href="{{ route('admin.orders.trash') }}" class="btn btn-danger">
+                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                        </a>
+                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
+                                            <i class="ri-add-line align-bottom me-1"></i> Tạo đơn thủ công
+                                        </a>
                                     </div>
                                 </div>
-                                {{-- <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm đơn hàng mới</a>
-                                    </div>
-                                </div> --}}
                             </div>
                         </div>
+
                         <div class="card-body">
                             <div class="tab-content">
                                 <div>
@@ -45,12 +36,12 @@
                                                     justify-content: space-between;
                                                     flex-wrap: wrap;
                                                 }
-                                            
+
                                                 .nav-tabs-custom .nav-item {
                                                     flex: 1;
                                                     text-align: center;
                                                 }
-                                            
+
                                                 .nav-tabs-custom .nav-link {
                                                     border: none;
                                                     border-radius: 0;
@@ -58,65 +49,71 @@
                                                     font-weight: 500;
                                                     transition: all 0.3s ease;
                                                 }
-                                            
+
                                                 .nav-tabs-custom .nav-link.active {
                                                     background-color: #f0f0f0;
                                                     border-bottom: 3px solid #0d6efd;
                                                     color: #0d6efd;
                                                 }
-                                            
+
                                                 .nav-tabs-custom .badge {
                                                     margin-left: 5px;
                                                     font-size: 12px;
                                                     vertical-align: middle;
                                                 }
                                             </style>
-                                            
+
                                             <ul class="nav nav-tabs nav-tabs-custom w-100">
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'all' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'all']) }}">
                                                         Tất cả
-                                                        <span class="badge rounded-pill bg-dark">{{ $statusCounts['all'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-dark">{{ $statusCounts['all'] }}</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'pending']) }}">
                                                         Đơn mới
-                                                        <span class="badge rounded-pill bg-danger text-dark">{{ $statusCounts['pending'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-danger text-dark">{{ $statusCounts['pending'] }}</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'confirmed' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'confirmed']) }}">
                                                         Đã xác nhận
-                                                        <span class="badge rounded-pill bg-warning text-dark">{{ $statusCounts['confirmed'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-warning text-dark">{{ $statusCounts['confirmed'] }}</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'processing' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'processing']) }}">
                                                         Đang chuẩn bị
-                                                        <span class="badge rounded-pill bg-primary">{{ $statusCounts['processing'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-primary">{{ $statusCounts['processing'] }}</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'completed' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'completed']) }}">
                                                         Hoàn thành
-                                                        <span class="badge rounded-pill bg-success">{{ $statusCounts['completed'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-success">{{ $statusCounts['completed'] }}</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'cancelled' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'cancelled']) }}">
                                                         Đã hủy
-                                                        <span class="badge rounded-pill bg-danger">{{ $statusCounts['cancelled'] }}</span>
+                                                        <span
+                                                            class="badge rounded-pill bg-danger">{{ $statusCounts['cancelled'] }}</span>
                                                     </a>
                                                 </li>
                                             </ul>
-                                            
+
 
                                             <!-- Bảng danh sách đơn hàng -->
                                             <div class="table-responsive mt-4">
@@ -177,15 +174,13 @@
                                                                 <td class="align-middle">
                                                                     {{ $order->created_at->format('d/m/Y H:i') }}</td>
                                                                 <td class="align-middle">
-                                                                    <div class="btn-group">
-                                                                        <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                                            class="btn btn-info btn-sm">
-                                                                            Chi tiết
-                                                                        </a>
+                                                                    <div class="btn">
                                                                         <a href="{{ route('admin.orders.edit', $order->id) }}"
-                                                                            class="btn btn-dark btn-sm">
-                                                                            Sửa
+                                                                            class="btn btn-info btn-sm"
+                                                                            title="Xem chi tiết">
+                                                                            <i class="fas fa-eye"></i>
                                                                         </a>
+
                                                                         <form
                                                                             action="{{ route('admin.orders.destroy', $order->id) }}"
                                                                             method="POST" class="d-inline-block">
@@ -193,11 +188,13 @@
                                                                             @method('DELETE')
                                                                             <button type="submit"
                                                                                 class="btn btn-danger btn-sm"
+                                                                                title="Xóa đơn hàng"
                                                                                 onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">
-                                                                                Xóa
+                                                                                <i class="fas fa-trash-alt"></i>
                                                                             </button>
                                                                         </form>
                                                                     </div>
+
                                                                 </td>
                                                             </tr>
                                                             @empty
@@ -228,9 +225,7 @@
                                 </div>
 
                             </div>
-                            <div class="card-header">
-                                <button class="btn btn-danger" id="deleteSelected">Xóa đã chọn</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -271,7 +266,33 @@
     @section('script')
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        @if (session('success'))
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            </script>
+        @endif
+        @if (session('error'))
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '{{ session('error') }}',
+                    confirmButtonText: 'OK',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            </script>
+        @endif
         <!-- Bootstrap CSS -->
         <!-- Bootstrap CSS -->
 
@@ -288,43 +309,51 @@
                 'orderTableconfirmed',
                 'orderTablecompleted',
                 'orderTablecancelled',
-               
             ];
 
             // Lặp qua từng ID và áp dụng DataTable
             tableIds.forEach(function(tableId) {
-                $('#' + tableId).DataTable({
-                    "paging": true,
-                    "lengthMenu": [10, 20, 50],
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "language": {
-                        "lengthMenu": "Hiển thị _MENU_ dòng",
-                        "zeroRecords": "Không tìm thấy dữ liệu",
-                        "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
-                        "infoEmpty": "Không có dữ liệu",
-                        "search": "Tìm kiếm:",
-                        "paginate": {
-                            "first": "Trang đầu",
-                            "last": "Trang cuối",
-                            "next": "Sau",
-                            "previous": "Trước"
+                var $table = $('#' + tableId);
+
+                // Kiểm tra bảng có tồn tại không
+                if ($table.length) {
+                    // Lấy số cột từ phần thead
+                    var thCount = $table.find('thead th').length;
+                    var isValid = true;
+
+                    // Kiểm tra các dòng trong tbody có đúng số lượng cột không
+                    $table.find('tbody tr').each(function() {
+                        if ($(this).find('td').length !== thCount) {
+                            isValid = false;
                         }
+                    });
+
+                    // Nếu số cột hợp lệ thì áp dụng DataTable
+                    if (isValid) {
+                        $table.DataTable({
+                            paging: true,
+                            lengthMenu: [10, 20, 50],
+                            searching: true,
+                            ordering: true,
+                            info: true,
+                            language: {
+                                lengthMenu: "Hiển thị _MENU_ dòng",
+                                zeroRecords: "Không tìm thấy dữ liệu",
+                                info: "Đang hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                                infoEmpty: "Không có dữ liệu",
+                                search: "Tìm kiếm:",
+                                paginate: {
+                                    first: "Trang đầu",
+                                    last: "Trang cuối",
+                                    next: "Sau",
+                                    previous: "Trước"
+                                }
+                            }
+                        });
+                    } else {
+                        console.warn(`❌ Bảng ${tableId} có số cột <td> không khớp với <th>, bỏ qua DataTables.`);
                     }
-                });
-            });
-        </script>
-       
-        <script>
-            // Tự động đóng thông báo sau 5 giây (5000ms)
-            setTimeout(function() {
-                var alert = document.getElementById('thongbao-alert');
-                if (alert) {
-                    // Sử dụng Bootstrap để đóng alert
-                    var bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
                 }
-            }, 5000); // 5000ms = 5 giây
+            });
         </script>
     @endsection

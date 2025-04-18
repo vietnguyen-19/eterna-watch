@@ -16,27 +16,26 @@ class OrderItemController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::with('address')
+        $users = User::with('defaultAddress')
             ->where('name', 'like', "%$search%")
             ->orWhere('email', 'like', "%$search%")
             ->limit(10)
             ->get();
-
         $filteredUsers = $users->map(function ($user) {
             return [
                 'id'     => $user->id,
                 'name'   => $user->name,
                 'email'  => $user->email,
                 'phone'  => $user->phone,
-                'address' => $user->address ? [
-                    'city'              => $user->address->city ?? '',
-                    'district'          => $user->address->district ?? '',
-                    'ward'              => $user->address->ward ?? '',
-                    'specific_address'  => $user->address->specific_address ?? '',
+                'address' => $user->defaultAddress ? [
+                    'city'              => $user->defaultAddress->city ?? '',
+                    'district'          => $user->defaultAddress->district ?? '',
+                    'ward'              => $user->defaultAddress->ward ?? '',
+                    'street_address'  => $user->defaultAddress->street_address ?? '',
                 ] : null, // Nếu không có address thì trả về null
             ];
         });
-
+       
         return response()->json($filteredUsers);
     }
 
