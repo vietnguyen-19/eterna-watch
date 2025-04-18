@@ -267,6 +267,6 @@ class OrderController extends Controller
     {
         $order = Order::onlyTrashed()->findOrFail($id);
         $order->forceDelete();
-        return redirect()->route('admin.orders.trashed')->with('success', 'Đã xoá vĩnh viễn đơn hàng.');
+        return redirect()->route('admin.orders.trash')->with('success', 'Đã xoá vĩnh viễn đơn hàng.');
     }
 }

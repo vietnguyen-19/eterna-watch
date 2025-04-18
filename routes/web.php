@@ -102,6 +102,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/trash', [VoucherController::class, 'trash'])->name('trash')->middleware('permission:view_vouchers');
         Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore')->middleware('permission:restore_vouchers');
         Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_vouchers');
+
     });
 
 
@@ -120,6 +121,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::delete('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
     });
     
+
 
     // THUỘC TÍNH SẢN PHẨM
     Route::prefix('attributes')->name('admin.attributes.')->group(function () {

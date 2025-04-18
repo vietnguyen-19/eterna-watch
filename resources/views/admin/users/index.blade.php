@@ -16,6 +16,7 @@
                                         @foreach ($roles as $role)
                                             <option value="{{ $role->id }}"
                                                 {{ request('role_id') == $role->id ? 'selected' : '' }}>
+
                                                 {{ $role->name == 'employee' ? 'Nhân viên' : ($role->name == 'user' ? 'Khách hàng' : $role->name) }}
                                             </option>
                                         @endforeach

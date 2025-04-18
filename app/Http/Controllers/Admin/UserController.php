@@ -36,6 +36,10 @@ class UserController extends Controller
     }
 
     /**
+     * Hiển thị danh sách người dùng đã xóa.
+     */
+
+    /**
      * Hiển thị form tạo mới người dùng.
      */
     public function create()
@@ -191,13 +195,11 @@ class UserController extends Controller
     }
 
     /**
-     * Xóa người dùng.
+     * Xóa mềm người dùng.
      */
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
-
             $user = User::findOrFail($id);
 
             UserAddress::where('user_id', $id)->delete();

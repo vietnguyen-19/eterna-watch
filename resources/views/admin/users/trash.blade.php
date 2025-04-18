@@ -13,8 +13,8 @@
                                 </div>
                                 <div>
 
-                                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                                        <i class="ri-add-line align-bottom me-1"></i>Quay lại trang danh sách
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                                        <i class="ri-add-line align-bottom me-1"></i>Quay lại danh sách
                                     </a>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($users as $user)
+                                        @foreach ($users as $user)
                                             <tr>
                                                 <td>{{ $user->id }}</td>
                                                 <td>
@@ -112,12 +112,7 @@
                                                 </td>
 
                                             </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="7" class="text-center text-muted">Không có tài khoản nào.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -167,31 +162,28 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $('#userTable').DataTable({
-                    "pageLength": 10,
-                    "lengthMenu": [10, 25, 50],
-                    "order": [
-                        [0, 'desc']
-                    ],
-                    "language": {
-                        "lengthMenu": "Hiển thị _MENU_ dòng",
-                        "zeroRecords": "Không tìm thấy dữ liệu",
-                        "info": "Trang _PAGE_ / _PAGES_",
-                        "infoEmpty": "Không có dữ liệu",
-                        "search": "Tìm kiếm:",
-                        "paginate": {
-                            "first": "Đầu",
-                            "last": "Cuối",
-                            "next": "Sau",
-                            "previous": "Trước"
-                        }
+            $('#userTable').DataTable({
+                "pageLength": 10,
+                "lengthMenu": [10, 25, 50],
+                "order": [
+                    [0, 'desc']
+                ],
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Trang _PAGE_ / _PAGES_",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
                     }
-                });
-
-                // Tự động ẩn thông báo sau 5 giây
-
+                }
             });
+
+            // Tự động ẩn thông báo sau 5 giây
         </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @if (session('success'))
