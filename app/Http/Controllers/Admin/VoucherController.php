@@ -22,6 +22,7 @@ class VoucherController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'name'           => 'required|string|max:100',
             'code'           => 'required|string|unique:vouchers,code|max:50',
             'discount_type'  => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:0',
