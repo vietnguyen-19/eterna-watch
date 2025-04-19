@@ -20,8 +20,8 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
-
-
+use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\Client\RefundController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('client.login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -96,6 +96,13 @@ Route::prefix('payments')->group(function () {
     Route::get('complete/{id}', [PaymentController::class, 'complete'])->name('payment.complete');
 });
 
+Route::prefix('orders')->group(function () {
+    Route::get('/{id}/refund', [RefundController::class, 'create'])->name('refunds.create');
+    Route::post('/{id}/refund', [RefundController::class, 'store'])->name('refunds.store');
+});
+
+
+
 Route::prefix('comments')->middleware('customer')->group(function () {
     Route::post('/store/{id}', [CommentController::class, 'store'])->name('comments.store');
     Route::post('/store-post/{id}', [CommentController::class, 'storePost'])->name('comments.store_post');
@@ -125,4 +132,7 @@ Route::post('contact_us/store', [SettingController::class, 'contactStore'])->nam
 
 Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
 Route::get('privacy', [SettingController::class, 'privacy'])->name('client.privacy');
+
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('client.chatbot.index');
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('client.chatbot.chat');
 

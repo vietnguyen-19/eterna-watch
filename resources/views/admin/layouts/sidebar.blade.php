@@ -12,18 +12,21 @@
             <nav class="">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
-                    <li style="background-color: rgb(86, 86, 86); border-radius: 4px" class="nav-item">
+                    <li style="background-color: rgb(22, 22, 22); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             @if (Auth::check())
-                                @if (Auth::user()->avatar && Storage::exists('public/' . Auth::user()->avatar))
-                                    <img src=" {{ Storage::url(Auth::user()->avatar) }}"
-                                        class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
-                                @else
-                                    <img src="{{ asset('theme/velzon/assets/images/users/avatar-1.jpg') }}"
-                                        class="nav-icon rounded-circle me-2" alt="User Image" width="100%">
-                                @endif
-                                <p class="fw-semibold ml-2">{{ Auth::user()->name }}</p>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatar/default.jpeg') }}"
+                                        class="rounded-circle me-2" alt="User Image" width="40" height="40"
+                                        style="object-fit: cover; border: 1px solid #ccc;">
+                                        <div class="d-flex flex-column justify-content-center ml-3">
+                                            <p class="text-white fw-semibold mb-0">{{ Auth::user()->name }}</p>
+                                            <small class="text-info">{{ Auth::user()->role_id == 1 ? 'Quản trị viên' : 'Nhân viên' }}</small>
+
+                                        </div>
+                                        
+                                </div>
                             @endif
 
                         </a>
@@ -31,17 +34,18 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.users.show', Auth::user()->id) }}" class="nav-link">
                                     <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
-                                    <p>Xem tài khoản</p>
+                                    <p class="text-white">Xem tài khoản</p>
                                 </a>
                             </li>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                             <li class="nav-item">
                                 <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                                     href="" class="nav-link">
                                     <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
-                                    <p>Đăng xuất</p>
+                                    <p class="text-white">Đăng xuất</p>
                                 </a>
                             </li>
                         </ul>
@@ -148,12 +152,20 @@
                                 <p>Danh sách</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.refunds.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.refunds.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Quản lí hoàn hàng</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>
 
-                <!-- quản lý banner -->
-                <li class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
+                <!-- quản lý bann er -->
+                <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}"
+                    class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-images"></i>
                         <p>
@@ -180,7 +192,7 @@
                 </li>
 
                 <!-- Tài khoản -->
-                <li
+                <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}"
                     class="nav-item {{ Request::is('admin/users*') || Request::is('admin/permissions*') || Request::is('admin/roles*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}">
                         <i class="nav-icon fa-solid fa-users"></i>
@@ -197,18 +209,12 @@
                                 <p>Danh sách tài khoản</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.permissions.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.permissions.index') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Danh sách phân quyền</p>
-                            </a>
-                        </li>
+
                         <li class="nav-item">
                             <a href="{{ route('admin.roles.index') }}"
                                 class="nav-link {{ Request::routeIs('admin.roles.index') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Danh sách vai trò</p>
+                                <p>Quản lí phân quyền</p>
                             </a>
                         </li>
                     </ul>
@@ -252,17 +258,25 @@
                     </a>
                     <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.comments.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.comments.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.comments.posts') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.posts') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Danh sách</p>
+                                <p>Bình luận bài viết</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.comments.products') }}"
+                                class="nav-link {{ Request::routeIs('admin.comments.products') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Đánh giá sản phẩm</p>
                             </a>
                         </li>
                     </ul>
                 </li>
 
                 {{-- Quản lý cài đặt --}}
-                <li class="nav-item {{ Request::is('admin/settings*') ? 'menu-open' : '' }}">
+                <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}"
+                    class="nav-item {{ Request::is('admin/settings*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-gear"></i>
                         <p>

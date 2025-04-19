@@ -1,0 +1,205 @@
+[33m258a0e7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev_tam[m[33m)[m Merge remote-tracking branch 'origin/main' into dev_tam
+[33m118c906[m[33m ([m[1;31morigin/dev_tam[m[33m)[m tích hợp gemini
+[33mfff4497[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m hiển thị banner ra client
+[33maa5f07c[m[33m ([m[1;31morigin/văn[m[33m)[m Merge branch 'main' into văn
+[33m5015825[m Tạo dữ liệu mẫu, banner admin, sửa lỗi
+[33mbb5baa9[m Merge branch 'main' into văn
+[33mc4e01bd[m update_banner
+[33mb46fd19[m[33m ([m[1;31morigin/levan[m[33m)[m Resolve merge conflicts giữa main và levan
+[33meb64046[m Văn
+[33m52b4b9a[m Tạo dữ liệu mẫu
+[33m3c93649[m route voucher
+[33md065753[m Merge branch 'main' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33mbc0c1c6[m Dev tam
+[33m2c11a51[m Merge remote-tracking branch 'origin/main' into dev_tam
+[33me2b10a0[m update thanh toán
+[33me710cce[m Merge pull request #96 from vietnguyen-19/ngocle1
+[33m1e142ab[m[33m ([m[1;31morigin/ngocle1[m[33m)[m Merge branch 'main' into ngocle1
+[33ma17bddd[m add composer.lock
+[33m3b20312[m call api
+[33ma281400[m Merge branch 'main' into dev_tam
+[33m86dbf4b[m call api
+[33mbbe8276[m sửa footer, thêm tìm kiếm.
+[33m33b091c[m Sua loi
+[33m8b25aee[m tìm kiếm footer
+[33m7c28bb9[m uodate
+[33m6990b00[m Merge branch 'main' into caodac
+[33mdf4c872[m update
+[33m93fbbee[m uodate
+[33m3cea53f[m up
+[33mad0cfe2[m update
+[33m3c5d54e[m[33m ([m[1;31morigin/viet[m[33m)[m Merge branch 'main' into viet
+[33mfc8c1dd[m update
+[33m2c558e1[m Văn
+[33m02b413e[m Merge branch 'main' into văn
+[33m984f127[m Merge branch 'văn' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33m6fe3f85[m up
+[33m6ee7b21[m sửa lại
+[33m6a9453b[m pix cưng dữ liệu
+[33m38db657[m save code
+[33m190d3c0[m Merge branch 'main' into levan
+[33m0a06c89[m update setting table and comment
+[33m952b217[m Merge branch 'main' into viet
+[33ma13851e[m update
+[33m8d6b567[m Merge branch 'main' into levan
+[33m62a1297[m update setting table and comment
+[33m61faa9d[m update
+[33ma742b55[m update
+[33m1f69c32[m Sửa đặt hàng thành công
+[33m9407c8a[m Sửa vận chuyển,đk thêm sp,show html,min max
+[33m433ad0d[m Văn
+[33me7a15ba[m Merge branch 'main' into văn
+[33m8fe63f8[m Caodac
+[33m3e656dc[m[33m ([m[1;31morigin/caodac11[m[33m)[m upload
+[33mf9d1c01[m update
+[33m77c5d48[m upload
+[33md9a6803[m Delete composer.lock
+[33mfd4223e[m update_order
+[33m803b2bc[m update_order
+[33mef214d1[m update_order
+[33mad51a77[m update_order
+[33m317658b[m abc
+[33m4b6fc0f[m Đã xử lý conflict khi pull
+[33m6382379[m Resolve merge conflict
+[33mc55039b[m update
+[33mc50ef62[m Merge branch 'main' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33m58d2cfb[m điều kiện đăng nhập cho admin và staff
+[33m3eef085[m Merge branch 'main' into viet
+[33m8b97f5f[m settings
+[33ma5fe927[m điều kiện đăng nhập cho admin và staff
+[33ma44582e[m Merge branch 'main' into dangquyen
+[33m572694a[m login
+[33mac8e4df[m login
+[33mf8aa9fe[m update permission
+[33m8c6e1ba[m Merge branch 'main' into viet
+[33m7489182[m update permission
+[33m7818b0d[m update
+[33m99d34f2[m them phan tin tuc
+[33md5c4c0b[m .
+[33m6e5aba3[m Merge branch 'main' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33m887c6f6[m update
+[33m8be5e97[m update
+[33me5888a5[m .
+[33m3485ae6[m xóa user
+[33md79fe77[m Merge branch 'main' into dev_tam
+[33m4a47bcc[m .
+[33m4edd113[m fix setting show
+[33m13297e4[m fix setting showshow
+[33mc40b99e[m .
+[33m585d73e[m xóa user
+[33md8adf2b[m .
+[33ma8eb7c6[m sửa sidebar
+[33m7a11284[m Merge branch 'main' into viet
+[33m1cacd8a[m sửa sidebar
+[33mfddc4ed[m .
+[33m61e2bbd[m .
+[33mb7a5a2a[m sửa flie routes/web
+[33m4da0b60[m sửa flie routes/webweb
+[33ma353464[m thu gọn menu, thêm menu setting
+[33mde5c22d[m Merge branch 'main' into viet
+[33m9e207c2[m thu gọn menu, thêm menu settingsetting
+[33m7bba0af[m sửa sidebar
+[33m4631f1f[m Merge branch 'main' into levan
+[33m1dc6aab[m Resolve conflicts and merge changes
+[33m9d08895[m settings
+[33mb60121e[m .
+[33m6aa4b09[m ;
+[33ma8996b2[m .
+[33ma6809be[m .
+[33mfb83024[m settings
+[33m45107e9[m Merge branch 'main' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33m443b191[m Merge branch 'văn' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33m37d15f7[m edit voucher
+[33m66ce749[m Sửa bài viết
+[33mab3d52d[m settings
+[33md28d976[m Merge branch 'main' into dangquyen
+[33med43754[m edit user
+[33m42a2669[m Merge branch 'main' into dev_tam
+[33m70915a0[m thống kê doanh thu
+[33m82d5922[m Merge branch 'main' into levan
+[33m507595e[m Thống kê kho
+[33maefe519[m thống kê khách hàng
+[33me02d37d[m thống kê doanh thu
+[33mbab091d[m edit user
+[33mab1b9e1[m Merge branch 'main' into dangquyen
+[33mc784143[m settings
+[33m3261569[m settings_admin
+[33m3ff243b[m .
+[33md0cd66e[m setting-admin
+[33m726dc89[m Merge branch 'main' into dangquyen
+[33ma4a1dcb[m settings
+[33m9404b47[m sửa lại bài viết và router admin
+[33m421743d[m Merge branch 'main' into viet
+[33m009d856[m update order by caodac
+[33m4d474f9[m Merge branch 'main' into caodac
+[33m933af0a[m settings
+[33m2b5097b[m sửa lại bài viết và router admin
+[33m9f695c7[m settings
+[33m6ca4e37[m .
+[33m9452a08[m Merge branch 'main' into dangquyen
+[33mc6ef260[m .
+[33m41f93a2[m .
+[33m407d835[m settings
+[33md85d222[m update show.order
+[33ma3aa1ac[m update_order
+[33m4058ed4[m Merge pull request #53 from vietnguyen-19/main
+[33m1a1a4b5[m sua phan bai viet
+[33mc243618[m Merge branch 'main' into ngocle1
+[33mb8af07e[m sua phan bai viet
+[33mec1a815[m Văn
+[33ma3a8220[m Merge branch 'main' into văn
+[33m11c5357[m Merge branch 'main' into dangquyen
+[33m2bd70de[m update chi tiết user
+[33m63c43e3[m update chi tiết user
+[33mc714124[m up voucher
+[33m085299a[m .
+[33mfd0ddcb[m Merge branch 'main' of https://github.com/vietnguyen-19/eterna-watch into văn
+[33mbbfca1a[m view banners by HaiVanHaiVan
+[33m01e25b5[m view banners by HaiVanHaiVan
+[33m65b3132[m Dev tam
+[33mc9bd6dd[m up voucher
+[33m5657f70[m update trạng thái user
+[33mb5e77f9[m cm1h48
+[33mc2ffdb5[m Update user
+[33m5cbc30c[m commit user
+[33m83f833d[m request banner
+[33me12917b[m up
+[33mba7cd34[m up
+[33m36753c0[m Cập nhật RoleSeeder
+[33mba2f4aa[m fix permission
+[33m77d04b3[m Merge branch 'main' into viet
+[33m3cf2b0f[m fix permission
+[33ma7fd1de[m Cập nhật DS thương hiệu
+[33md4a70a9[m Merge branch 'main' into dev_tam
+[33m5e1033b[m Cập nhật DS thương hiệu
+[33m8a0a138[m AboutUs, Contact, Account, sửa giao diện
+[33mda5b063[m AboutUs, Contact, Account, sửa giao diện
+[33m81031aa[m Ngocle1 phần bài viết
+[33ma979070[m Merge branch 'main' into ngocle1
+[33m2ece2aa[m Thêm bình luận sp và bài viết
+[33m86ce944[m Merge branch 'main' into levan
+[33m54772af[m phần bài viết
+[33m33f63c6[m phần bài viết
+[33m201715d[m Thêm bình luận sp và bài viết
+[33mbda959f[m Caodac
+[33mb635443[m Merge branch 'main' into caodac
+[33m54ccdbd[m sửa giỏ hàng
+[33m371d486[m Merge branch 'main' into levan
+[33m8f61d3b[m Sửa giao diện
+[33ma3ebbe9[m update_order
+[33m7f90562[m update_show
+[33m14b06e4[m user update
+[33m578252e[m Merge branch 'main' into dev_tam
+[33m130054f[m index user
+[33me134333[m Thêm chức năng quản lý bài viết
+[33mce014b4[m Sửa luồng mua hàng
+[33m85ec982[m admin/order/show
+[33medae4b9[m Merge branch 'main' into caodac
+[33m1c6704e[m cm web
+[33meb435f4[m Merge branch 'dev_tam' of https://github.com/vietnguyen-19/eterna-watch into dev_tam
+[33m177d9fb[m admin/order/show
+[33m269d30e[m Ngocle cập nhật phần bài viết
+[33mc88a928[m Cập nhật code mới
+[33m498a22e[m Cập nhật code mới
+[33me813e87[m Dev tam
+[33m8

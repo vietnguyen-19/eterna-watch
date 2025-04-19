@@ -80,8 +80,7 @@
                             @enderror
                         </div>
 
-                        <div class="pb-1"></div>
-                        <div class="pb-1"></div>
+                        
                         <div class="form-label-fixed mb-4">
                             <label for="registerPasswordInput" class="form-label">Mật khẩu *</label>
                             <input name="password" id="registerPasswordInput" class="form-control form-control_gray"
@@ -91,7 +90,6 @@
                             @enderror
                         </div>
 
-                        <div class="pb-1"></div>
                         <div class="form-label-fixed mb-4">
                             <label for="registerRePasswordInput" class="form-label">Nhập lại mật khẩu *</label>
                             <input name="password_confirmation" id="registerRePasswordInput"

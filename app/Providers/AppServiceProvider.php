@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
             'order' => 'App\Models\Order',
             'payment' => 'App\Models\Payment',
             'shipment' => 'App\Models\Shipment',
+            'refund' => 'App\Models\Refund',
         ]);
     }
 }

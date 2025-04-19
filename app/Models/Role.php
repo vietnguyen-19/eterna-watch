@@ -20,9 +20,14 @@ class Role extends Model
     protected $table = 'roles'; // Tên bảng trong CSDL
 
     protected $fillable = ['name','guard_name']; // Các cột có thể gán giá trị hàng loạt
+    
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'role_has_permissions');
+    }
+    public function users()
+    {
+        return $this->hasMany(User::class, 'role_id');
     }
 }
 

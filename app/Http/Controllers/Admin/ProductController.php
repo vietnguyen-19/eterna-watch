@@ -230,35 +230,60 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
 
+       
+            $product = Product::findOrFail($id);
 
-        // Tìm sản phẩm cần xóa
-        $product = Product::findOrFail($id);
+            // Chỉ xóa mềm (không xóa file hay biến thể)
+            $product->delete();
 
-        // Xóa avatar của sản phẩm nếu có
-        if ($product->avatar && file_exists(storage_path('app/public/' . $product->avatar))) {
-            unlink(storage_path('app/public/' . $product->avatar));
-        }
+            DB::commit();
+            return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được đưa vào thùng rác.');
+       
+    }
+    public function trash()
+    {
+        $products = Product::onlyTrashed()->with('variants')->get();
 
-        // Lấy các biến thể của sản phẩm
-        $variants = $product->variants;
+        return view('admin.products.trash', compact('products'));
+    }
+    public function restore($id)
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
 
-        // Xóa ảnh của các biến thể nếu có
-        foreach ($variants as $variant) {
-            if ($variant->image && file_exists(storage_path('app/public/' . $variant->image))) {
-                unlink(storage_path('app/public/' . $variant->image));
+        return redirect()->route('admin.products.trash')->with('success', 'Sản phẩm đã được khôi phục.');
+    }
+    public function forceDelete($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $product = Product::onlyTrashed()->findOrFail($id);
+
+            // Xóa ảnh avatar nếu có
+            if ($product->avatar && file_exists(storage_path('app/public/' . $product->avatar))) {
+                unlink(storage_path('app/public/' . $product->avatar));
             }
+
+            // Xóa ảnh biến thể
+            foreach ($product->variants as $variant) {
+                if ($variant->image && file_exists(storage_path('app/public/' . $variant->image))) {
+                    unlink(storage_path('app/public/' . $variant->image));
+                }
+
+                // Xóa mềm hoặc vĩnh viễn tùy theo bạn muốn
+                $variant->forceDelete();
+            }
+
+            // Xóa luôn bản ghi sản phẩm
+            $product->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('admin.productvariants.trash')->with('success', 'Sản phẩm đã được xóa vĩnh viễn.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
         }
-
-        // Xóa các biến thể của sản phẩm
-        ProductVariant::where('product_id', $id)->delete();
-
-        // Xóa sản phẩm
-        $product->delete();
-
-        // Lưu lại transaction
-        DB::commit();
-
-        // Redirect về trang danh sách sản phẩm với thông báo thành công
-        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được xóa thành công.');
     }
 }

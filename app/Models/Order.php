@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
 
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
@@ -17,6 +19,7 @@ class Order extends Model
     protected $fillable = [
         'order_code',
         'user_id',
+        'address_id',
         'voucher_id',
         'total_amount',
         'status',
@@ -40,6 +43,16 @@ class Order extends Model
     {
         return $this->hasOne(Payment::class, 'order_id');
     }
+    public function refund()
+    {
+        return $this->hasOne(Refund::class, 'order_id');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(UserAddress::class, 'address_id');
+    }
+    
     public function shipment()
     {
         return $this->hasOne(Shipment::class, 'order_id');
@@ -60,20 +73,19 @@ class Order extends Model
         }
     
         $orderTotal = $this->orderItems()->sum('total_price');
+        
         // Nếu không có sản phẩm nào trong đơn hàng, không có chiết khấu
         if ($orderTotal <= 0) {
-
             return 0;
         }
     
         // Kiểm tra loại chiết khấu của voucher
         if ($this->voucher->discount_type == 'percent') {
             $discount = $orderTotal * ($this->voucher->discount_value / 100);
-        } else {
+        } else { // Trường hợp fixed
             $discount = $this->voucher->discount_value;
         }
-
-        return min($discount, $orderTotal); // Đảm bảo chiết khấu không vượt quá tổng tiền
+        return $discount; // Không vượt quá tổng tiền đơn hàng
     }
     
     public function getShippingFee()
@@ -87,9 +99,5 @@ class Order extends Model
     public function shippingAddress()
     {
         return $this->hasOne(UserAddress::class, 'user_id', 'user_id')->where('is_default', 1);
-    }
-    public function getDiscountAmountAttribute()
-    {
-        return $this->getDiscountAmount(); 
     }
 }
