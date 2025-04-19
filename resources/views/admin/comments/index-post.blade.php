@@ -342,24 +342,24 @@
                 'reviewTablerejected',
                 'reviewTableall'
             ];
-        
+
             // Lặp qua từng ID và áp dụng DataTable
             tableIds.forEach(function(tableId) {
                 var $table = $('#' + tableId);
-        
+
                 // Kiểm tra bảng có tồn tại không
                 if ($table.length) {
                     // Lấy số cột từ phần thead
                     var thCount = $table.find('thead th').length;
                     var isValid = true;
-        
+
                     // Kiểm tra các dòng trong tbody có đúng số lượng cột không
                     $table.find('tbody tr').each(function() {
                         if ($(this).find('td').length !== thCount) {
                             isValid = false;
                         }
                     });
-        
+
                     // Nếu số cột hợp lệ thì áp dụng DataTable
                     if (isValid) {
                         $table.DataTable({
@@ -388,7 +388,7 @@
                 }
             });
         </script>
-        
+
         <script>
             $(document).ready(function() {
                 // Chọn tất cả

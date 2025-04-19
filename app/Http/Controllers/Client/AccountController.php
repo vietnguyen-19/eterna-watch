@@ -56,7 +56,7 @@ class AccountController extends Controller
     }
     public function orderDetail($id)
     {
-        $order = Order::with(['orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->findOrFail($id);
+        $order = Order::with(['refund.refundItems','orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->findOrFail($id);
         return view('client.account.order-detail', compact('order'));
     }
     public function cancelOrder($id)

@@ -152,6 +152,13 @@
                                 <p>Danh sách</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.refunds.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.refunds.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Quản lí hoàn hàng</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>

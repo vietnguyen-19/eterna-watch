@@ -115,7 +115,6 @@
                                                     <th class="text-left" scope="col">Biến thể</th>
                                                     <th scope="col">SKU</th>
                                                     <th scope="col">Giá</th>
-                                                    <th scope="col">Kho hàng</th>
                                                     <th scope="col">Trạng thái</th>
                                                     <th scope="col">Thao tác</th>
 

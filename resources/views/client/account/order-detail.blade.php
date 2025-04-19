@@ -18,10 +18,10 @@
                             <h5 class="mt-3 mb-1">{{ auth()->user()->name }}</h5>
                             <p class="text-muted">{{ auth()->user()->email }}</p>
                         </div>
-                        
+
                     </div>
                     <nav class="nav flex-column account-sidebar sticky-sidebar">
-                       
+
                         <a href="{{ route('account.order') }}" class="nav-link active">
                             <i class="fas fa-shopping-bag me-2"></i> Đơn hàng
                         </a>
@@ -67,14 +67,60 @@
                                         Hủy đơn hàng
                                     </button>
                                 @endif
+                                @if ($order->status == 'completed')
+                                    <a class="btn btn-sm btn-cancel-order"
+                                        style="background: #bd850b; color:#fff; border-radius:3px"
+                                        href="{{ route('refunds.create', $order->id) }}">
+                                        Hoàn trả đơn hàng
+                                    </a>
+                                @endif
 
                             </div>
-                           
+                            @if ($order->refund)
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Thông tin hoàn trả đơn hàng</h5>
+
+                                        <p><strong>Lý do hoàn:</strong> {{ $order->refund->reason }}</p>
+                                        <p><strong>Ngày yêu cầu:</strong>
+                                            {{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
+                                            <p><strong>Trạng thái:</strong>
+                                                @if ($order->refund && $order->refund->status == 'pending')
+                                                    <span style="background-color: #ffc107; color: #000; padding: 2px 6px; border-radius: 4px;">Đang chờ duyệt</span>
+                                                @elseif ($order->refund && $order->refund->status == 'approved')
+                                                    <span style="background-color: #28a745; color: #fff; padding: 2px 6px; border-radius: 4px;">Đã duyệt</span>
+                                                @else
+                                                    <span style="background-color: #dc3545; color: #fff; padding: 2px 6px; border-radius: 4px;">Bị từ chối</span>
+                                                @endif
+                                            </p>
+                                            
+                                        @if ($order->refund->status == 'rejected' && $order->refund->rejected_reason)
+                                            <p><strong>Lý do từ chối:</strong> {{ $order->refund->rejected_reason }}</p>
+                                        @endif
+
+                                        <hr>
+                                        <h6>Sản phẩm được hoàn:</h6>
+                                        <ul>
+                                            @foreach ($order->refund->refundItems as $item)
+                                                <li>
+                                                    {{ $item->orderItem->productVariant->product->name }} -
+                                                    SL: {{ $item->quantity }} -
+                                                    Giá: {{ number_format($item->unit_price) }}đ
+                                                </li>
+                                            @endforeach
+                                        </ul>
+
+                                        <p><strong>Tổng tiền hoàn:</strong>
+                                            {{ number_format($order->refund->total_refund_amount) }}đ</p>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h5 class="card-title">Thông tin thanh toán</h5>
                                     <p class="card-text">
-                                        <strong>Phương thức thanh toán:</strong> 
+                                        <strong>Phương thức thanh toán:</strong>
                                         @if ($order->payment->payment_method == 'Cash')
                                             Tiền mặt
                                         @elseif ($order->payment->payment_method == 'vnpay')
@@ -83,21 +129,21 @@
                                             {{ $order->payment->payment_method }}
                                         @endif
                                         <br>
-                                        <strong>Trạng thái thanh toán:</strong> 
-                                        <span style="background-color: 
+                                        <strong>Trạng thái thanh toán:</strong>
+                                        <span
+                                            style="background-color: 
                                             @if ($order->payment->payment_status == 'completed') #28a745;
                                             @elseif ($order->payment->payment_status == 'pending') #ffc107;
                                             @elseif ($order->payment->payment_status == 'failed') #dc3545;
-                                            @else #6c757d; 
-                                            @endif
+                                            @else #6c757d; @endif
                                             color: white; padding: 0.2em 0.6em; border-radius: 0.25rem;">
                                             {{ $order->payment->payment_status }}
                                         </span>
                                     </p>
                                 </div>
                             </div>
-                          
-                            
+
+
                             <table class="checkout-cart-items">
                                 <thead>
                                     <tr>
@@ -182,17 +228,19 @@
                                     <tr>
                                         <th>Mã giảm giá
                                             @if ($order->voucher)
-                                                | <strong><span style="background:#bd2c0b" class="badge">{{ $order->voucher->code }}</span></strong>
+                                                | <strong><span style="background:#bd2c0b"
+                                                        class="badge">{{ $order->voucher->code }}</span></strong>
                                             @endif
                                         </th>
-                                        <td class="text-end"> <span style="color: #bd2c0b" class="shopping-cart__product-price">
-                                                -{{number_format($order->getDiscountAmount(), 0, ',', '.') }}đ
+                                        <td class="text-end"> <span style="color: #bd2c0b"
+                                                class="shopping-cart__product-price">
+                                                -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }}đ
                                             </span></td>
                                     </tr>
                                     <tr>
                                         <th><strong>Tổng cộng</strong></th>
                                         <td class="text-end"> <span class="shopping-cart__product-price">
-                                               <strong> {{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
+                                                <strong> {{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
                                             </span></td>
                                     </tr>
                                 </tbody>
@@ -208,88 +256,88 @@
 @endsection
 
 @section('style')
-<style>
-    /* Sidebar */
-    .account-sidebar .nav-link {
-        font-size: 16px;
-        padding: 12px 18px;
-        border-radius: 3px;
-        background: #fdfdfd;
-        transition: all 0.3s ease-in-out;
-        display: flex;
-        align-items: center;
-        color: #333;
-        font-weight: 500;
-    }
-
-    .account-sidebar .nav-link i {
-        font-size: 18px;
-        width: 24px;
-        text-align: center;
-    }
-
-    .account-sidebar .nav-link:hover {
-        background: #ececec;
-        padding-left: 22px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-
-    .account-sidebar .nav-link.active {
-        background: #e84040;
-        color: #ffffff;
-        font-weight: bold;
-    }
-
-    /* Hiệu ứng hover cho liên kết */
-    .link-hover {
-        transition: color 0.3s ease-in-out;
-    }
-
-    .link-hover:hover {
-        color: #0d47a1 !important;
-        text-decoration: underline;
-    }
-
-    /* Nội dung chính */
-    .content-box {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 24px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .logout-btn {
-        background: none;
-        border: none;
-        text-align: left;
-        width: 100%;
-        padding: 12px 18px;
-        transition: background-color 0.3s, padding-left 0.3s;
-        font-size: 16px;
-        color: #d3401f !important;
-        font-weight: bold;
-    }
-
-    .logout-btn:hover {
-        background: #fff5f5;
-        padding-left: 22px;
-    }
-
-    /* Responsive tối ưu */
-    @media (max-width: 768px) {
-        .container {
-            max-width: 100%;
+    <style>
+        /* Sidebar */
+        .account-sidebar .nav-link {
+            font-size: 16px;
+            padding: 12px 18px;
+            border-radius: 3px;
+            background: #fdfdfd;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            color: #333;
+            font-weight: 500;
         }
 
-        .nav {
-            border-bottom: 1px solid #ddd;
+        .account-sidebar .nav-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
         }
 
+        .account-sidebar .nav-link:hover {
+            background: #ececec;
+            padding-left: 22px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .account-sidebar .nav-link.active {
+            background: #e84040;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* Hiệu ứng hover cho liên kết */
+        .link-hover {
+            transition: color 0.3s ease-in-out;
+        }
+
+        .link-hover:hover {
+            color: #0d47a1 !important;
+            text-decoration: underline;
+        }
+
+        /* Nội dung chính */
         .content-box {
-            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         }
-    }
-</style>
+
+        .logout-btn {
+            background: none;
+            border: none;
+            text-align: left;
+            width: 100%;
+            padding: 12px 18px;
+            transition: background-color 0.3s, padding-left 0.3s;
+            font-size: 16px;
+            color: #d3401f !important;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background: #fff5f5;
+            padding-left: 22px;
+        }
+
+        /* Responsive tối ưu */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+
+            .nav {
+                border-bottom: 1px solid #ddd;
+            }
+
+            .content-box {
+                margin-top: 20px;
+            }
+        }
+    </style>
 @endsection
 @section('script')
     <script>
@@ -325,4 +373,31 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 @endsection
