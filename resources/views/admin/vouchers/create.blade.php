@@ -19,6 +19,16 @@
                             @csrf
                             <div class="card-body">
                                 <div class="body row">
+                                     <!-- tiêu đề Voucher -->
+                                     <div class="mb-3 col-md-6">
+                                        <label for="name" class="form-label">Tiêu đề mã giảm giá </label>
+                                        <input value="{{ old('name') }}" name="name" type="text" id="name"
+                                            class="form-control" placeholder="Nhập tiêu đề">
+                                        @error('name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
                                     <!-- Mã Voucher -->
                                     <div class="mb-3 col-md-6">
                                         <label for="code" class="form-label">Mã Voucher</label>

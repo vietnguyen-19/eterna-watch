@@ -115,9 +115,11 @@ class RolePermissionSeeder extends Seeder
             'view_categories',
 
             'view_products',
-            'create_products',
-            'edit_products',
 
+            'view_brands',
+
+            'view_attributes',
+            
             'view_orders',
             'edit_orders',
 
