@@ -41,7 +41,7 @@ class RolePermissionSeeder extends Seeder
             'edit_vouchers',
             'restore_vouchers',
             'delete_vouchers',
-            
+
 
             // ===== Users =====
             'view_users',
@@ -115,9 +115,11 @@ class RolePermissionSeeder extends Seeder
             'view_categories',
 
             'view_products',
-            'create_products',
-            'edit_products',
 
+            'view_brands',
+
+            'view_attributes',
+            
             'view_orders',
             'edit_orders',
 
@@ -129,12 +131,14 @@ class RolePermissionSeeder extends Seeder
             'view_posts',
             'create_posts',
 
+            'view_users',
+
         ];
         $staffRole->syncPermissions($staffPermissions);
 
         // Khách hàng không có quyền hệ thống
         $customerRole->syncPermissions([]);
 
-       
+
     }
 }
