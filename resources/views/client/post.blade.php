@@ -215,6 +215,7 @@
                                                                     <a href="#" class="reply-btn"
                                                                         data-comment-id="{{ $comment->id }}"
                                                                         data-entity-id="{{ $comment->entity_id }}"
+                                                                        data-entity-type="{{ $comment->entity_type }}"
                                                                         style="color: #3c6ae7; font-size: 13px; text-decoration: none; font-style: italic;">
                                                                         <i>Trả lời</i>
                                                                     </a>
@@ -247,7 +248,7 @@
                                                             <div class="reply-form" id="reply-form-{{ $comment->id }}"
                                                                 style="display: none; margin-top: 15px; width:100%">
                                                                 <form
-                                                                    action="{{ route('comments.reply', ['comment' => $comment->id, 'entity_id' => $comment->entity_id]) }}"
+                                                                    action="{{ route('comments.reply', ['comment' => $comment->id, 'entity_id' => $comment->entity_id,'entity_type' => $comment->entity_type, ]) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     <textarea name="content" rows="2" placeholder="Viết câu trả lời..."

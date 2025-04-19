@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\RefundController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -185,10 +187,20 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::post('{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send')->middleware('permission:edit_orders');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('status')->middleware('permission:edit_orders');
 
+      
+
         Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy'); // Xoá mềm
         Route::get('/trash', [OrderController::class, 'trash'])->name('trash'); // Danh sách đã xoá
         Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore'); // Khôi phục
         Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
+    });
+   
+    
+    Route::prefix('refunds')->group(function () {
+        Route::get('/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
+        Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('admin.refunds.show');
+        Route::post('/refunds/{refund}/approve', [RefundController::class, 'approve'])->name('admin.refunds.approve');
+        Route::post('/refunds/{refund}/reject', [RefundController::class, 'reject'])->name('admin.refunds.reject');
     });
 
     Route::prefix('order_items')->group(function () {

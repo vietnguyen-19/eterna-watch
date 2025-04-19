@@ -30,7 +30,7 @@ class CommentController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->get();
-
+       
         return view('admin.comments.index-post', compact('comments', 'postStatusCounts', 'status'));
     }
     public function indexProduct(Request $request)
