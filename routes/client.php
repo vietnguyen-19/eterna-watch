@@ -132,6 +132,7 @@ Route::post('contact_us/store', [SettingController::class, 'contactStore'])->nam
 
 Route::get('about_us', [SettingController::class, 'aboutUs'])->name('client.about_us');
 Route::get('privacy', [SettingController::class, 'privacy'])->name('client.privacy');
+Route::get('return-policy', [SettingController::class, 'returnPolicy'])->name('client.return-policy');
 
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('client.chatbot.index');
 Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('client.chatbot.chat');

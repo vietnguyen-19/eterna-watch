@@ -73,6 +73,16 @@
                                             @enderror
 
                                         </div>
+                                        <div class="mb-3 col-md-12">
+                                            <label for="price_sale" class="form-label">Giá khuyến mãi</label>
+                                            <input type="text" name="price_sale" id="price_sale"
+                                                class="form-control" value="{{ $data->price_sale }}"
+                                                oninput="formatPrice(this)">
+                                            @error('price_sale')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+
+                                        </div>
 
                                         <div class="mb-3 col-md-12">
                                             <label for="status" class="form-label">Trạng thái</label>
