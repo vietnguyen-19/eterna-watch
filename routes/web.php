@@ -48,13 +48,16 @@ Route::prefix('admin')->group(function () {
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.forgot');
     Route::post('forgot-password', [ForgotPasswordController::class, 'admin.ForgotPassword'])->name('admin.password.email');
 
-    Route::get('/login', [AdminLoginController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AdminLoginController::class, 'adminLogin'])->name('login');
-    Route::post('/logout', [AdminLoginController::class, 'adminLogout'])->name('logout');
-    Route::get('forgot-password', [AdminLoginController::class, 'forgotPasswordForm'])
-        ->name('password.forgot');
-    Route::post('forgot-password', [AdminLoginController::class, 'admin.ForgotPassword'])
-        ->name('password.email');   
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+        ->name('admin.password.request');
+
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->name('admin.password.email');
+    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
+        ->name('admin.password.reset');
+
+    Route::post('reset-password', [ResetPasswordController::class, 'reset'])
+        ->name('admin.password.update');
 });
 
 // ADMIN CHỨC NĂNG (middleware auth + admin)
