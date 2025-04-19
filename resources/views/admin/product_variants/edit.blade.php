@@ -1,351 +1,406 @@
 @extends('admin.layouts.master')
 @section('content')
     <section class="content pt-3">
-        <form action="{{ route('admin.productvariants.update', $product->id) }}" autocomplete="off" method="POST"
-            enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <input name="productId" value="{{ $product->id }}" type="text" hidden>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card" id="customerList">
-                            <div class=" card-header border-bottom-dashed ">
 
-                                <div class="row g-4 align-items-center">
-                                    <div class="col-sm">
-                                        <div>
-                                            <h5 class="card-title mb-0"><b>Thông tin sản phẩm</b></h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-auto">
-                                        <div class="d-flex flex-wrap align-items-start gap-2">
-                                            <a href="{{ route('admin.products.edit', $product->id) }}"
-                                                class="btn btn-warning add-btn"><i
-                                                    class="ri-add-line align-bottom me-1"></i>Chỉnh sửa thông tin sản
-                                                phẩm</a>
-                                        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card" id="customerList">
+                        <div class=" card-header border-bottom-dashed ">
+
+                            <div class="row g-4 align-items-center">
+                                <div class="col-sm">
+                                    <div>
+                                        <h5 class="card-title mb-0"><b>Thông tin sản phẩm</b></h5>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <!-- Ảnh đại diện -->
-                                    <div class="col-3">
-                                        <div class="col-md-12 text-center">
-                                            <img src="{{ asset('storage/' . $product->avatar) }}"
-                                                class="img-fluid rounded shadow" style="object-fit: cover;"
-                                                alt="Ảnh sản phẩm">
-                                        </div>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-12">
-                                                <label for="name" class="form-label">Tên sản phẩm</label>
-                                                <input type="text" name="name" id="name" class="form-control"
-                                                    value="{{ $product->name }}" disabled>
-                                            </div>
-
-                                            <div class="mb-3 col-md-6">
-                                                <label for="category" class="form-label">Danh mục</label>
-                                                <select class="form-control" name="category_id" class="form-select"
-                                                    disabled>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}"
-                                                            {{ $category->id == $product->category->id ? 'selected' : '' }}>
-                                                            {{ $category->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="mb-3 col-md-6">
-                                                <label for="brand" class="form-label">Thương hiệu</label>
-                                                <select class="form-control" name="brand_id" class="form-select" disabled>
-                                                    @foreach ($brands as $brand)
-                                                        <option value="{{ $brand->id }}"
-                                                            {{ $brand->id == $product->brand->id ? 'selected' : '' }}>
-                                                            {{ $brand->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="mb-3 col-md-6">
-                                                <label for="price_default" class="form-label">Giá mặc định</label>
-                                                <input type="text" name="price_default" id="price_default"
-                                                    class="form-control"
-                                                    value="{{ number_format($product->price_default, 0, ',', '.') }}"
-                                                    disabled>
-                                            </div>
-
-                                            <div class="mb-3 col-md-6">
-                                                <label for="status" class="form-label">Trạng thái</label>
-                                                <select class="form-control" name="status" class="form-select" disabled>
-                                                    <option value="active"
-                                                        {{ $product->status === 'active' ? 'selected' : '' }}>
-                                                        Đang
-                                                        bán
-                                                    </option>
-                                                    <option value="inactive"
-                                                        {{ $product->status === 'inactive' ? 'selected' : '' }}>
-                                                        Ngừng bán
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-4 col-12">
-                                                <label for="status" class="form-label">Mô tả ngắn</label>
-                                                <textarea name="short_description" id="short_description" class="form-control" rows="2"
-                                                    placeholder="Nhập mô tả ngắn" disabled>{{ $product->short_description }}</textarea>
-                                                @error('short_description')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                <div class="col-sm-auto">
+                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                        <a href="{{ route('admin.products.edit', $product->id) }}"
+                                            class="btn btn-info add-btn"><i class="ri-add-line align-bottom me-1"></i>Chỉnh
+                                            sửa thông tin sản
+                                            phẩm</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="card mt-3" id="customerList">
-                            <div class="card-header border-bottom-dashed">
-                                <div class="row g-4 align-items-center">
-                                    <div class="col-sm">
-                                        <div>
-                                            <h5 class="card-title mb-0"><b>Danh sách biến thể sản phẩm</b></h5>
-                                        </div>
+                        <div class="card-body">
+                            <div class="row d-flex align-items-stretch">
+                                <!-- Ảnh sản phẩm -->
+                                <div class="col-md-3 d-flex">
+                                    <div
+                                        class="w-100 h-100 d-flex align-items-center justify-content-center border rounded shadow-sm p-2 bg-light">
+                                        <img src="{{ Storage::url($product->avatar ?? 'default-avatar.png') }}"
+                                            class="img-fluid rounded"
+                                            style="max-height: 100%; max-width: 100%; object-fit: cover;"
+                                            alt="Ảnh sản phẩm">
                                     </div>
-                                    <div class="col-sm-auto">
-                                        <div class="d-flex flex-wrap align-items-start gap-2">
-                                            <button id="add-variant" href="" class="btn btn-success add-btn"><i
-                                                    class="ri-add-line align-bottom me-1"></i>Thêm biến thể mới</button>
+                                </div>
+
+                                <!-- Thông tin sản phẩm -->
+                                <div class="col-md-9 d-flex">
+                                    <div class="table-responsive w-100 border rounded shadow-sm p-2 bg-white">
+                                        <table class="table table-bordered mb-0 h-100">
+                                            <tbody>
+                                                <tr>
+                                                    <th class="text-muted" style="width: 180px;">Tên sản phẩm</th>
+                                                    <td class="fs-5">{{ $product->name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Danh mục</th>
+                                                    <td class="fs-5">{{ $product->category->name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Thương hiệu</th>
+                                                    <td class="fs-5">{{ $product->brand->name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Giá mặc định</th>
+                                                    <td class="fs-5">
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Trạng thái</th>
+                                                    <td
+                                                        class="fs-5 {{ $product->status === 'active' ? 'text-success' : 'text-danger' }}">
+                                                        {{ $product->status === 'active' ? 'Đang bán' : 'Ngừng bán' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted align-top">Mô tả ngắn</th>
+                                                    <td class="fs-5">{{ $product->short_description }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3" id="customerList">
+                        <div class="card-header border-bottom-dashed">
+                            <div class="row g-4 align-items-center">
+                                <div class="col-sm">
+                                    <div>
+                                        <h5 class="card-title mb-0"><b>Danh sách biến thể sản phẩm</b></h5>
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto">
+                                    <div class="d-flex flex-wrap align-items-start gap-2">
+                                        <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
+                                            data-bs-target="#variantModal">
+                                            <i class="ri-add-line align-bottom me-1"></i> Thêm biến thể mới
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Nút mở modal -->
+
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content shadow">
+                                    <form action="{{ route('admin.productvariants.store') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <input name="productId" value="{{ $product->id }}" type="hidden">
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="card shadow-sm h-100">
+                                                        <div class="card-body d-flex flex-column">
+
+                                                            {{-- Hình ảnh --}}
+                                                            <div class="mb-3">
+                                                                <label class="form-label mb-1">Hình ảnh</label>
+                                                                <input type="file" name="variants[image]"
+                                                                    class="form-control form-control-sm mt-2">
+                                                                @error('variants.image')
+                                                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+
+                                                            {{-- Biến thể --}}
+                                                            <div class="mb-3">
+                                                                <label class="form-label mb-1">Biến thể</label>
+                                                                <div class="card p-3">
+                                                                    @foreach ($product->attributes as $attribute)
+                                                                        <div class="mb-3">
+                                                                            <label
+                                                                                class="form-label">{{ $attribute->attribute_name }}</label>
+                                                                            <select
+                                                                                name="variants[attributes][{{ $attribute->id }}]"
+                                                                                class="form-select form-control @error('variants.attributes.' . $attribute->id) is-invalid @enderror">
+                                                                                <option value="">-- Chọn
+                                                                                    {{ strtolower($attribute->attribute_name) }}
+                                                                                    --</option>
+                                                                                @foreach ($attribute->attributeValues as $value)
+                                                                                    <option value="{{ $value->id }}"
+                                                                                        {{ old('variants.attributes.' . $attribute->id) == $value->id ? 'selected' : '' }}>
+                                                                                        {{ $value->value_name }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            @error('variants.attributes.' . $attribute->id)
+                                                                                <div class="invalid-feedback">
+                                                                                    {{ $message }}</div>
+                                                                            @enderror
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+
+                                                            {{-- SKU --}}
+                                                            <div class="mb-2">
+                                                                <label class="form-label mb-1">SKU</label>
+                                                                <input type="text" name="variants[sku]"
+                                                                    class="form-control form-control-sm @error('variants.sku') is-invalid @enderror"
+                                                                    value="{{ old('variants.sku') }}">
+                                                                @error('variants.sku')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+
+                                                            {{-- Giá --}}
+                                                            <div class="mb-2">
+                                                                <label class="form-label mb-1">Giá</label>
+                                                                <input type="text" name="variants[price]"
+                                                                    class="form-control form-control-sm @error('variants.price') is-invalid @enderror"
+                                                                    value="{{ old('variants.price') }}">
+                                                                @error('variants.price')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+
+                                                            {{-- Số lượng tồn --}}
+                                                            <div class="mb-2">
+                                                                <label class="form-label mb-1">Số lượng tồn</label>
+                                                                <input type="text" name="variants[stock]"
+                                                                    class="form-control form-control-sm @error('variants.stock') is-invalid @enderror"
+                                                                    value="{{ old('variants.stock') }}">
+                                                                @error('variants.stock')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
+                                        {{-- Footer --}}
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Thêm biến thể mới</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('admin.productvariants.update', $product->id) }}" autocomplete="off"
+                            method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <input name="productId" value="{{ $product->id }}" type="text" hidden>
+                            <div id="card_variant" class="card-body bg-light">
+                                <div class="row">
+                                    <div class="table-responsive mb-4 w-100">
+                                        <table class="table bg-white table-bordered align-middle text-center">
+                                            <thead class="">
+                                                <tr>
+                                                    <th>Ảnh biến thể</th>
+                                                    <th>Biến thể</th>
+                                                    <th>SKU</th>
+                                                    <th>Giá</th>
+                                                    <th>Số lượng tồn</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($product->variants as $variant)
+                                                <tr>
+                                                    <td style="width: 180px;">
+                                                        @if ($variant->image)
+                                                            <img src="{{ asset('storage/' . $variant->image) }}"
+                                                                class="img-thumbnail"
+                                                                style="max-height: 100%; object-fit: contain;"
+                                                                alt="Ảnh biến thể">
+                                                        @else
+                                                            <div class="text-muted">Chưa có ảnh</div>
+                                                        @endif
+                                                
+                                                        <input type="file" name="image[{{ $variant->id }}]"
+                                                            class="form-control form-control-sm mt-2 @error("image.{$variant->id}") is-invalid @enderror">
+                                                        @error("image.{$variant->id}")
+                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
+                                                    </td>
+                                                
+                                                    <td class="text-start align-middle">
+                                                        <table class="table table-bordered table-sm mb-0">
+                                                            <tbody>
+                                                                @foreach ($variant->attributeValues as $value)
+                                                                    <tr>
+                                                                        <td class="text-muted text-left" style="width: 60%;">
+                                                                            <strong>{{ $value->nameValue->attribute->attribute_name }}</strong>
+                                                                        </td>
+                                                                        <td class="text-muted text-left">
+                                                                            {{ $value->nameValue->value_name }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <input type="hidden"
+                                                                        name="attributes[{{ $variant->id }}][{{ $value->id }}]"
+                                                                        value="{{ $value->nameValue->id }}">
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                
+                                                    <td class="align-middle">
+                                                        <input type="text" name="sku[{{ $variant->id }}]"
+                                                            class="form-control form-control @error("sku.{$variant->id}") is-invalid @enderror"
+                                                            value="{{ old("sku.{$variant->id}", $variant->sku) }}">
+                                                        @error("sku.{$variant->id}")
+                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
+                                                    </td>
+                                                
+                                                    <td class="align-middle">
+                                                        <input type="text" name="price[{{ $variant->id }}]"
+                                                            class="form-control form-control price-input @error("price.{$variant->id}") is-invalid @enderror"
+                                                            value="{{ old("price.{$variant->id}", $variant->price) }}">
+                                                        @error("price.{$variant->id}")
+                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
+                                                    </td>
+                                                
+                                                    <td class="align-middle">
+                                                        <input type="text" name="stock[{{ $variant->id }}]"
+                                                            class="form-control form-control stock-input @error("stock.{$variant->id}") is-invalid @enderror"
+                                                            value="{{ old("stock.{$variant->id}", $variant->stock) }}">
+                                                        @error("stock.{$variant->id}")
+                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
+                                                    </td>
+                                                
+                                                    <td class="align-middle">
+                                                        @php
+                                                            switch ($variant->status) {
+                                                                case 'in_stock':
+                                                                    $class = 'badge bg-success';
+                                                                    $text = 'Còn hàng';
+                                                                    break;
+                                                                case 'out_of_stock':
+                                                                    $class = 'badge bg-danger';
+                                                                    $text = 'Hết hàng';
+                                                                    break;
+                                                                case 'pre_order':
+                                                                    $class = 'badge bg-warning text-dark';
+                                                                    $text = 'Đặt trước';
+                                                                    break;
+                                                                default:
+                                                                    $class = 'badge bg-secondary';
+                                                                    $text = 'Không xác định';
+                                                            }
+                                                        @endphp
+                                                        <span class="{{ $class }}">{{ $text }}</span>
+                                                    </td>
+                                                </tr>
+                                                
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">
+                                                            Không có biến thể nào.
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body">
-                                <table id="variants" class="table table-bordered align-middle bg-light">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center" class="text-center">Ảnh</th>
-                                            <th class="text-center">Thuộc tính</th>
-                                            <th class="text-center">SKU</th>
-                                            <th class="text-center">Giá</th>
-                                            <th class="text-center">Số lượng tồn</th>
-                                            <th class="text-center">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($product->variants as $variant)
-                                            <tr>
-                                                <td class="text-center align-middle" style="width: 20%">
-                                                    @if ($variant->image)
-                                                        <img src="{{ asset('storage/' . $variant->image) }}"
-                                                            class="img-thumbnail d-block mx-auto" style="max-width:25%;"
-                                                            alt="Ảnh biến thể">
-                                                        <input type="file" name="image[{{ $variant->id }}]"
-                                                            class="form-control form-control-sm mt-1">
-                                                    @else
-                                                        <span class="text-muted">Chưa có ảnh</span>
-                                                        <input type="file" name="image[{{ $variant->id }}]"
-                                                            class="form-control form-control-sm mt-1">
-                                                    @endif
-                                                </td>
-                                                <td class="align-middle" style="width: 25%;">
-                                                    <div class="">
-                                                        @foreach ($variant->attributeValues as $value)
-                                                            <div class="d-flex align-items-đcenter mb-2">
-                                                                <input type="hidden"
-                                                                    name="attributes[{{ $variant->id }}][{{ $value->id }}]"
-                                                                    value="{{ $value->nameValue->id }}">
-                                                                <span class="text-muted mb-0">
-                                                                    <strong>{{ $value->nameValue->attribute->attribute_name }}</strong>: {{ $value->nameValue->value_name }}
-                                                                </span>
-                                                            </div>
-                                                        @endforeach
-                                                        
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle" style="width: 15%">
-                                                    <input type="text" name="sku[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm" value="{{ $variant->sku }}"
-                                                        required>
-                                                </td>
-                                                <td class="align-middle" style="width: 15%;">
-                                                    <input type="text" name="price[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm price-input"
-                                                        value="{{ $variant->price}}"
-                                                        required>
-                                                </td>
-                                                <td class="align-middle" style="width:10%">
-                                                    <input type="text" name="stock[{{ $variant->id }}]"
-                                                        class="form-control form-control-sm stock-input"
-                                                        value="{{ $variant->stock }}" required>
-                                                </td>
-                                                <td class="align-middle text-center" style="width:10%">
-                                                    <div class="list-inline-item" title="Xóa">
-                                                        <button
-                                                            class="btn btn-danger btn-icon waves-effect waves-light btn-sm delete-variant"
-                                                            data-id="{{ $variant->id }}">
-                                                            <i class="nav-icon fa-solid fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="5" class="text-center text-muted">Không có biến thể nào.
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-
-                            </div>
                             <div class="card-footer">
                                 <div class="text-end mt-3">
                                     <button type="submit" class="btn btn-success">Lưu thay đổi</button>
                                     <a href="{{ route('admin.products.show', $product->id) }}"
-                                        class="btn btn-secondary">Trở về</a>
+                                        class="btn btn-secondary">Trở
+                                        về</a>
                                 </div>
                             </div>
-                        </div>
-
-
+                        </form>
                     </div>
+
                 </div>
             </div>
-        </form>
+        </div>
+
     </section>
 @endsection
 @section('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Tải jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-
-    <script>
-        // Thêm biến thể mới vào bảng
-        document.getElementById('add-variant').addEventListener('click', function(event) {
-            event.preventDefault();
-
-            // Lấy phần tbody trong table
-            var tbody = document.querySelector('#variants tbody');
-
-            // Kiểm tra nếu có hàng hiện có (loại trừ hàng empty) thì validate thông tin trong hàng cuối cùng
-            var existingRows = tbody.querySelectorAll('tr:not(.empty)');
-            if (existingRows.length > 0) {
-                var lastRow = existingRows[existingRows.length - 1];
-                // Lấy tất cả các input và select có thuộc tính required trong hàng cuối cùng
-                var requiredFields = lastRow.querySelectorAll('input[required], select[required]');
-                var incomplete = false;
-                requiredFields.forEach(function(field) {
-                    if (field.value.trim() === '') {
-                        incomplete = true;
-                    }
-                });
-                if (incomplete) {
-                    alert("Vui lòng điền đầy đủ thông tin cho biến thể hiện tại trước khi thêm mới.");
-                    return;
-                }
-            }
-
-            // Đếm số lượng hàng hiện có để tạo index cho hàng mới
-            var index = tbody.querySelectorAll('tr').length;
-
-            // Tạo hàng tr mới
-            var newRow = document.createElement('tr');
-
-            // Nội dung của hàng mới với tên mảng đồng nhất và chỉ số động
-            newRow.innerHTML = `
-                <td class="text-center align-middle" style="width: 20%">
-                    <input type="file" name="variants[new][${index}][image][]" class="form-control form-control-sm mt-1" required>
-                </td>
-                <td class="align-middle" style="width: 20%;">
-                    <div>
-                        @foreach ($product->attributes as $attribute)
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <label class="text-muted mb-0" style="width: 150px;">
-                                    {{ $attribute->attribute_name }}:
-                                </label>
-                                <select class="form-select form-select-sm w-100" required
-                                    name="variants[new][${index}][attributes][{{ $attribute->id }}]">
-                                    <option value="">-- Chọn giá trị --</option>
-                                    @foreach ($allAttributeValues[$attribute->id] as $option)
-                                        <option value="{{ $option->id }}">
-                                            {{ $option->value_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endforeach
-                    </div>
-                </td>
-                <td class="align-middle" style="width: 15%">
-                    <input type="text" name="variants[new][${index}][sku]" class="form-control form-control-sm" value="" required>
-                </td>
-                <td class="align-middle" style="width: 15%;">
-                    <input type="text" name="variants[new][${index}][price]" class="form-control form-control-sm" value="" required>
-                </td>
-                <td class="align-middle" style="width:10%">
-                    <input type="text" name="variants[new][${index}][stock]" class="form-control form-control-sm" value="" required>
-                </td>
-                <td class="align-middle text-center" style="width:10%">
-                    <button class="btn btn-danger btn-icon waves-effect waves-light btn-sm delete-variant" type="button">
-                        <i class="nav-icon fa-solid fa-trash"></i>
-                    </button>
-                </td>
-            `;
-
-            // Thêm hàng mới vào tbody
-            tbody.appendChild(newRow);
-        });
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('close_modal'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const myModal = new bootstrap.Modal(document.getElementById('variantModal'));
+                myModal.hide(); // Đóng modal
+            });
+        </script>
+    @endif
+    @if (session('open_modal'))
+        <script>
+            window.onload = function() {
+                var modal = new bootstrap.Modal(document.getElementById('variantModal'));
+                modal.show();
+            };
+        </script>
+    @endif
 
 
 
-        // Lắng nghe sự kiện click trên nút xóa (cho cả biến thể cũ và mới)
-        document.addEventListener('click', function(event) {
-            var deleteButton = event.target.closest('.delete-variant');
-            if (!deleteButton) return;
 
-            event.preventDefault();
 
-            // Hiển thị xác nhận trước khi xóa
-            if (!confirm('Bạn có chắc chắn muốn xóa biến thể này?')) {
-                // Nếu người dùng từ chối, không thực hiện hành động nào
-                return;
-            }
-
-            // Kiểm tra nếu nút xóa có data-id => biến thể cũ đã lưu trên server
-            var variantId = deleteButton.getAttribute('data-id');
-            if (variantId) {
-                // Gửi yêu cầu xóa bằng Ajax đến server
-                fetch(`/admin/productvariants/destroy/${variantId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                'content')
-                        }
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('Xóa biến thể thành công!');
-                            deleteButton.closest('tr').remove();
-                        } else {
-                            alert('Đã xảy ra lỗi, vui lòng thử lại.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Lỗi:', error);
-                        alert('Đã xảy ra lỗi, vui lòng thử lại.');
-                    });
-            } else {
-                // Nếu không có data-id, biến thể đó chưa được lưu trên server nên chỉ xóa khỏi DOM
-                deleteButton.closest('tr').remove();
-            }
-        });
-    </script>
     <!-- Khởi tạo Summernote cho textarea -->
     <script>
         $(document).ready(function() {

@@ -12,7 +12,6 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-
     protected $fillable = [
         'position',
         'title',
@@ -24,7 +23,6 @@ class Banner extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
     public static function getByPosition(string $position)
     {
         return static::where('position', $position)

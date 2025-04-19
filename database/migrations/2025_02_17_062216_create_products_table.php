@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->enum('status', ['active', 'inactive', 'out_of_stock'])->default('active');
             $table->unsignedBigInteger('view_count')->default(0);
+            $table->softDeletes();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');

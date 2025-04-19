@@ -58,6 +58,7 @@ class CommentController extends Controller
     public function reply(Request $request, $commentId, $entityId)
     {
 
+        
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Vui lòng đăng nhập để trả lời bình luận!');
         }
@@ -82,7 +83,7 @@ class CommentController extends Controller
         $reply->content = $request->input('content');
         $reply->parent_id = $commentId;
         $reply->entity_id = $entityId;
-        $reply->entity_type = $request->input('entity_type'); // Giả định entity_type là 'product'
+        $reply->entity_type = $parentComment->entity_type; // Giả định entity_type là 'product'
         $reply->status = 'pending'; // Trạng thái mặc định
         $reply->save();
 
@@ -112,7 +113,7 @@ class CommentController extends Controller
         ]);
 
         // Nếu rating là null, giữ nguyên giá trị cũ
-       $validatedData['rating'] = $validatedData['rating'] ?? $comment->rating;
+        $validatedData['rating'] = $validatedData['rating'] ?? $comment->rating;
 
         $comment->update($validatedData);
         return response()->json([

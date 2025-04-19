@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('status_history', function (Blueprint $table) {
             $table->id('id');
             $table->unsignedBigInteger('entity_id'); // ID của thực thể
-            $table->enum('entity_type', ['order', 'payment', 'shipment']); // Loại thực thể
+            $table->enum('entity_type', ['order', 'payment', 'shipment','refund']); // Loại thực thể
             $table->string('old_status', 50);
             $table->string('new_status', 50);
             $table->unsignedBigInteger('changed_by')->nullable(); // Cho phép NULL
             $table->timestamp('changed_at')->useCurrent();
+            $table->text('note')->nullable();
             $table->timestamps();
 
             // Khóa ngoại tham chiếu đến bảng users (nếu cần)
