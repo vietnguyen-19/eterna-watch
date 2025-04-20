@@ -42,7 +42,7 @@ Route::get('/email/verify', [EmailVerificationController::class, 'showVerificati
 
 // Route xử lý xác minh email
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-    ->middleware(['auth', 'signed'])
+    ->middleware('signed')
     ->name('verification.verify');
 
 // Route để gửi lại email xác minh
@@ -124,7 +124,6 @@ Route::prefix('account')->middleware('customer')->group(function () {
 
     Route::post('/upload-image', [AccountController::class, 'uploadImage']);
     Route::post('/remove-image', [AccountController::class, 'removeImage']);
-
 });
 
 Route::get('contact_us', [SettingController::class, 'contactUs'])->name('client.contact_us');
@@ -136,4 +135,3 @@ Route::get('return-policy', [SettingController::class, 'returnPolicy'])->name('c
 
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('client.chatbot.index');
 Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('client.chatbot.chat');
-
