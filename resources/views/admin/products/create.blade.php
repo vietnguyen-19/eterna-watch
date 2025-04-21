@@ -3,6 +3,7 @@
     <section class="content pt-3">
         <form action="{{ route('admin.products.store') }}" autocomplete="off" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="type" value="{{ $type }}">
             <div class="container-fluid">
                 <div class="row">
                     <!-- Cột 1: Thông tin cơ bản -->
@@ -40,8 +41,14 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    <!-- Danh mục sản phẩm -->
+                                    <div class="mb-3 col-md-12">
+                                        <label for="price_sale" class="form-label">Giá khuyến mãi (nếu có)</label>
+                                        <input value="{{ old('price_sale') }}" name="price_sale" type="number"
+                                            id="price_sale" class="form-control" placeholder="Nhập giá sản phẩm">
+                                        @error('price_sale')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="mb-3 col-md-12">
                                         <label for="category_id" class="form-label">Danh mục sản phẩm</label>
                                         <select id="categorySelect" class="form-control form-select">
@@ -60,8 +67,7 @@
 
                                     <div class="mb-3 col-md-12">
                                         <label for="subcategory_id" class="form-label">Danh mục con</label>
-                                        <select id="subcategorySelect" name="category_id"
-                                            class="form-control form-select">
+                                        <select id="subcategorySelect" name="category_id" class="form-control form-select">
                                             <option value="">Chọn danh mục con</option>
                                         </select>
                                         @error('subcategory_id')
@@ -139,39 +145,47 @@
                     </div>
 
                     <!-- Cột 3: Biến thể -->
-                    <div class="col-lg-12">
-                        <div class="card" id="customerList">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="card-title mb-0"><b>Bước 2 | Chọn các loại biến thể</b></h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="attribute-values" class="form-label">Chọn các loại biến
-                                            thể</label>
-                                        <select name="attribute_values[]" class="form-control select2" multiple
-                                            id="attribute-values">
-                                            @foreach ($attributes as $attribute)
-                                                <option value="{{ $attribute->id }}"
-                                                    {{ is_array(old('attribute_values')) && in_array($attribute->id, old('attribute_values')) ? 'selected' : '' }}>
-                                                    {{ $attribute->attribute_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('attribute_values')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                    @if ($type != 'simple')
+                        <div class="col-lg-12">
+                            <div class="card" id="customerList">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="card-title mb-0"><b>Bước 2 | Chọn các loại biến thể</b></h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="attribute-values" class="form-label">Chọn các loại biến
+                                                thể</label>
+                                            <select name="attribute_values[]" class="form-control select2" multiple
+                                                id="attribute-values">
+                                                @foreach ($attributes as $attribute)
+                                                    <option value="{{ $attribute->id }}"
+                                                        {{ is_array(old('attribute_values')) && in_array($attribute->id, old('attribute_values')) ? 'selected' : '' }}>
+                                                        {{ $attribute->attribute_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('attribute_values')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="submit" class="btn btn-success">Tiếp theo</button>
-                                </div>
-                            </div>
                         </div>
+                    @endif
+
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-end gap-2">
+                        @if ($type == 'simple')
+                            <button type="submit" class="btn btn-success">Thêm mới sản phẩm</button>
+                        @else
+                            <button type="submit" class="btn btn-success">Tiếp theo</button>
+                        @endif
                     </div>
                 </div>
+
             </div>
         </form>
     </section>

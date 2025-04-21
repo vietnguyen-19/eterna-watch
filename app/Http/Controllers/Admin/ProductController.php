@@ -76,16 +76,32 @@ class ProductController extends Controller
         Storage::delete($storagePath); // Xóa file
         return response()->json(['success' => true, 'message' => 'Ảnh đã được xóa']);
     }
-    public function store(ProductStoreRequest $request)
+    public function store(Request $request)
     {
-
+        // Validate dữ liệu đầu vào
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price_default' => 'required|numeric|min:0',
+            'price_sale' => 'nullable|numeric|min:0|lt:price_default',
+            'type' => 'required|in:simple,variant',
+            'avatar' => 'nullable|string',
+            'short_description' => 'nullable|string',
+            'full_description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'nullable|exists:brands,id',
+            'status' => 'required|in:active,inactive,out_of_stock',
+            'attribute_values' => 'nullable|array',
+        ]);
+    
         DB::beginTransaction();
-
+    
         try {
-            // Khởi tạo mảng dữ liệu cho sản phẩm
+            // Chuẩn bị dữ liệu cơ bản
             $productData = [
                 'name' => $request->name,
                 'price_default' => $request->price_default,
+                'price_sale' => $request->price_sale ?? null,
+                'type' => $request->type,
                 'avatar' => $request->avatar,
                 'short_description' => $request->short_description,
                 'full_description' => $request->full_description,
@@ -93,30 +109,54 @@ class ProductController extends Controller
                 'brand_id' => $request->brand_id,
                 'status' => $request->status,
             ];
-
-
-            // Tạo sản phẩm mới trong bảng products
-            $product = Product::create($productData);
-
-            // Kiểm tra nếu có attribute_values từ request
-            if ($request->has('attribute_values') && is_array($request->attribute_values)) {
-                foreach ($request->attribute_values as $attributeName) {
-                    ProductHasAttribute::create([
-                        'product_id' => $product->id,
-                        'attribute_id' => $attributeName
-                    ]);
-                }
+    
+            if ($request->type === 'simple') {
+                // Lưu trực tiếp nếu là sản phẩm thường
+                Product::create($productData);
+    
+                DB::commit();
+                return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được tạo thành công.');
             }
-
-            // Lưu lại transaction
-            DB::commit();
-
-            return redirect()->route('admin.productvariants.create', $product->id)->with('success', 'Sản phẩm đã được tạo thành công.');
+    
+            if ($request->type === 'variant') {
+                // Lấy tên category và brand
+                $category = Category::find($request->category_id);
+                $brand = $request->brand_id ? Brand::find($request->brand_id) : null;
+    
+                // Bổ sung tên category/brand để tiện hiển thị trong bước tạo biến thể
+                $productData['category_name'] = $category ? $category->name : '';
+                $productData['brand_name'] = $brand ? $brand->name : '';
+    
+                // Lưu dữ liệu vào session để qua trang tạo biến thể
+                session(['product' => $productData]);
+               
+                // Lưu các giá trị thuộc tính đã chọn
+                if ($request->has('attribute_values') && is_array($request->attribute_values)) {
+                    $attributes = collect();
+                    foreach ($request->attribute_values as $attribute_id) {
+                        $attribute = Attribute::with('attributeValues')->where('id', $attribute_id)->first();
+                        if ($attribute) {
+                            $attributes->push($attribute);
+                        }
+                    }
+                    session(['attributes' => $attributes]);
+                }
+                
+                DB::commit();
+                return redirect()->route('admin.productvariants.create')->with('success', 'Thông tin sản phẩm đã được lưu để tạo biến thể.');
+            }
+    
+            DB::rollback();
+            return back()->with('error', 'Loại sản phẩm không hợp lệ.');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
+    
+
+
+
     public function index()
     {
         $data = Product::with('brand', 'category')->latest('id')->get();
@@ -124,9 +164,9 @@ class ProductController extends Controller
             'data' => $data,
         ]);
     }
-    public function create()
+    public function create(Request $request)
     {
-
+        $type = $request->query('type', 'simple');
         $categories = Category::select('id', 'name')->whereNull('parent_id')->get();
         $brands = Brand::select('id', 'name')->get();
         $attributes = Attribute::select('id', 'attribute_name')->get();
@@ -136,6 +176,7 @@ class ProductController extends Controller
             'categories' => $categories,
             'brands' => $brands,
             'attributes' => $attributes,
+            'type' => $type,
         ]);
     }
     public function getSubcategories($parent_id)
@@ -177,12 +218,8 @@ class ProductController extends Controller
         ]);
     }
 
-
-
     public function update(ProductUpdateRequest $request, $id)
     {
-
-
         DB::beginTransaction();
 
         $product = Product::findOrFail($id);
@@ -191,6 +228,8 @@ class ProductController extends Controller
             'name' => $request->name,
             'avatar' => $request->avatar_hidden ?? $product->avatar,
             'price_default' => $request->price_default,
+            'price_sale' => $request->price_sale,
+            'type' => $product->type,
             'short_description' => $request->short_description,
             'full_description' => $request->full_description,
             'category_id' => $request->category_id,
@@ -207,6 +246,8 @@ class ProductController extends Controller
             'name' => $productData['name'],
             'avatar' => $productData['avatar'],
             'price_default' => $productData['price_default'],
+            'price_sale' => $productData['price_sale'],
+            'type' => $product->type,
             'short_description' => $productData['short_description'],
             'full_description' => $productData['full_description'],
             'category_id' => $productData['category_id'],
@@ -230,15 +271,14 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
 
-       
-            $product = Product::findOrFail($id);
 
-            // Chỉ xóa mềm (không xóa file hay biến thể)
-            $product->delete();
+        $product = Product::findOrFail($id);
 
-            DB::commit();
-            return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được đưa vào thùng rác.');
-       
+        // Chỉ xóa mềm (không xóa file hay biến thể)
+        $product->delete();
+
+        DB::commit();
+        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được đưa vào thùng rác.');
     }
     public function trash()
     {
