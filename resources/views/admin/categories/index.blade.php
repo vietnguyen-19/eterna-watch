@@ -4,36 +4,35 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+                    @if (session('thongbao'))
+                    <div id="thongbao-alert"
+                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                        role="alert">
+                        <i class="ri-notification-off-line label-icon"></i><strong>
+                            {{ session('thongbao.message') }}</strong>
+                        
+                    </div>
+                    @php
+                        session()->forget('thongbao');
+                    @endphp
+                @endif
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0"><strong>Danh sách danh mục</strong></h5>
+                                        <h5 class="card-title mb-0">Danh sách danh mục</h5>
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.categories.trash') }}" class="btn btn-danger">
-                                            <i class="ri-add-line align-bottom me-1"></i>Thùng rác
-                                        </a>
-                                        <!-- Nút Thêm danh mục Cha -->
-                                        <a href="{{ route('admin.categories.create', ['type' => 'parent']) }}"
-                                            class="btn btn-success add-btn mr-1 ml-1">
-                                            <i class="ri-add-line align-bottom me-1"></i>Thêm danh mục cha
-                                        </a>
-
-                                        <!-- Nút Thêm danh mục Con -->
-                                        <a href="{{ route('admin.categories.create', ['type' => 'child']) }}"
-                                            class="btn btn-info add-btn">
-                                            <i class="ri-add-line align-bottom me-1"></i>Thêm danh mục con
-                                        </a>
+                                        <a href="{{ route('admin.categories.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm danh mục</a>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-
+                       
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -43,94 +42,66 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <table id="categoryTable" class="table table-bordered align-middle text-center">
-                                            <thead>
+                                        <table class="table table-bordered" aria-describedby="example2_info"
+                                            id="danhmucTable">
+                                            <thead class="text-muted">
                                                 <tr>
-                                                    <th style="width: 100px;">Hình ảnh</th>
-                                                    <th class="text-left">Tên danh mục</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Ngày tạo</th>
-                                                    <th>Thao tác</th>
+                                                    <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
+                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
+                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="action">Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                @foreach ($categories as $parent)
-                                                    @php
-                                                        $childCount = $parent->children->count();
-                                                        $rowspan = $childCount > 0 ? $childCount + 1 : 1;
-                                                    @endphp
+                                            <tbody class="list form-check-all">
+                                                @foreach ($data as $item)
                                                     <tr>
-                                                        {{-- Ảnh to hơn, canh giữa --}}
-                                                        <td class="align-middle text-center" rowspan="{{ $rowspan }}">
-                                                            <div
-                                                                class="d-flex justify-content-center align-items-center h-100">
-                                                                <img src="{{ Storage::url($parent->image ?? 'default-avatar.png') }}"
-                                                                    alt="Hình danh mục" class="rounded border"
-                                                                    style="width: 160px; height: 160px; object-fit: cover;">
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-left text-info fw-bold">{{ $parent->name }}</td>
-                                                        <td>
-                                                            <span
-                                                                class="badge {{ $parent->status ? 'badge-success' : 'badge-danger' }}">
-                                                                {{ $parent->status ? 'Active' : 'Inactive' }}
-                                                            </span>
-                                                        </td>
-                                                        <td>{{ $parent->created_at->format('Y-m-d') }}</td>
-                                                        <td>
 
-                                                            <a href="{{ route('admin.categories.edit', ['id' => $parent->id, 'type' => 'parent']) }}"
-                                                                class="btn btn-sm btn-warning" title="Edit">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <form
-                                                                action="{{ route('admin.categories.destroy', $parent->id) }}"
-                                                                method="POST" style="display:inline-block;"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn thực hiện hành động này không?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="btn btn-sm btn-danger" title="Delete">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            </form>
+                                                        <td class="id">{{ $item->id }}</td>
+                                                        <td class="ten_danh_muc">{{ $item->name }}</td>
+                                                        <td class="slug">
+                                                            {{ $item->parent ? $item->parent->name : 'Danh mục gốc' }}
+                                                        </td>
+
+                                                        <td class="trang_thai">
+                                                            {{ $item->status }}
+                                                        </td>
+
+
+                                                        <td>
+                                                            <ul class="list-inline hstack gap-2 mb-0">
+                                                                <!-- Edit Button -->
+                                                                <li class="list-inline-item edit" title="Edit">
+                                                                    <a href="{{ route('admin.categories.edit', $item->id) }}"
+                                                                        class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
+                                                                        Sửa
+                                                                    </a>
+                                                                </li>
+                                                                <!-- Remove Button -->
+                                                                <li class="list-inline-item" title="Remove">
+                                                                    <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
+                                                                        onclick="return confirm('Bạn đã chắc chắn chưa?')"
+                                                                        href="{{ route('admin.categories.destroy', $item->id) }}">
+                                                                        Xóa
+                                                                    </a>
+                                                                </li>
+
+                                                            </ul>
                                                         </td>
                                                     </tr>
-
-                                                    @foreach ($parent->children as $child)
-                                                        <tr>
-                                                            <td class="text-left">
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳
-                                                                {{ $child->name }}
-                                                            </td>
-                                                            <td>
-                                                                <span
-                                                                    class="badge {{ $child->status ? 'badge-success' : 'badge-danger' }}">
-                                                                    {{ $child->status ? 'Active' : 'Inactive' }}
-                                                                </span>
-                                                            </td>
-                                                            <td>{{ $child->created_at->format('Y-m-d') }}</td>
-                                                            <td>
-                                                                <a href="{{ route('admin.categories.edit', ['id' => $child->id, 'type' => 'child']) }}"
-                                                                    class="btn btn-sm btn-warning" title="Edit">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </a>
-
-                                                                <form
-                                                                    action="{{ route('admin.categories.destroy', $child->id) }}"
-                                                                    method="POST" style="display:inline-block;"
-                                                                    onsubmit="return confirm('Delete this category?')">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button class="btn btn-sm btn-danger" title="Delete">
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
                                                 @endforeach
                                             </tbody>
+                                            <thead class="text-muted">
+                                                <tr>
+                                                    <th class="sort" data-sort="id">ID</th>
+                                                    <th class="sort" data-sort="ten_danh_muc">Tên danh mục</th>
+                                                    <th class="sort" data-sort="mo_ta">Danh mục cha</th>
+                                                    <th class="sort" data-sort="mo_ta">Trang thái</th>
+                                                    <th class="sort" data-sort="action">Action</th>
+                                                </tr>
+                                            </thead>
                                         </table>
+
                                     </div>
                                 </div>
                             </div>
@@ -143,6 +114,7 @@
     </section>
 @endsection
 @section('script')
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -184,33 +156,6 @@
             }
         }, 5000); // 5000ms = 5 giây
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công!',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi!',
-                text: '{{ session('error') }}',
-                confirmButtonText: 'OK',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
 @endsection
 @section('style')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">

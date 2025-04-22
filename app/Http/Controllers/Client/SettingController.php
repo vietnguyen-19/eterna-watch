@@ -22,10 +22,6 @@ class SettingController extends Controller
     {
         return view('client.privacy');
     }
-    public function returnPolicy()
-    {
-        return view('client.return-policy');
-    }
     public function contactStore(Request $request)
     {
         // Xác thực dữ liệu đầu vào

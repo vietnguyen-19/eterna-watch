@@ -79,10 +79,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('edit')->middleware('permission:edit_categories');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('update')->middleware('permission:edit_categories');
         Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
-
-        Route::get('trash', [CategoryController::class, 'trash'])->name('trash')->middleware('permission:delete_categories');
-        Route::put('restore/{id}', [CategoryController::class, 'restore'])->name('restore')->middleware('permission:delete_categories');
-        Route::delete('force-delete/{id}', [CategoryController::class, 'forceDelete'])->name('force-delete')->middleware('permission:delete_categories');
     });
 
     // BANNER
@@ -172,7 +168,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // PHIÊN BẢN SẢN PHẨM
     Route::prefix('productvariants')->name('admin.productvariants.')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('index')->middleware('permission:view_products');
-        Route::get('create', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
+        Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
         Route::post('store', [ProductVariantController::class, 'store'])->name('store')->middleware('permission:create_products');
         Route::post('store-many', [ProductVariantController::class, 'storeMany'])->name('store-many');
         Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('edit')->middleware('permission:edit_products');

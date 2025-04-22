@@ -12,14 +12,13 @@ class Product extends Model
     protected $fillable = [
         'name',
         'price_default',
-        'price_sale',
-        'type',
         'short_description',
         'full_description',
         'avatar',
         'category_id',
         'brand_id',
         'status',
+        'view_count'
     ];
     // Trong model Product
 
@@ -72,4 +71,6 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+   
 }

@@ -298,7 +298,6 @@
             });
         });
     </script>
-    
 @endsection
 @section('style')
     <!-- CSS noUiSlider -->

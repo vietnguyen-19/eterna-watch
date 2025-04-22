@@ -189,7 +189,7 @@
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title">Sửa Bình Luận</h5>
                                                                                 <button type="button" class="close"
-                                                                                    data-dismiss="modal" aria-label="Close">
+                                                                                data-bs-dismiss="modal" aria-label="Close">
                                                                                     <span aria-hidden="true">&times;</span>
                                                                                 </button>
                                                                             </div>
@@ -204,7 +204,7 @@
                                                                             <div class="modal-footer">
                                                                                 <button type="button"
                                                                                     class="btn btn-secondary"
-                                                                                    data-dismiss="modal">Hủy</button>
+                                                                                    data-bs-dismiss="modal">Hủy</button>
                                                                                 <button type="button"
                                                                                     class="btn btn-primary"
                                                                                     id="saveEditComment">Lưu
@@ -225,7 +225,7 @@
                                                                                 <h5 class="modal-title">Trả Lời Bình Luận
                                                                                 </h5>
                                                                                 <button type="button" class="close"
-                                                                                    data-dismiss="modal"
+                                                                                    data-bs-dismiss="modal"
                                                                                     aria-label="Close">
                                                                                     <span aria-hidden="true">&times;</span>
                                                                                 </button>
@@ -245,7 +245,7 @@
                                                                             <div class="modal-footer">
                                                                                 <button type="button"
                                                                                     class="btn btn-secondary"
-                                                                                    data-dismiss="modal">Hủy</button>
+                                                                                    data-bs-dismiss="modal">Hủy</button>
                                                                                 <button type="button"
                                                                                     class="btn btn-primary"
                                                                                     id="saveReplyComment">Gửi Trả
@@ -350,24 +350,24 @@
                 'reviewTablerejected',
                 'reviewTableall'
             ];
-        
+
             // Lặp qua từng ID và áp dụng DataTable
             tableIds.forEach(function(tableId) {
                 var $table = $('#' + tableId);
-        
+
                 // Kiểm tra bảng có tồn tại không
                 if ($table.length) {
                     // Lấy số cột từ phần thead
                     var thCount = $table.find('thead th').length;
                     var isValid = true;
-        
+
                     // Kiểm tra các dòng trong tbody có đúng số lượng cột không
                     $table.find('tbody tr').each(function() {
                         if ($(this).find('td').length !== thCount) {
                             isValid = false;
                         }
                     });
-        
+
                     // Nếu số cột hợp lệ thì áp dụng DataTable
                     if (isValid) {
                         $table.DataTable({
@@ -396,7 +396,7 @@
                 }
             });
         </script>
-        
+
         <script>
             $(document).ready(function() {
                 // Chọn tất cả

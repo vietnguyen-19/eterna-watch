@@ -4,28 +4,32 @@
     <main>
         <div class="mb-4 pb-4"></div>
         <section class="shop-checkout container">
+            <h2 class="page-title">GIỎ HÀNG</h2>
+            <div class="checkout-steps">
+                <a href="shop_cart.html" class="checkout-steps__item active d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">01</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Giỏ hàng</span>
+                        <em class="step-description text-muted">Quản lý danh sách sản phẩm của bạn</em>
+                    </span>
+                </a>
 
-            <a href="shop_cart.html" class="d-flex"
-                style="background-color: #f6f6f6; border-radius: 3px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);">
+                <a href="shop_checkout.html" class="checkout-steps__item d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">02</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Giao hàng và thanh toán</span>
+                        <em class="step-description text-muted">Tiến hành thanh toán</em>
+                    </span>
+                </a>
 
-                <!-- Cột icon full height -->
-                <div
-                    style="background-color: #242424; padding: 0 35px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-shopping-cart" style="color: white; font-size: 36px;"></i>
-                </div>
-
-                <!-- Phần nội dung -->
-                <div style="padding: 20px;">
-                    <div style="font-size: 1.8rem; color: #b42020; font-weight: bold; margin-bottom: 5px;">
-                        GIỎ HÀNG
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem; color: #6c757d;">
-                        Quản lý danh sách sản phẩm của bạn
-                    </p>
-                </div>
-
-            </a>
-
+                <a href="shop_order_complete.html" class="checkout-steps__item d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">03</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Xác nhận</span>
+                        <em class="step-description text-muted">Kiểm tra và gửi đơn hàng</em>
+                    </span>
+                </a>
+            </div>
             <div class="shopping-cart">
                 <div class="cart-table__wrapper">
                     <table class="cart-table">
@@ -42,16 +46,14 @@
 
                             </tr>
                         </thead>
+
                         <tbody>
                             @php
                                 $total = $total ?? 0;
                                 $total_amount = $total_amount ?? 0;
                             @endphp
 
-                            @if (
-                                !isset($cart) ||
-                                    (is_array($cart) && count($cart) == 0) ||
-                                    (is_object($cart) && method_exists($cart, 'isEmpty') && $cart->isEmpty()))
+                            @if (empty($cart))
                                 <tr>
                                     <td colspan="7" class="text-center py-4">
                                         <strong>Giỏ hàng của bạn đang trống.</strong>
@@ -142,92 +144,19 @@
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div id="fixedBar" class="card mt-5">
-                        <div class="card-header bg-dark border-bottom border-secondary py-3">
-                            <div class="container">
-                                <div
-                                    class="d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-3">
-
-                                    <!-- Nhập mã giảm giá (vuông) -->
-                                    <div class="position-relative w-100 w-md-50">
-                                        <input id="voucherInput" style="border-radius: 3px" type="text"
-                                            name="discount-code" class="form-control form-control-sm pe-5"
+                        <div style="border-bottom:1px solid #a7a7a7" class="card-header bg-dark p-2">
+                            <div class="container"> <!-- Thêm container để giới hạn chiều rộng -->
+                                <div class="d-flex justify-content-end align-items-center">
+                                    <div class="position-relative w-50">
+                                        <input class="form-control form-control-sm" type="text" name="discount-code"
                                             placeholder="Nhập mã giảm giá" disabled>
-                                        <button id="checkVoucher" data-total="{{ $total }}"
-                                            class="btn btn-sm fw-semibold position-absolute top-0 end-0 h-100 px-4"
-                                            style="background-color: #1d7bda; color: #fff; border-radius: 4px;" disabled>
-                                            Kiểm tra
-                                        </button>
-                                    </div>
-
-                                    <!-- Nút xem voucher (vuông) -->
-                                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2"
-                                        data-bs-toggle="modal" data-bs-target="#voucherModal"
-                                        class="btn btn-sm fw-semibold text-white"
-                                        style="width: 160px;background-color: #c93030; padding: 13px 20px; border-radius: 4px;">
-                                        Xem Voucher
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel">
-                            <div class="modal-dialog modal-xl">
-                                <div class="modal-content" style="border: none; box-shadow: 0 0 10px rgba(0,0,0,0.15);">
-                                    <div class="modal-header" style="background-color: #f8f9fa;">
-                                        <h5 class="modal-title" id="voucherModalLabel"
-                                            style="color: #0d6efd; font-weight: bold; font-size: 1.75rem;">
-                                            Danh sách Voucher
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Đóng"></button>
-                                    </div>
-                                    <div class="modal-body" style="background-color: #fff;">
-                                        <div class="row">
-
-                                            <!-- Voucher 1 -->
-                                            @foreach ($vouchers as $voucher)
-                                                <div class="col-6">
-                                                    <div class="card h-100"
-                                                        style="border: none; box-shadow: 0 0 6px rgba(0,0,0,0.08);">
-                                                        <div class="card-body">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-2">
-                                                                <span
-                                                                    style="background-color: #ffe0e0; color: #c71c13; font-weight: 600; padding: 4px 8px; border-radius: 4px;">
-                                                                    GIẢM GIÁ
-                                                                </span>
-                                                                <small style="color: #6c757d;">HSD:
-                                                                    {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}</small>
-
-                                                            </div>
-                                                            <h5 style="font-weight: bold; color: #212529;">
-                                                                {{ $voucher->name }}</h5>
-                                                            <p style="margin-bottom: 4px; color: #6c757d;">Đơn tối thiểu:
-                                                                {{ number_format($voucher->min_order, 0, ',', '.') }}₫
-                                                            </p>
-                                                            <p style="margin-bottom: 4px; color: #6c757d;">Mã: <span
-                                                                    style="font-weight: 600; color: #212529;">{{ $voucher->code }}</span>
-                                                            </p>
-                                                            <p style="margin-bottom: 8px; color: #6c757d;">Đã
-                                                                dùng:{{ $voucher->used_count }}/{{ $voucher->max_uses }}
-                                                            </p>
-                                                            <button class="btn w-100 btn-copy-code"
-                                                                style="border: 1px solid #c71c13; color: #c71c13;"
-                                                                data-code="{{ $voucher->code }}">
-                                                                Sao chép mã
-                                                            </button>
-
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                            <!-- Voucher 2 -->
-                                        </div>
+                                        <button data-total="{{ $total }}" style="background: #1d7bda; color:#fff"
+                                            id="checkVoucher" class="btn fw-medium position-absolute top-0 end-0 h-100 px-4"
+                                            disabled>Kiểm tra</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="card-body bg-dark p-2">
                             <div class="container"> <!-- Thêm container để giới hạn chiều rộng -->
@@ -268,7 +197,6 @@
     </main>
 @endsection
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkAll = document.querySelector("#check-all");
@@ -320,19 +248,12 @@
                 let stock = parseInt(input.closest(".input-group").querySelector(".qty-increase").dataset.stock);
                 console.log(stock);
                 if (quantity > stock) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Vượt quá tồn kho!',
-                        text: `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`,
-                        timer: 3500,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    });
-
+                    alert(
+                        `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`
+                    );
                     input.value = stock; // Đặt lại số lượng về tối đa tồn kho
                     return;
                 }
-
                 fetch("/cart/update", {
                         method: "POST",
                         headers: {
@@ -512,29 +433,12 @@
                     .then(data => {
                         if (data.valid) {
                             appliedDiscount = data.discount;
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã giảm giá hợp lệ.',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-
+                            alert(`Mã giảm giá hợp lệ! Giảm ${data.discount}đ.`);
                             updateTotalAmount();
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: data.message || 'Mã giảm giá không hợp lệ!',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert(data.message || "Mã giảm giá không hợp lệ!");
                         }
                     });
-
             });
 
             updateVoucherStatus();
@@ -565,71 +469,6 @@
             );
 
             observer.observe(footer);
-        });
-    </script>
-
-    <!-- Script JavaScript -->
-    <!-- SweetAlert2 CDN -->
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.btn-copy-code');
-
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const code = this.getAttribute('data-code');
-
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(code).then(() => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code +
-                                    '" đã được sao chép vào clipboard!',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        }).catch(err => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã. Lỗi: ' + err,
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        });
-                    } else {
-                        const textarea = document.createElement('textarea');
-                        textarea.value = code;
-                        document.body.appendChild(textarea);
-                        textarea.select();
-                        try {
-                            document.execCommand('copy');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code + '" đã được sao chép vào clipboard!',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        } catch (err) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã.',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        }
-                        document.body.removeChild(textarea);
-                    }
-                });
-            });
         });
     </script>
 @endsection

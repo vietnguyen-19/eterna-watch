@@ -2,31 +2,35 @@
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main style="padding-top: 90px;">
-
+        <div class="mb-4 pb-4"></div>
         <section class="shop-checkout container">
+            <h2 class="page-title">GIAO HÀNG VÀ THANH TOÁN</h2>
+            <div class="checkout-steps">
+                <a href="shop_cart.html" class="checkout-steps__item active d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#fff" class="me-1 mb-0 p-2">01</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Giỏ hàng</span>
+                        <em class="step-description text-muted">Quản lý danh sách sản phẩm của bạn</em>
+                    </span>
+                </a>
 
+                <a href="shop_checkout.html" class="checkout-steps__item active d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#fff" class="me-1 mb-0 p-2">02</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Giao hàng và thanh toán</span>
+                        <em class="step-description text-muted">Tiến hành thanh toán</em>
+                    </span>
+                </a>
 
-            <div class="mb-4 pb-4"></div>
-            <a href="shop_cart.html" class="d-flex"
-                style="background-color: #f6f6f6; border-radius: 3px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);">
+                <a href="shop_order_complete.html" class="checkout-steps__item d-flex align-items-center py-3">
+                    <h2 style="background: #b42020; color:#fff" class="me-1 mb-0 p-2">03</h2>
+                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
+                        <span class="step-title fw-bold">Xác nhận</span>
+                        <em class="step-description text-muted">Kiểm tra và gửi đơn hàng</em>
+                    </span>
+                </a>
+            </div>
 
-                <!-- Cột icon full height -->
-                <div
-                    style="background-color: #242424; padding: 0 35px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-credit-card" style="color: white; font-size: 36px;"></i>
-                </div>
-
-                <!-- Phần nội dung -->
-                <div style="padding: 20px;">
-                    <div style="font-size: 1.8rem; color: #b42020; font-weight: bold; margin-bottom: 5px;">
-                        GIAO HÀNG VÀ THANH TOÁN
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem; color: #6c757d;">
-                        GIAO HÀNG VÀ THANH TOÁN
-                    </p>
-                </div>
-
-            </a>
             <form action="{{ route('payment.checkout') }}" method="POST">
                 @csrf
                 <div class="checkout-form">
@@ -78,92 +82,80 @@
 
                             <!-- Chọn kiểu địa chỉ -->
                             <div class="col-md-12">
-
-                                @php
-                                    $coDiaChiMacDinh = Auth::check() && Auth::user()->defaultAddress;
-                                @endphp
-                            
-                                @if ($coDiaChiMacDinh)
-                                    <!-- Nếu có địa chỉ mặc định -->
-                                    <div class="form-check my-2">
-                                        <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_mac_dinh" value="mac_dinh" checked>
-                                        <label class="form-check-label" for="dia_chi_mac_dinh">Sử dụng địa chỉ mặc định</label>
-                                    </div>
-                                @endif
-                            
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_moi" value="them_moi" {{ !$coDiaChiMacDinh ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="dia_chi_moi">
-                                        Thêm địa chỉ mới
-                                    </label>
+                                <div class="form-check my-2">
+                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_mac_dinh" value="mac_dinh" checked>
+                                    <label class="form-check-label" for="dia_chi_mac_dinh">Sử dụng địa chỉ mặc định</label>
                                 </div>
-                            
-                                @if (!$coDiaChiMacDinh)
-                                    <!-- Nếu KHÔNG có địa chỉ mặc định -->
-                                    <div class="alert alert-warning mb-3">
-                                        Bạn chưa có địa chỉ mặc định. Vui lòng <a href="{{ route('account.edit') }}" class="fw-bold text-danger">thêm địa chỉ mới</a> trước khi tiếp tục thanh toán.
-                                    </div>
-                                @endif
-                            
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_moi" value="them_moi">
+                                    <label class="form-check-label" for="dia_chi_moi">Thêm địa chỉ mới</label>
+                                </div>
                             </div>
                             
-                            @if ($coDiaChiMacDinh)
-                                <!-- Địa chỉ mặc định -->
-                                <div id="diaChiMacDinh" class="col-md-12">
-                                    <div class="form-floating my-2">
-                                        <input type="text" class="form-control" id="dia_chi_day_du" name="dia_chi_day_du"
-                                            value="{{ trim(optional(Auth::user()->defaultAddress)->street_address . ', ' . optional(Auth::user()->defaultAddress)->ward . ', ' . optional(Auth::user()->defaultAddress)->district . ', ' . optional(Auth::user()->defaultAddress)->city, ', ') }}"
-                                            placeholder="Địa chỉ đầy đủ" readonly>
-                                    </div>
-                            
-                                    <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
-                                    <input type="hidden" name="type_address" value="default">
-                                    <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
-                                    <input type="hidden" name="ward" value="{{ optional(Auth::user()->defaultAddress)->ward }}">
-                                    <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
-                                    <input type="hidden" name="city" value="{{ optional(Auth::user()->defaultAddress)->city }}">
+                            <!-- Địa chỉ mặc định -->
+                            <div id="diaChiMacDinh" class="col-md-12">
+                                <div class="form-floating my-2">
+                                    <input type="text" class="form-control" id="dia_chi_day_du" name="dia_chi_day_du"
+                                        value="{{ old(
+                                            'dia_chi_day_du',
+                                            Auth::check()
+                                                ? trim(
+                                                    optional(Auth::user()->defaultAddress)->street_address .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->ward .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->district .
+                                                        ', ' .
+                                                        optional(Auth::user()->defaultAddress)->city,
+                                                    ', ',
+                                                )
+                                                : '',
+                                        ) }}"
+                                        placeholder="Địa chỉ đầy đủ" readonly>
                                 </div>
-                            @endif
+                            
+                                <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
+                                <input type="hidden" name="type_address" value="default">
+                                <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
+                                <input type="hidden" name="ward" value="{{ optional(Auth::user()->defaultAddress)->ward }}">
+                                <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
+                                <input type="hidden" name="city" value="{{ optional(Auth::user()->defaultAddress)->city }}">
+                            </div>
                             
                             <!-- Địa chỉ mới -->
-                            <div id="themDiaChiMoi" style="display: {{ !$coDiaChiMacDinh ? 'block' : 'none' }};">
+                            <div id="themDiaChiMoi" style="display: none;">
                                 <input type="hidden" name="type_address" value="new">
-                                
-                                <!-- Tỉnh/Thành -->
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
-                                        <select id="city" name="city" class="form-select">
+                                        <select id="city" name="city" class="form-select" disabled>
                                             <option value="">-- Chọn Tỉnh/Thành phố --</option>
                                         </select>
                                         <label for="city">Tỉnh/Thành phố</label>
                                     </div>
                                 </div>
                             
-                                <!-- Quận/Huyện -->
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
-                                        <select id="district" name="district" class="form-select">
+                                        <select id="district" name="district" class="form-select" disabled>
                                             <option value="">-- Chọn Quận/Huyện --</option>
                                         </select>
                                         <label for="district">Quận/Huyện</label>
                                     </div>
                                 </div>
                             
-                                <!-- Phường/Xã -->
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
-                                        <select id="ward" name="ward" class="form-select">
+                                        <select id="ward" name="ward" class="form-select" disabled>
                                             <option value="">-- Chọn Phường/Xã --</option>
                                         </select>
                                         <label for="ward">Phường/Xã</label>
                                     </div>
                                 </div>
                             
-                                <!-- Địa chỉ cụ thể -->
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
                                         <input type="text" class="form-control" id="street_address" name="street_address"
-                                            value="{{ old('street_address') }}" placeholder="Địa chỉ cụ thể">
+                                            value="{{ old('street_address') }}" placeholder="Địa chỉ" disabled>
                                         <label for="street_address">Địa chỉ cụ thể *</label>
                                     </div>
                                 </div>

@@ -15,19 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price_default', 15, 2);
-            $table->decimal('price_sale', 15, 2)->nullable(); // Thêm cột giá khuyến mãi
-            $table->enum('type', ['simple', 'variant'])->default('simple'); // Thêm loại sản phẩm
-            $table->text('short_description');
-            $table->text('full_description');
-            $table->string('avatar');
+            $table->text('short_description')->nullable();
+            $table->text('full_description')->nullable();
+            $table->string('avatar')->nullable();
             $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('brand_id');
+            $table->unsignedBigInteger('brand_id')->nullable();
             $table->enum('status', ['active', 'inactive', 'out_of_stock'])->default('active');
             $table->unsignedBigInteger('view_count')->default(0);
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
         });
     }
 

@@ -14,7 +14,7 @@
                 <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">{{  $banners['home_start']->title ?? 'Tiêu đề mặc định' }}
                 </h2>
                 <div class="d-flex align-items-center text-center justify-content-center">
-                    <a href="{{ route('client.shop') }}" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
+                    <a href="shop1.html" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
                         Mua Ngay
                     </a>
                 </div>
@@ -54,7 +54,7 @@
                                 <div class="swiper-slide">
                                     <a href="{{ route('client.shop', ['category_id' => $item->id]) }}">
                                         <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                            src="{{ Storage::url($item->image ?? 'avatar/default.jpeg') }}" width="330"
+                                            src="{{ asset('storage/cate/cate' . ($index + 1) . '.jpg') }}" width="330"
                                             height="400" alt=""></a>
                                     <div class="text-center">
                                         <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
