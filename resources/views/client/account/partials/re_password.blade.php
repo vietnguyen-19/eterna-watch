@@ -1,107 +1,63 @@
-@extends('client.layouts.master')
-@section('content')
-    <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
-    <main style="padding-top: 90px;">
-        <div class="mb-4 pb-4"></div>
-        <section class="my-account container py-5">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="user-info mb-3"
-                        style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
-                        <div class="d-flex flex-column align-items-center text-center p-3">
-                            {{-- Avatar --}}
-                            <div class="avatar" style="width: 200px; height: 200px; overflow: hidden;">
-                                <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                            </div>
-                            <h5 class="mt-3 mb-1">{{ auth()->user()->name }}</h5>
-                            <p class="text-muted">{{ auth()->user()->email }}</p>
+@extends('client.account.main')
+@section('account_content')
+    <form name="password_update_form" method="POST"
+        action="{{ route('account.update_pass') }}">
+        @csrf
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold text-primary pb-3">Cập nhật mật khẩu</h5>
+
+                        <!-- Mật khẩu hiện tại -->
+                        <!-- Mật khẩu hiện tại -->
+                        <div class="form-floating my-3">
+                            <input type="password" class="form-control @error('current_password') is-invalid @enderror"
+                                id="current_password" name="current_password" placeholder="Mật khẩu hiện tại">
+                            <label for="current_password"><strong>Mật khẩu hiện tại</strong></label>
+                            @error('current_password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                        
-                    </div>
-                    <nav class="nav flex-column account-sidebar sticky-sidebar">
 
-                        <a href="{{ route('account.order') }}" class="nav-link">
-                            <i class="fas fa-shopping-bag me-2"></i> Đơn hàng
-                        </a>
-                        <a href="{{ route('account.re_password') }}" class="nav-link active">
-                            <i class="fas fa-key me-2"></i> Cập nhật mật khẩu
-                        </a>
-                        <a href="{{ route('account.edit') }}" class="nav-link ">
-                            <i class="fas fa-user me-2"></i> Chi tiết tài khoản
-                        </a>
-                        <form action="{{ route('client.logout') }}" method="POST" class="w-100">
-                            @csrf
-                            <button type="submit" class="nav-link text-danger logout-btn">
-                                <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
-                            </button>
-                        </form>
-                    </nav>
-                </div>
-                <div class="col-lg-9">
-                    <div class="row">
-                        @if (session('success'))
-                            <div class="alert alert-success" id="success-message">
-                                {{ session('success') }}
-                            </div>
-                        @endif
+                        <!-- Mật khẩu mới -->
+                        <div class="form-floating my-3">
+                            <input type="password" class="form-control @error('new_password') is-invalid @enderror"
+                                id="new_password" name="new_password" placeholder="Mật khẩu mới">
+                            <label for="new_password"><strong>Mật khẩu mới</strong></label>
+                            @error('new_password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                @foreach ($errors->all() as $error)
-                                    <p>{{ $error }}</p>
-                                @endforeach
-                            </div>
-                        @endif
+                        <!-- Nhập lại mật khẩu mới -->
+                        <div class="form-floating my-3">
+                            <input type="password"
+                                class="form-control @error('new_password_confirmation') is-invalid @enderror"
+                                id="new_password_confirmation" name="new_password_confirmation"
+                                placeholder="Nhập lại mật khẩu mới">
+                            <label for="new_password_confirmation"><strong>Nhập lại mật khẩu mới</strong></label>
+                            @error('new_password_confirmation')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
-
-                        <form name="password_update_form" class="needs-validation" novalidate method="POST"
-                        action="{{ route('account.update_pass') }}">
-                      @csrf
-                  
-                      <div class="row">
-                          <div class="col-md-12">
-                              <div class="card shadow-sm">
-                                  <div class="card-body">
-                                      <h5 class="fw-bold text-primary pb-3">Cập nhật mật khẩu</h5>
-                  
-                                      <!-- Mật khẩu hiện tại -->
-                                      <div class="form-floating my-3">
-                                          <input type="password" class="form-control" id="current_password"
-                                                 name="current_password" placeholder="Mật khẩu hiện tại" required>
-                                          <label for="current_password"><strong>Mật khẩu hiện tại</strong></label>
-                                      </div>
-                  
-                                      <!-- Mật khẩu mới -->
-                                      <div class="form-floating my-3">
-                                          <input type="password" class="form-control" id="new_password"
-                                                 name="new_password" placeholder="Mật khẩu mới" required>
-                                          <label for="new_password"><strong>Mật khẩu mới</strong></label>
-                                      </div>
-                  
-                                      <!-- Xác nhận mật khẩu mới (Cập nhật tên thành 'new_password_confirmation') -->
-                                      <div class="form-floating my-3">
-                                          <input type="password" class="form-control" id="new_password_confirmation"
-                                                 name="new_password_confirmation" placeholder="Nhập lại mật khẩu mới" required>
-                                          <label for="new_password_confirmation"><strong>Nhập lại mật khẩu mới</strong></label>
-                                      </div>
-                  
-                                      <!-- Nút cập nhật -->
-                                      <div class="col-md-12 text-center mt-4">
-                                          <button class="btn btn-primary">Lưu thay đổi</button>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </form>
+                        <!-- Nút cập nhật -->
+                        <div class="col-md-12 text-center mt-4">
+                            <button class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
                     </div>
                 </div>
-        </section>
-    </main>
-
-
-    <div class="mb-5 pb-xl-5"></div>
+            </div>
+        </div>
+    </form>
 @endsection
 @section('script')
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
@@ -194,6 +150,33 @@
             }
         });
     </script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      @if (session('success'))
+          <script>
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Thành công!',
+                  text: '{{ session('success') }}',
+                  confirmButtonText: 'OK',
+                  timer: 3000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+              });
+          </script>
+      @endif
+      @if (session('error'))
+          <script>
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Lỗi!',
+                  text: '{{ session('error') }}',
+                  confirmButtonText: 'OK',
+                  timer: 3000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+              });
+          </script>
+      @endif
 @endsection
 @section('style')
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">

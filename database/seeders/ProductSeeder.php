@@ -100,6 +100,7 @@ class ProductSeeder extends Seeder
                     'short_description' => 'Sản phẩm chất lượng cao, chính hãng.',
                     'full_description' => 'Đồng hồ chính hãng, thiết kế sang trọng, bảo hành 2 năm.',
                     'price_default' => $p['price'],
+                    'type' => 'variant',
                     'brand_id' => $brandId,
                     'category_id' => $categoryId,
                     'status' => 'active',

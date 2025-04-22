@@ -2,30 +2,16 @@
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
-        <div class="mb-4 pb-4"></div>
+      
         <section class="shop-checkout container">
-
-            <a href="shop_cart.html" class="d-flex"
-                style="background-color: #f6f6f6; border-radius: 3px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);">
-
-                <!-- Cột icon full height -->
-                <div
-                    style="background-color: #242424; padding: 0 35px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-shopping-cart" style="color: white; font-size: 36px;"></i>
-                </div>
-
-                <!-- Phần nội dung -->
-                <div style="padding: 20px;">
-                    <div style="font-size: 1.8rem; color: #b42020; font-weight: bold; margin-bottom: 5px;">
-                        GIỎ HÀNG
-                    </div>
-                    <p style="margin: 0; font-size: 0.95rem; color: #6c757d;">
-                        Quản lý danh sách sản phẩm của bạn
-                    </p>
-                </div>
-
+            <div class="mb-4 pb-4"></div>
+            <a href="shop_cart.html" class="checkout-steps__item d-flex align-items-center py-3">
+                <div style="padding: style="background: #b42020; color:#fff" class="me-1 mb-0 p-2"></div>
+                <span class="checkoutteps__item-title d-flex flex-column justify-content-center text-start">
+                    <span class="step-title fw-bold">Giỏ hàng</span>
+                    <em class="step-description text-muted">Quản lý danh sách sản phẩm của bạn</em>
+                </span>
             </a>
-
             <div class="shopping-cart">
                 <div class="cart-table__wrapper">
                     <table class="cart-table">
@@ -42,6 +28,7 @@
 
                             </tr>
                         </thead>
+
                         <tbody>
                             @php
                                 $total = $total ?? 0;
@@ -268,7 +255,6 @@
     </main>
 @endsection
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkAll = document.querySelector("#check-all");
@@ -320,19 +306,12 @@
                 let stock = parseInt(input.closest(".input-group").querySelector(".qty-increase").dataset.stock);
                 console.log(stock);
                 if (quantity > stock) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Vượt quá tồn kho!',
-                        text: `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`,
-                        timer: 3500,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    });
-
+                    alert(
+                        `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`
+                    );
                     input.value = stock; // Đặt lại số lượng về tối đa tồn kho
                     return;
                 }
-
                 fetch("/cart/update", {
                         method: "POST",
                         headers: {
@@ -512,119 +491,46 @@
                     .then(data => {
                         if (data.valid) {
                             appliedDiscount = data.discount;
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã giảm giá hợp lệ.',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-
+                            alert(`Mã giảm giá hợp lệ! Giảm ${data.discount}đ.`);
                             updateTotalAmount();
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: data.message || 'Mã giảm giá không hợp lệ!',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert(data.message || "Mã giảm giá không hợp lệ!");
                         }
                     });
-
             });
 
             updateVoucherStatus();
         });
     </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const fixedBar = document.getElementById("fixedBar");
-            const footer = document.querySelector("footer");
-
-            if (!fixedBar || !footer) return;
-
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            // Khi footer xuất hiện trên màn hình, ẩn fixedBar
-                            fixedBar.classList.add("hidden");
-                        } else {
-                            // Khi footer ra khỏi màn hình, hiện lại fixedBar
-                            fixedBar.classList.remove("hidden");
-                        }
-                    });
-                }, {
-                    threshold: 0.1
-                } // Khi footer hiển thị ít nhất 10%, kích hoạt
-            );
-
-            observer.observe(footer);
-        });
-    </script>
-
-    <!-- Script JavaScript -->
-    <!-- SweetAlert2 CDN -->
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.btn-copy-code');
+            const copyButtons = document.querySelectorAll('.btn-copy-code');
 
-            buttons.forEach(button => {
+            copyButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const code = this.getAttribute('data-code');
 
-                    if (navigator.clipboard) {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText(code).then(() => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code +
-                                    '" đã được sao chép vào clipboard!',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert('Đã sao chép mã: ' + code);
                         }).catch(err => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã. Lỗi: ' + err,
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            console.error('Lỗi sao chép:', err);
+                            alert('Không thể sao chép mã. Vui lòng thử lại.');
                         });
                     } else {
+                        // Fallback cho trình duyệt không hỗ trợ clipboard API
                         const textarea = document.createElement('textarea');
                         textarea.value = code;
                         document.body.appendChild(textarea);
                         textarea.select();
                         try {
                             document.execCommand('copy');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code + '" đã được sao chép vào clipboard!',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert('Đã sao chép mã: ' + code);
                         } catch (err) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã.',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert('Không thể sao chép mã.');
                         }
                         document.body.removeChild(textarea);
                     }
@@ -690,6 +596,65 @@
             opacity: 0;
             transform: translateY(100%);
             pointer-events: none;
+        }
+
+        .checkout-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            max-width: 700px;
+            margin: auto;
+            border-left: 4px solid #b42020;
+        }
+
+        .checkout-steps__item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f8f8;
+            text-decoration: none;
+            color: #000;
+            transition: background 0.2s;
+        }
+
+        .checkout-steps__item:hover {
+            background: #f1f1f1;
+        }
+
+        .checkout-steps__item.active {
+            background: #b42020;
+            color: #fff;
+        }
+
+        .checkout-step-number {
+            width: 50px;
+            height: 50px;
+            background: #000;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .checkout-steps__item.active .checkout-step-number {
+            background: #fff;
+            color: #b42020;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: inherit;
         }
     </style>
 @endsection

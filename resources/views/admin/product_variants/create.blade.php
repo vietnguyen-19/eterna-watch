@@ -19,7 +19,7 @@
                                 <div class="col-md-3 d-flex">
                                     <div
                                         class="w-100 h-100 d-flex align-items-center justify-content-center border rounded shadow-sm p-2 bg-light">
-                                        <img src="{{ asset('storage/' . $product->avatar) }}" class="img-fluid rounded"
+                                        <img src="{{ asset('storage/' . $product['avatar']) }}" class="img-fluid rounded"
                                             style="max-height: 100%; max-width: 100%; object-fit: cover;"
                                             alt="Ảnh sản phẩm">
                                     </div>
@@ -32,32 +32,38 @@
                                             <tbody>
                                                 <tr>
                                                     <th class="text-muted" style="width: 180px;">Tên sản phẩm</th>
-                                                    <td class="fs-5">{{ $product->name }}</td>
+                                                    <td class="fs-5">{{ $product['name'] }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Danh mục</th>
-                                                    <td class="fs-5">{{ $product->category->name }}</td>
+                                                    <td class="fs-5">{{ $product['category_name']}}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Thương hiệu</th>
-                                                    <td class="fs-5">{{ $product->brand->name }}</td>
+                                                    <td class="fs-5">{{ $product['brand_name'] }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Giá mặc định</th>
                                                     <td class="fs-5">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        {{ number_format($product['price_default'], 0, ',', '.') }} VND
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Giá mặc định</th>
+                                                    <td class="fs-5">
+                                                        {{ number_format($product['price_sale'], 0, ',', '.') }} VND
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Trạng thái</th>
                                                     <td
-                                                        class="fs-5 {{ $product->status === 'active' ? 'text-success' : 'text-danger' }}">
-                                                        {{ $product->status === 'active' ? 'Đang bán' : 'Ngừng bán' }}
+                                                        class="fs-5 {{ $product['status'] === 'active' ? 'text-success' : 'text-danger' }}">
+                                                        {{ $product['status'] === 'active' ? 'Đang bán' : 'Ngừng bán' }}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted align-top">Mô tả ngắn</th>
-                                                    <td class="fs-5">{{ $product->short_description }}</td>
+                                                    <td class="fs-5">{{$product['short_description'] }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -80,7 +86,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        @foreach ($product->attributes as $attribute)
+                                        @foreach ($attributes as $attribute)
                                             <div class="mb-3 col-md-12">
                                                 <label for="name_values"
                                                     class="form-label">{{ $attribute->attribute_name }}</label>
@@ -120,7 +126,6 @@
                             <form id="variantForm" method="POST" action="{{ route('admin.productvariants.store-many') }}"
                                 enctype="multipart/form-data">
                                 @csrf
-                                <input name="productId" value="{{ $product->id }}" type="hidden">
                                 <div class="card">
                                     <div class="bg-light card-header border-bottom-dashed">
                                         <div class="row g-4 align-items-center">
@@ -166,7 +171,6 @@
                                 <form action="{{ route('admin.productvariants.store') }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
-                                    <input name="productId" value="{{ $product->id }}" type="hidden">
 
                                     <div class="modal-body">
                                         <div class="row">
@@ -188,7 +192,7 @@
                                                         <div class="mb-3">
                                                             <label class="form-label mb-1">Biến thể</label>
                                                             <div class="card p-3">
-                                                                @foreach ($product->attributes as $attribute)
+                                                                @foreach ($attributes as $attribute)
                                                                     <div class="mb-3">
                                                                         <label
                                                                             class="form-label">{{ $attribute->attribute_name }}</label>
