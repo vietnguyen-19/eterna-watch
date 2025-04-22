@@ -103,7 +103,7 @@ class UserSeeder extends Seeder
                 'avatar' => 'avatar/avatar8.jpeg',
                 'note' => 'Ưu tiên thanh toán bằng chuyển khoản.',
                 'role_id' => 3,
-                'status' => 'banned',
+                'status' => 'active',
             ],
             [
                 'name' => 'Phan Hữu Khang',

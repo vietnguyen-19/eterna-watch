@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->text('note')->nullable();
             $table->unsignedBigInteger('role_id');
-            $table->enum('status', ['active', 'inactive', 'banned'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

@@ -109,7 +109,7 @@ class CategoryController extends Controller
             if ($request->hasFile('image')) {
                 // Xóa ảnh cũ nếu có
                 if ($category->image) {
-                    $oldImagePath = public_path('storage/categories/' . $category->image);
+                    $oldImagePath = public_path('storage/' . $category->image);
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath); // Xóa ảnh cũ khỏi thư mục
                     }

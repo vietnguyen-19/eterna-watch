@@ -23,22 +23,13 @@ class UserStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|regex:/^0\d{9}$/',
             'password' => 'required|min:6',
             'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
             'status' => 'required|in:active,inactive,banned,pending',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'note' => 'nullable|string',
-
-            // Địa chỉ
-            // 'full_name' => 'required|string|max:255',
-            // 'phone_number' => 'required|string|max:20',
-            // 'street_address' => 'required|string|max:255',
-            // 'ward' => 'required|string|max:255',
-            // 'district' => 'required|string|max:255',
-            // 'city' => 'required|string|max:255',
-            // 'country' => 'required|string|max:255',
         ];
     }
 
@@ -53,6 +44,7 @@ class UserStoreRequest extends FormRequest
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã tồn tại',
             'phone.required' => 'Vui lòng nhập số điện thoại',
+            'phone.regex' => 'Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (bắt đầu bằng 0 và có 10 chữ số).',
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
             'gender.required' => 'Vui lòng chọn giới tính',
