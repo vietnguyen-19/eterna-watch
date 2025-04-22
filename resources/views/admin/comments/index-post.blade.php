@@ -150,7 +150,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    {{ $comment->entity->title }}
+                                                                    <a href="{{ route('client.blog.detail', $comment->entity->id) }}">{{ $comment->entity->title }}</a>
                                                                 </td>
                                                                 <td>
                                                                     @switch($comment->status)
