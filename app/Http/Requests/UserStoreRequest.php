@@ -23,7 +23,7 @@ class UserStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:10',
             'password' => 'required|min:6',
             'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
@@ -53,6 +53,7 @@ class UserStoreRequest extends FormRequest
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã tồn tại',
             'phone.required' => 'Vui lòng nhập số điện thoại',
+            'phone.max' => 'Số điện thoại chỉ có 10 ký tự',
             'password.required' => 'Vui lòng nhập mật khẩu',
             'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
             'gender.required' => 'Vui lòng chọn giới tính',
