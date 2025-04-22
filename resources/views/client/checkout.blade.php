@@ -91,7 +91,7 @@
                                     <label class="form-check-label" for="dia_chi_moi">Thêm địa chỉ mới</label>
                                 </div>
                             </div>
-                            
+
                             <!-- Địa chỉ mặc định -->
                             <div id="diaChiMacDinh" class="col-md-12">
                                 <div class="form-floating my-2">
@@ -113,7 +113,7 @@
                                         ) }}"
                                         placeholder="Địa chỉ đầy đủ" readonly>
                                 </div>
-                            
+
                                 <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
                                 <input type="hidden" name="type_address" value="default">
                                 <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
@@ -121,7 +121,7 @@
                                 <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
                                 <input type="hidden" name="city" value="{{ optional(Auth::user()->defaultAddress)->city }}">
                             </div>
-                            
+
                             <!-- Địa chỉ mới -->
                             <div id="themDiaChiMoi" style="display: none;">
                                 <input type="hidden" name="type_address" value="new">
@@ -133,7 +133,7 @@
                                         <label for="city">Tỉnh/Thành phố</label>
                                     </div>
                                 </div>
-                            
+
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
                                         <select id="district" name="district" class="form-select" disabled>
@@ -142,7 +142,7 @@
                                         <label for="district">Quận/Huyện</label>
                                     </div>
                                 </div>
-                            
+
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
                                         <select id="ward" name="ward" class="form-select" disabled>
@@ -151,7 +151,7 @@
                                         <label for="ward">Phường/Xã</label>
                                     </div>
                                 </div>
-                            
+
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
                                         <input type="text" class="form-control" id="street_address" name="street_address"
@@ -160,7 +160,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Script xử lý hiển thị & kích hoạt trường -->
                             <script>
                                 document.addEventListener('DOMContentLoaded', function () {
@@ -168,33 +168,33 @@
                                     const moiRadio = document.getElementById('dia_chi_moi');
                                     const diaChiMacDinhDiv = document.getElementById('diaChiMacDinh');
                                     const themDiaChiMoiDiv = document.getElementById('themDiaChiMoi');
-                            
+
                                     const toggleDiaChi = () => {
                                         const isMacDinh = macDinhRadio.checked;
-                            
+
                                         diaChiMacDinhDiv.style.display = isMacDinh ? 'block' : 'none';
                                         themDiaChiMoiDiv.style.display = isMacDinh ? 'none' : 'block';
-                            
+
                                         // Bật/tắt các input trong form thêm địa chỉ mới
                                         const newAddressInputs = themDiaChiMoiDiv.querySelectorAll('select, input');
                                         newAddressInputs.forEach(el => {
                                             el.disabled = isMacDinh;
                                         });
-                            
+
                                         // Ẩn/hiện các input hidden nếu cần thiết
                                         const hiddenInputs = diaChiMacDinhDiv.querySelectorAll('input[type="hidden"]');
                                         hiddenInputs.forEach(el => {
                                             el.disabled = !isMacDinh;
                                         });
                                     };
-                            
+
                                     macDinhRadio.addEventListener('change', toggleDiaChi);
                                     moiRadio.addEventListener('change', toggleDiaChi);
-                            
+
                                     toggleDiaChi(); // Khởi tạo ban đầu
                                 });
                             </script>
-                            
+
 
 
                             <!-- Ghi chú đơn hàng -->
@@ -219,8 +219,8 @@
                                         <tr>
                                             <th style="width: 10%" class="fw-bold">Sản phẩm</th>
                                             <th></th>
-                                            <th class="fw-bold text-center">Giá</th>
                                             <th class="fw-bold text-center">Số lượng</th>
+                                            <th class="fw-bold text-center">Giá</th>
                                             <th class="fw-bold text-end">Tổng cộng</th>
                                         </tr>
                                     </thead>

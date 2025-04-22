@@ -17,7 +17,7 @@ class UserUpdateRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email,' . $userId,
             'phone' => 'required|string|max:20',
             'password' => 'nullable|min:6',
             'gender' => 'required|in:male,female,other',
@@ -25,7 +25,7 @@ class UserUpdateRequest extends FormRequest
             'status' => 'required|in:active,inactive,banned,pending',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'note' => 'nullable|string',
-            
+
             // Địa chỉ
             'full_name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:20',
@@ -55,7 +55,7 @@ class UserUpdateRequest extends FormRequest
             'avatar.image' => 'File phải là hình ảnh',
             'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
             'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
-            
+
             // Địa chỉ
             'full_name.required' => 'Vui lòng nhập họ tên người nhận',
             'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',

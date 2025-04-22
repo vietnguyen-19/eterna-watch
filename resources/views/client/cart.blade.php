@@ -53,10 +53,10 @@
                                 $total_amount = $total_amount ?? 0;
                             @endphp
 
-                            @if (empty($cart))
+                            @if ($cart->isEmpty())
                                 <tr>
                                     <td colspan="7" class="text-center py-4">
-                                        <strong>Giỏ hàng của bạn đang trống.</strong>
+                                        <h4><strong>Bạn chưa có sản phẩm nào trong giỏ hàng!</strong></h4>
                                     </td>
                                 </tr>
                             @else
@@ -87,7 +87,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item">
-                                                <a href="product1_simple.html">
+                                                <a href="{{ route('client.shop.show', $product->id) }}">
                                                     <img style="border: 1px solid #c4bebe;width:88px"
                                                         src="{{ Storage::url($image) }}" alt="">
                                                 </a>
@@ -95,7 +95,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item__detail">
-                                                <h4><a href="product1_simple.html">
+                                                <h4><a href="{{ route('client.shop.show', $product->id) }}" >
                                                         <strong>{{ $name ?? 'Sản phẩm không tồn tại' }}</strong></a>
                                                 </h4>
                                                 <ul class="shopping-cart__product-item__options">

@@ -103,18 +103,18 @@ class UserController extends Controller
             ]);
 
             // Tạo địa chỉ mặc định cho người dùng
-            UserAddress::create([
-                'user_id' => $user->id,
-                'full_name' => $request->input('full_name'),
-                'phone_number' => $request->input('phone_number'),
-                'email' => $request->input('email'),
-                'street_address' => $request->input('street_address'),
-                'ward' => $request->input('ward'),
-                'district' => $request->input('district'),
-                'city' => $request->input('city'),
-                'country' => $request->input('country'),
-                'is_default' => true,
-            ]);
+            // UserAddress::create([
+            //     'user_id' => $user->id,
+            //     'name' => $request->input('name'),
+            //     'phone_number' => $request->input('phone_number'),
+            //     'email' => $request->input('email'),
+            //     'street_address' => $request->input('street_address'),
+            //     'ward' => $request->input('ward'),
+            //     'district' => $request->input('district'),
+            //     'city' => $request->input('city'),
+            //     'country' => $request->input('country'),
+            //     'is_default' => true,
+            // ]);
 
             DB::commit();
 

@@ -158,7 +158,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    {{ optional($comment->entity)->name }}
+                                                                    <a href="{{ route('client.shop.show', $comment->entity->id) }}">{{ optional($comment->entity)->name }}</a>
 
                                                                 </td>
                                                                 <td>
