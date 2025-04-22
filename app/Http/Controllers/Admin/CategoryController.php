@@ -55,13 +55,47 @@ class CategoryController extends Controller
             'parent_id' => $request->parent_id ?? $category->parent_id,
             'status' => $request->status ?? $category->status,
         ]);
+        try {
+            // Tìm danh mục theo ID
+            $category = Category::find($id);
 
-        return redirect()->route('admin.categories.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Danh mục đã được cập nhật thành công.',
-            ]
-        ]);
+            // Kiểm tra nếu có ảnh mới được upload
+            if ($request->hasFile('image')) {
+                // Xóa ảnh cũ nếu có
+                if ($category->image) {
+                    $oldImagePath = public_path('storage/' . $category->image);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath); // Xóa ảnh cũ khỏi thư mục
+                    }
+                }
+
+                // Lưu ảnh mới vào thư mục public/storage/categories
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = public_path('storage/categories/') . $imageName;
+
+                // Di chuyển ảnh vào thư mục
+                $image->move(public_path('storage/categories'), $imageName);
+
+                // Cập nhật đường dẫn ảnh vào cơ sở dữ liệu
+                $category->image = 'categories/' . $imageName;
+            }
+
+            // Cập nhật các trường khác của danh mục
+            $category->name = $request->name ?? $category->name;
+            $category->parent_id = $request->parent_id ?? $category->parent_id;
+            $category->status = $request->status ?? $category->status;
+
+            // Lưu thông tin danh mục
+            $category->save();
+
+            // Trả về thông báo thành công
+            return redirect()->route('admin.categories.index')->with('success', 'Sửa danh mục thành công');
+        } catch (\Exception $e) {
+            // Trường hợp có lỗi trong quá trình xử lý
+            return redirect()->route('admin.categories.index')->with('error', 'Có lỗi xảy ra trong quá trình cập nhật danh mục. Vui lòng thử lại.');
+        }
+
     }
 
 
