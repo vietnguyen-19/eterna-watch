@@ -78,8 +78,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [CategoryController::class, 'show'])->name('show')->middleware('permission:view_categories');
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('edit')->middleware('permission:edit_categories');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('update')->middleware('permission:edit_categories');
+        Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
 
-        Route::delete('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
         Route::get('trash', [CategoryController::class, 'trash'])->name('trash')->middleware('permission:delete_categories');
         Route::put('restore/{id}', [CategoryController::class, 'restore'])->name('restore')->middleware('permission:delete_categories');
         Route::delete('force-delete/{id}', [CategoryController::class, 'forceDelete'])->name('force-delete')->middleware('permission:delete_categories');

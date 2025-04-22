@@ -48,7 +48,7 @@ class LoginController extends Controller
             }
             if ($user->role_id == 1||$user->role_id ==2) {
                 // Admin đăng nhập => chuyển đến trang quản trị admin
-                return redirect()->route('admin.dashboard.revenue');
+                return redirect()->route('admin.login');
             }
             Auth::logout();
             return redirect()->route('client.home')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
