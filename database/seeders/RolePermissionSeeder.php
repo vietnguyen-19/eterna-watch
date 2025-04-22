@@ -119,17 +119,22 @@ class RolePermissionSeeder extends Seeder
             'view_brands',
 
             'view_attributes',
-            
+
             'view_orders',
             'edit_orders',
 
             'view_vouchers',
+            'edit_vouchers',
+            'restore_vouchers',
+            'delete_vouchers',
 
             'view_comments',
             'edit_comments',
 
             'view_posts',
             'create_posts',
+            'edit_posts',
+            'delete_posts',
 
             'view_users',
 

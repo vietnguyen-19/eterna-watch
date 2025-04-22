@@ -1,95 +1,69 @@
 @extends('admin.layouts.master')
 @section('content')
-    <section class="content pt-3">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card" id="customerList">
-                        <div class="card-header border-bottom-dashed">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0"><strong>Thêm mới danh mục</strong></h5>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="col-lg-12">
+        <div class="card" id="customerList">
+            <div class="card-header border-bottom-dashed">
+                <div class="row g-4 align-items-center">
+                    <div class="col-sm">
+                        <div>
+                            <h5 class="card-title mb-0">Thêm mới danh mục</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"
+                enctype="multipart/form-data">
+                @csrf
+                <div class="card-body">
+                    <div class="body row">
+                        <div class="mb-3 col-12">
+                            <label for="name" class="form-label">Tên danh mục</label>
+                            <input value="{{ old('name') }}" name="name" type="text" id="name"
+                                class="form-control" placeholder="Enter name">
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <form action="{{ route('admin.categories.store') }}" autocomplete="off" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="card-body">
-                                <div class="body row">
-                                    <!-- Tên danh mục -->
-                                    <div class="mb-3 col-12">
-                                        <label for="name" class="form-label">Tên danh mục</label>
-                                        <input value="{{ old('name') }}" name="name" type="text" id="name"
-                                            class="form-control" placeholder="Enter name">
-                                        @error('name')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                        <div class="mb-3 col-12">
+                            <select name="parent_id" class="form-control">
+                                <option value="">Chọn danh mục cha</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('slug')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
 
-                                    <!-- Ảnh danh mục (chỉ hiển thị khi type == child) -->
-                                    @if ($type == 'parent')
-                                        <div class="mb-3 col-12">
-                                            <label for="image" class="form-label">Ảnh danh mục</label>
-                                            <input value="{{ old('image') }}" name="image" type="file" id="image"
-                                                class="form-control" placeholder="Enter image">
-                                            @error('image')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    @endif
-
-                                    <!-- Chọn danh mục cha (chỉ hiển thị khi type == parent) -->
-                                    @if ($type == 'parent')
-                                    <input type="hidden" name="parent_id" value="">
-
-                                    @else
-                                        <div class="mb-3 col-12">
-                                            <label for="parent_id" class="form-label">Chọn danh mục cha</label>
-                                            <select name="parent_id" class="form-control">
-                                                <option value="">Chọn danh mục cha</option>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('parent_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    @endif
-
-                                    <!-- Trạng thái -->
-                                    <div class="mb-3 col-12">
-                                        <label for="status">Trạng thái</label>
-                                        <select name="status" class="form-control" required>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                        @error('status')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="hstack gap-2 justify-content-left">
-                                    <button type="submit" class="btn btn-success" id="add-btn">Thêm danh mục</button>
-                                    <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
-                                </div>
-                            </div>
-                        </form>
-
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="status">Trạng thái</label>
+                            <select name="status" class="form-control" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
-
                 </div>
-
-            </div>
+                <div class="card-footer">
+                    <div class="hstack gap-2 justify-content-left">
+                        <button type="submit" class="btn btn-success" id="add-btn">Thêm danh mục</button>
+                        <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
+                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                    </div>
+                </div>
+            </form>
         </div>
-    </section>
+
+
+    </div>
+
+    </div>
 @endsection
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>

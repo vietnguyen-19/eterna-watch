@@ -241,7 +241,7 @@ class PaymentController extends Controller
 
             return redirect()
                 ->route('account.order')
-                ->with('success', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
+                ->with('message', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
         } else {
             // Thất bại
             
@@ -292,6 +292,6 @@ class PaymentController extends Controller
         }
         return redirect()
             ->route('account.order')
-            ->with('success', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
+            ->with('message', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
 }

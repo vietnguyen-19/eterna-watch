@@ -623,8 +623,6 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
 @endsection
 @section('script')
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const productVariants = document.getElementById("product-variants");
@@ -694,7 +692,7 @@
             errorMessage.style.display = "none"; // Ẩn ban đầu
         });
     </script>
- 
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const addToCartForm = document.querySelector("form[name='addtocart-form']");
@@ -716,26 +714,10 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Sản phẩm đã được thêm vào giỏ hàng!',
-                                confirmButtonText: 'OK',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert("Sản phẩm đã được thêm vào giỏ hàng!"); // Thông báo thành công
                             viewCartButton.classList.remove("d-none"); // Hiển thị nút "Xem giỏ hàng"
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Lỗi: ' + data.message,
-                                confirmButtonText: 'OK',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
+                            alert("Lỗi: " + data.message); // Hiển thị lỗi nếu có
                         }
                     })
                     .catch(error => console.error("Lỗi:", error));

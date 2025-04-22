@@ -17,40 +17,47 @@ class CartController extends Controller
 {
     public function viewCart()
     {
-        $userId = Auth::id();
+        if (Auth::check()) {
 
-        // Kiểm tra nếu user chưa có giỏ hàng thì tạo mới
-        $cart = Cart::firstOrCreate(['user_id' => $userId]);
-        $vouchers = Voucher::all();
-        // Lấy giỏ hàng từ session
-        $sessionCart = session()->get('cart', []);
+            $userId = Auth::id();
 
-        if (!empty($sessionCart)) {
-            // Lấy giỏ hàng từ DB
+            // Kiểm tra nếu user chưa có giỏ hàng thì tạo mới
             $cart = Cart::firstOrCreate(['user_id' => $userId]);
 
-            foreach ($sessionCart as $variantId => $item) {
-                $cartDetail = CartDetail::firstOrNew([
-                    'cart_id' => $cart->id,
-                    'variant_id' => $variantId
-                ]);
+            // Lấy giỏ hàng từ session
+            $sessionCart = session()->get('cart', []);
 
-                // Cộng dồn số lượng nếu sản phẩm đã tồn tại
-                $cartDetail->quantity += $item['quantity'] ?? 0;
-                $cartDetail->price = $item['price'] ?? 0;
-                $cartDetail->save();
+            if (!empty($sessionCart)) {
+                // Lấy giỏ hàng từ DB
+                $cart = Cart::firstOrCreate(['user_id' => $userId]);
+
+                foreach ($sessionCart as $variantId => $item) {
+                    $cartDetail = CartDetail::firstOrNew([
+                        'cart_id' => $cart->id,
+                        'variant_id' => $variantId
+                    ]);
+
+                    // Cộng dồn số lượng nếu sản phẩm đã tồn tại
+                    $cartDetail->quantity += $item['quantity'] ?? 0;
+                    $cartDetail->price = $item['price'] ?? 0;
+                    $cartDetail->save();
+                }
+
+                // Xóa giỏ hàng trong session sau khi đã đồng bộ vào database
+                session()->forget('cart');
             }
-
-            // Xóa giỏ hàng trong session sau khi đã đồng bộ vào database
-            session()->forget('cart');
+            $userId = Auth::id(); // Lấy ID của user đang đăng nhập
+            $cart = Cart::where('user_id', $userId)->first();
+            // Lấy giỏ hàng từ database sau khi đồng bộ
+            $cart = CartDetail::where('cart_id', $cart->id)
+                ->with('productVariant.product', 'productVariant.attributeValues.nameValue.attribute')
+                ->get();
+        } else {
+            // Nếu chưa đăng nhập, lấy giỏ hàng từ session
+            $cart = session()->get('cart', []);
         }
-        $userId = Auth::id(); // Lấy ID của user đang đăng nhập
-        $cart = Cart::where('user_id', $userId)->first();
-        // Lấy giỏ hàng từ database sau khi đồng bộ
-        $cart = CartDetail::where('cart_id', $cart->id)
-            ->with('productVariant.product', 'productVariant.attributeValues.nameValue.attribute')
-            ->get();
-        return view('client.cart', compact('cart', 'vouchers'));
+
+        return view('client.cart', compact('cart'));
     }
 
 
@@ -136,7 +143,8 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
         return response()->json([
-            'success' => 'Sản phẩm đã được thêm vào giỏ hàng.',
+            'success' => true,
+            'message' => 'Sản phẩm đã được thêm vào giỏ hàng.',
             'cart' => Auth::check() ? CartDetail::where('cart_id', $cart->id)->count() : count(session('cart', []))
         ]);
     }
@@ -392,12 +400,12 @@ class CartController extends Controller
     public function checkout(Request $request)
     {
         $selectedItems = json_decode($request->order_items, true);
-
+        
         if (empty($selectedItems)) {
             return redirect()->route('client.cart.view')->with('error', 'Vui lòng chọn sản phẩm để mua!');
         }
-        $voucher = Voucher::where('id', $request->voucher_id)->get();
-
+        $voucher= Voucher::where('id', $request->voucher_id)->get();
+      
         // Tính toán tổng tiền và chi tiết sản phẩm
         $totalAmount = 0;
         $totalItems = 0;
@@ -406,7 +414,7 @@ class CartController extends Controller
         foreach ($selectedItems as $item) {
             $variant = ProductVariant::with('product', 'attributeValues.nameValue.attribute')
                 ->find($item['variant_id']);
-
+                
             if ($variant) {
                 $quantity = $item['quantity'];
                 $subtotal = $variant->price * $quantity;
@@ -421,7 +429,7 @@ class CartController extends Controller
             }
         }
 
-
+        
         // Lưu thông tin vào session để sử dụng ở trang checkout
         session([
             'checkout_data' => [

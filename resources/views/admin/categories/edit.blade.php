@@ -1,103 +1,79 @@
 @extends('admin.layouts.master')
 @section('content')
-    <section class="content pt-3">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card" id="customerList">
-                        <div class="card-header border-bottom-dashed">
+    <div class="col-lg-12">
+        <div class="card" id="customerList">
+            <div class="card-header border-bottom-dashed">
 
-                            <div class="row g-4 align-items-center">
-                                <div class="col-sm">
-                                    <div>
-                                        <h5 class="text-primary card-title mb-0"><strong>Chỉnh sửa danh mục</strong></h5>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row g-4 align-items-center">
+                    <div class="col-sm">
+                        <div>
+                            <h5 class="card-title mb-0">Chỉnh sửa danh mục</h5>
                         </div>
-                        <form action="{{ route('admin.categories.update', $item->id) }}" autocomplete="off" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
-
-                            <div class="card-body">
-                                <div class="body row">
-                                    <!-- Tên danh mục -->
-                                    <div class="mb-3 col-12">
-                                        <label for="name" class="form-label">Tên danh mục</label>
-                                        <input value="{{ old('name', $item->name) }}" name="name" type="text"
-                                            id="name" class="form-control" placeholder="Enter name">
-                                        @error('name')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    @if ($type == 'child')
-                                        <!-- Danh mục cha -->
-                                        <div class="mb-3 col-12">
-                                            <label for="parent_id" class="form-label">Danh mục cha</label>
-                                            <select name="parent_id" class="form-control">
-                                                <option value="">Chọn danh mục cha</option>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}"
-                                                        {{ old('parent_id', $item->parent_id) == $category->id ? 'selected' : '' }}>
-                                                        {{ $category->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @error('parent_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    @endif
-
-                                    <!-- Trạng thái -->
-                                    <div class="mb-3 col-12">
-                                        <label for="status" class="form-label">Trạng thái</label>
-                                        <select name="status" class="form-control" required>
-                                            <option value="active"
-                                                {{ old('status', $item->status) == 'active' ? 'selected' : '' }}>Active
-                                            </option>
-                                            <option value="inactive"
-                                                {{ old('status', $item->status) == 'inactive' ? 'selected' : '' }}>Inactive
-                                            </option>
-                                        </select>
-                                        @error('status')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    @if ($type == 'parent')
-                                        <!-- Ảnh danh mục -->
-                                        <div class="mb-3 col-12">
-                                            <label for="image" class="form-label">Ảnh danh mục</label>
-                                            @if ($item->image)
-                                                <div class="mb-2">
-                                                    <img src="{{ asset('storage/' . $item->image) }}" alt="Current Image"
-                                                        width="150">
-                                                </div>
-                                            @endif
-                                            <input type="file" name="image" class="form-control">
-                                            @error('image')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="hstack gap-2 justify-content-left">
-                                    <button type="submit" class="btn btn-success">Cập nhật danh mục</button>
-                                    <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
-                                </div>
-                            </div>
-                        </form>
                     </div>
-
-
                 </div>
             </div>
+
+
+
+            <form action="{{ route('admin.categories.update', $item->id) }}" autocomplete="off" method="POST"
+                enctype="multipart/form-data">
+                @csrf
+                @method('PUT') <!-- Đảm bảo sử dụng phương thức PUT để cập nhật -->
+                <div class="card-body">
+                    <div class="body row">
+                        <div class="mb-3 col-12">
+                            <label for="name" class="form-label">Tên danh mục</label>
+                            <input value="{{ old('name', $item->name) }}" name="name" type="text" id="name"
+                                class="form-control" placeholder="Enter name">
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="parent_id" class="form-label">Danh mục cha</label>
+                            <select name="parent_id" class="form-control">
+                                <option value="">Chọn danh mục cha</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}"
+                                        {{ old('parent_id', $item->parent_id) == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('parent_id')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="status" class="form-label">Trạng thái</label>
+                            <select name="status" class="form-control" required>
+                                <option value="active" {{ old('status', $item->status) == 'active' ? 'selected' : '' }}>
+                                    Active</option>
+                                <option value="inactive" {{ old('status', $item->status) == 'inactive' ? 'selected' : '' }}>
+                                    Inactive</option>
+                            </select>
+                            @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="hstack gap-2 justify-content-left">
+                        <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh mục</button>
+                        <a href="{{ route('admin.categories.index') }}" class="btn btn-light">Đóng</a>
+                    </div>
+                </div>
+            </form>
+
         </div>
-    </section>
+
+
+    </div>
+
+    </div>
 @endsection
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>

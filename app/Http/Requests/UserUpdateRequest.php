@@ -19,13 +19,14 @@ class UserUpdateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $userId,
             'phone' => 'required|regex:/^0\d{9}$/',
+
             'password' => 'nullable|min:6',
             'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
             'status' => 'required|in:active,inactive,banned,pending',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'note' => 'nullable|string',
-            
+
             // Địa chỉ
            
             'street_address' => 'nullable|string|max:255',
@@ -53,8 +54,9 @@ class UserUpdateRequest extends FormRequest
             'status.in' => 'Trạng thái không hợp lệ',
             'avatar.image' => 'File phải là hình ảnh',
             'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
-            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
+            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB'
             
+
         ];
     }
 }

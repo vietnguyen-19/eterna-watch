@@ -56,7 +56,7 @@
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label for="rejectReason" class="form-label">Lý do:</label>
-                                                <input type="text" class="form-control" name="rejected_reason" id="rejectReason"
+                                                <input type="text" class="form-control" name="reason" id="rejectReason"
                                                     placeholder="Nhập lý do từ chối..." required>
                                             </div>
                                         </div>
@@ -176,8 +176,8 @@
                                                 <table class="table table-bordered">
                                                     <thead class="">
                                                         <tr>
-                                                            <th>ID</th>
-                                                            <th>Sản phẩm</th>
+                                                            <th>ID Sản phẩm</th>
+                                                            <th>Tên sản phẩm</th>
                                                             <th>Số lượng hoàn</th>
                                                             <th>Giá (VNĐ)</th>
                                                             <th>Thành tiền (VNĐ)</th>
@@ -200,28 +200,39 @@
                                                                         class="me-2 rounded">
                                                                     {{ $product->name }}
                                                                 </td>
-                                                                <td>{{$refundItem->quantity }}</td>
-                                                                <td>{{ number_format($refundItem->unit_price, 0, ',', '.') }} VND
+                                                                <td>{{ $item->quantity }}</td>
+                                                                <td>{{ number_format($item->unit_price, 0, ',', '.') }} VND
                                                                 </td>
-                                                                <td>{{ number_format($refundItem->quantity*$refundItem->unit_price, 0, ',', '.') }}
+                                                                <td>{{ number_format($item->total_price, 0, ',', '.') }}
                                                                     VND</td>
                                                             </tr>
                                                         @endforeach
 
                                                         @php
                                                             $order = $refund->order;
-                                                           
+                                                            $discountAmount = 0;
+                                                            if ($order->voucher) {
+                                                                if ($order->voucher->discount_type === 'percent') {
+                                                                    $discountAmount =
+                                                                        ($subtotal * $order->voucher->discount_value) /
+                                                                        100;
+                                                                } elseif ($order->voucher->discount_type === 'fixed') {
+                                                                    $discountAmount = $order->voucher->discount_value;
+                                                                }
+                                                                $discountAmount = min($discountAmount, $subtotal);
+                                                            }
+                                                            $totalPayment = $subtotal - $discountAmount;
                                                         @endphp
 
                                                         <tr>
-                                                            <th colspan="4" class="text-end">Đã thanh toán</th>
+                                                            <th colspan="4" class="text-end">Tạm tính</th>
                                                             <td class="text-end">
-                                                                {{ number_format( $order->total_amount, 0, ',', '.') }} VND</td>
+                                                                {{ number_format($subtotal, 0, ',', '.') }} VND</td>
                                                         </tr>
 
                                                         @if ($order->voucher)
                                                             <tr>
-                                                                <th colspan="4" class="text-end">Mã giảm giá đã sử dụng trong đơn hàng</th>
+                                                                <th colspan="4" class="text-end">Mã giảm giá</th>
                                                                 <td class="text-end">
                                                                     <span
                                                                         class="badge bg-success">{{ $order->voucher->code }}</span>
@@ -230,15 +241,16 @@
                                                             <tr>
                                                                 <th colspan="4" class="text-end">Giảm giá</th>
                                                                 <td class="text-end">
-                                                                    -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }} VND
+                                                                    -{{ number_format($discountAmount, 0, ',', '.') }} VND
                                                                 </td>
                                                             </tr>
                                                         @endif
 
                                                         <tr>
-                                                            <th colspan="4" class="text-end"><strong>Tổng hoàn trả</strong></th>
+                                                            <th colspan="4" class="text-end"><strong>Tổng thanh
+                                                                    toán</strong></th>
                                                             <td class="text-end">
-                                                                <strong>{{ number_format($refund->total_refund_amount, 0, ',', '.') }}
+                                                                <strong>{{ number_format($totalPayment, 0, ',', '.') }}
                                                                     VND</strong>
                                                             </td>
                                                         </tr>
@@ -252,7 +264,7 @@
                                             <strong> Lý do hoàn hàng</strong>
                                         </div>
                                         <div class="card-body">
-                                            {{ $refund->refund_reason }}
+                                            {{ $refund->reason }}
                                         </div>
                                     </div>
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Refund;
 use App\Models\RefundItem;
 use App\Models\StatusHistory;
@@ -20,51 +19,44 @@ class RefundController extends Controller
             abort(403, 'Bạn không thể hoàn hàng đơn này.');
         }
 
-        return view('client.account.partials.refund', compact('order'));
+        return view('client.account.refund', compact('order'));
     }
+
 
     public function store(Request $request, $id)
     {
         $order = Order::findOrFail($id);
 
         $validated = $request->validate([
-            'refund_reason' => 'required|string',
+            'reason' => 'required|string',
             'refund_quantity' => 'required|array',
-            'refund_quantity.*' => 'nullable|integer|min:0',
-            'total_refund_amount' => 'required|numeric',
         ]);
-
-        // Kiểm tra total_refund_amount > 0
-        if ($validated['total_refund_amount'] <= 0) {
-            return back()
-                ->withErrors(['total_refund_amount' => 'Bạn cần chọn sản phẩm hoàn hàng'])
-                ->withInput();
-        }
 
         // 1. Tạo refund mới
         $refund = Refund::create([
             'order_id' => $order->id,
-            'refund_reason' => $validated['refund_reason'],
-            'status' => 'pending',
-            'total_refund_amount' => $validated['total_refund_amount'],
+            'reason' => $validated['reason'],
+            'status' => 'pending', // trạng thái ban đầu
+            'total_refund_amount' => 0,
         ]);
 
-        // 2. Tạo các bản ghi refund_items
-        foreach ($validated['refund_quantity'] as $orderItemId => $quantity) {
-            if ($quantity > 0) {
-                $orderItem = OrderItem::find($orderItemId);
-                if ($orderItem) {
-                    RefundItem::create([
-                        'refund_id' => $refund->id,
-                        'order_item_id' => $orderItem->id,
-                        'quantity' => $quantity,
-                        'unit_price' => $orderItem->unit_price,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
+        // 2. Tính tổng tiền hoàn lại
+        $totalAmount = 0;
+        foreach ($validated['refund_quantity'] as $orderItemId => $qty) {
+            $orderItem = $order->orderItems()->where('id', $orderItemId)->first();
+            if (!$orderItem || $qty <= 0 || $qty > $orderItem->quantity) continue;
+
+            RefundItem::create([
+                'refund_id' => $refund->id,
+                'order_item_id' => $orderItem->id,
+                'quantity' => $qty,
+                'unit_price' => $orderItem->unit_price,
+            ]);
+
+            $totalAmount += $qty * $orderItem->unit_price;
         }
+
+        $refund->update(['total_refund_amount' => $totalAmount]);
 
         // 3. Ghi nhận lịch sử trạng thái
         StatusHistory::create([

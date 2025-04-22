@@ -9,7 +9,6 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Attribute;
-use App\Models\ProductHasAttribute;
 use App\Models\ProductVariant;
 use App\Models\VariantAttribute;
 
@@ -19,27 +18,21 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductVariantController extends Controller
 {
-    public function create()
-    {
-        // Lấy dữ liệu sản phẩm từ session
-        $product = session('product');
-        $attributes = session('attributes');
 
-        // Lấy danh mục, thương hiệu
+    public function create($id)
+    {
+
+        $product = Product::with('attributes.attributeValues', 'brand', 'category')->findOrFail($id);
         $categories = Category::select('id', 'name')->get();
         $brands = Brand::select('id', 'name')->get();
-
-
+        $attributes = Attribute::select('id', 'attribute_name')->get();
+        // Trả về view cùng với dữ liệu
         return view('admin.product_variants.create', [
             'product' => $product,
             'categories' => $categories,
             'brands' => $brands,
-            'attributes' => $attributes, // Đây là mảng 2 chiều: attributes -> attributeValues
         ]);
     }
-
-
-
     public function edit($id)
     {
         $categories = Category::select('id', 'name')->get();
@@ -59,7 +52,6 @@ class ProductVariantController extends Controller
     }
     public function store(Request $request)
     {
-
 
         $data = $request->all();
 
@@ -170,8 +162,8 @@ class ProductVariantController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage())
-                ->with('open_modal', true);
+            ->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage())
+            ->with('open_modal', true);
         }
     }
     public function storeMany(Request $request)
@@ -229,32 +221,18 @@ class ProductVariantController extends Controller
         }
 
         $validated = $validator->validated();
-        $product = session('product');
-        $attributes = session('attributes');
-        unset($product['category_name'], $product['brand_name']);
-
-        DB::beginTransaction();
 
         try {
-            $newProduct = Product::create($product);
-
-            foreach ($attributes as $attribute) {
-                ProductHasAttribute::create([
-                    'product_id' => $newProduct->id,
-                    'attribute_id' => $attribute->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
+            DB::beginTransaction();
 
             foreach ($validated['variants'] as $variant) {
                 $productVariant = ProductVariant::create([
-                    'product_id' => $newProduct->id,
+                    'product_id' => $request->productId,
                     'sku' => $variant['sku'],
                     'price' => $variant['price'],
                     'stock' => $variant['stock'],
                     'image' => $variant['image'],
-                    'status' => 'in_stock',
+                    'status' => 'in_stock'
                 ]);
 
                 foreach ($variant['name_value_ids'] as $attribute) {
@@ -267,21 +245,17 @@ class ProductVariantController extends Controller
 
             DB::commit();
 
-            // Xóa session sau khi lưu thành công (nếu muốn)
-            session()->forget(['product', 'attributes']);
-
             return redirect()
-                ->route('admin.products.show', $newProduct->id)
-                ->with('success', 'Sản phẩm đã được tạo thành công.');
+                ->route('admin.products.show', $request->productId)
+                ->with('success', 'Biến thể sản phẩm đã được tạo thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
 
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Đã xảy ra lỗi khi lưu sản phẩm: ' . $e->getMessage());
+                ->with('error', 'Đã xảy ra lỗi khi lưu biến thể: ' . $e->getMessage());
         }
     }
-
 
 
 
@@ -321,11 +295,11 @@ class ProductVariantController extends Controller
         if ($request->productId != $productId) {
             return redirect()->back()->with('error', 'Invalid product ID.');
         }
-
+       
         DB::beginTransaction();
 
         try {
-            $data = $request->only(['sku', 'price', 'stock', 'attributes', 'image', 'productId']);
+            $data = $request->only(['sku', 'price', 'stock', 'attributes', 'image','productId']);
             $productId = $data['productId'];
 
             if (isset($data['attributes']) && is_array($data['attributes'])) {
@@ -388,8 +362,8 @@ class ProductVariantController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage())
-                ->with('close_modal', true);
+            ->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage())
+            ->with('close_modal', true);
         }
     }
 

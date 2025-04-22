@@ -105,8 +105,6 @@ class UserController extends Controller
                 'avatar' => $avatarPath,
             ]);
 
-            // Tạo địa chỉ mặc định cho người dùng
-
             DB::commit();
 
             return redirect()->route('admin.users.index')->with('success', 'Thêm tài khoản thành công!');
