@@ -17,8 +17,9 @@ class UserUpdateRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email:rfc,dns|max:255|unique:users,email,' . $userId,
-            'phone' => 'required|string|max:10',
+
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email,' . $userId,    
+            'phone' => 'required|regex:/^0\d{9}$/',
             'password' => 'nullable|min:6',
             'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
@@ -27,13 +28,15 @@ class UserUpdateRequest extends FormRequest
             'note' => 'nullable|string',
 
             // Địa chỉ
+
             'full_name' => 'required|string|max:255',
             'phone_number' => 'required|string|max:10',
-            'street_address' => 'required|string|max:255',
-            'ward' => 'required|string|max:255',
-            'district' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
             'country' => 'required|string|max:255',
+            'street_address' => 'nullable|string|max:255',
+            'ward' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+
         ];
     }
 
@@ -45,7 +48,7 @@ class UserUpdateRequest extends FormRequest
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã tồn tại',
             'phone.required' => 'Vui lòng nhập số điện thoại',
-            'phone.max' => 'Số điện thoại chỉ có 10 ký tự',
+            'phone.regex' => 'Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (bắt đầu bằng 0 và có 10 chữ số).',
             'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
             'gender.required' => 'Vui lòng chọn giới tính',
             'gender.in' => 'Giới tính không hợp lệ',
@@ -55,16 +58,9 @@ class UserUpdateRequest extends FormRequest
             'status.in' => 'Trạng thái không hợp lệ',
             'avatar.image' => 'File phải là hình ảnh',
             'avatar.mimes' => 'Hình ảnh phải có định dạng: jpeg, png, jpg, gif',
-            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB',
+            'avatar.max' => 'Kích thước hình ảnh tối đa là 2MB'
+            
 
-            // Địa chỉ
-            'full_name.required' => 'Vui lòng nhập họ tên người nhận',
-            'phone_number.required' => 'Vui lòng nhập số điện thoại người nhận',
-            'street_address.required' => 'Vui lòng nhập địa chỉ chi tiết',
-            'ward.required' => 'Vui lòng nhập phường/xã',
-            'district.required' => 'Vui lòng nhập quận/huyện',
-            'city.required' => 'Vui lòng nhập thành phố',
-            'country.required' => 'Vui lòng nhập quốc gia',
         ];
     }
 }

@@ -218,7 +218,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 10%" class="fw-bold">Sản phẩm</th>
-                                            <th></th>
+                                            <th></th>                                       
                                             <th class="fw-bold text-center">Số lượng</th>
                                             <th class="fw-bold text-center">Giá</th>
                                             <th class="fw-bold text-end">Tổng cộng</th>

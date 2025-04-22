@@ -44,7 +44,7 @@
                             @endif
 
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="bannerTable">
+                                <table class="table table-bordered align-middle" id="bannerTable">
                                     <thead class="table-light">
                                         <tr>
                                             <th style="width: 5%">ID</th>
