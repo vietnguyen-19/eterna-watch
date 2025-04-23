@@ -36,7 +36,9 @@ class LoginController extends Controller
             if ($user->role_id == 1 || $user->role_id == 2) {
                 return redirect()->route('admin.dashboard.revenue');
             }
-
+            if ($user->role_id == 3) {
+                return redirect()->route('client.home');
+            }
             Auth::logout();
             return redirect()->route('admin.login')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
         }

@@ -34,8 +34,8 @@
                         </div>
                         <div class="card-body">
                             <div>
-                                <div class="table mb-1 mt-2">
-                                    <table class="table table-bordered" id="postTable">
+                                <div class="table-responsive table-card mb-1 mt-2">
+                                    <table class="table table-bordered display" id="postTable">
                                         <thead class="table-light text-muted">
                                             <tr>
                                                 <th class="sort" data-sort="title">ID</th>
@@ -43,9 +43,7 @@
                                                 <th class="sort" data-sort="user">Tác giả</th>
                                                 <th class="sort" data-sort="tags">Tags</th>
                                                 <th class="sort" data-sort="categories">Danh mục</th>
-                                                <th style="width:10%" class="sort" data-sort="published_at">Ngày đăng</th>
-                                                <th style="width:10%" class="sort" data-sort="published_at">Trạng thái
-                                                </th>
+                                                <th class="sort" data-sort="published_at">Ngày đăng</th>
                                                 <th class="sort" data-sort="action">Action</th>
                                             </tr>
                                         </thead>
@@ -54,23 +52,22 @@
                                                 <tr>
                                                     <!-- Title -->
                                                     <td class="align-middle">
-                                                        {{ $post->id }}</a>
+                                                       {{ $post->id }}</a>
                                                     </td>
                                                     <td class="align-middle">
-                                                        {{ $post->title }}
+                                                        <a href="{{ route('admin.posts.show', $post->id) }}">{{ $post->title }}</a>
                                                     </td>
                                                     <!-- Image -->
-
+                                                    
                                                     <!-- User Name -->
                                                     <td class="align-middle">
                                                         {{ $post->user->name ?? 'N/A' }}
                                                     </td>
                                                     <!-- Tags -->
                                                     <td class="align-middle">
-                                                        @if ($post->tags && $post->tags->isNotEmpty())
+                                                        @if($post->tags && $post->tags->isNotEmpty())
                                                             @foreach ($post->tags as $tag)
-                                                                <span
-                                                                    class="badge bg-info text-dark">{{ $tag->name }}</span>
+                                                                <span class="badge bg-info text-dark">{{ $tag->name }}</span>
                                                             @endforeach
                                                         @else
                                                             N/A
@@ -78,10 +75,9 @@
                                                     </td>
                                                     <!-- Categories -->
                                                     <td class="align-middle">
-                                                        @if ($post->categories && $post->categories->isNotEmpty())
+                                                        @if($post->categories && $post->categories->isNotEmpty())
                                                             @foreach ($post->categories as $category)
-                                                                <span
-                                                                    class="badge bg-secondary">{{ $category->name }}</span>
+                                                                <span class="badge bg-secondary">{{ $category->name }}</span>
                                                             @endforeach
                                                         @else
                                                             N/A
@@ -91,41 +87,24 @@
                                                     <td class="align-middle">
                                                         {{ $post->published_at ? $post->published_at->format('d/m/Y') : 'Chưa xuất bản' }}
                                                     </td>
-                                                    <td class="align-middle">
-                                                        @if ($post->status === 'draft')
-                                                            <span class="badge bg-warning-subtle text-warning">Bản
-                                                                nháp</span>
-                                                        @elseif ($post->status === 'published')
-                                                            <span class="badge bg-success-subtle text-success">Đã xuất
-                                                                bản</span>
-                                                        @elseif ($post->status === 'archived')
-                                                            <span class="badge bg-danger-subtle text-danger">Lưu trữ</span>
-                                                        @else
-                                                            <span class="badge bg-secondary-subtle text-secondary">Không xác
-                                                                định</span>
-                                                        @endif
-                                                    </td>
-
                                                     <!-- Action -->
                                                     <td class="align-middle">
                                                         <ul class="list-inline hstack d-flex flex-nowrap gap-2 mb-0">
                                                             <!-- Edit Button -->
                                                             <li class="list-inline-item" title="Chỉnh sửa">
                                                                 <a href="{{ route('admin.posts.edit', $post->id) }}"
-                                                                    class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
+                                                                   class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                     <i class="fa-solid fa-pen-nib"></i>
                                                                 </a>
                                                             </li>
                                                             <!-- Delete Button -->
                                                             <li class="list-inline-item" title="Xóa">
-                                                                <form
-                                                                    action="{{ route('admin.posts.destroy', $post->id) }}"
-                                                                    method="POST" style="display:inline;">
+                                                                <form action="{{ route('admin.posts.destroy', $post->id) }}" 
+                                                                      method="POST" style="display:inline;">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button
-                                                                        class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
-                                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                                                    <button class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
+                                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </button>
                                                                 </form>
@@ -147,7 +126,7 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-
+                                    
 
                                 </div>
 
@@ -227,34 +206,4 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
         type="text/css" />
-    <style>
-        .avatar-xs {
-            height: 2.2rem;
-            width: 2.2rem;
-        }
-
-        .bg-success-subtle {
-            background-color: rgba(10, 179, 156, .1);
-        }
-
-        .bg-danger-subtle {
-            background-color: rgba(240, 101, 72, .1);
-        }
-
-        .bg-warning-subtle {
-            background-color: rgba(247, 184, 75, .1);
-        }
-
-        .bg-primary-subtle {
-            background-color: rgba(64, 81, 137, .1);
-        }
-
-        .bg-secondary-subtle {
-            background-color: rgba(116, 120, 141, .1);
-        }
-
-        .bg-dark-subtle {
-            background-color: rgba(33, 37, 41, .1);
-        }
-    </style>
 @endsection

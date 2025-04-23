@@ -205,8 +205,8 @@
                                     <div class="col-md-12">
                                         <div class="row">
                                             <!-- Họ tên người nhận -->
-                                            
-                                            
+
+
 
                                             <!-- Địa chỉ chi tiết -->
                                             <div class="mb-3 col-12">
@@ -216,8 +216,8 @@
                                                     {{-- JS sẽ tự thêm các option vào đây --}}
                                                 </select>
                                                 @error('city')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3 col-12">
                                                 <label for="district">Quận/Huyện</label>
@@ -225,8 +225,8 @@
                                                     <option value="">-- Chọn Quận/Huyện --</option>
                                                 </select>
                                                 @error('district')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="mb-3 col-12">
                                                 <label for="ward">Phường/Xã</label>
@@ -234,8 +234,8 @@
                                                     <option value="">-- Chọn Phường/Xã --</option>
                                                 </select>
                                                 @error('ward')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
 
 
@@ -248,7 +248,7 @@
                                                     placeholder="Nhập địa chỉ chi tiết">
                                                 @error('street_address')
                                                     <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror @error('street_address')
+                                                    @enderror @error('street_address')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>

@@ -78,7 +78,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [CategoryController::class, 'show'])->name('show')->middleware('permission:view_categories');
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('edit')->middleware('permission:edit_categories');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('update')->middleware('permission:edit_categories');
-        Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
+        Route::delete('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
+
+        Route::get('trash', [CategoryController::class, 'trash'])->name('trash')->middleware('permission:delete_categories');
+        Route::put('restore/{id}', [CategoryController::class, 'restore'])->name('restore')->middleware('permission:delete_categories');
+        Route::delete('force-delete/{id}', [CategoryController::class, 'forceDelete'])->name('force-delete')->middleware('permission:delete_categories');
     });
 
     // BANNER
@@ -98,7 +102,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/', [VoucherController::class, 'index'])->name('index')->middleware('permission:view_vouchers');
         Route::get('/create', [VoucherController::class, 'create'])->name('create')->middleware('permission:create_vouchers');
         Route::post('', [VoucherController::class, 'store'])->name('store')->middleware('permission:create_vouchers');
-        Route::get('/{voucher}/edit', [VoucherController::class, 'edit'])->name('edit')->middleware('permission:view_vouchers');
+        Route::get('/{voucher}/edit', [VoucherController::class, 'edit'])->name('edit')->middleware('permission:edit_vouchers');
         Route::put('/{voucher}', [VoucherController::class, 'update'])->name('update')->middleware('permission:edit_vouchers');
         Route::delete('/{voucher}', [VoucherController::class, 'destroy'])->name('destroy')->middleware('permission:delete_vouchers');
         Route::get('/trash', [VoucherController::class, 'trash'])->name('trash')->middleware('permission:view_vouchers');
@@ -125,7 +129,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
 
     });
-
 
 
     // THUỘC TÍNH SẢN PHẨM
@@ -171,7 +174,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // PHIÊN BẢN SẢN PHẨM
     Route::prefix('productvariants')->name('admin.productvariants.')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('index')->middleware('permission:view_products');
-        Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
+        Route::get('create', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
         Route::post('store', [ProductVariantController::class, 'store'])->name('store')->middleware('permission:create_products');
         Route::post('store-many', [ProductVariantController::class, 'storeMany'])->name('store-many');
         Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('edit')->middleware('permission:edit_products');
@@ -190,15 +193,15 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::post('{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send')->middleware('permission:edit_orders');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('status')->middleware('permission:edit_orders');
 
-
+      
 
         Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy'); // Xoá mềm
         Route::get('/trash', [OrderController::class, 'trash'])->name('trash'); // Danh sách đã xoá
         Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore'); // Khôi phục
         Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
     });
-
-
+   
+    
     Route::prefix('refunds')->group(function () {
         Route::get('/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
         Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('admin.refunds.show');

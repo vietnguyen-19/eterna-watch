@@ -34,7 +34,6 @@ class PermissionSeeder extends Seeder
 
             // ===== Vouchers =====
             'view_vouchers',
-            'edit_vouchers',
             'restore_vouchers',
             'delete_vouchers',
 

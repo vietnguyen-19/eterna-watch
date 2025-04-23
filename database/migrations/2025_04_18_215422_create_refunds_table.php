@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->decimal('total_refund_amount', 12, 2)->default(0);
-            $table->text('reason')->nullable();
+            $table->text('refund_reason')->nullable();
+            $table->text('rejected_reason')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         

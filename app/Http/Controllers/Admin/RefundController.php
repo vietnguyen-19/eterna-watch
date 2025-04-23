@@ -38,16 +38,26 @@ class RefundController extends Controller
 
     public function show(Refund $refund)
     {
-        $refund->load('refundItems.orderItem.productVariant.product', 'order.user', 'order.address');
+        // Nạp các quan hệ cần thiết để tránh truy vấn lặp
+        $refund->load([
+            'refundItems.orderItem.productVariant.product',
+            'order.user',
+            'order.address',
+        ]);
+
+        // Lấy danh sách lịch sử trạng thái của đơn hoàn hàng
         $statusHistories = StatusHistory::where('entity_id', $refund->id)
             ->where('entity_type', 'refund')
-            ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
+            ->orderByDesc('changed_at')
             ->get();
+
+        // Trả về view hiển thị chi tiết đơn hoàn hàng
         return view('admin.refunds.show', compact('refund', 'statusHistories'));
     }
 
     public function approve(Refund $refund)
     {
+
         if ($refund->status !== 'pending') {
             return back()->with('error', 'Yêu cầu này đã được xử lý.');
         }
@@ -90,7 +100,7 @@ class RefundController extends Controller
         $oldStatus = $refund->status;
 
         $refund->status = 'rejected';
-        $refund->reason = $request->input('reason');
+        $refund->rejected_reason = $request->input('rejected_reason');
         $refund->save();
 
         // Ghi nhận lịch sử trạng thái

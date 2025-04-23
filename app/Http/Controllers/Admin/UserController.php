@@ -121,7 +121,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-
+        
         try {
             DB::beginTransaction();
 
@@ -158,10 +158,10 @@ class UserController extends Controller
                 // Lưu avatar mới
                 $avatar = $request->file('avatar');
                 $fileName = time() . '.' . $avatar->getClientOriginalExtension();
-                $path = 'avatar/' . $fileName;
+                $path = 'avatars/' . $fileName;
 
                 // Di chuyển file đến thư mục lưu trữ
-                $avatar->move(public_path('storage/avatar'), $fileName);
+                $avatar->move(public_path('storage/avatars'), $fileName);
 
                 // Cập nhật đường dẫn ảnh mới vào database
                 $user->avatar = $path;
