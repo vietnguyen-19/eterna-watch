@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SettingUpdateRequest extends FormRequest
@@ -21,14 +22,14 @@ class SettingUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        
+
         return [
-            'key_name' => [
+            'key' => [
                 'sometimes',
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('settings')->ignore($this->route('id')),
+                Rule::unique('settings')->ignore($this->route('setting')),
             ],
             'value' => 'sometimes|required|string|max:255',
         ];
@@ -42,15 +43,15 @@ class SettingUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'key_name.required' => 'Vui lòng nhập tên khóa cài đặt.',
-            'key_name.string' => 'Tên khóa cài đặt phải là chuỗi ký tự.',
-            'key_name.max' => 'Tên khóa cài đặt không được vượt quá 255 ký tự.',
-            'key_name.unique' => 'Tên khóa cài đặt đã tồn tại.',
+            'key.required' => 'Vui lòng nhập tên khóa cài đặt.',
+            'key.string' => 'Tên khóa cài đặt phải là chuỗi ký tự.',
+            'key.max' => 'Tên khóa cài đặt không được vượt quá 255 ký tự.',
+            'key.unique' => 'Tên khóa cài đặt đã tồn tại.',
             'value.required' => 'Vui lòng nhập giá trị cài đặt.',
             'value.string' => 'Giá trị cài đặt phải là chuỗi ký tự.',
             'value.max' => 'Giá trị cài đặt không được vượt quá 255 ký tự.',
         ];
     }
 
-    
+
 }

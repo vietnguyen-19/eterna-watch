@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -90,11 +90,13 @@
                                                         </td>
                                                         <td class="align-middle">
                                                             <span
-                                                                class="badge 
+                                                                class="badge
                                                             @if ($voucher->status == 'active') bg-success
                                                             @elseif($voucher->status == 'inactive') bg-warning
                                                             @else bg-danger @endif">
-                                                                {{ ucfirst($voucher->status) }}
+                                                                @if ($voucher->status == 'active') Hoạt động
+                                                                @elseif($voucher->status == 'inactive') Vô hiệu hóa
+                                                                @endif
                                                             </span>
                                                         </td>
                                                         <td class="align-middle">
@@ -120,7 +122,7 @@
                                                                 </li>
                                                             </ul>
                                                         </td>
-                                                        
+
                                                     </tr>
                                                 @endforeach
                                             </tbody>

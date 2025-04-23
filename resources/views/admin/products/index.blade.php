@@ -78,7 +78,9 @@
                                                             @if ($product->status == 'active') bg-success
                                                             @elseif($product->status == 'inactive') bg-warning
                                                             @else bg-danger @endif">
-                                                            {{ ucfirst($product->status) }}
+                                                            @if ($product->status == 'active') Đang bán
+                                                                @elseif($product->status == 'inactive') Ngừng bán
+                                                                @endif
                                                         </span>
                                                     </td>
                                                     <td class="align-middle">

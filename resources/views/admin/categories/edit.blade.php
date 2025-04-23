@@ -50,9 +50,9 @@
                             <label for="status" class="form-label">Trạng thái</label>
                             <select name="status" class="form-control" required>
                                 <option value="active" {{ old('status', $item->status) == 'active' ? 'selected' : '' }}>
-                                    Active</option>
+                                    Hoạt động</option>
                                 <option value="inactive" {{ old('status', $item->status) == 'inactive' ? 'selected' : '' }}>
-                                    Inactive</option>
+                                    Vô hiệu hóa</option>
                             </select>
                             @error('status')
                                 <div class="text-danger">{{ $message }}</div>

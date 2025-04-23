@@ -10,7 +10,7 @@
                         role="alert">
                         <i class="ri-notification-off-line label-icon"></i><strong>
                             {{ session('thongbao.message') }}</strong>
-                        
+
                     </div>
                     @php
                         session()->forget('thongbao');
@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -64,7 +64,9 @@
                                                         </td>
 
                                                         <td class="trang_thai">
-                                                            {{ $item->status }}
+                                                            @if ($item->status == 'active') Hoạt động
+                                                            @elseif($item->status == 'inactive') Vô hiệu hóa
+                                                            @endif
                                                         </td>
 
 
