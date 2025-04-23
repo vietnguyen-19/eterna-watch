@@ -26,7 +26,7 @@
                                             <small class="text-info">{{ Auth::user()->role_id == 1 ? 'Quản trị viên' : 'Nhân viên' }}</small>
 
                                         </div>
-                                        
+
                                 </div>
                             @endif
 
@@ -114,7 +114,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-ticket"></i>
                         <p>
-                            Voucher
+                            Mã giảm giá
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>

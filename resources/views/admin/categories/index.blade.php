@@ -4,6 +4,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+
                     <div class="card">
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
@@ -69,6 +70,7 @@
                                                                     style="width: 160px; height: 160px; object-fit: cover;">
                                                             </div>
                                                         </td>
+<<<<<<< HEAD
                                                         <td class="text-left text-info fw-bold">{{ $parent->name }}</td>
                                                         <td>
                                                             <span
@@ -77,6 +79,16 @@
                                                             </span>
                                                         </td>
                                                         <td>{{ $parent->created_at->format('Y-m-d') }}</td>
+=======
+
+                                                        <td class="trang_thai">
+                                                            @if ($item->status == 'active') Hoạt động
+                                                            @elseif($item->status == 'inactive') Vô hiệu hóa
+                                                            @endif
+                                                        </td>
+
+
+>>>>>>> b7330abbd29fc9cbc9b7d6893b4afacd56dcbede
                                                         <td>
 
                                                             <a href="{{ route('admin.categories.edit', ['id' => $parent->id, 'type' => 'parent']) }}"

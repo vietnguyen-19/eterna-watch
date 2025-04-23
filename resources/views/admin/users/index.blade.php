@@ -87,7 +87,7 @@
                                                 <td class="align-middle">
                                                     @if ($user->role)
                                                         <span class="badge bg-primary-subtle text-primary">
-                                                            {{ $user->role->name == 'employee' ? 'Nhân viên' : ($user->role->name == 'user' ? 'Khách hàng' : $user->role->name) }}
+                                                            {{ $user->role->name == 'staff' ? 'Nhân viên' : ($user->role->name == 'customer' ? 'Khách hàng' : ($user->role->name == 'admin' ? 'Quản trị viên' : 'không xác định')) }}
                                                         </span>
                                                     @else
                                                         <span class="badge bg-secondary-subtle text-secondary">Chưa

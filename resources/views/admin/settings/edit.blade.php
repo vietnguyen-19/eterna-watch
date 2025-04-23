@@ -7,63 +7,41 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
-                            <h5 class="card-title mb-0">Chỉnh sửa danh mục</h5>
+                            <h5 class="card-title mb-0">Chỉnh sửa cài đặt</h5>
                         </div>
                     </div>
                 </div>
             </div>
 
-
-
-            <form action="{{ route('admin.setting.update', $item->id) }}" autocomplete="off" method="POST"
+            <form action="{{ route('admin.settings.update', $setting->id) }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT') <!-- Đảm bảo sử dụng phương thức PUT để cập nhật -->
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
-                            <label for="name" class="form-label">Tên danh mục</label>
-                            <input value="{{ old('name', $item->name) }}" name="name" type="text" id="name"
-                                class="form-control" placeholder="Enter name">
-                            @error('name')
+                            <label for="key" class="form-label">Tên cài đặt</label>
+                            <input name="key" value="{{ old('key', $setting->key) }}" key="key" type="text" id="key"
+                                class="form-control" placeholder="Nhập tên cài đặt">
+                            @error('key')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="value" class="form-label">Nội dung</label>
+                            <input name="value" value="{{ old('value', $setting->value) }}" value="value" type="text" id="value"
+                                class="form-control" placeholder="Nhập nội dung">
+                            @error('value')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="mb-3 col-12">
-                            <label for="parent_id" class="form-label">Danh mục cha</label>
-                            <select name="parent_id" class="form-control">
-                                <option value="">Chọn danh mục cha</option>
-                                @foreach ($settings as $setting)
-                                    <option value="{{ $setting->id }}"
-                                        {{ old('parent_id', $item->parent_id) == $setting->id ? 'selected' : '' }}>
-                                        {{ $setting->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('parent_id')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3 col-12">
-                            <label for="status" class="form-label">Trạng thái</label>
-                            <select name="status" class="form-control" required>
-                                <option value="active" {{ old('status', $item->status) == 'active' ? 'selected' : '' }}>
-                                    Active</option>
-                                <option value="inactive" {{ old('status', $item->status) == 'inactive' ? 'selected' : '' }}>
-                                    Inactive</option>
-                            </select>
-                            @error('status')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
                         <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh mục</button>
-                        <a href="{{ route('admin.setting.index') }}" class="btn btn-light">Đóng</a>
+                        <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
                     </div>
                 </div>
             </form>

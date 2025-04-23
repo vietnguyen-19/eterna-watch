@@ -110,14 +110,14 @@
                             </article>
 
                             <nav class="mt-4 d-flex justify-content-between">
-                                <a href="#" class="btn btn-outline-secondary d-flex align-items-center">
+                                <a href="{{ route('client.blog.detail', $post->id-1) }}" class="btn btn-outline-secondary d-flex align-items-center">
                                     <svg class="me-2" width="7" height="11" viewBox="0 0 7 11"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <use href="#icon_prev_sm" />
                                     </svg>
                                     <span>Bài viết trước</span>
                                 </a>
-                                <a href="#" class="btn btn-outline-secondary d-flex align-items-center">
+                                <a href="{{ route('client.blog.detail', $post->id+1) }}" class="btn btn-outline-secondary d-flex align-items-center">
                                     <span class="me-2">Bài viết tiếp theo</span>
                                     <svg width="7" height="11" viewBox="0 0 7 11"
                                         xmlns="http://www.w3.org/2000/svg">

@@ -17,9 +17,9 @@ class UserUpdateRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
-            'phone' => 'required|regex:/^0\d{9}$/',
 
+            'email' => 'required|email:rfc,dns|max:255|unique:users,email,' . $userId,    
+            'phone' => 'required|regex:/^0\d{9}$/',
             'password' => 'nullable|min:6',
             'gender' => 'required|in:male,female,other',
             'role_id' => 'required|exists:roles,id',
@@ -28,11 +28,15 @@ class UserUpdateRequest extends FormRequest
             'note' => 'nullable|string',
 
             // Địa chỉ
-           
+
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:10',
+            'country' => 'required|string|max:255',
             'street_address' => 'nullable|string|max:255',
             'ward' => 'nullable|string|max:255',
             'district' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
+
         ];
     }
 
