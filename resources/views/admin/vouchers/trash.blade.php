@@ -13,11 +13,11 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
-                                   
+
                                         <a href="{{ route('admin.vouchers.index') }}" class="btn btn-secondary add-btn mr-1">
                                             <i class="ri-add-line align-bottom me-1"></i>Quay lại trang danh sách
                                         </a>
-                                       
+
                                 </div>
                             </div>
                         </div>
@@ -67,11 +67,13 @@
                                                         </td>
                                                         <td class="align-middle">
                                                             <span
-                                                                class="badge 
+                                                                class="badge
                                                                 @if ($voucher->status == 'active') bg-success
                                                                 @elseif($voucher->status == 'inactive') bg-warning
                                                                 @else bg-danger @endif">
-                                                                {{ ucfirst($voucher->status) }}
+                                                                @if ($voucher->status == 'active') Hoạt động
+                                                                @elseif($voucher->status == 'inactive') Vô hiệu hóa
+                                                                @endif
                                                             </span>
                                                         </td>
                                                         <td class="align-middle">
@@ -87,7 +89,7 @@
                                                                         method="POST"
                                                                         onsubmit="return confirm('Bạn có chắc chắn muốn khôi phục voucher này?');">
                                                                         @csrf
-                                                                      
+
                                                                         <button type="submit"
                                                                             class="btn btn-info btn-icon waves-effect waves-light btn-sm">
                                                                             <i class="fas fa-undo-alt"></i>

@@ -41,8 +41,8 @@
                         <div class="mb-3 col-12">
                             <label for="status">Trạng thái</label>
                             <select name="status" class="form-control" required>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Vô hiệu hóa</option>
                             </select>
                             @error('status')
                                 <div class="text-danger">{{ $message }}</div>
