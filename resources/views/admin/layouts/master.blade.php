@@ -12,8 +12,8 @@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+     <!-- Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -78,19 +78,19 @@
     </div>
     <!-- ./wrapper -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".nav-item > .nav-link").forEach(function(menu) {
-                menu.addEventListener("click", function(e) {
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".nav-item > .nav-link").forEach(function (menu) {
+                menu.addEventListener("click", function (e) {
                     // Chỉ chặn khi href là "#"
                     if (this.getAttribute("href") === "#") {
                         e.preventDefault();
                     }
-
+    
                     let parentLi = this.parentElement; // Lấy thẻ <li> cha
-
+    
                     // Toggle class 'menu-open' cho chính nó
                     parentLi.classList.toggle("menu-open");
-
+    
                     // Toggle icon fa-angle-left để đổi hướng
                     let icon = this.querySelector(".fa-angle-left");
                     if (icon) {
@@ -100,7 +100,7 @@
             });
         });
     </script>
-
+    
     <!-- jQuery -->
     <script src="{{ asset('theme/admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -136,34 +136,6 @@
     <script src="{{ asset('theme/admin/dist/js/demo.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('theme/admin/dist/js/pages/dashboard.js') }}"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công!',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi!',
-                text: '{{ session('error') }}',
-                confirmButtonText: 'OK',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
     @yield('script')
 </body>
 

@@ -19,7 +19,7 @@
                                 <div class="col-md-3 d-flex">
                                     <div
                                         class="w-100 h-100 d-flex align-items-center justify-content-center border rounded shadow-sm p-2 bg-light">
-                                        <img src="{{ asset('storage/' . $product->avatar) }}" class="img-fluid rounded"
+                                        <img src="{{ asset('storage/' . $product['avatar']) }}" class="img-fluid rounded"
                                             style="max-height: 100%; max-width: 100%; object-fit: cover;"
                                             alt="Ảnh sản phẩm">
                                     </div>
@@ -32,32 +32,38 @@
                                             <tbody>
                                                 <tr>
                                                     <th class="text-muted" style="width: 180px;">Tên sản phẩm</th>
-                                                    <td class="fs-5">{{ $product->name }}</td>
+                                                    <td class="fs-5">{{ $product['name'] }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Danh mục</th>
-                                                    <td class="fs-5">{{ $product->category->name }}</td>
+                                                    <td class="fs-5">{{ $product['category_name'] }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Thương hiệu</th>
-                                                    <td class="fs-5">{{ $product->brand->name }}</td>
+                                                    <td class="fs-5">{{ $product['brand_name'] }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Giá mặc định</th>
                                                     <td class="fs-5">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        {{ number_format($product['price_default'], 0, ',', '.') }} VND
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-muted">Giá mặc định</th>
+                                                    <td class="fs-5">
+                                                        {{ number_format($product['price_sale'], 0, ',', '.') }} VND
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted">Trạng thái</th>
                                                     <td
-                                                        class="fs-5 {{ $product->status === 'active' ? 'text-success' : 'text-danger' }}">
-                                                        {{ $product->status === 'active' ? 'Đang bán' : 'Ngừng bán' }}
+                                                        class="fs-5 {{ $product['status'] === 'active' ? 'text-success' : 'text-danger' }}">
+                                                        {{ $product['status'] === 'active' ? 'Đang bán' : 'Ngừng bán' }}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-muted align-top">Mô tả ngắn</th>
-                                                    <td class="fs-5">{{ $product->short_description }}</td>
+                                                    <td class="fs-5">{{ $product['short_description'] }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -80,7 +86,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        @foreach ($product->attributes as $attribute)
+                                        @foreach ($attributes as $attribute)
                                             <div class="mb-3 col-md-12">
                                                 <label for="name_values"
                                                     class="form-label">{{ $attribute->attribute_name }}</label>
@@ -120,7 +126,6 @@
                             <form id="variantForm" method="POST" action="{{ route('admin.productvariants.store-many') }}"
                                 enctype="multipart/form-data">
                                 @csrf
-                                <input name="productId" value="{{ $product->id }}" type="hidden">
                                 <div class="card">
                                     <div class="bg-light card-header border-bottom-dashed">
                                         <div class="row g-4 align-items-center">
@@ -166,7 +171,6 @@
                                 <form action="{{ route('admin.productvariants.store') }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
-                                    <input name="productId" value="{{ $product->id }}" type="hidden">
 
                                     <div class="modal-body">
                                         <div class="row">
@@ -188,7 +192,7 @@
                                                         <div class="mb-3">
                                                             <label class="form-label mb-1">Biến thể</label>
                                                             <div class="card p-3">
-                                                                @foreach ($product->attributes as $attribute)
+                                                                @foreach ($attributes as $attribute)
                                                                     <div class="mb-3">
                                                                         <label
                                                                             class="form-label">{{ $attribute->attribute_name }}</label>
@@ -276,7 +280,6 @@
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
     <script>
-        // Gọi lại sau khi DOM load (sau khi redirect do lỗi)
         window.addEventListener('DOMContentLoaded', function() {
             displayValidationErrors();
         });
@@ -322,16 +325,12 @@
 
             combinations.forEach((combo, index) => {
                 let row = document.createElement("tr");
-
                 row.appendChild(createVariantColumn(combo, index));
-
-                ["sku", "price", "stock"].forEach((field) => {
+                ["sku", "price", "stock"].forEach(field => {
                     row.appendChild(createInputColumn(field, index));
                 });
-
                 row.appendChild(createImageColumn(index));
                 row.appendChild(createRemoveColumn(row));
-
                 tbody.appendChild(row);
             });
         }
@@ -340,7 +339,6 @@
             let td = document.createElement("td");
             td.classList.add("text-center");
             td.textContent = combo.map(i => i.name).join(" - ");
-
             combo.forEach(item => {
                 let input = document.createElement("input");
                 input.type = "hidden";
@@ -348,18 +346,15 @@
                 input.value = item.id;
                 td.appendChild(input);
             });
-
             return td;
         }
 
         function createInputColumn(field, index) {
             let td = document.createElement("td");
-
             let input = document.createElement("input");
             input.name = `variants[${index}][${field}]`;
             input.classList.add("form-control", "form-control-sm");
             input.type = (field === "price" || field === "stock") ? "number" : "text";
-
             if (field === "price") {
                 input.min = 0.01;
                 input.step = "0.01";
@@ -367,10 +362,8 @@
                 input.min = 1;
                 input.step = "1";
             }
-
             td.appendChild(input);
 
-            // Tạo div hiển thị lỗi Laravel (ẩn nếu không có lỗi)
             let errorDiv = document.createElement("div");
             errorDiv.classList.add("text-danger", "small", "mt-1");
             errorDiv.id = `error-variants-${index}-${field}`;
@@ -380,25 +373,58 @@
         }
 
         function createImageColumn(index) {
-            let td = document.createElement("td");
-            td.style.width = "20%";
+    let td = document.createElement("td");
+    td.classList.add("text-center", "align-middle"); // Căn giữa nội dung
+    td.style.width = "150px"; // Cố định chiều rộng cột để cân đối
 
-            let fileInput = document.createElement("input");
-            fileInput.type = "file";
-            fileInput.name = "avatar";
-            fileInput.classList.add("filepond");
+    let inputGroup = document.createElement("div");
+    inputGroup.classList.add("d-flex", "justify-content-center"); // Dùng flex để căn giữa
 
-            let hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = `variants[${index}][image]`;
-            hiddenInput.id = `avatar-hidden-${index}`;
+    let fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.classList.add("d-none"); // Ẩn input file mặc định
+    fileInput.id = `image-${index}`;
+    fileInput.name = `variants[${index}][image]`;
+    fileInput.accept = "image/*";
 
-            td.appendChild(fileInput);
-            td.appendChild(hiddenInput);
+    let label = document.createElement("label");
+    label.classList.add("btn", "btn-outline-primary", "text-center");
+    label.htmlFor = `image-${index}`;
+    label.textContent = "Chọn ảnh";
+    label.style.width = "100px"; // Đặt width nút = 100px
+    label.style.padding = "0.25rem 0.5rem"; // Padding gọn gàng
+    label.style.fontSize = "0.875rem"; // Kích thước chữ nhỏ hơn
 
-            initializeFilePond(fileInput, index);
-            return td;
-        }
+    inputGroup.appendChild(fileInput);
+    inputGroup.appendChild(label);
+
+    let errorDiv = document.createElement("div");
+    errorDiv.classList.add("invalid-feedback", "d-block", "text-center");
+    errorDiv.id = `error-variants-${index}-image`;
+
+    let previewContainer = document.createElement("div");
+    previewContainer.classList.add("mt-2", "d-none");
+    previewContainer.id = `previewContainer-${index}`;
+
+    let previewImageTag = document.createElement("img");
+    previewImageTag.id = `previewImageTag-${index}`;
+    previewImageTag.alt = "Xem trước ảnh";
+    previewImageTag.classList.add("img-thumbnail");
+    previewImageTag.style.width = "100px"; // Đặt width ảnh = 100px
+    previewImageTag.style.height = "auto"; // Giữ tỷ lệ ảnh
+
+    previewContainer.appendChild(previewImageTag);
+
+    td.appendChild(inputGroup);
+    td.appendChild(errorDiv);
+    td.appendChild(previewContainer);
+
+    fileInput.addEventListener('change', function(event) {
+        handlePreviewImage(event.target, index);
+    });
+
+    return td;
+}
 
         function createRemoveColumn(row) {
             let td = document.createElement("td");
@@ -409,7 +435,7 @@
             btn.type = "button";
             btn.textContent = "Xóa";
 
-            btn.onclick = function() {
+            btn.addEventListener('click', function() {
                 if (confirm("Bạn có chắc muốn xóa biến thể này?")) {
                     row.remove();
                     if (document.querySelectorAll("#variantTableBody tr").length === 0) {
@@ -417,102 +443,72 @@
                             `<tr><td colspan="6" class="text-muted">Chưa có biến thể nào.</td></tr>`;
                     }
                 }
-            };
+            });
 
             td.appendChild(btn);
             return td;
         }
 
+        function handlePreviewImage(input, index) {
+            const previewContainer = document.getElementById(`previewContainer-${index}`);
+            const previewImageTag = document.getElementById(`previewImageTag-${index}`);
+            const errorDiv = document.getElementById(`error-variants-${index}-image`);
+            const file = input.files[0];
+
+            errorDiv.textContent = '';
+            previewContainer.classList.add('d-none');
+            previewImageTag.src = '';
+
+            if (file) {
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    errorDiv.textContent = 'Chỉ chấp nhận JPEG, PNG, GIF hoặc WebP.';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        previewImageTag.src = e.target.result;
+                        previewContainer.classList.remove('d-none');
+                    } catch (err) {
+                        errorDiv.textContent = 'Không thể hiển thị ảnh xem trước.';
+                        console.error('Error displaying image:', err);
+                    }
+                };
+                reader.onerror = function() {
+                    errorDiv.textContent = 'Không thể đọc file. Vui lòng thử lại.';
+                    console.error('FileReader error');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function displayValidationErrors() {
             let errors = @json($errors->messages());
 
-            // Xóa lỗi cũ
-            document.querySelectorAll('.text-danger.small').forEach(div => {
+            document.querySelectorAll('.text-danger.small, .invalid-feedback').forEach(div => {
                 div.innerHTML = '';
             });
-            document.querySelectorAll('.filepond-error-message').forEach(div => div.remove());
 
             Object.keys(errors).forEach(key => {
-                let errorMessages = errors[key];
-                let fieldParts = key.split('.');
-
-                if (fieldParts[0] === 'variants' && fieldParts.length >= 3) {
-                    let index = fieldParts[1];
-                    let field = fieldParts[2];
-
-                    if (field === 'image') {
-                        // Filepond: chèn lỗi sau phần tử filepond
-                        const filepondRoot = document.querySelectorAll('.filepond--root')[index];
-                        if (filepondRoot) {
-                            const errorDiv = document.createElement("div");
-                            errorDiv.classList.add("text-danger", "small", "filepond-error-message");
-                            errorDiv.style.marginTop = "5px";
-                            errorDiv.innerHTML = errorMessages.map(msg => `<div>${msg}</div>`).join('');
-                            filepondRoot.insertAdjacentElement('afterend', errorDiv);
-                        }
-                    } else {
-                        let errorDiv = document.getElementById(`error-variants-${index}-${field}`);
-                        if (errorDiv) {
-                            errorMessages.forEach(message => {
-                                let errorSpan = document.createElement('span');
-                                errorSpan.textContent = message;
-                                errorSpan.style.display = 'block';
-                                errorDiv.appendChild(errorSpan);
-                            });
-                        }
-                    }
-                }
-            });
-        }
-
-
-        function initializeFilePond(inputImage, index) {
-            FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginImageResize);
-
-            FilePond.create(inputImage, {
-                name: 'avatar',
-                allowMultiple: false,
-                imagePreviewHeight: 100,
-                server: {
-                    process: {
-                        url: '/admin/upload-image',
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector("meta[name='csrf-token']").getAttribute(
-                                "content")
-                        },
-                        onload: (res) => {
-                            let json = JSON.parse(res);
-                            if (json.success) {
-                                document.getElementById(`avatar-hidden-${index}`).value = json.path;
-                            } else {
-                                alert(json.message);
-                            }
-                        },
-                        onerror: (err) => {
-                            console.error('Upload error:', err);
-                        }
-                    },
-                    revert: {
-                        url: '/admin/remove-image',
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector("meta[name='csrf-token']").getAttribute(
-                                "content")
-                        },
-                        onload: (res) => {
-                            let json = JSON.parse(res);
-                            if (json.success) {
-                                document.getElementById(`avatar-hidden-${index}`).value = '';
-                            } else {
-                                console.error('Remove error:', json.message);
-                            }
-                        }
+                let parts = key.split('.');
+                if (parts[0] === 'variants' && parts.length >= 3) {
+                    let idx = parts[1],
+                        field = parts[2];
+                    let container = document.getElementById(`error-variants-${idx}-${field}`);
+                    if (container) {
+                        errors[key].forEach(msg => {
+                            let span = document.createElement('span');
+                            span.textContent = msg;
+                            span.style.display = 'block';
+                            container.appendChild(span);
+                        });
                     }
                 }
             });
         }
     </script>
+
 
     <script>
         const oldVariants = @json(old('variants'));

@@ -11,7 +11,8 @@ class Refund extends Model
     protected $fillable = [
         'order_id',
         'total_refund_amount',
-        'reason',
+        'refund_reason',
+        'rejected_reason',
         'status',
     ];
 

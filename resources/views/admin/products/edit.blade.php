@@ -33,20 +33,40 @@
                                             @enderror
                                         </div>
 
+                                        <!-- Danh mục cha -->
+                                        <!-- Danh mục cha -->
                                         <div class="mb-3 col-md-12">
-                                            <label for="category" class="form-label">Danh mục</label>
-                                            <select class="form-control" name="category_id" class="form-select">
+                                            <label for="categorySelect" class="form-label">Danh mục sản phẩm</label>
+                                            <select id="categorySelect" name="category_id"
+                                                class="form-control form-select @error('category_id') is-invalid @enderror">
+                                                <option value="">Chọn danh mục</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}"
-                                                        {{ $category->id == $data->category->id ? 'selected' : '' }}>
+                                                        {{ old('category_id', optional($data->category->parent)->id) == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                             @error('category_id')
-                                                <div class="text-danger">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+                                        <!-- Danh mục con -->
+                                        <div class="mb-3 col-md-12">
+                                            <label for="subcategorySelect" class="form-label">Danh mục con</label>
+                                            <select id="subcategorySelect" name="subcategory_id"
+                                                class="form-control form-select @error('subcategory_id') is-invalid @enderror">
+                                                <option value="">Chọn danh mục con</option>
+                                                <!-- Danh mục con sẽ được load qua AJAX -->
+                                            </select>
+                                            @error('subcategory_id')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+
+
 
                                         <div class="mb-3 col-md-12">
                                             <label for="brand" class="form-label">Thương hiệu</label>
@@ -73,6 +93,15 @@
                                             @enderror
 
                                         </div>
+                                        <div class="mb-3 col-md-12">
+                                            <label for="price_sale" class="form-label">Giá khuyến mãi</label>
+                                            <input type="text" name="price_sale" id="price_sale" class="form-control"
+                                                value="{{ $data->price_sale }}" oninput="formatPrice(this)">
+                                            @error('price_sale')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+
+                                        </div>
 
                                         <div class="mb-3 col-md-12">
                                             <label for="status" class="form-label">Trạng thái</label>
@@ -90,18 +119,31 @@
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-12 text-center">
-                                            <label for="avatar" class="d-block mb-2">Ảnh hiện tại</label>
-                                            <div class="col-md-12 text-center">
-                                                <input type="file" id="avatar" name="avatar" class="filepond">
-                                                <input type="hidden" id="avatar-hidden" name="avatar_hidden"
-                                                    value="{{ $data->avatar ?? '' }}">
+
+                                        <div class="mb-3">
+                                            <label for="image" class="form-label">Chọn ảnh mới (nếu muốn thay)</label>
+
+                                            <div class="input-group">
+                                                <input type="file"
+                                                    class="form-control d-none @error('image') is-invalid @enderror"
+                                                    id="avatar" name="avatar" accept="image/*"
+                                                    onchange="previewImage(this)">
+                                                    <label class="input-group-text btn btn-outline-primary w-100"
+                                                    for="avatar">
+                                                    <i class="fas fa-cloud-upload-alt mr-2"></i> Chọn ảnh
+                                                </label>
                                             </div>
 
                                             @error('avatar')
-                                                <div class="text-danger">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
+
+                                            <div class="mt-3">
+                                                <img src="{{ Storage::url($data->avatar) }}" id="previewImageTag"
+                                                    alt="Ảnh hiện tại" class="img-thumbnail w-100">
+                                            </div>
                                         </div>
+
 
                                     </div>
                                     <div class="col-9">
@@ -155,90 +197,68 @@
         });
     </script>
 
-
-    <!-- FilePond JS -->
-    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            FilePond.registerPlugin(FilePondPluginImagePreview);
+        function previewImage(input) {
+            const file = input.files[0];
+            const preview = document.getElementById('previewImageTag');
+            const container = document.getElementById('previewContainer');
 
-            const avatarInput = document.getElementById("avatar");
-            const avatarHidden = document.getElementById("avatar-hidden");
-
-            const pond = FilePond.create(avatarInput, {
-                allowMultiple: false,
-                allowImagePreview: true,
-                imagePreviewHeight: 200,
-                labelIdle: "Kéo & thả ảnh hoặc <span class='filepond--label-action'>chọn ảnh</span>",
-                server: {
-                    process: {
-                        url: "{{ url('/admin/upload-image') }}",
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        onload: (response) => {
-                            try {
-                                let res = JSON.parse(response);
-                                if (res.success) {
-                                    avatarHidden.value = res.path;
-                                } else {
-                                    alert("Lỗi: " + (res.message || "Không thể tải ảnh lên."));
-                                }
-                            } catch (error) {
-                                console.error("Lỗi JSON:", error);
-                                alert("Lỗi không xác định khi tải ảnh lên.");
-                            }
-                        }
-                    },
-                    revert: (filename, load) => {
-                        fetch("{{ url('/admin/remove-image') }}", {
-                                method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    path: avatarHidden.value
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    avatarHidden.value = "";
-                                } else {
-                                    alert("Lỗi: " + (data.message || "Không thể xóa ảnh."));
-                                }
-                                load();
-                            })
-                            .catch(error => {
-                                console.error("Lỗi khi xóa ảnh:", error);
-                                alert("Lỗi kết nối đến server.");
-                                load();
-                            });
-                    }
-                }
-            });
-
-            // ✅ Thêm ảnh cũ vào FilePond sau khi khởi tạo
-            let oldImage = "{{ $data->avatar ? asset('storage/' . $data->avatar) : '' }}";
-            if (oldImage) {
-                fetch(oldImage)
-                    .then(res => {
-                        if (res.ok) {
-                            pond.addFile(oldImage, {
-                                source: oldImage
-                            });
-                        } else {
-                            console.error("Ảnh không tồn tại hoặc không thể tải.");
-                        }
-                    })
-                    .catch(error => console.error("Lỗi khi tải ảnh:", error));
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
             }
+        }
+    </script>
+    <!-- FilePond JS -->
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            function loadSubcategories(parentId, selectedSubId = null) {
+                $('#subcategorySelect').html('<option value="">Chọn danh mục con</option>');
+    
+                if (parentId) {
+                    $.ajax({
+                        url: '/admin/products/get-subcategories/' + parentId,
+                        type: 'GET',
+                        success: function (data) {
+                            data.forEach(function (subcategory) {
+                                $('#subcategorySelect').append(
+                                    `<option value="${subcategory.id}" 
+                                        ${selectedSubId == subcategory.id ? 'selected' : ''}>
+                                        ${subcategory.name}
+                                    </option>`
+                                );
+                            });
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi tải danh mục con!');
+                        }
+                    });
+                }
+            }
+    
+            // Lấy ID danh mục cha & con ban đầu từ Blade
+            let initialParentId = '{{ old('category_id', optional($data->category->parent)->id) }}';
+            let initialSubId = '{{ old('subcategory_id', $data->category_id) }}';
+    
+            // Nếu đã có sẵn ID => Load danh mục con tương ứng
+            if (initialParentId) {
+                loadSubcategories(initialParentId, initialSubId);
+            }
+    
+            // Khi người dùng thay đổi danh mục cha => cập nhật danh mục con
+            $('#categorySelect').change(function () {
+                let selectedParentId = $(this).val();
+                loadSubcategories(selectedParentId);
+            });
         });
     </script>
+    
 @endsection
 @section('style')
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"

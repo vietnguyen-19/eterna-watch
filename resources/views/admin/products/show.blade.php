@@ -89,7 +89,7 @@
                         </div>
 
 
-
+                        @if ($data->type != 'simple')
                         <!-- Các biến thể của sản phẩm -->
                         <div class="card" id="customerList">
                             <div class="card-header border-bottom-dashed">
@@ -114,6 +114,7 @@
                                                     <th scope="col" style="width: 100px;">Ảnh</th>
                                                     <th class="text-left" scope="col">Biến thể</th>
                                                     <th scope="col">SKU</th>
+                                                    <th scope="col">Số lượng tồn</th>
                                                     <th scope="col">Giá</th>
                                                     <th scope="col">Trạng thái</th>
                                                     <th scope="col">Thao tác</th>
@@ -214,6 +215,7 @@
                                 <div id="variants-combinations"></div>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>

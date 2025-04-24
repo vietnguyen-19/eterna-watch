@@ -7,18 +7,22 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="user-info mb-3"
-                        style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
+                        style="display: flex; justify-content: center; padding: 15px; border-bottom: 1px solid #eee; background-color: #f8f9fa; border-radius: 5px 5px 0 0; width: 100%; box-sizing: border-box;">
                         <div class="d-flex flex-column align-items-center text-center p-3">
-                            {{-- Avatar --}}
-                            <div class="avatar" style="width: 200px; height: 200px; overflow: hidden;">
-                                <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
+                            {{-- Avatar có viền --}}
+                            <div class="avatar"
+                                style="width: 200px; height: 200px; overflow: hidden; border-radius: 50%; border: 6px solid #dee2e6; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                <img src="{{ auth()->user()->avatar ? Storage::url(auth()->user()->avatar) : asset('images/default-avatar.png') }}"
+                                    alt="Avatar"
                                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                             </div>
-                            <h5 class="mt-3 mb-1">{{ auth()->user()->name }}</h5>
-                            <p class="text-muted">{{ auth()->user()->email }}</p>
+
+                            {{-- Thông tin căn giữa dưới avatar --}}
+                            <h5 class="mt-3 mb-1" style="font-weight: bold;">{{ auth()->user()->name }}</h5>
+                            <p class="text-muted" style="margin: 0;">{{ auth()->user()->email }}</p>
                         </div>
-                        
                     </div>
+
                     <nav class="nav flex-column account-sidebar sticky-sidebar">
                         <a href="{{ route('account.order') }}" class="nav-link active">
                             <i class="fas fa-shopping-bag me-2"></i> Đơn hàng
@@ -37,47 +41,59 @@
                         </form>
                     </nav>
                 </div>
+
                 <div class="col-lg-9">
-                    <div class="card shadow-sm border-0">
+                    <div class="card shadow-sm border-0 mb-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold text-primary">Thông Tin Tài Khoản</h5>
-                                <a href="{{route('account.edit')}}" class="btn btn-outline-primary btn-sm">Chỉnh sửa</a>
+                                <a href="{{ route('account.edit') }}" class="btn btn-outline-primary btn-sm">Chỉnh sửa</a>
                             </div>
                             <div class="mb-3">
-                                <p class="mb-1"><strong>Họ tên:</strong> {{ Auth::user()->name }}</p>
-                                <p class="mb-1"><strong>Email:</strong> {{ Auth::user()->email }}</p>
-                                <p class="mb-1"><strong>Số điện thoại:</strong> {{ Auth::user()->phone }}</p>
-                                <p class="mb-1"><strong>Giới tính:</strong>
-                                    {{ Auth::user()->gender == 1 ? 'Nam' : 'Nữ' }}</p>
+                                <p class="mb-1"><strong>Họ tên:</strong> {{ auth()->user()->name }}</p>
+                                <p class="mb-1"><strong>Email:</strong> {{ auth()->user()->email }}</p>
+                                <p class="mb-1"><strong>Số điện thoại:</strong> {{ auth()->user()->phone }}</p>
+                                @php
+                                    $gioiTinh = match (auth()->user()->gender) {
+                                        1 => 'Nam',
+                                        0 => 'Nữ',
+                                        default => 'Không xác định',
+                                    };
+                                @endphp
+                                <p class="mb-1"><strong>Giới tính:</strong> {{ $gioiTinh }}</p>
                             </div>
-                            @if (Auth::user()->defaultAddress)
-                                <div class="border-top pt-3">
-                                    <h6 class="text-secondary fw-bold">Địa chỉ mặc định</h6>
-                                    <p class="mb-1"><strong>Địa chỉ:</strong>
-                                        {{ Auth::user()->defaultAddress->street_address }},
-                                        {{ Auth::user()->defaultAddress->district }}</p>
-                                    <p class="mb-1"><strong>Thành phố:</strong> {{ Auth::user()->defaultAddress->city }},
-                                        {{ Auth::user()->defaultAddress->country }}</p>
-                                </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="text-secondary fw-bold mb-2">Địa chỉ mặc định</h6>
+                            @if (auth()->user()->defaultAddress)
+                                <p class="mb-1"><strong>Địa chỉ:</strong>
+                                    {{ auth()->user()->defaultAddress->street_address }},
+                                    {{ auth()->user()->defaultAddress->district }}
+                                </p>
+                                <p class="mb-1"><strong>Thành phố:</strong>
+                                    {{ auth()->user()->defaultAddress->city }},
+                                    {{ auth()->user()->defaultAddress->country }}
+                                </p>
                             @else
-                                <p class="text-muted">Chưa cập nhật địa chỉ</p>
+                                <p class="text-muted mb-0">Chưa cập nhật địa chỉ</p>
                             @endif
                         </div>
                     </div>
                 </div>
-
+            </div> <!-- 🔧 Thêm dòng này để đóng .row -->
         </section>
     </main>
-
-
     <div class="mb-5 pb-xl-5"></div>
 @endsection
+
 @section('script')
 @endsection
+
 @section('style')
     <style>
-        /* Sidebar */
         .account-sidebar .nav-link {
             font-size: 16px;
             padding: 12px 18px;
@@ -108,24 +124,6 @@
             font-weight: bold;
         }
 
-        /* Hiệu ứng hover cho liên kết */
-        .link-hover {
-            transition: color 0.3s ease-in-out;
-        }
-
-        .link-hover:hover {
-            color: #0d47a1 !important;
-            text-decoration: underline;
-        }
-
-        /* Nội dung chính */
-        .content-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 24px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        }
-
         .logout-btn {
             background: none;
             border: none;
@@ -143,7 +141,6 @@
             padding-left: 22px;
         }
 
-        /* Responsive tối ưu */
         @media (max-width: 768px) {
             .container {
                 max-width: 100%;

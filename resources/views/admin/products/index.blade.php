@@ -23,15 +23,23 @@
                                     <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <a href="{{ route('admin.products.trash') }}" class="btn btn-danger">
-                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                    <a href="{{ route('admin.products.trash') }}" class="btn btn-sm btn-danger" title="Thùng rác">
+                                        <i class="ri-delete-bin-line align-bottom me-1"></i>
+                                        Thùng rác
+                                    </a>
+                                    <div class="btn-group" role="group">
+                                        
+                                        <a href="{{ route('admin.products.create', ['type' => 'simple']) }}" class="btn btn-sm btn-success me-2" title="Thêm sản phẩm thường">
+                                            <i class="ri-add-line align-bottom me-1"></i>
+                                            Thêm sản phẩm thường
                                         </a>
-                                        <a href="{{ route('admin.products.create') }}" class="btn btn-success ml-1">
-                                            <i class="ri-add-line align-bottom me-1"></i> Thêm sản phẩm mới
+                                        <a href="{{ route('admin.products.create', ['type' => 'variant']) }}" class="btn btn-sm btn-primary" title="Thêm sản phẩm có biến thể">
+                                            <i class="ri-add-line align-bottom me-1"></i>
+                                            Thêm sản phẩm có biến thể
                                         </a>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
 

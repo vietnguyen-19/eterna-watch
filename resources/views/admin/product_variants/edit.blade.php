@@ -227,95 +227,112 @@
                                             </thead>
                                             <tbody>
                                                 @forelse ($product->variants as $variant)
-                                                <tr>
-                                                    <td style="width: 180px;">
-                                                        @if ($variant->image)
-                                                            <img src="{{ asset('storage/' . $variant->image) }}"
-                                                                class="img-thumbnail"
-                                                                style="max-height: 100%; object-fit: contain;"
-                                                                alt="Ảnh biến thể">
-                                                        @else
-                                                            <div class="text-muted">Chưa có ảnh</div>
-                                                        @endif
-                                                
-                                                        <input type="file" name="image[{{ $variant->id }}]"
-                                                            class="form-control form-control-sm mt-2 @error("image.{$variant->id}") is-invalid @enderror">
-                                                        @error("image.{$variant->id}")
-                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                                        @enderror
-                                                    </td>
-                                                
-                                                    <td class="text-start align-middle">
-                                                        <table class="table table-bordered table-sm mb-0">
-                                                            <tbody>
-                                                                @foreach ($variant->attributeValues as $value)
-                                                                    <tr>
-                                                                        <td class="text-muted text-left" style="width: 60%;">
-                                                                            <strong>{{ $value->nameValue->attribute->attribute_name }}</strong>
-                                                                        </td>
-                                                                        <td class="text-muted text-left">
-                                                                            {{ $value->nameValue->value_name }}
-                                                                        </td>
-                                                                    </tr>
-                                                                    <input type="hidden"
-                                                                        name="attributes[{{ $variant->id }}][{{ $value->id }}]"
-                                                                        value="{{ $value->nameValue->id }}">
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </td>
-                                                
-                                                    <td class="align-middle">
-                                                        <input type="text" name="sku[{{ $variant->id }}]"
-                                                            class="form-control form-control @error("sku.{$variant->id}") is-invalid @enderror"
-                                                            value="{{ old("sku.{$variant->id}", $variant->sku) }}">
-                                                        @error("sku.{$variant->id}")
-                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                                        @enderror
-                                                    </td>
-                                                
-                                                    <td class="align-middle">
-                                                        <input type="text" name="price[{{ $variant->id }}]"
-                                                            class="form-control form-control price-input @error("price.{$variant->id}") is-invalid @enderror"
-                                                            value="{{ old("price.{$variant->id}", $variant->price) }}">
-                                                        @error("price.{$variant->id}")
-                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                                        @enderror
-                                                    </td>
-                                                
-                                                    <td class="align-middle">
-                                                        <input type="text" name="stock[{{ $variant->id }}]"
-                                                            class="form-control form-control stock-input @error("stock.{$variant->id}") is-invalid @enderror"
-                                                            value="{{ old("stock.{$variant->id}", $variant->stock) }}">
-                                                        @error("stock.{$variant->id}")
-                                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                                        @enderror
-                                                    </td>
-                                                
-                                                    <td class="align-middle">
-                                                        @php
-                                                            switch ($variant->status) {
-                                                                case 'in_stock':
-                                                                    $class = 'badge bg-success';
-                                                                    $text = 'Còn hàng';
-                                                                    break;
-                                                                case 'out_of_stock':
-                                                                    $class = 'badge bg-danger';
-                                                                    $text = 'Hết hàng';
-                                                                    break;
-                                                                case 'pre_order':
-                                                                    $class = 'badge bg-warning text-dark';
-                                                                    $text = 'Đặt trước';
-                                                                    break;
-                                                                default:
-                                                                    $class = 'badge bg-secondary';
-                                                                    $text = 'Không xác định';
-                                                            }
-                                                        @endphp
-                                                        <span class="{{ $class }}">{{ $text }}</span>
-                                                    </td>
-                                                </tr>
-                                                
+                                                    <tr>
+                                                        <td style="width: 150px;">
+                                                            <!-- Hiển thị ảnh hoặc chữ nếu chưa có -->
+                                                            <div id="variant-preview-{{ $variant->id }}" class="mb-2 text-center">
+                                                                @if ($variant->image)
+                                                                    <img src="{{ asset('storage/' . $variant->image) }}"
+                                                                        class="img-thumbnail" id="previewImageTag-{{ $variant->id }}"
+                                                                        style="w-100; object-fit: contain;" alt="Ảnh biến thể">
+                                                                @else
+                                                                    <div class="text-muted" id="previewImageTag-{{ $variant->id }}">Chưa có ảnh</div>
+                                                                @endif
+                                                            </div>
+                                                        
+                                                            <!-- Nút chọn ảnh tùy chỉnh -->
+                                                            <div class="text-center">
+                                                                <label class="btn btn-sm btn-outline-primary w-100 mb-1" style="cursor: pointer;">
+                                                                    Chọn ảnh
+                                                                    <input type="file"
+                                                                        name="image[{{ $variant->id }}]"
+                                                                        class="d-none @error("image.{$variant->id}") is-invalid @enderror"
+                                                                        onchange="previewVariantImage(this, {{ $variant->id }})">
+                                                                </label>
+                                                            </div>
+                                                        
+                                                            <!-- Lỗi -->
+                                                            @error("image.{$variant->id}")
+                                                                <div class="invalid-feedback d-block text-danger small">{{ $message }}</div>
+                                                            @enderror
+                                                        </td>
+                                                        
+
+                                                        <td class="text-start align-middle">
+                                                            <table class="table table-bordered table-sm mb-0">
+                                                                <tbody>
+                                                                    @foreach ($variant->attributeValues as $value)
+                                                                        <tr>
+                                                                            <td class="text-muted text-left"
+                                                                                style="width: 60%;">
+                                                                                <strong>{{ $value->nameValue->attribute->attribute_name }}</strong>
+                                                                            </td>
+                                                                            <td class="text-muted text-left">
+                                                                                {{ $value->nameValue->value_name }}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <input type="hidden"
+                                                                            name="attributes[{{ $variant->id }}][{{ $value->id }}]"
+                                                                            value="{{ $value->nameValue->id }}">
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+
+                                                        <td class="align-middle">
+                                                            <input type="text" name="sku[{{ $variant->id }}]"
+                                                                class="form-control form-control @error("sku.{$variant->id}") is-invalid @enderror"
+                                                                value="{{ old("sku.{$variant->id}", $variant->sku) }}">
+                                                            @error("sku.{$variant->id}")
+                                                                <div class="invalid-feedback d-block">{{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </td>
+
+                                                        <td class="align-middle">
+                                                            <input type="text" name="price[{{ $variant->id }}]"
+                                                                class="form-control form-control price-input @error("price.{$variant->id}") is-invalid @enderror"
+                                                                value="{{ old("price.{$variant->id}", $variant->price) }}">
+                                                            @error("price.{$variant->id}")
+                                                                <div class="invalid-feedback d-block">{{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </td>
+
+                                                        <td class="align-middle">
+                                                            <input type="text" name="stock[{{ $variant->id }}]"
+                                                                class="form-control form-control stock-input @error("stock.{$variant->id}") is-invalid @enderror"
+                                                                value="{{ old("stock.{$variant->id}", $variant->stock) }}">
+                                                            @error("stock.{$variant->id}")
+                                                                <div class="invalid-feedback d-block">{{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </td>
+
+                                                        <td class="align-middle">
+                                                            @php
+                                                                switch ($variant->status) {
+                                                                    case 'in_stock':
+                                                                        $class = 'badge bg-success';
+                                                                        $text = 'Còn hàng';
+                                                                        break;
+                                                                    case 'out_of_stock':
+                                                                        $class = 'badge bg-danger';
+                                                                        $text = 'Hết hàng';
+                                                                        break;
+                                                                    case 'pre_order':
+                                                                        $class = 'badge bg-warning text-dark';
+                                                                        $text = 'Đặt trước';
+                                                                        break;
+                                                                    default:
+                                                                        $class = 'badge bg-secondary';
+                                                                        $text = 'Không xác định';
+                                                                }
+                                                            @endphp
+                                                            <span class="{{ $class }}">{{ $text }}</span>
+                                                        </td>
+                                                    </tr>
+
                                                 @empty
                                                     <tr>
                                                         <td colspan="6" class="text-center text-muted">
@@ -397,7 +414,26 @@
         </script>
     @endif
 
+    <script>
+        function previewVariantImage(input, variantId) {
+            const file = input.files[0];
+            const previewTag = document.getElementById(`previewImageTag-${variantId}`);
 
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Nếu previewTag là <div> (text 'Chưa có ảnh') thì thay bằng <img>
+                    if (previewTag.tagName.toLowerCase() === 'div') {
+                        previewTag.outerHTML =
+                            `<img src="${e.target.result}" id="previewImageTag-${variantId}" class="img-thumbnail" style="max-height: 100px; object-fit: contain;" alt="Xem trước ảnh">`;
+                    } else {
+                        previewTag.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 
 
 
