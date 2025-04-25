@@ -123,19 +123,19 @@
                             xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart"></use>
                         </svg>
-                        @if (Auth::check())
+                        @if (Auth::guard('web')->check())
                             <span class="cart-amount d-block position-absolute js-cart-items-count">
-                                {{ Auth::user()->cart ? Auth::user()->cart->countCartDetails() : 0 }}
+                                {{ Auth::guard('web')->user()->cart ? Auth::guard('web')->user()->cart->countCartDetails() : 0 }}
                             </span>
                         @endif
 
                     </a>
                     <div class="header-tools__item hover-container dropdown">
-                        @if (Auth::check())
+                        @if (Auth::guard('web')->check() && Auth::guard('web')->user()->role_id == 3)
                             {{-- Nếu đã đăng nhập, hiển thị avatar và dropdown --}}
                             <a href="#" class="dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatar/default.jpeg') }}"
+                                <img src="{{ Storage::url(Auth::guard('web')->user()->avatar ?? 'avatar/default.jpeg') }}"
                                     alt="Avatar" class="rounded-circle border border-secondary" width="40"
                                     height="40">
                             </a>
@@ -145,17 +145,16 @@
                                 class="dropdown-menu dropdown-menu-end bg-dark text-white mt-2"
                                 aria-labelledby="userDropdown" style="min-width: 400px;">
                                 <li class="text-center">
-                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatar/default.jpeg') }}"
+                                    <img src="{{ Storage::url(Auth::guard('web')->user()->avatar ?? 'avatar/default.jpeg') }}"
                                         alt="Avatar" class="rounded-circle border border-light mb-2" width="70"
                                         height="70">
-                                    <p class="mb-0 fw-bold">{{ Auth::user()->name }}</p>
-                                    <p class="text-muted small">{{ Auth::user()->email }}</p>
+                                    <p class="mb-0 fw-bold">{{ Auth::guard('web')->user()->name }}</p>
+                                    <p class="text-muted small">{{ Auth::guard('web')->user()->email }}</p>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider border-secondary">
                                 </li>
-                                <li><a class="dropdown-item login text-white py-2 " href="{{route('account.order')}}"> Hồ sơ</a></li>
-                                <li><a class="dropdown-item login text-white py-2" href="">Cài đặt</a></li>
+                                <li><a class="dropdown-item login text-white py-2 " href="{{route('account.order')}}">Xem tài khoản</a></li>
                                 <li>
                                     <hr class="dropdown-divider border-secondary">
                                 </li>

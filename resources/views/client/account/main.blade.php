@@ -1,6 +1,7 @@
 @extends('client.layouts.master')
 @section('content')
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-4"></div>
+    <div class="mb-4 pb-lg-3"></div>
     <main style="padding-top: 90px;">
         <div class="mb-4"></div>
         <section class="my-account container py-5">

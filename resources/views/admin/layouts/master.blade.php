@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>AdminLTE 3 | Dashboard</title>
+    <title>EternaWatch | Manage</title>
     @yield('style')
 
     <!-- Google Font: Source Sans Pro -->
@@ -136,6 +136,33 @@
     <script src="{{ asset('theme/admin/dist/js/demo.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('theme/admin/dist/js/pages/dashboard.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
     @yield('script')
 </body>
 

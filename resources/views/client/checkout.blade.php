@@ -1,10 +1,11 @@
 @extends('client.layouts.master')
 @section('content')
-    <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
+    <div class="mb-4 mb-xl-5 pt-xl-1"></div>
     <main style="padding-top: 90px;">
 
         <section class="shop-checkout container">
-
+            <div class="mb-4 pb-4"></div>
+            <div class="mb-4 pb-lg-3"></div>
 
             <div class="mb-4 pb-4"></div>
             <a href="shop_cart.html" class="d-flex"

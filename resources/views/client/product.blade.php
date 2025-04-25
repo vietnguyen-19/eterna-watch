@@ -71,48 +71,51 @@
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between mb-4 pb-md-2">
                         <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-                            <a style="font-weight:500" href="#"
-                                class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                            <a style="font-weight:500" href="{{ route('client.home') }}"
+                                class="menu-link menu-link_us-s text-uppercase fw-medium">Trang chủ</a>
                             <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                            <a style="font-weight:500" href="#"
-                                class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+                            <a style="font-weight:500" href="{{ route('client.shop') }}"
+                                class="menu-link menu-link_us-s text-uppercase fw-medium">Cửa hàng</a>
                         </div><!-- /.breadcrumb -->
 
                         <div
                             class="product-single__prev-next d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                            <a href="product1_simple.html" class="text-uppercase fw-medium"><svg class="mb-1px"
-                                    width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_prev_md" />
-                                </svg><span class="menu-link menu-link_us-s">Prev</span></a>
-                            <a href="product3_external.html" class="text-uppercase fw-medium"><span
-                                    class="menu-link menu-link_us-s">Next</span><svg class="mb-1px" width="10"
-                                    height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_next_md" />
-                                </svg></a>
+                            @php
+                                // Lấy ID của sản phẩm trước và sau
+                                $productTruoc = \App\Models\Product::where('id', '<', $product->id)
+                                    ->orderBy('id', 'desc')
+                                    ->first();
+                                $productSau = \App\Models\Product::where('id', '>', $product->id)
+                                    ->orderBy('id', 'asc')
+                                    ->first();
+                            @endphp
+
+                            @if ($productTruoc)
+                                <a href="{{ route('client.shop.show', $productTruoc->id) }}"
+                                    class="text-uppercase fw-medium">
+                                    <svg class="mb-1px" width="10" height="10" viewBox="0 0 25 25"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <use href="#icon_prev_md" />
+                                    </svg>
+                                    <span class="menu-link menu-link_us-s">Trước đó</span>
+                                </a>
+                            @endif
+
+                            @if ($productSau)
+                                <a href="{{ route('client.shop.show', $productSau->id) }}" class="text-uppercase fw-medium">
+                                    <span class="menu-link menu-link_us-s">Tiếp theo</span>
+                                    <svg class="mb-1px" width="10" height="10" viewBox="0 0 25 25"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <use href="#icon_next_md" />
+                                    </svg>
+                                </a>
+                            @endif
+
                         </div><!-- /.shop-acs -->
                     </div>
 
                     <h1 class="product-single__name">{{ $product->name }}</h1>
-                    <div class="product-single__rating">
-                        <div class="reviews-group d-flex">
-                            <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_star" />
-                            </svg>
-                            <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_star" />
-                            </svg>
-                            <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_star" />
-                            </svg>
-                            <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_star" />
-                            </svg>
-                            <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_star" />
-                            </svg>
-                        </div>
-                        <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
-                    </div>
+
                     <div class="product-single__price">
                         <span class="current-price"></span>
                     </div>
@@ -127,7 +130,7 @@
 
                             @foreach ($product->attributes as $attribute)
                                 <div class="product-swatch text-swatches">
-                                    <label>{{ $attribute->attribute_name }}</label>
+                                    <label><strong>{{ $attribute->attribute_name }}</strong></label>
                                     <div class="swatch-list">
                                         @foreach ($attribute->attributeValues as $value)
                                             <input type="radio" name="attribute_{{ $attribute->id }}"
@@ -168,59 +171,17 @@
 
                         </div>
                     </form>
-                    <div class="product-single__addtolinks">
-                        <a href="#" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16"
-                                height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_heart" />
-                            </svg><span>Thêm vào yêu thích</span></a>
-                        <share-button class="share-button">
-                            <button
-                                class="menu-link menu-link_us-s to-share border-0 bg-transparent d-flex align-items-center">
-                                <svg width="16" height="19" viewBox="0 0 16 19" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_sharing" />
-                                </svg>
-                                <span>Share</span>
-                            </button>
-                            <details id="Details-share-template__main" class="m-1 xl:m-1.5" hidden="">
-                                <summary class="btn-solid m-1 xl:m-1.5 pt-3.5 pb-3 px-5">+</summary>
-                                <div id="Article-share-template__main"
-                                    class="share-button__fallback flex items-center absolute top-full left-0 w-full px-2 py-4 bg-container shadow-theme border-t z-10">
-                                    <div class="field grow mr-4">
-                                        <label class="field__label sr-only" for="url">Link</label>
-                                        <input type="text" class="field__input w-full" id="url"
-                                            value="https://uomo-crystal.myshopify.com/blogs/news/go-to-wellness-tips-for-mental-health"
-                                            placeholder="Link" onclick="this.select();" readonly="">
-                                    </div>
-                                    <button class="share-button__copy no-js-hidden">
-                                        <svg class="icon icon-clipboard inline-block mr-1" width="11" height="13"
-                                            fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-                                            focusable="false" viewBox="0 0 11 13">
-                                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                                d="M2 1a1 1 0 011-1h7a1 1 0 011 1v9a1 1 0 01-1 1V1H2zM1 2a1 1 0 00-1 1v9a1 1 0 001 1h7a1 1 0 001-1V3a1 1 0 00-1-1H1zm0 10V3h7v9H1z"
-                                                fill="currentColor"></path>
-                                        </svg>
-                                        <span class="sr-only">Copy link</span>
-                                    </button>
-                                </div>
-                            </details>
-                        </share-button>
-                        <script src="js/details-disclosure.js" defer="defer"></script>
-                        <script src="js/share.js" defer="defer"></script>
-                    </div>
                     <div class="product-single__meta-info">
                         <div class="meta-item">
-                            <label>SKU:</label>
-                            <span>{{ $product->category->name }}</span>
+                            <label>Thường hiệu:</label>
+                            <span>{{ $product->brand->name }}</span>
                         </div>
+
                         <div class="meta-item">
                             <label>Danh mục:</label>
                             <span>{{ $product->category->name }}</span>
                         </div>
-                        <div class="meta-item">
-                            <label>Tags:</label>
-                            <span>biker, black, bomber, leather</span>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -623,11 +584,11 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
 @endsection
 @section('script')
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const productVariants = document.getElementById("product-variants");
+
             if (!productVariants) {
                 console.error("Không tìm thấy #product-variants trong HTML");
                 return;
@@ -694,15 +655,24 @@
             errorMessage.style.display = "none"; // Ẩn ban đầu
         });
     </script>
- 
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const addToCartForm = document.querySelector("form[name='addtocart-form']");
             const viewCartButton = document.getElementById("view_cart");
+            const variantIdInput = document.getElementById("variant_id");
 
             addToCartForm.addEventListener("submit", function(event) {
                 event.preventDefault(); // Ngăn chặn reload trang
-
+                if (!variantIdInput.value) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa chọn biến thể!',
+                    text: 'Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
                 // Thu thập dữ liệu form
                 let formData = new FormData(this);
                 // Gửi AJAX request
@@ -912,6 +882,33 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Thất bại!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 @endsection
 @section('style')
     <style>

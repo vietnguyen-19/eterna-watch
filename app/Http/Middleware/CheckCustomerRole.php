@@ -17,7 +17,7 @@ class CheckCustomerRole
     public function handle(Request $request, Closure $next)
     {
         // Kiểm tra nếu user đã đăng nhập và có role_id = 3
-        if (Auth::check() && Auth::user()->role_id == 3) {
+        if (Auth::guard('web')->check() && Auth::guard('web')->user()->role_id == 3) {
             return $next($request); // Cho phép tiếp tục
         }
 

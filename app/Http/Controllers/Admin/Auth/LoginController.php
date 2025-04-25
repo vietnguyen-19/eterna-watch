@@ -16,8 +16,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-       
-        // Validate dữ liệu đầu vào
+        // ✅ Validate dữ liệu đầu vào
         $validated = $request->validate([
             'email'    => 'required|email|max:255',
             'password' => 'required|string|min:6|max:255',
@@ -29,25 +28,32 @@ class LoginController extends Controller
             'password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.',
             'password.max'      => 'Mật khẩu không được vượt quá 255 ký tự.',
         ]);
-        
-        if (Auth::attempt($validated)) {
-            $user = Auth::user();
-           
-            if ($user->role_id == 1 || $user->role_id == 2) {
+    
+        // ✅ Thử đăng nhập với guard admin
+        if (Auth::guard('admin')->attempt($validated)) {
+            $user = Auth::guard('admin')->user();
+    
+            // ✅ Chỉ cho phép role_id 1 (admin) hoặc 2 (nhân viên)
+            if (in_array($user->role_id, [1, 2])) {
                 return redirect()->route('admin.dashboard.revenue');
             }
-            if ($user->role_id == 3) {
-                return redirect()->route('client.home');
-            }
-            Auth::logout();
-            return redirect()->route('admin.login')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
+    
+            // 🚫 Không có quyền truy cập => đăng xuất
+            Auth::guard('admin')->logout();
+            return redirect()->route('admin.login')->withErrors([
+                'email' => 'Tài khoản của bạn không được phép truy cập trang quản trị.'
+            ]);
         }
-     
-        return back()->withErrors(['email' => 'Thông tin đăng nhập không chính xác.']);
+    
+        // ❌ Sai thông tin đăng nhập
+        return back()->withErrors([
+            'email' => 'Email hoặc mật khẩu không chính xác.'
+        ]);
     }
+    
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
         return redirect()->route('admin.login');
     }
 }

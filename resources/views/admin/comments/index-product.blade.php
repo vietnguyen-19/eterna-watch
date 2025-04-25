@@ -57,7 +57,8 @@
 
                                             <!-- Bảng hiển thị bình luận -->
                                             <div class="table-responsive mt-4">
-                                                <table class="table table-bordered" id="reviewTable{{ $status }}">
+                                                <table class="table table-bordered table-smaller"
+                                                    id="reviewTable{{ $status }}">
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 4%">
@@ -82,14 +83,9 @@
 
                                                                 <td class="align-middle">
                                                                     <div class="d-flex align-items-center">
-                                                                        <div>
-                                                                            <img src="{{ Storage::url($comment->user->avatar ?? 'default-avatar.png') }}"
-                                                                                class=""
-                                                                                style="width: 66px; height: 66px; object-fit: cover;">
-                                                                        </div>
                                                                         <div class="m-3">
-                                                                            <span
-                                                                                class="user-name text-info"><b>{{ $comment->user->name }}</b></span><br>
+                                                                            <a href="{{route('admin.users.show',$comment->user->id)}}"
+                                                                                class="user-name text-info"><b>{{ $comment->user->name }}</b></a><br>
                                                                             <span
                                                                                 class="user-email">{{ $comment->user->email }}</span>
                                                                         </div>
@@ -98,7 +94,7 @@
 
                                                                 <td>
                                                                     <div>
-                                                                        <p> {{ $comment->content }}</p>
+                                                                        <span> {{ $comment->content }}</span>
                                                                         <br>
                                                                         @if (isset($comment->parent) && isset($comment->parent->user))
                                                                             Trả lời tới | <span
@@ -106,59 +102,64 @@
                                                                         @endif
                                                                         <br>
                                                                         @if (isset($comment->rating))
-                                                                            Rating | <span
-                                                                                class="text-info">{{ $comment->rating }}</span>
-                                                                            <i style="width: 16px"
-                                                                                class="fa-solid fa-star text-warning"></i>
+                                                                            Đánh giá | <span
+                                                                                class="text-info"></span>
+                                                                            @for ($i = 0; $i < $comment->rating; $i++)
+                                                                                <i style="width: 16px"
+                                                                                    class="fa-solid fa-star text-warning"></i>
+                                                                            @endfor
                                                                         @endif
                                                                         <br>
-                                                                        <div class="mt-2 btn-group">
-                                                                            <button class="btn btn-dark btn-sm edit-comment"
-                                                                                data-id="{{ $comment->id }}"
-                                                                                data-content="{{ $comment->content }}">
-                                                                                Sửa
-                                                                            </button>
-                                                                            <button
-                                                                                class="btn btn-info btn-sm reply-comment"
-                                                                                data-id="{{ $comment->id }}"
-                                                                                data-entity-id="{{ $comment->entity_id }}"
-                                                                                data-entity-type="{{ $comment->entity_type }}">
-                                                                                Trả lời
-                                                                            </button>
-                                                                            @switch($comment->status)
-                                                                                @case('pending')
-                                                                                    <a href="#"
-                                                                                        class="btn btn-warning btn-sm comment-action"
-                                                                                        data-id="{{ $comment->id }}"
-                                                                                        data-action="approve">Chấp nhận</a>
-                                                                                @break
+                                                                        <div>
+                                                                            <br>
+                                                                            <div class="btn-group">
+                                                                                <button
+                                                                                    class="btn btn-info btn-xs reply-comment"
+                                                                                    data-id="{{ $comment->id }}"
+                                                                                    data-entity-id="{{ $comment->entity_id }}"
+                                                                                    data-entity-type="{{ $comment->entity_type }}">
+                                                                                    Trả lời
+                                                                                </button>
 
-                                                                                @case('approved')
-                                                                                    <a href="#"
-                                                                                        class="btn btn-warning btn-sm comment-action"
-                                                                                        data-id="{{ $comment->id }}"
-                                                                                        data-action="reject">Không duyệt</a>
-                                                                                @break
+                                                                                @switch($comment->status)
+                                                                                    @case('pending')
+                                                                                        <a href="#"
+                                                                                            class="btn btn-success btn-xs comment-action"
+                                                                                            data-id="{{ $comment->id }}"
+                                                                                            data-action="approve">Duyệt</a>
+                                                                                        <a href="#"
+                                                                                            class="btn btn-dark btn-xs comment-action"
+                                                                                            data-id="{{ $comment->id }}"
+                                                                                            data-action="reject">Không duyệt</a>
+                                                                                    @break
 
-                                                                                @case('rejected')
-                                                                                    <a href="#"
-                                                                                        class="btn btn-warning btn-sm comment-action"
-                                                                                        data-id="{{ $comment->id }}"
-                                                                                        data-action="approve">Chấp nhận</a>
-                                                                                @break
-                                                                            @endswitch
-                                                                            <a href="#"
-                                                                                class="btn btn-danger btn-sm comment-action"
-                                                                                data-id="{{ $comment->id }}"
-                                                                                data-action="delete">Xóa</a>
+                                                                                    @case('approved')
+                                                                                        <a href="#"
+                                                                                            class="btn btn-warning btn-xs comment-action"
+                                                                                            data-id="{{ $comment->id }}"
+                                                                                            data-action="reject">Ẩn đi</a>
+                                                                                    @break
 
+                                                                                    @case('rejected')
+                                                                                        <a href="#"
+                                                                                            class="btn btn-success btn-xs comment-action"
+                                                                                            data-id="{{ $comment->id }}"
+                                                                                            data-action="approve">Hiển thị</a>
+                                                                                    @break
+                                                                                @endswitch
+
+                                                                                <a href="#"
+                                                                                    class="btn btn-danger btn-xs comment-action"
+                                                                                    data-id="{{ $comment->id }}"
+                                                                                    data-action="delete">Xóa</a>
+                                                                            </div>
                                                                         </div>
 
 
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    {{ optional($comment->entity)->name }}
+                                                                   <a href="{{route('admin.products.show',$comment->entity->id)}}"> {{ optional($comment->entity)->name }}</a>
 
                                                                 </td>
                                                                 <td>
@@ -173,7 +174,7 @@
                                                                         @break
 
                                                                         @case('rejected')
-                                                                            <span class="badge bg-danger">Bị từ chối</span>
+                                                                            <span class="badge bg-danger">Không hiển thị</span>
                                                                         @break
 
                                                                         @default
@@ -225,10 +226,10 @@
                                                                                 <h5 class="modal-title">Trả Lời Bình Luận
                                                                                 </h5>
                                                                                 <button type="button" class="close"
-                                                                                    data-dismiss="modal"
-                                                                                    aria-label="Close">
+                                                                                    id="closeReplyModal">
                                                                                     <span aria-hidden="true">&times;</span>
                                                                                 </button>
+
                                                                             </div>
                                                                             <div class="modal-body">
                                                                                 <div class="form-group">
@@ -245,7 +246,8 @@
                                                                             <div class="modal-footer">
                                                                                 <button type="button"
                                                                                     class="btn btn-secondary"
-                                                                                    data-dismiss="modal">Hủy</button>
+                                                                                    id="cancelReplyModal">Hủy</button>
+
                                                                                 <button type="button"
                                                                                     class="btn btn-primary"
                                                                                     id="saveReplyComment">Gửi Trả
@@ -324,6 +326,11 @@
                 border-color: #17a2b8;
                 /* Màu viền khi hover */
             }
+
+            .table-smaller {
+                font-size: 0.875rem;
+                /* hoặc nhỏ hơn như 0.75rem */
+            }
         </style>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     @endsection
@@ -350,24 +357,24 @@
                 'reviewTablerejected',
                 'reviewTableall'
             ];
-        
+
             // Lặp qua từng ID và áp dụng DataTable
             tableIds.forEach(function(tableId) {
                 var $table = $('#' + tableId);
-        
+
                 // Kiểm tra bảng có tồn tại không
                 if ($table.length) {
                     // Lấy số cột từ phần thead
                     var thCount = $table.find('thead th').length;
                     var isValid = true;
-        
+
                     // Kiểm tra các dòng trong tbody có đúng số lượng cột không
                     $table.find('tbody tr').each(function() {
                         if ($(this).find('td').length !== thCount) {
                             isValid = false;
                         }
                     });
-        
+
                     // Nếu số cột hợp lệ thì áp dụng DataTable
                     if (isValid) {
                         $table.DataTable({
@@ -396,7 +403,7 @@
                 }
             });
         </script>
-        
+
         <script>
             $(document).ready(function() {
                 // Chọn tất cả
@@ -476,13 +483,22 @@
                 $('#replyCommentModal').modal('show');
             });
 
-            // AJAX trả lời bình luận
+            // Đóng modal bằng nút Close
+            document.getElementById('closeReplyModal').addEventListener('click', function() {
+                $('#replyCommentModal').modal('hide'); // Sử dụng modal('hide') thay vì classList
+            });
+
+            // Đóng modal bằng nút Cancel
+            document.getElementById('cancelReplyModal').addEventListener('click', function() {
+                $('#replyCommentModal').modal('hide'); // Sử dụng modal('hide') thay vì classList
+            });
+
             // AJAX trả lời bình luận
             $('#saveReplyComment').on('click', function() {
                 var parentId = $('#replyCommentId').val();
                 var content = $('#replyCommentContent').val();
-                var entityId = $('#entityId').val(); // Lấy entity_id
-                var entityType = $('#entityType').val(); // Lấy entity_type
+                var entityId = $('#entityId').val();
+                var entityType = $('#entityType').val();
 
                 $.ajax({
                     url: '{{ route('admin.comments.reply') }}',
@@ -495,7 +511,7 @@
                         entity_type: entityType
                     },
                     success: function(response) {
-                        $('#replyCommentModal').modal('hide');
+                        $('#replyCommentModal').modal('hide'); // Đóng modal bằng modal('hide')
                         alert('Đã trả lời bình luận thành công!');
                         location.reload();
                     },

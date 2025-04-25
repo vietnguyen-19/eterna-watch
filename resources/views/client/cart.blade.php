@@ -3,6 +3,7 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
         <div class="mb-4 pb-4"></div>
+        <div class="mb-4 pb-lg-3"></div>
         <section class="shop-checkout container">
 
             <a href="shop_cart.html" class="d-flex"

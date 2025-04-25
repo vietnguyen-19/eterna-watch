@@ -82,7 +82,7 @@ Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('client.c
 | Protected Routes (Cần login và là khách hàng)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'customer'])->group(function () {
+Route::middleware(['auth:web', 'customer'])->group(function () {
 
     Route::get('/dashboard', fn() => view('client.dashboard'))->name('client.dashboard');
 
