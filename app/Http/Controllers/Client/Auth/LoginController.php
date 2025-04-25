@@ -29,17 +29,17 @@ class LoginController extends Controller
         ]);
 
         // Kiểm tra đăng nhập
-        if (Auth::attempt($validated, $request->has('remember'))) {
-            $user = Auth::user();
+        if (Auth::guard('web')->attempt($validated, $request->has('remember'))) {
+            $user = Auth::guard('web')->user();
 
             // Kiểm tra email đã xác minh chưa
             if (!$user->hasVerifiedEmail()) {
-                Auth::logout();
+                Auth::guard('web')->logout();
                 return redirect()->back()->withErrors(['email' => 'Vui lòng xác minh email trước khi đăng nhập.']);
             }
 
             if ($user->status != 'active') {
-                Auth::logout();
+                Auth::guard('web')->logout();
                 return redirect()->back()->withErrors(['email' => 'Tài khoản của bạn đã bị khóa.']);
             }
             // Kiểm tra quyền truy cập
@@ -50,7 +50,7 @@ class LoginController extends Controller
                 // Admin đăng nhập => chuyển đến trang quản trị admin
                 return redirect()->route('admin.login');
             }
-            Auth::logout();
+            Auth::guard('web')->logout();
             return redirect()->route('client.home')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
         }
 
@@ -60,7 +60,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         return redirect()->route('client.home');
     }
 }

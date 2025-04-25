@@ -4,34 +4,25 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    @if (session('thongbao'))
-                        <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                            role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
-
-                        </div>
-                        @php
-                            session()->forget('thongbao');
-                        @endphp
-                    @endif
                     <div class="card" id="customerList">
                         <div class="card-header border-bottom-dashed">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <div>
-                                        <h5 class="card-title mb-0"><b>Danh sách bài viết</b></h5>
-                                    </div>
+                                    <h5 class="card-title mb-0"><b>Danh sách bài viết</b></h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.posts.create') }}" class="btn btn-success add-btn"><i
-                                                class="ri-add-line align-bottom me-1"></i>Thêm bài viết mới</a>
+                                        <a href="{{ route('admin.posts.trash') }}" class="btn btn-sm btn-danger mr-1">
+                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                        </a>
+                                        <a href="{{ route('admin.posts.create') }}" class="btn btn-sm btn-success">
+                                            <i class="ri-add-line align-bottom me-1"></i> Thêm bài viết mới
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="card-body">
                             <div>
                                 <div class="table-responsive table-card mb-1 mt-2">
@@ -41,9 +32,9 @@
                                                 <th class="sort" data-sort="title">ID</th>
                                                 <th class="sort" data-sort="image">Tiêu đề</th>
                                                 <th class="sort" data-sort="user">Tác giả</th>
-                                                <th class="sort" data-sort="tags">Tags</th>
-                                                <th class="sort" data-sort="categories">Danh mục</th>
+                                                
                                                 <th class="sort" data-sort="published_at">Ngày đăng</th>
+                                                <th class="sort" data-sort="published_at">Trạng thái</th>
                                                 <th class="sort" data-sort="action">Action</th>
                                             </tr>
                                         </thead>
@@ -55,7 +46,7 @@
                                                        {{ $post->id }}</a>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <a href="{{ route('admin.posts.show', $post->id) }}">{{ $post->title }}</a>
+                                                        {{ $post->title }}
                                                     </td>
                                                     <!-- Image -->
                                                     
@@ -64,28 +55,25 @@
                                                         {{ $post->user->name ?? 'N/A' }}
                                                     </td>
                                                     <!-- Tags -->
-                                                    <td class="align-middle">
-                                                        @if($post->tags && $post->tags->isNotEmpty())
-                                                            @foreach ($post->tags as $tag)
-                                                                <span class="badge bg-info text-dark">{{ $tag->name }}</span>
-                                                            @endforeach
-                                                        @else
-                                                            N/A
-                                                        @endif
-                                                    </td>
-                                                    <!-- Categories -->
-                                                    <td class="align-middle">
-                                                        @if($post->categories && $post->categories->isNotEmpty())
-                                                            @foreach ($post->categories as $category)
-                                                                <span class="badge bg-secondary">{{ $category->name }}</span>
-                                                            @endforeach
-                                                        @else
-                                                            N/A
-                                                        @endif
-                                                    </td>
+                                                    
                                                     <!-- Published Date -->
                                                     <td class="align-middle">
                                                         {{ $post->published_at ? $post->published_at->format('d/m/Y') : 'Chưa xuất bản' }}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        @switch($post->status)
+                                                            @case('draft')
+                                                                <span class="badge bg-warning-subtle text-warning">Bản nháp</span>
+                                                                @break
+                                                            @case('published')
+                                                                <span class="badge bg-success-subtle text-success">Đã xuất bản</span>
+                                                                @break
+                                                            @case('archived')
+                                                                <span class="badge bg-dark-subtle text-dark">Đã lưu trữ</span>
+                                                                @break
+                                                            @default
+                                                                <span class="badge bg-light text-dark">Không rõ</span>
+                                                        @endswitch
                                                     </td>
                                                     <!-- Action -->
                                                     <td class="align-middle">
@@ -114,17 +102,7 @@
                                                 </tr>
                                             @endforeach
                                         </tbody>
-                                        <tfoot class="table-light text-muted">
-                                            <tr>
-                                                <th class="sort" data-sort="title">ID</th>
-                                                <th class="sort" data-sort="image">Tiêu đề</th>
-                                                <th class="sort" data-sort="user">Tác giả</th>
-                                                <th class="sort" data-sort="tags">Tags</th>
-                                                <th class="sort" data-sort="categories">Danh mục</th>
-                                                <th class="sort" data-sort="published_at">Ngày đăng</th>
-                                                <th class="sort" data-sort="action">Action</th>
-                                            </tr>
-                                        </tfoot>
+                                       
                                     </table>
                                     
 
@@ -206,4 +184,34 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
         type="text/css" />
+        <style>
+            .avatar-xs {
+                height: 2.2rem;
+                width: 2.2rem;
+            }
+
+            .bg-success-subtle {
+                background-color: rgba(10, 179, 156, .1);
+            }
+
+            .bg-danger-subtle {
+                background-color: rgba(240, 101, 72, .1);
+            }
+
+            .bg-warning-subtle {
+                background-color: rgba(247, 184, 75, .1);
+            }
+
+            .bg-primary-subtle {
+                background-color: rgba(64, 81, 137, .1);
+            }
+
+            .bg-secondary-subtle {
+                background-color: rgba(116, 120, 141, .1);
+            }
+
+            .bg-dark-subtle {
+                background-color: rgba(33, 37, 41, .1);
+            }
+        </style>
 @endsection

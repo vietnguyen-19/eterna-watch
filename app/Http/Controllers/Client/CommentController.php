@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Order;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +27,24 @@ class CommentController extends Controller
         if ($request->entity_type === 'product') {
             $rules['rating'] = 'required|integer|between:1,5';
         }
+        if ($request->entity_type === 'product') {
+            $rules['rating'] = 'required|integer|between:1,5';
 
+            // ✅ Lấy danh sách variant_id của sản phẩm đó
+            $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
+
+            // ✅ Kiểm tra người dùng đã mua ít nhất 1 variant nào của sản phẩm chưa
+            $daMua = Order::where('user_id', Auth::id())
+                ->where('status', 'completed') // hoặc 'thanh_cong' tùy hệ thống
+                ->whereHas('orderItems', function ($query) use ($variantIds) {
+                    $query->whereIn('variant_id', $variantIds);
+                })
+                ->exists();
+
+            if (!$daMua) {
+                return redirect()->back()->with('error', 'Chỉ khách hàng đã mua sản phẩm mới có thể đánh giá.');
+            }
+        }
         $messages = [
             'content.required' => 'Nội dung bình luận không được để trống.',
             'content.max' => 'Nội dung bình luận không được vượt quá 1000 ký tự.',
@@ -58,7 +77,7 @@ class CommentController extends Controller
     public function reply(Request $request, $commentId, $entityId)
     {
 
-        
+
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Vui lòng đăng nhập để trả lời bình luận!');
         }

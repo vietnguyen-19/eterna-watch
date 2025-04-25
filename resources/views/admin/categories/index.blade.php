@@ -15,18 +15,18 @@
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
-                                        <a href="{{ route('admin.categories.trash') }}" class="btn btn-danger">
+                                        <a href="{{ route('admin.categories.trash') }}" class="btn btn-sm btn-danger">
                                             <i class="ri-add-line align-bottom me-1"></i>Thùng rác
                                         </a>
                                         <!-- Nút Thêm danh mục Cha -->
                                         <a href="{{ route('admin.categories.create', ['type' => 'parent']) }}"
-                                            class="btn btn-success add-btn mr-1 ml-1">
+                                            class="btn btn-sm btn-success add-btn mr-1 ml-1">
                                             <i class="ri-add-line align-bottom me-1"></i>Thêm danh mục cha
                                         </a>
 
                                         <!-- Nút Thêm danh mục Con -->
                                         <a href="{{ route('admin.categories.create', ['type' => 'child']) }}"
-                                            class="btn btn-info add-btn">
+                                            class="btn btn-sm btn-info add-btn">
                                             <i class="ri-add-line align-bottom me-1"></i>Thêm danh mục con
                                         </a>
                                     </div>
@@ -70,7 +70,7 @@
                                                                     style="width: 160px; height: 160px; object-fit: cover;">
                                                             </div>
                                                         </td>
-<<<<<<< HEAD
+
                                                         <td class="text-left text-info fw-bold">{{ $parent->name }}</td>
                                                         <td>
                                                             <span
@@ -79,16 +79,7 @@
                                                             </span>
                                                         </td>
                                                         <td>{{ $parent->created_at->format('Y-m-d') }}</td>
-=======
 
-                                                        <td class="trang_thai">
-                                                            @if ($item->status == 'active') Hoạt động
-                                                            @elseif($item->status == 'inactive') Vô hiệu hóa
-                                                            @endif
-                                                        </td>
-
-
->>>>>>> b7330abbd29fc9cbc9b7d6893b4afacd56dcbede
                                                         <td>
 
                                                             <a href="{{ route('admin.categories.edit', ['id' => $parent->id, 'type' => 'parent']) }}"

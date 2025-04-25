@@ -88,6 +88,7 @@
                     <li><a href="{{route('client.contact_us')}}" class="menu-link fs-14">Liên hệ</a></li>
                     <li><a href="{{route('account.order')}}" class="menu-link fs-14">Tài khoản của tôi</a></li>
                     <li><a href="{{route('client.privacy')}}" class="menu-link fs-14">Chính sách & pháp lý</a></li>
+                    <li><a href="{{route('client.return-policy')}}" class="menu-link fs-14">Chính sách hoàn hàng</a></li>
                 </ul>
             </div>
 

@@ -3,6 +3,7 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
         <div class="mb-4 pb-lg-3"></div>
+        <div class="mb-4 pb-lg-3"></div>
         <section class="shop-main container d-flex">
             <div sty class="shop-sidebar side-sticky bg-body border-1 p-3 shadow-sm" id="shopFilter">
                 <div class="aside-header d-flex d-lg-none align-items-center">

@@ -36,11 +36,18 @@
                             <div class="card-body">
                                 <div class="row">
                                     <!-- Email tác giả -->
-                                    <div class="mb-4 col-md-12">
-                                        <label for="email_user" class="form-label">Email tác giả *</label>
-                                        <input value="{{ old('email_user', $post->user->email ?? '') }}" name="email_user"
-                                            type="text" id="email_user" class="form-control" placeholder="Nhập email">
-                                        @error('email_user')
+                                    <div class="mb-4 col-md-12 col-sm-12">
+                                        <label for="search-customer">Tác giả</label>
+                                        <select name="user_id" style="width: 100%" id="search-customer"
+                                            class="form-control border-primary shadow-sm">
+                                            @if (isset($post))
+                                                <option value="{{ $post->user->id }}" selected>
+                                                    {{$post->user->name }} - {{ $post->user->email }}
+                                                </option>
+                                            @endif
+                                            <!-- Các option sẽ được load động hoặc tự thêm vào đây -->
+                                        </select>
+                                        @error('user_id')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -55,20 +62,29 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Ảnh đại diện -->
-                                    <div class="mb-4 col-md-12">
-                                        <label for="image" class="form-label">Ảnh đại diện</label>
-                                        <input name="image" type="file" id="image" class="form-control">
-                                        @if ($post->image)
-                                            <div class="mt-2">
-                                                <img src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}" alt="Ảnh hiện tại"
-                                                    width="100">
-                                            </div>
-                                        @endif
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Chọn ảnh mới (nếu muốn thay)</label>
+
+                                        <div class="input-group">
+                                            <input type="file"
+                                                class="form-control d-none @error('image') is-invalid @enderror"
+                                                id="avatar" name="image" accept="image/*"
+                                                onchange="previewImage(this)">
+                                            <label class="input-group-text btn btn-outline-primary w-100" for="avatar">
+                                                <i class="fas fa-cloud-upload-alt mr-2"></i> Chọn ảnh
+                                            </label>
+                                        </div>
+
                                         @error('image')
-                                            <div class="text-danger">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
-                                    </div>
+
+                                        <div class="mt-3">
+                                            <img src="{{ Storage::url($post->image) }}" id="previewImageTag"
+                                                alt="Ảnh hiện tại" class="img-thumbnail w-100">
+                                        </div>
+                                    </div><!-- Ảnh đại diện -->
+
 
                                     <!-- Mô tả ngắn -->
                                     <div class="mb-4 col-md-12">
@@ -178,9 +194,58 @@
             });
         });
     </script>
+    <script>
+        function previewImage(input) {
+            const file = input.files[0];
+            const preview = document.getElementById('previewImageTag');
+            const container = document.getElementById('previewContainer');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#search-customer').select2({
+                placeholder: 'Tìm kiếm người dùng theo tên hoặc email',
+                ajax: {
+                    url: "{{ route('admin.orders.user-search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Gửi từ khóa người dùng nhập
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(function(user) {
+                                return {
+                                    id: user
+                                        .id, // Giá trị thực sẽ được gửi lên server khi submit form
+                                    text: user.name + ' - ' + user.email
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1
+            });
+
+        });
+    </script>
 @endsection
 @section('style')
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
         type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection

@@ -61,7 +61,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // ADMIN CHỨC NĂNG (middleware auth + admin)
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
 
     // DASHBOARD
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
@@ -251,7 +251,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [PostController::class, 'show'])->name('show')->middleware('permission:view_posts');
         Route::get('{id}/edit', [PostController::class, 'edit'])->name('edit')->middleware('permission:edit_posts');
         Route::put('{id}/update', [PostController::class, 'update'])->name('update')->middleware('permission:edit_posts');
-        Route::delete('{id}/destroy', [PostController::class, 'destroy'])->name('destroy')->middleware('permission:delete_posts');
+       
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy'); // Xoá mềm
+        Route::get('/trash', [PostController::class, 'trash'])->name('trash'); // Danh sách đã xoá
+        Route::post('/restore/{id}', [PostController::class, 'restore'])->name('restore'); // Khôi phục
+        Route::delete('/force-delete/{id}', [PostController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
     });
 
     // ẢNH
