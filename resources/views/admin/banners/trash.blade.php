@@ -21,7 +21,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Ảnh</th>
-                                        <th>Link chuyển hướng</th>
+                                        <th>Liên kết chuyển hướng</th>
                                         <th>Ngày xóa</th>
                                         <th>Hành động</th>
                                     </tr>
@@ -34,7 +34,7 @@
                                             @if($banner->image_link)
                                                 <img src="{{ $banner->image_link }}" width="100" alt="Banner">
                                             @else
-                                                No Image
+                                                Không có ảnh
                                             @endif
                                         </td>
                                         <td>{{ $banner->redirect_link ?? '#' }}</td>

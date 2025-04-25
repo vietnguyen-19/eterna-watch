@@ -4,7 +4,7 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Cập nhật Banner</h2>
+                <h2 class="mb-0">Cập nhật banner</h2>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.banners.update', $banner->id) }}" method="POST" enctype="multipart/form-data">
@@ -31,7 +31,7 @@
 
                     <!-- Redirect Link -->
                     <div class="mb-3">
-                        <label for="redirect_link" class="form-label">Redirect Link:</label>
+                        <label for="redirect_link" class="form-label">Đường dẫn chuyển hướng:</label>
                         <input type="text" id="redirect_link" name="redirect_link" class="form-control @error('redirect_link') is-invalid @enderror" value="{{ old('redirect_link', $banner->redirect_link) }}">
 
                         @error('redirect_link')

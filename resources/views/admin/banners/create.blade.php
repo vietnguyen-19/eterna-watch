@@ -5,14 +5,14 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Thêm Mới Banner</h3>
+            <h3 class="card-title">Thêm mới banner</h3>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="form-group">
-                    <label for="image">Ảnh Banner <span class="text-danger">*</span></label>
+                    <label for="image">Ảnh banner <span class="text-danger">*</span></label>
                     <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" required>
                     @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -26,7 +26,6 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-
 
                 <button type="submit" class="btn btn-success">Thêm mới</button>
                 <button type="submit" class="btn btn-primary">Lưu lại</button>

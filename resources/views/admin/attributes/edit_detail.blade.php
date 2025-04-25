@@ -10,7 +10,7 @@
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
                                     <div>
-                                        <h5 class="card-title mb-0">Thêm mới giá trị thuộc tính |
+                                        <h5 class="card-title mb-0">Cập nhật giá trị thuộc tính |
                                             <b>{{ $attributeValue->attribute->attribute_name }}</b>
                                         </h5>
                                     </div>
@@ -27,9 +27,9 @@
 
                                     <input type="hidden" name="attribute_id" value="{{ $attributeValue->attribute_id }}">
                                     <div class="mb-3 col-12">
-                                        <label for="value_name" class="form-label">Gía trị thuộc tính</label>
+                                        <label for="value_name" class="form-label">Giá trị thuộc tính</label>
                                         <input value="{{ $attributeValue->value_name }}" name="value_name" type="text"
-                                            id="value_name" class="form-control" placeholder="Enter name">
+                                            id="value_name" class="form-control" placeholder="Nhập giá trị">
                                         @error('value_name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -37,7 +37,7 @@
                                     <div class="mb-3 col-12">
                                         <label for="note" class="form-label">Ghi chú</label>
                                         <input value="{{ $attributeValue->note }}" name="note" type="text"
-                                            id="note" class="form-control" placeholder="Enter name">
+                                            id="note" class="form-control" placeholder="Nhập ghi chú">
                                         @error('note')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -47,25 +47,20 @@
                             </div>
                             <div class="card-footer">
                                 <div class="hstack gap-2 justify-content-left">
-                                    <button type="submit" class="btn btn-success" id="add-btn">Cập nhật giá trị </button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">Cập nhật giá trị</button>
                                     <a href="{{ route('admin.attribute_values.index', $attributeValue->attribute_id) }}"
                                         class="btn btn-light">Đóng</a>
-                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                    <!-- <button type="button" class="btn btn-success" id="edit-btn">Cập nhật</button> -->
                                 </div>
                             </div>
                         </form>
                     </div>
-
-
                 </div>
-
             </div>
         </div>
     </section>
-
-
-    </div>
 @endsection
+
 @section('script-lib')
 @endsection
 @section('script')

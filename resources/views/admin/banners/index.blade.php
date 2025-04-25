@@ -27,12 +27,12 @@
                                     </div>
                                     <div class="col-sm-auto">
 
-                                            <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
-                                                <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
-                                            </a>
+                                        <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning me-2">
+                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
+                                        </a>
 
-                                            <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
-                                                    class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
+                                        <a href="{{ route('admin.banners.create') }}" class="btn btn-success add-btn"><i
+                                                class="ri-add-line align-bottom me-1"></i>Thêm banner</a>
 
                                     </div>
                                 </div>
@@ -77,22 +77,21 @@
                                                                     <a href="{{ $banner->redirect_link }}"
                                                                         target="_blank">{{ $banner->redirect_link }}</a>
                                                                 @else
-                                                                    <span class="text-muted">Không có liên kết chuyển
-                                                                        hướng</span>
+                                                                    <span class="text-muted">Không có liên kết chuyển hướng</span>
                                                                 @endif
                                                             </td>
 
                                                             <td>
                                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                                     <!-- Edit Button -->
-                                                                    <li class="list-inline-item edit" title="Edit">
+                                                                    <li class="list-inline-item edit" title="Chỉnh sửa">
                                                                         <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                                             class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                             <i class="fa-solid fa-edit"></i>
                                                                         </a>
                                                                     </li>
                                                                     <!-- Remove Button -->
-                                                                    <li class="list-inline-item delete" title="Remove">
+                                                                    <li class="list-inline-item delete" title="Xóa">
                                                                         <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" style="display:inline;">
                                                                             @csrf
                                                                             @method('DELETE')
@@ -111,8 +110,7 @@
                                                     <tr>
                                                         <th class="sort" data-sort="id">ID</th>
                                                         <th class="sort" data-sort="image_link">Liên kết hình ảnh</th>
-                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng
-                                                        </th>
+                                                        <th class="sort" data-sort="redirect_link">Liên kết chuyển hướng</th>
                                                         <th class="sort" data-sort="action">Hành động</th>
                                                     </tr>
                                                 </thead>
@@ -146,7 +144,7 @@
                     "language": {
                         "lengthMenu": "Hiển thị _MENU_ dòng",
                         "zeroRecords": "Không tìm thấy dữ liệu",
-                        "info": "Đang hiển thị  _START_  đến  _END_  của  _TOTAL_  mục",
+                        "info": "Đang hiển thị _START_ đến _END_ của _TOTAL_ mục",
                         "infoEmpty": "Không có dữ liệu",
                         "search": "Tìm kiếm:",
                         "paginate": {

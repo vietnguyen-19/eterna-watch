@@ -18,7 +18,7 @@
                         <div class="card-header">
                             <div class="row g-4 align-items-center">
                                 <div class="col-sm">
-                                    <h5 class="card-title mb-0">Danh sách Thương hiệu</h5>
+                                    <h5 class="card-title mb-0">Danh sách thương hiệu</h5>
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
@@ -52,31 +52,28 @@
                                             <tbody class="list form-check-all">
                                                 @foreach ($brands as $brand)
                                                     <tr>
-
                                                         <td class="id">{{ $brand->id }}</td>
                                                         <td class="ten_danh_muc">{{ $brand->name }}</td>
                                                         <td class="slug">
                                                             {{ $brand->parent?->name ?? 'Thương hiệu gốc' }}
                                                         </td>
-
                                                         <td>
                                                             <ul class="list-inline hstack gap-2 mb-0">
                                                                 <!-- Edit Button -->
-                                                                <li class="list-inline-item edit" title="Edit">
+                                                                <li class="list-inline-item edit" title="Sửa">
                                                                     <a href="{{ route('admin.brands.edit', $brand->id) }}"
                                                                         class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                         <i class="bi bi-pen"></i>Sửa
                                                                     </a>
                                                                 </li>
                                                                 <!-- Remove Button -->
-                                                                <li class="list-inline-item" title="Remove">
+                                                                <li class="list-inline-item" title="Xóa">
                                                                     <a class="btn btn-danger btn-icon waves-effect waves-light btn-sm"
                                                                         onclick="return confirm('Bạn đã chắc chắn chưa?')"
                                                                         href="{{ route('admin.brands.destroy', $brand->id) }}">
                                                                         <i class="bi bi-trash"></i>Xóa
                                                                     </a>
                                                                 </li>
-
                                                             </ul>
                                                         </td>
                                                     </tr>
@@ -91,7 +88,6 @@
                                                 </tr>
                                             </thead>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>

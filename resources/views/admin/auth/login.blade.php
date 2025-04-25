@@ -64,7 +64,7 @@
                 </form>
 
                 <p class="my-1">
-                    <a href="{{ route('password.forgot') }}">Quên mật khẩu!</a>
+                    <a href="{{ route('password.forgot') }}">Quên mật khẩu?</a>
                 </p>
 
             </div>
