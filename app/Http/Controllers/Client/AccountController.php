@@ -17,7 +17,6 @@ class AccountController extends Controller
         return view('client.account.partials.edit_account');
     }
 
-
     public function rePassword()
     {
         return view('client.account.partials.re_password');
@@ -36,7 +35,6 @@ class AccountController extends Controller
             'new_password.confirmed' => 'Mật khẩu mới xác nhận không khớp.',
         ]);
 
-
         // Lấy user hiện tại
         $user = Auth::user();
 
@@ -53,18 +51,18 @@ class AccountController extends Controller
         return back()->with('success', 'Mật khẩu đã được cập nhật thành công.');
     }
 
-
-
     public function order()
     {
         $orders = Order::where('user_id', Auth::id())->with(['orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->latest()->get();
         return view('client.account.partials.order', compact('orders'));
     }
+
     public function orderDetail($id)
     {
         $order = Order::with(['refund.refundItems', 'orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->findOrFail($id);
         return view('client.account.partials.order-detail', compact('order'));
     }
+
     public function cancelOrder($id)
     {
         $order = Order::find($id);
@@ -75,7 +73,7 @@ class AccountController extends Controller
 
         // Chỉ chặn hủy nếu đơn hàng đã được vận chuyển hoặc hoàn tất
         if (!in_array($order->status, ["pending", "confirmed"])) {
-            return response()->json(["success" => false, "message" => "Không thể hủy đơn hàng khi vì đã giao cho bên vận chuyển"], 400);
+            return response()->json(["success" => false, "message" => "Không thể hủy đơn hàng vì đã giao cho bên vận chuyển"], 400);
         }
 
         $order->status = "cancelled";
@@ -86,8 +84,6 @@ class AccountController extends Controller
 
     public function uploadImage(Request $request)
     {
-
-
         if (!$request->hasFile('avatar')) {
             return response()->json(['success' => false, 'message' => 'No image uploaded'], 400);
         }
@@ -113,7 +109,7 @@ class AccountController extends Controller
         $file->move($destinationPath, $fileName);
 
         // Trả về đường dẫn public có thể truy cập ảnh
-        $publicPath =  'avatars/' . $fileName;
+        $publicPath = 'avatars/' . $fileName;
 
         return response()->json([
             'success' => true,
@@ -141,7 +137,7 @@ class AccountController extends Controller
 
         // Đường dẫn đầy đủ tới file trong thư mục storage
         $storagePath = public_path('storage/' . $filePath);
-        dd($storagePath);
+
         if (file_exists($storagePath)) {
             unlink($storagePath);
             return response()->json(['success' => true, 'message' => 'File deleted']);
@@ -149,9 +145,9 @@ class AccountController extends Controller
 
         return response()->json(['success' => false, 'message' => 'File not found'], 404);
     }
+
     public function update(Request $request)
     {
-
         $user = Auth::user();
 
         // Xác thực dữ liệu
