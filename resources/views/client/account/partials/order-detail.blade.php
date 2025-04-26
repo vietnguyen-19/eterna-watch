@@ -3,38 +3,73 @@
     <div class="checkout__totals-wrapper">
         <div style="width: 100%" class="checkout__totals">
             <div class="d-flex justify-content-between align-items-center mb-3">
+                @php
+                    if ($order->status == 'pending') {
+                        $mauChu = '#856404'; // cam đậm
+                        $mauNen = '#fff3cd'; // cam nhạt
+                        $tenTrangThai = 'Đang chờ xử lý';
+                    } elseif ($order->status == 'confirmed') {
+                        $mauChu = '#004085'; // xanh dương đậm
+                        $mauNen = '#cce5ff'; // xanh dương nhạt
+                        $tenTrangThai = 'Đã xác nhận';
+                    } elseif ($order->status == 'processing') {
+                        $mauChu = '#0c5460'; // xanh đậm
+                        $mauNen = '#d1ecf1'; // xanh nhạt
+                        $tenTrangThai = 'Đang xử lý';
+                    } elseif ($order->status == 'completed') {
+                        $mauChu = '#155724'; // xanh lá đậm
+                        $mauNen = '#d4edda'; // xanh lá nhạt
+                        $tenTrangThai = 'Hoàn tất';
+                    } elseif ($order->status == 'cancelled') {
+                        $mauChu = '#721c24'; // đỏ đậm
+                        $mauNen = '#f8d7da'; // đỏ nhạt
+                        $tenTrangThai = 'Đã hủy';
+                    } else {
+                        $mauChu = '#383d41'; // xám đậm
+                        $mauNen = '#e2e3e5'; // xám nhạt
+                        $tenTrangThai = 'Không xác định';
+                    }
+                @endphp
+
                 <h4 class="mb-0 d-flex align-items-center gap-2">
-                    Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong> |
-                    <span class="badge text-white px-3 py-1"
-                        style="background-color: 
-                             {{ $order->status == 'pending'
-                                 ? '#f0ad4e'
-                                 : ($order->status == 'confirmed'
-                                     ? '#5bc0de'
-                                     : ($order->status == 'cancelled'
-                                         ? '#d9534f'
-                                         : '#a2a2a2')) }} !important;">
-                        {{ $order->status }}
+                    Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong> | TTĐH:
+                    <span class="badge px-3 py-1" style="color: {{ $mauChu }}; background-color: {{ $mauNen }};">
+                        {{ $tenTrangThai }}
                     </span>
                 </h4>
 
-                @if (!in_array($order->status, ['cancelled', 'completed']))
-                    <button class="btn btn-sm btn-cancel-order" style="background: #bd2c0b; color:#fff; border-radius:3px"
-                        data-order-id="{{ $order->id }}">
-                        Hủy đơn hàng
-                    </button>
-                @endif
-                @if ($order->status == 'completed' && !$order->refund)
-                    <a class="btn btn-sm" style="background: #dadd13; color:#fff; border-radius:3px"
-                        href="{{ route('refunds.create', $order->id) }}">
-                        Hoàn trả đơn hàng
-                    </a>
-                @endif
+
+
 
             </div>
 
 
             <div class="card mb-3">
+                @php
+                    switch ($order->payment->payment_status) {
+                        case 'completed':
+                            $mauChuTT = '#155724'; // xanh đậm
+                            $mauNenTT = '#d4edda'; // xanh nhạt
+                            $tenTrangThaiTT = 'Đã thanh toán';
+                            break;
+                        case 'pending':
+                            $mauChuTT = '#856404'; // cam đậm
+                            $mauNenTT = '#fff3cd'; // cam nhạt
+                            $tenTrangThaiTT = 'Chờ thanh toán';
+                            break;
+                        case 'failed':
+                            $mauChuTT = '#721c24'; // đỏ đậm
+                            $mauNenTT = '#f8d7da'; // đỏ nhạt
+                            $tenTrangThaiTT = 'Thanh toán thất bại';
+                            break;
+                        default:
+                            $mauChuTT = '#383d41'; // xám đậm
+                            $mauNenTT = '#e2e3e5'; // xám nhạt
+                            $tenTrangThaiTT = 'Không xác định';
+                            break;
+                    }
+                @endphp
+
                 <div class="card-body">
                     <h5 class="card-title">Thông tin thanh toán</h5>
                     <p class="card-text">
@@ -49,16 +84,12 @@
                         <br>
                         <strong>Trạng thái thanh toán:</strong>
                         <span
-                            style="background-color: 
-                        @if ($order->payment->payment_status == 'completed') #28a745;
-                        @elseif ($order->payment->payment_status == 'pending') #ffc107;
-                        @elseif ($order->payment->payment_status == 'failed') #dc3545;
-                        @else #6c757d; @endif
-                        color: white; padding: 0.2em 0.6em; border-radius: 0.25rem;">
-                            {{ $order->payment->payment_status }}
+                            style="color: {{ $mauChuTT }}; background-color: {{ $mauNenTT }}; padding: 0.25em 0.6em; border-radius: 0.25rem;">
+                            {{ $tenTrangThaiTT }}
                         </span>
                     </p>
                 </div>
+
             </div>
 
 
@@ -159,6 +190,21 @@
                     </tr>
                 </tbody>
             </table>
+            <hr>
+            <div class="text-end">
+                <button class="btn btn-sm btn-cancel-order" style="background: #bd2c0b; color:#fff; border-radius:3px"
+                    data-order-id="{{ $order->id }}"
+                    data-allow-cancel="{{ !in_array($order->status, ['cancelled', 'completed']) ? '1' : '0' }}">
+                    Hủy đơn hàng
+                </button>
+
+                <a href="{{ $order->status == 'completed' && !$order->refund ? route('refunds.create', $order->id) : 'javascript:void(0)' }}"
+                    class="btn btn-sm btn-refund-order" style="background: #d7b20e; color:#fff; border-radius:3px"
+                    data-allow-refund="{{ $order->status == 'completed' && !$order->refund ? '1' : '0' }}">
+                    Hoàn trả đơn hàng
+                </a>
+
+            </div>
 
         </div>
         @if ($order->refund)
@@ -319,33 +365,33 @@
     </style>
 @endsection
 @section('script')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@if (session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Thành công!',
-            text: '{{ session('success') }}',
-            confirmButtonText: 'OK',
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false
-        });
-    </script>
-@endif
-@if (session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Lỗi!',
-            text: '{{ session('error') }}',
-            confirmButtonText: 'OK',
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false
-        });
-    </script>
-@endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.btn-cancel-order').forEach(button => {
@@ -366,10 +412,26 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                alert(data.message);
-                                location.reload(); // Hoặc cập nhật UI
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công!',
+                                    text: data.message,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location
+                                .reload(); // Hoặc cập nhật lại giao diện nếu muốn
+                                });
                             } else {
-                                alert(data.error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi!',
+                                    text: data.message,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: false
+                                });
                             }
                         })
                         .catch(error => {
@@ -406,4 +468,25 @@
             });
         </script>
     @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const refundButton = document.querySelector('.btn-refund-order');
+            if (refundButton) {
+                refundButton.addEventListener('click', function(e) {
+                    if (this.dataset.allowRefund === '0') {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: 'Không thể hoàn trả đơn hàng này.',
+                            confirmButtonText: 'OK',
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

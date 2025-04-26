@@ -16,9 +16,9 @@
                     <li style="background-color: rgb(22, 22, 22); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            @if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role_id == 1 )
+                            @if (Auth::guard('admin')->check() && (Auth::guard('admin')->user()->role_id == 1 || Auth::guard('admin')->user()->role_id == 2))
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatar/default.jpeg') }}"
+                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatars/default.jpeg') }}"
                                         class="rounded-circle me-2" alt="User Image" width="40" height="40"
                                         style="object-fit: cover; border: 1px solid #ccc;">
                                         <div class="d-flex flex-column justify-content-center ml-3">
