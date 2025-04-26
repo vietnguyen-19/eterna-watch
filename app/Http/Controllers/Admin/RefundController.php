@@ -38,13 +38,15 @@ class RefundController extends Controller
 
     public function show(Refund $refund)
     {
+       
         // Nạp các quan hệ cần thiết để tránh truy vấn lặp
         $refund->load([
+            'imageRefunds',
             'refundItems.orderItem.productVariant.product',
             'order.user',
             'order.address',
         ]);
-
+       
         // Lấy danh sách lịch sử trạng thái của đơn hoàn hàng
         $statusHistories = StatusHistory::where('entity_id', $refund->id)
             ->where('entity_type', 'refund')

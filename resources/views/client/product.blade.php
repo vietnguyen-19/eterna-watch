@@ -401,10 +401,6 @@
                                                             </div>
                                                         @endif
 
-
-
-                                                        <!-- Form trả lời (ẩn mặc định) -->
-
                                                         <!-- Bình luận con -->
                                                         @if ($comment->replies->count() > 0)
                                                             <div class="replies"
@@ -655,6 +651,9 @@
             errorMessage.style.display = "none"; // Ẩn ban đầu
         });
     </script>
+    <script>
+        const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -662,24 +661,52 @@
             const viewCartButton = document.getElementById("view_cart");
             const variantIdInput = document.getElementById("variant_id");
 
-            addToCartForm.addEventListener("submit", function(event) {
+            addToCartForm.addEventListener("submit", async function(event) {
                 event.preventDefault(); // Ngăn chặn reload trang
+
+                // Kiểm tra trạng thái đăng nhập sử dụng Auth
+                const isLoggedIn = {!! Auth::check() ? 'true' : 'false' !!};
+
+                if (!isLoggedIn) {
+                    // Lưu URL trang hiện tại vào sessionStorage
+                    sessionStorage.setItem('redirectUrl', window.location.href);
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Chưa đăng nhập!',
+                        text: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Đăng nhập',
+                        showCancelButton: true,
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Chuyển hướng đến trang đăng nhập
+                            window.location.href = "{{ route('client.login') }}";
+                        }
+                    });
+                    return;
+                }
+
                 if (!variantIdInput.value) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Chưa chọn biến thể!',
-                    text: 'Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Chưa chọn biến thể!',
+                        text: 'Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
                 // Thu thập dữ liệu form
                 let formData = new FormData(this);
+
                 // Gửi AJAX request
                 fetch("{{ route('cart.add') }}", {
                         method: "POST",
                         headers: {
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                .content,
                         },
                         body: formData,
                     })
@@ -695,7 +722,8 @@
                                 timerProgressBar: true,
                                 showConfirmButton: false
                             });
-                            viewCartButton.classList.remove("d-none"); // Hiển thị nút "Xem giỏ hàng"
+                            viewCartButton.classList.remove(
+                            "d-none"); // Hiển thị nút "Xem giỏ hàng"
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -713,7 +741,7 @@
         });
     </script>
 
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Chọn tất cả các thông báo

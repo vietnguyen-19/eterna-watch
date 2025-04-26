@@ -78,7 +78,7 @@ class AccountController extends Controller
             return response()->json(["success" => false, "message" => "Không thể hủy đơn hàng khi vì đã giao cho bên vận chuyển"], 400);
         }
 
-        $order->status = "Cancelled";
+        $order->status = "cancelled";
         $order->save();
 
         return response()->json(["success" => true, "message" => "Đơn hàng đã được hủy thành công!"]);

@@ -11,25 +11,51 @@
         @else
             @foreach ($orders as $order)
                 <div class="order-item"
-                    style="border: 1px solid #eee; margin-bottom: 20px; border-radius: 5px; padding: 15px; background-color: #fff;">
+                    style="border: 1px solid #ffffff; margin-bottom: 20px; border-radius: 5px; padding: 15px; background-color: #fff;">
                     <!-- Header của đơn hàng -->
                     <div class="order-header"
                         style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
                         <div>
-                            <strong>Mã đơn hàng: {{ $order->order_code }}</strong> <br>
-                            <small>Ngày đặt: {{ $order->created_at->format('d/m/Y') }}</small>
+                            <strong>Mã đơn hàng: {{ $order->order_code }}</strong><br>
+                            @php
+                                if ($order->status == 'pending') {
+                                    $mauChuTrangThai = '#ffc107'; // vàng đậm giống Bootstrap warning
+                                } elseif (in_array($order->status, ['confirmed', 'processing'])) {
+                                    $mauChuTrangThai = '#0d6efd'; // xanh dương – giống Bootstrap primary
+                                } elseif ($order->status == 'completed') {
+                                    $mauChuTrangThai = '#198754'; // xanh lá – giống Bootstrap success
+                                } elseif ($order->status == 'cancelled') {
+                                    $mauChuTrangThai = '#dc3545'; // đỏ – giống Bootstrap danger
+                                } else {
+                                    $mauChuTrangThai = '#6c757d'; // xám – giống Bootstrap secondary
+                                }
+                            @endphp
+
+                            <small>Trạng thái đơn hàng:
+                                <b style="color: {{ $mauChuTrangThai }}">
+                                    {{ $order->status == 'pending'
+                                        ? 'Đang chờ xử lý'
+                                        : ($order->status == 'confirmed'
+                                            ? 'Đã xác nhận'
+                                            : ($order->status == 'processing'
+                                                ? 'Đang xử lý'
+                                                : ($order->status == 'completed'
+                                                    ? 'Hoàn tất'
+                                                    : ($order->status == 'cancelled'
+                                                        ? 'Đã hủy'
+                                                        : 'Không xác định')))) }}
+                                </b>
+                            </small>
+
+
+
+                            <br>
+                            <small>Ngày đặt: <b>{{ $order->created_at->format('d/m/Y') }}</b></small>
                         </div>
-                        <button class="btn btn-sm text-white px-3 py-1"
-                            style="background-color: 
-            {{ $order->status == 'pending'
-                ? '#f0ad4e'
-                : ($order->status == 'completed'
-                    ? '#28a745'
-                    : ($order->status == 'cancelled'
-                        ? '#dc3545'
-                        : '#6c757d')) }};">
-                            {{ $order->status == 'pending' ? 'Đang chờ xử lý' : ($order->status == 'completed' ? 'Hoàn tất' : ($order->status == 'cancelled' ? 'Đã hủy' : 'Không xác định')) }}
-                        </button>
+                        <a href="{{ route('account.order_detail', $order->id) }}" class="btn btn-sm"
+                            style="background-color: #0caaa5; color: #fff; border-radius: 3px; text-decoration: none; padding: 5px 15px;">
+                            Xem chi tiết
+                        </a>
                     </div>
 
                     <!-- Danh sách sản phẩm trong đơn hàng -->
@@ -68,10 +94,7 @@
                             Tổng: <strong>{{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
                             ({{ $order->orderItems->sum('quantity') }} sản phẩm)
                         </div>
-                        <a href="{{ route('account.order_detail', $order->id) }}" class="btn btn-sm"
-                            style="background-color: #0caaa5; color: #fff; border-radius: 3px; text-decoration: none; padding: 5px 15px;">
-                            Xem chi tiết
-                        </a>
+
                     </div>
                 </div>
             @endforeach

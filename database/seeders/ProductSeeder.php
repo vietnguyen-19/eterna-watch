@@ -118,8 +118,8 @@ class ProductSeeder extends Seeder
             // Đồng hồ vintage
             ['name' => 'Seiko Automatic Vintage 1960', 'avatar' => 'products/product35.jpeg', 'brand' => 'Seiko 5', 'category' => 'Đồng hồ vintage', 'price' => 8800000],
             ['name' => 'Citizen Vintage Japan', 'avatar' => 'products/product36.jpeg', 'brand' => 'Quartz', 'category' => 'Đồng hồ vintage', 'price' => 7900000],
-        ];
 
+        ];
         foreach ($products as $p) {
             $brandId = Brand::where('name', $p['brand'])->first()?->id;
             $categoryId = Category::where('name', $p['category'])->first()?->id;
