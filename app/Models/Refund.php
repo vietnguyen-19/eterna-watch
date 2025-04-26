@@ -25,6 +25,10 @@ class Refund extends Model
     {
         return $this->hasMany(RefundItem::class);
     }
+    public function imageRefunds()
+    {
+        return $this->hasMany(ImageRefund::class);
+    }
     public function entity()
     {
         return $this->morphTo();

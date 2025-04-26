@@ -1,6 +1,6 @@
 @extends('client.account.main')
 @section('account_content')
-    <form method="POST" action="{{ route('refunds.store', $order->id) }}">
+    <form method="POST" action="{{ route('refunds.store', $order->id) }}" enctype="multipart/form-data">
         @csrf
         <div class="checkout__totals-wrapper">
             <div style="width: 100%" class="checkout__totals">
@@ -119,6 +119,21 @@
                         </div>
                     @enderror
                 </div>
+                <div class="mt-3">
+                    <label><strong>Hình ảnh minh chứng:</strong></label>
+                    <input type="file" name="images[]" class="form-control" multiple id="image-input">
+
+                    <div id="image-preview-container" class="mt-3">
+                        <!-- Các ảnh preview sẽ được hiển thị ở đây -->
+                    </div>
+
+                    @error('images')
+                        <div style="color: #e84040" class="mt-1">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+
 
                 <button type="submit" class="btn btn-primary mt-3">Gửi yêu cầu</button>
             </div>
@@ -126,6 +141,43 @@
     </form>
 @endsection
 @section('script')
+    <script>
+        document.getElementById('image-input').addEventListener('change', function(event) {
+            var files = event.target.files; // Lấy các file đã chọn
+            var previewContainer = document.getElementById('image-preview-container');
+            previewContainer.innerHTML = ''; // Xóa tất cả ảnh preview cũ
+
+            // Giới hạn tối đa 4 ảnh
+            if (files.length > 4) {
+                alert("Bạn chỉ có thể chọn tối đa 4 ảnh.");
+                event.target.value = ''; // Xóa lựa chọn của người dùng
+                return;
+            }
+
+            // Duyệt qua các file và tạo preview cho từng ảnh
+            Array.from(files).forEach(function(file) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '150px'; // Điều chỉnh kích thước ảnh preview
+                    img.style.maxHeight = '150px'; // Giới hạn chiều cao
+                    img.style.marginRight = '15px'; // Khoảng cách giữa các ảnh
+                    img.style.marginBottom = '15px'; // Khoảng cách giữa các ảnh
+                    img.style.borderRadius = '8px'; // Bo góc ảnh cho đẹp mắt
+                    img.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'; // Tạo bóng cho ảnh
+                    img.style.objectFit = 'cover'; // Đảm bảo ảnh không bị méo
+
+                    previewContainer.appendChild(img); // Thêm ảnh vào container
+                };
+
+                reader.readAsDataURL(file); // Đọc file và tạo URL ảnh
+            });
+        });
+    </script>
+
+
     <script>
         document.querySelectorAll('.refund-quantity').forEach(input => {
             input.addEventListener('input', function() {
@@ -226,31 +278,31 @@
             updateRefundTotal();
         });
     </script>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-      @if (session('success'))
-          <script>
-              Swal.fire({
-                  icon: 'success',
-                  title: 'Thành công!',
-                  text: '{{ session('success') }}',
-                  confirmButtonText: 'OK',
-                  timer: 3000,
-                  timerProgressBar: true,
-                  showConfirmButton: false
-              });
-          </script>
-      @endif
-      @if (session('error'))
-          <script>
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Lỗi!',
-                  text: '{{ session('error') }}',
-                  confirmButtonText: 'OK',
-                  timer: 3000,
-                  timerProgressBar: true,
-                  showConfirmButton: false
-              });
-          </script>
-      @endif
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 @endsection

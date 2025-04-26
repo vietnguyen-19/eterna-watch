@@ -75,14 +75,14 @@ class ProductVariantSeeder extends Seeder
                 // Tạo biến thể mới
                 $price = $product->price_default + rand(1, 50) * 10000;
                 $stock = rand(5, 20);
-                $image = 'products/product' . rand(1, 36) . '.jpeg';
+
 
                 $variant_id = DB::table('product_variants')->insertGetId([
                     'product_id' => $product->id,
                     'sku'        => $sku,
                     'price'      => $price,
                     'stock'      => $stock,
-                    'image'      => $image,
+                    'image'      => null,
                     'status' => 'in_stock',
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -91,6 +91,15 @@ class ProductVariantSeeder extends Seeder
                 // Lưu variant_id để dùng cho bước tiếp theo
                 $variants[$variant_id] = $selectedValues;
             }
+            for ($i = 0; $i < 180; $i++) {
+                $variant = ProductVariant::find($i + 1); // Lấy 1 bản ghi theo ID
+
+                if ($variant) {
+                    $variant->image = 'product_variants/product_variant' . ($i + 1) . '.jpeg';
+                    $variant->save(); // Lưu lại sau khi gán
+                }
+            }
+
             foreach ($variants as $variant_id => $selectedValues) {
                 foreach ($selectedValues as $attribute_value_id) {
                     DB::table('variant_attributes')->insert([

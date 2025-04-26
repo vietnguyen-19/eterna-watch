@@ -307,6 +307,17 @@
         <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     </main>
 @endsection
+@section('script')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const redirectUrl = sessionStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl'); // Xóa URL sau khi sử dụng
+            window.location.href = redirectUrl; // Chuyển hướng về trang sản phẩm
+        }
+    });
+</script>
+@endsection
 @section('style')
    
 <style>

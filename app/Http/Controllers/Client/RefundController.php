@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Helpers\ImageHandler;
 use App\Http\Controllers\Controller;
+use App\Models\ImageRefund;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Refund;
@@ -65,7 +67,19 @@ class RefundController extends Controller
                 }
             }
         }
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = ImageHandler::saveImage($file, 'image_refunds');
+              
 
+                ImageRefund::create([
+                    'refund_id' => $refund->id,
+                    'image' => $path,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
         // 3. Ghi nhận lịch sử trạng thái
         StatusHistory::create([
             'entity_id'   => $refund->id,

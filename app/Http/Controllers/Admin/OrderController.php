@@ -21,31 +21,63 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
+        // Lấy các tham số lọc từ request
         $status = $request->input('status', 'all');
-
+        $paymentStatus = $request->input('payment_status');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        $paymentMethod = $request->input('payment_method');
+    
         // Đếm số lượng đơn hàng theo trạng thái
         $statusCounts = Order::selectRaw("status, COUNT(*) as count")
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
-
+    
         // Đảm bảo tất cả trạng thái đều có giá trị
         $allStatuses = ['pending', 'confirmed', 'processing', 'completed', 'cancelled'];
         foreach ($allStatuses as $s) {
             $statusCounts[$s] = $statusCounts[$s] ?? 0;
         }
-
+    
         // Đếm tổng số đơn hàng
         $statusCounts['all'] = array_sum($statusCounts);
-
-        // Lấy danh sách đơn hàng theo trạng thái
-        $orders = Order::with('orderItems')
-            ->when($status !== 'all', function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+    
+        // Xây dựng query lấy danh sách đơn hàng
+        $query = Order::with(['orderItems', 'payment']);
+    
+        // Áp dụng bộ lọc trạng thái đơn hàng
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+    
+        // Áp dụng bộ lọc trạng thái thanh toán
+        if ($paymentStatus) {
+            $query->whereHas('payment', function ($q) use ($paymentStatus) {
+                $q->where('payment_status', $paymentStatus);
+            });
+        }
+    
+        // Áp dụng bộ lọc ngày đặt hàng
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+    
+        // Áp dụng bộ lọc phương thức thanh toán
+        if ($paymentMethod) {
+            $query->whereHas('payment', function ($q) use ($paymentMethod) {
+                $q->where('payment_method', $paymentMethod);
+            });
+           
+        }
+    
+        // Lấy danh sách đơn hàng
+        $orders = $query->orderBy('created_at', 'desc')->get();
+    
+        // Trả về view với các dữ liệu cần thiết
         return view('admin.orders.index', compact('orders', 'statusCounts', 'status'));
     }
     public function create()
