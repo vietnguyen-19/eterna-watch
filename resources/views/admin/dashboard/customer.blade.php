@@ -65,6 +65,7 @@
                             </a>
                             <form action="{{ route('admin.dashboard.customer') }}" method="GET"
                                 class="d-flex align-items-center">
+                                <input type="hidden" name="filter" value="custom">
                                 <input class="form-control form-control-sm mx-2" type="date" name="from_date"
                                     value="{{ $fromDate }}">
                                 <span>-</span>
