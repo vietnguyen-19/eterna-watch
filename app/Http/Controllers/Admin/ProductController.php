@@ -15,7 +15,9 @@ use App\Models\ProductHasAttribute;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -23,35 +25,38 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // Validate dữ liệu đầu vào
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price_default' => 'required|numeric|min:0',
             'price_sale' => 'nullable|numeric|min:0|lt:price_default',
             'type' => 'required|in:simple,variant',
+            'stock' => 'required_if:type,simple|nullable|integer|min:0',
             'avatar' => 'required|file|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'short_description' => 'required|string',
             'full_description' => 'nullable|string',
             'category_id' => 'required',
-            'subcategory_id' => 'required',
+            'subcategory_id' => 'required', // chú ý có cần lưu subcategory thực sự ko, DB bạn chưa thấy có
             'brand_id' => 'required|exists:brands,id',
-            'status' => 'required',
+            'status' => 'required|in:active,inactive,out_of_stock',
             'attribute_values' => 'required_if:type,variant|array|nullable',
         ]);
-
+    
         DB::beginTransaction();
-
+    
         try {
             // Xử lý ảnh
             $avatarPath = null;
             if ($request->hasFile('avatar')) {
                 $avatarPath = ImageHandler::saveImage($request->file('avatar'), 'products');
             }
-
-            // Chuẩn bị dữ liệu cơ bản
+    
+            // Chuẩn bị dữ liệu sản phẩm
             $productData = [
                 'name' => $request->name,
                 'price_default' => $request->price_default,
                 'price_sale' => $request->price_sale ?? null,
+                'stock' => $request->type == 'simple' ? ($request->stock ?? 0) : null,
                 'type' => $request->type,
                 'short_description' => $request->short_description,
                 'full_description' => $request->full_description,
@@ -59,46 +64,54 @@ class ProductController extends Controller
                 'brand_id' => $request->brand_id,
                 'status' => $request->status,
                 'avatar' => $avatarPath,
+              
             ];
-
             if ($request->type === 'simple') {
-                Product::create($productData);
+                $product = Product::create($productData);
+                
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'sku' => 'SP-' . strtoupper(Str::random(6)), // hoặc lấy tên sản phẩm sinh mã SKU
+                    'price' => $product->price_default,
+                    'image'=>$product->avatar,
+                    'stock' => $product->stock ?? 0,
+                    'status' =>$product->status,
+                    
+                ]);
                 DB::commit();
                 return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được tạo thành công.');
             }
-
+    
             if ($request->type === 'variant') {
+                // Chuẩn bị lưu tạm vào session để tiếp tục tạo biến thể
                 $category = Category::find($request->category_id);
-                $brand = $request->brand_id ? Brand::find($request->brand_id) : null;
-
+                $brand = Brand::find($request->brand_id);
+    
                 $productData['category_name'] = $category ? $category->name : '';
                 $productData['brand_name'] = $brand ? $brand->name : '';
-
+    
                 session(['product' => $productData]);
-
+    
                 if ($request->has('attribute_values') && is_array($request->attribute_values)) {
-                    $attributes = collect();
-                    foreach ($request->attribute_values as $attribute_id) {
-                        $attribute = Attribute::with('attributeValues')->find($attribute_id);
-                        if ($attribute) {
-                            $attributes->push($attribute);
-                        }
-                    }
+                    $attributes = Attribute::with('attributeValues')
+                                    ->whereIn('id', $request->attribute_values)
+                                    ->get();
                     session(['attributes' => $attributes]);
                 }
-
+    
                 DB::commit();
                 return redirect()->route('admin.productvariants.create')->with('success', 'Thông tin sản phẩm đã được lưu để tạo biến thể.');
             }
-
+    
             DB::rollback();
             return back()->with('error', 'Loại sản phẩm không hợp lệ.');
+            
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
-
+    
 
 
 
@@ -181,7 +194,6 @@ class ProductController extends Controller
             'attribute_values' => 'nullable|array',
         ]);
         DB::beginTransaction();
-
         try {
             $product = Product::findOrFail($id);
 
@@ -221,10 +233,7 @@ class ProductController extends Controller
     public function destroy($id)
     {
         DB::beginTransaction();
-
-
         $product = Product::findOrFail($id);
-
         // Chỉ xóa mềm (không xóa file hay biến thể)
         $product->delete();
 

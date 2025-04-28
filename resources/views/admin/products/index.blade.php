@@ -23,23 +23,26 @@
                                     <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
                                 </div>
                                 <div class="col-sm-auto">
-                                    <a href="{{ route('admin.products.trash') }}" class="btn btn-sm btn-danger" title="Thùng rác">
+                                    <a href="{{ route('admin.products.trash') }}" class="btn btn-sm btn-danger"
+                                        title="Thùng rác">
                                         <i class="ri-delete-bin-line align-bottom me-1"></i>
                                         Thùng rác
                                     </a>
                                     <div class="btn-group" role="group">
-                                        
-                                        <a href="{{ route('admin.products.create', ['type' => 'simple']) }}" class="btn btn-sm btn-success me-2" title="Thêm sản phẩm thường">
+
+                                        <a href="{{ route('admin.products.create', ['type' => 'simple']) }}"
+                                            class="btn btn-sm btn-success me-2" title="Thêm sản phẩm thường">
                                             <i class="ri-add-line align-bottom me-1"></i>
                                             Thêm sản phẩm thường
                                         </a>
-                                        <a href="{{ route('admin.products.create', ['type' => 'variant']) }}" class="btn btn-sm btn-primary" title="Thêm sản phẩm có biến thể">
+                                        <a href="{{ route('admin.products.create', ['type' => 'variant']) }}"
+                                            class="btn btn-sm btn-primary" title="Thêm sản phẩm có biến thể">
                                             <i class="ri-add-line align-bottom me-1"></i>
                                             Thêm sản phẩm có biến thể
                                         </a>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
 
@@ -52,7 +55,9 @@
                                                 <th class="sort" data-sort="id">ID</th>
                                                 <th class="sort" data-sort="product">Sản phẩm</th>
                                                 <th class="sort" data-sort="status">Thương hiệu</th>
-                                                <th class="sort" data-sort="phone">Giá mặc định</th>
+                                                <th class="sort" data-sort="phone">Giá</th>
+                                                <th style="width:8%" class="sort" data-sort="phone">Đã bán</th>
+                                                <th style="width:8%" class="sort" data-sort="phone">Tồn kho</th>
                                                 <th class="sort" data-sort="created_at">Trạng thái</th>
                                                 <th class="sort" data-sort="action">Hành động</th>
                                             </tr>
@@ -79,16 +84,23 @@
 
                                                     <td class="align-middle"> {{ $product->brand->name }}</td>
                                                     <td class="align-middle">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND</td>
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        
+                                                        {{ number_format($product->min_price, 0, ',', '.') }} -
+                                                        {{ number_format($product->max_price, 0, ',', '.') }} VND</td>
+                                                    <td class="align-middle"> {{ $product->sold_quantity }}</td>
+                                                    <td class="align-middle"> {{ $product->current_stock }}</td>
                                                     <td class="align-middle">
                                                         <span
                                                             class="badge
                                                             @if ($product->status == 'active') bg-success
                                                             @elseif($product->status == 'inactive') bg-warning
                                                             @else bg-danger @endif">
-                                                            @if ($product->status == 'active') Đang bán
-                                                                @elseif($product->status == 'inactive') Ngừng bán
-                                                                @endif
+                                                            @if ($product->status == 'active')
+                                                                Đang bán
+                                                            @elseif($product->status == 'inactive')
+                                                                Ngừng bán
+                                                            @endif
                                                         </span>
                                                     </td>
                                                     <td class="align-middle">

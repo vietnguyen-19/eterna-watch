@@ -13,10 +13,10 @@
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-center gap-2">
-                                        <a href="{{ route('admin.orders.trash') }}" class="btn btn-danger">
+                                        <a href="{{ route('admin.orders.trash') }}" class="btn btn-sm btn-danger">
                                             <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
                                         </a>
-                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
+                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-sm btn-primary">
                                             <i class="ri-add-line align-bottom me-1"></i> Tạo đơn thủ công
                                         </a>
                                     </div>
@@ -32,7 +32,7 @@
                                         <div class="col-md-2">
                                             <label for="status" class="form-label">Trạng thái đơn hàng</label>
                                             <select name="status" id="status" class="form-select">
-                                                <option value="">Tất cả</option>
+                                                <option value="all">Tất cả</option>
                                                 <option value="pending"
                                                     {{ request('status') == 'pending' ? 'selected' : '' }}>Đơn mới
                                                 </option>
@@ -50,14 +50,28 @@
                                                 </option>
                                             </select>
                                         </div>
+                                        <!-- Phương thức thanh toán -->
+                                        <div class="col-md-2">
+                                            <label for="payment_method" class="form-label">Phương thức thanh toán</label>
+                                            <select name="payment_method" id="payment_method" class="form-select">
+                                                <option value="">Tất cả</option>
+                                                <option value="cash"
+                                                    {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Tiền mặt
+                                                </option>
 
+                                                <option value="vnpay"
+                                                    {{ request('payment_method') == 'vnpay' ? 'selected' : '' }}>
+                                                    Thanh toán VNPay</option>
+                                            </select>
+                                        </div>
                                         <!-- Trạng thái thanh toán -->
                                         <div class="col-md-2">
                                             <label for="payment_status" class="form-label">Trạng thái thanh toán</label>
                                             <select name="payment_status" id="payment_status" class="form-select">
                                                 <option value="">Tất cả</option>
                                                 <option value="pending"
-                                                    {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Chờ xử lý
+                                                    {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Chờ xử
+                                                    lý
                                                 </option>
                                                 <option value="completed"
                                                     {{ request('payment_status') == 'completed' ? 'selected' : '' }}>Hoàn
@@ -80,24 +94,11 @@
                                                 value="{{ request('date_to') }}">
                                         </div>
 
-                                        <!-- Phương thức thanh toán -->
-                                        <div class="col-md-2">
-                                            <label for="payment_method" class="form-label">Phương thức thanh toán</label>
-                                            <select name="payment_method" id="payment_method" class="form-select">
-                                                <option value="">Tất cả</option>
-                                                <option value="cash"
-                                                    {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Tiền mặt
-                                                </option>
-                                              
-                                                <option value="online_payment"
-                                                    {{ request('payment_method') == 'vnpay' ? 'selected' : '' }}>
-                                                    Thanh toán VNPay</option>
-                                            </select>
-                                        </div>
+
 
                                         <!-- Nút hành động -->
-                                        <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary me-2">Áp dụng lọc</button>
+                                        <div class="col-md-2 text-end">
+                                            <button type="submit" class="btn btn-info me-2">Áp dụng lọc</button>
                                             <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Xóa
                                                 lọc</a>
                                         </div>
@@ -238,8 +239,13 @@
                                                                     {{ number_format($order->total_amount, 0, ',', '.') }}
                                                                     đ</td>
                                                                     <td class="align-middle">
-                                                                        {{ $order->payment->payment_method }}
+                                                                        @if ($order->payment_method === 'cash')
+                                                                            Tiền mặt
+                                                                        @elseif ($order->payment_method === 'vnpay')
+                                                                            VNPay
+                                                                        @endif
                                                                     </td>
+                                                                    
                                                                 <td class="align-middle">
                                                                     @switch($order->status)
                                                                         @case('pending')
@@ -512,5 +518,4 @@
                 }
             });
         </script>
-        
     @endsection

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('sku', 100)->unique();
             $table->decimal('price', 15, 2);
             $table->integer('stock')->default(0);
-            $table->enum('status', ['in_stock', 'out_of_stock', 'pre_order'])->default('in_stock')->nullable(); // Thêm cột status
+            $table->enum('status', ['active', 'inactive', 'out_of_stock'])->default('active');
             $table->string('image', 255)->nullable();
             $table->softDeletes();
             $table->timestamps();

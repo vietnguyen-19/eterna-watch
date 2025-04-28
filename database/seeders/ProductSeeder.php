@@ -84,9 +84,8 @@ class ProductSeeder extends Seeder
             ['name' => 'Apple Watch Series 9 Cellular', 'avatar' => 'products/product18.jpeg', 'brand' => 'Apple Watch Series 9', 'category' => 'Apple Watch', 'price' => 13500000],
 
             // Tissot - PRX
-            ['name' => 'Tissot PRX Powermatic 80', 'avatar' => 'products/product19.jpeg', 'brand' => 'PRX', 'category' => 'Đồng hồ dây kim loại', 'price' => 16500000],
-            ['name' => 'Tissot PRX Quartz', 'avatar' => 'products/product20.jpeg', 'brand' => 'PRX', 'category' => 'Đồng hồ quartz', 'price' => 9500000],
-
+            ['name' => 'Tissot PRX Powermatic 80', 'avatar' => 'products/product19.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ cơ', 'price' => 16500000],
+            ['name' => 'Tissot PRX Quartz', 'avatar' => 'products/product20.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ quartz', 'price' => 9500000],
             // Đồng hồ nữ - thời trang
             ['name' => 'Michael Kors Runway Rose Gold', 'avatar' => 'products/product21.jpeg', 'brand' => 'Hybrid', 'category' => 'Đồng hồ thời trang', 'price' => 5500000],
             ['name' => 'Fossil Jacqueline Leather', 'avatar' => 'products/product22.jpeg', 'brand' => 'Hybrid', 'category' => 'Đồng hồ dây da', 'price' => 4500000],
@@ -116,11 +115,15 @@ class ProductSeeder extends Seeder
             ['name' => 'Samsung Galaxy Watch 6 Classic', 'avatar' => 'products/product34.jpeg', 'brand' => 'Smartwatch', 'category' => 'Samsung Galaxy Watch', 'price' => 9500000],
 
             // Đồng hồ vintage
-            ['name' => 'Seiko Automatic Vintage 1960', 'avatar' => 'products/product35.jpeg', 'brand' => 'Seiko 5', 'category' => 'Đồng hồ vintage', 'price' => 8800000],
+            ['name' => 'Seiko Automatic Vintage 1960',  'avatar' => 'products/product35.jpeg', 'brand' => 'Seiko 5', 'category' => 'Đồng hồ vintage', 'price' => 8800000],
             ['name' => 'Citizen Vintage Japan', 'avatar' => 'products/product36.jpeg', 'brand' => 'Quartz', 'category' => 'Đồng hồ vintage', 'price' => 7900000],
+            ['name' => 'Seiko Presage Cocktail Time','stock'=>100, 'avatar' => 'products/product37.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ cơ', 'price' => 13800000],
+            ['name' => 'Casio G-Shock GA-2100','stock'=>100, 'avatar' => 'products/product38.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ thể thao', 'price' => 3600000],
+            ['name' => 'Citizen Eco-Drive Chandler', 'stock'=>100,'avatar' => 'products/product39.jpeg', 'brand' => 'Citizen', 'category' => 'Đồng hồ năng lượng ánh sáng', 'price' => 4900000],
+            ['name' => 'Orient Bambino Version IV','stock'=>100, 'avatar' => 'products/product40.jpeg', 'brand' => 'Orient', 'category' => 'Đồng hồ cơ', 'price' => 5300000],
 
         ];
-        foreach ($products as $p) {
+        foreach ($products as $index => $p) {
             $brandId = Brand::where('name', $p['brand'])->first()?->id;
             $categoryId = Category::where('name', $p['category'])->first()?->id;
 
@@ -131,7 +134,8 @@ class ProductSeeder extends Seeder
                     'short_description' => 'Đồng hồ này là minh chứng cho sự giao thoa hoàn hảo giữa kỹ thuật chế tác thủ công tinh xảo và nghệ thuật thiết kế đỉnh cao, thể hiện đẳng cấp vượt thời gian dành cho những ai trân trọng giá trị thật sự của sự hoàn mỹ. Với phần vỏ được làm từ thép không gỉ 316L cao cấp hoặc vàng 18K nguyên khối, kết hợp cùng mặt kính sapphire chống trầy xước tuyệt đối, sản phẩm mang đến sự bền bỉ và vẻ đẹp trường tồn với thời gian. Bộ máy Automatic Thụy Sĩ được tích hợp bên trong hoạt động bền bỉ, có khả năng trữ cót lên tới 40 giờ, đảm bảo độ chính xác cao và chuyển động êm ái theo từng nhịp đập.',
                     'full_description' => $fullDesc,
                     'price_default' => $p['price'],
-                    'type' => 'variant',
+                    'stock'=>$p['stock'] ?? null,
+                    'type' => $index < 36 ? 'variant' : 'simple', // <--- Phân loại ở đây
                     'brand_id' => $brandId,
                     'category_id' => $categoryId,
                     'status' => 'active',

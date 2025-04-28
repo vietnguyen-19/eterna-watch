@@ -114,8 +114,9 @@
                                                     <th scope="col" style="width: 100px;">Ảnh</th>
                                                     <th class="text-left" scope="col">Biến thể</th>
                                                     <th scope="col">SKU</th>
-                                                    <th scope="col">Số lượng tồn</th>
                                                     <th scope="col">Giá</th>
+                                                    <th scope="col">Tồn kho</th>
+                                                    <th scope="col">Đã bán</th>
                                                     <th scope="col">Trạng thái</th>
                                                     <th scope="col">Thao tác</th>
 
@@ -160,6 +161,7 @@
                                                                 class="text-muted">VND</span>
                                                         </td>
                                                         <td class="text-center align-middle">{{ $variant->stock }}</td>
+                                                        <td class="text-center align-middle">{{ $variant->sold_quantity }}</td>
                                                         <td class="align-middle">
                                                             @php
                                                                 switch ($variant->status) {

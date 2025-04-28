@@ -13,6 +13,7 @@ class Product extends Model
         'name',
         'price_default',
         'price_sale',
+        'stock',
         'type',
         'short_description',
         'full_description',
@@ -59,9 +60,6 @@ class Product extends Model
             ->min('price') ?? $this->price;
     }
 
-    /**
-     * Lấy giá cao nhất của từng sản phẩm
-     */
     public function getMaxPriceAttribute()
     {
         return $this->variants()
@@ -75,5 +73,42 @@ class Product extends Model
     public function getAvatarAttribute($value)
     {
         return $value ? $value : 'avatars/default.jpeg';
+    }
+    public function getSoldQuantityAttribute()
+    {
+        // Nếu sản phẩm có biến thể
+        if ($this->variants()->exists()) {
+            return OrderItem::whereIn('variant_id', $this->variants->pluck('id'))
+                ->whereHas('order', function ($query) {
+                    $query->where('status', 'completed'); // chỉ tính đơn hoàn tất
+                })
+                ->sum('quantity');
+        }
+
+        // Nếu sản phẩm không có biến thể (đơn giản)
+        return OrderItem::where('product_id', $this->id)
+            ->whereNull('variant_id') // chắc chắn không phải biến thể
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'completed');
+            })
+            ->sum('quantity');
+    }
+    public function getCurrentStockAttribute()
+    {
+        // Nếu có biến thể
+        if ($this->variants()->exists()) {
+            return $this->variants->sum('stock');
+            // Giả sử mỗi ProductVariant có một cột 'stock' (số lượng tồn)
+        }
+
+        // Nếu không có biến thể
+        return $this->stock;
+        // Giả sử bảng 'products' cũng có cột 'stock'
+    }
+    // Trong model Product
+    public function getFirstVariantId()
+    {
+        // Kiểm tra nếu sản phẩm có biến thể và trả về id của biến thể đầu tiên
+        return $this->variants->first() ? $this->variants->first()->id : null;
     }
 }

@@ -122,6 +122,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         
+        
         try {
             DB::beginTransaction();
 
@@ -198,7 +199,7 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.users.index')->with('success', 'Cập nhật tài khoản thành công!');
+            return redirect()->route('admin.users.show', $id)->with('success', 'Cập nhật tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();

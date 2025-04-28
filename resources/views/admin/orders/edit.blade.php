@@ -73,7 +73,7 @@
                                     {{-- Phương thức và Trạng thái thanh toán --}}
                                     <strong>Phương thức thanh toán:</strong>
                                     <span class="badge bg-success">
-                                        {{ $order->payment->payment_method }}
+                                        {{ $order->payment_method }}
                                     </span>
                                     |
                                     <strong>Trạng thái:</strong>

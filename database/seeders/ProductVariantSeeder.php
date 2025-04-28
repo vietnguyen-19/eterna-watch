@@ -17,97 +17,101 @@ class ProductVariantSeeder extends Seeder
      */
     public function run()
     {
-        // Lấy danh sách sản phẩm cùng giá mặc định
-        $products = DB::table('products')->select('id', 'price_default')->get();
+        // Lấy danh sách sản phẩm
+        $products = DB::table('products')->select('id', 'price_default', 'stock', 'type', 'avatar')->get();
+
 
         foreach ($products as $product) {
-            // Bước 1: Chọn ngẫu nhiên 2 thuộc tính
-            $attributes = DB::table('attributes')->inRandomOrder()->limit(2)->pluck('id');
-
-            // Lưu vào bảng ProductHasAttribute
-            foreach ($attributes as $attribute_id) {
-                DB::table('product_has_attributes')->insert([
-                    'product_id'   => $product->id,
-                    'attribute_id' => $attribute_id,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
-                ]);
-            }
-
-            // Bước 2: Lấy danh sách giá trị thuộc tính cho 2 thuộc tính đã chọn
-            $attributeValues = [];
-            foreach ($attributes as $attribute_id) {
-                $values = DB::table('attribute_values')
-                    ->where('attribute_id', $attribute_id)
-                    ->pluck('id')
-                    ->toArray();
-                $attributeValues[] = $values;
-            }
-
-            // Bước 3: Tạo 5 biến thể sản phẩm (đảm bảo không trùng lặp)
-            $variants = [];
-            $generatedSKUs = []; // Danh sách SKU đã tạo để kiểm tra trùng
-
-            while (count($variants) < 5) {
-                // Chọn giá trị thuộc tính cho biến thể
-                $selectedValues = [];
-                foreach ($attributeValues as $values) {
-                    if (!empty($values)) {
-                        $selectedValues[] = $values[array_rand($values)];
-                    }
-                }
-
-                // Sắp xếp để tránh trùng lặp do thứ tự khác nhau
-                sort($selectedValues);
-                $sku = 'SKU-' . $product->id . '-' . implode('-', $selectedValues);
-
-                // Kiểm tra xem SKU đã tồn tại chưa
-                if (
-                    in_array($sku, $generatedSKUs) ||
-                    DB::table('product_variants')->where('sku', $sku)->exists()
-                ) {
-                    continue; // Bỏ qua nếu SKU đã tồn tại
-                }
-
-                // Thêm SKU vào danh sách đã tạo
-                $generatedSKUs[] = $sku;
-
-                // Tạo biến thể mới
-                $price = $product->price_default + rand(1, 50) * 10000;
-                $stock = rand(5, 20);
-
-
-                $variant_id = DB::table('product_variants')->insertGetId([
+            if ($product->type === 'simple') {
+                // Nếu sản phẩm là simple, chỉ tạo 1 biến thể duy nhất
+                DB::table('product_variants')->insert([
                     'product_id' => $product->id,
-                    'sku'        => $sku,
-                    'price'      => $price,
-                    'stock'      => $stock,
-                    'image'      => null,
-                    'status' => 'in_stock',
+                    'sku'        => 'SKU-' . $product->id,
+                    'price'      => $product->price_default,
+                    'stock'      => $product->stock ?? 10,
+                    'image'      => $product->avatar,
+                    'status'     => 'active',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+            } else {
+                // Nếu sản phẩm là variable, tạo nhiều biến thể như trước
+                $attributes = DB::table('attributes')->inRandomOrder()->limit(2)->pluck('id');
 
-                // Lưu variant_id để dùng cho bước tiếp theo
-                $variants[$variant_id] = $selectedValues;
-            }
-            for ($i = 0; $i < 180; $i++) {
-                $variant = ProductVariant::find($i + 1); // Lấy 1 bản ghi theo ID
-
-                if ($variant) {
-                    $variant->image = 'product_variants/product_variant' . ($i + 1) . '.jpeg';
-                    $variant->save(); // Lưu lại sau khi gán
-                }
-            }
-
-            foreach ($variants as $variant_id => $selectedValues) {
-                foreach ($selectedValues as $attribute_value_id) {
-                    DB::table('variant_attributes')->insert([
-                        'variant_id'         => $variant_id,
-                        'attribute_value_id' => $attribute_value_id,
+                foreach ($attributes as $attribute_id) {
+                    DB::table('product_has_attributes')->insert([
+                        'product_id'   => $product->id,
+                        'attribute_id' => $attribute_id,
+                        'created_at'   => now(),
+                        'updated_at'   => now(),
                     ]);
                 }
+
+                $attributeValues = [];
+                foreach ($attributes as $attribute_id) {
+                    $values = DB::table('attribute_values')
+                        ->where('attribute_id', $attribute_id)
+                        ->pluck('id')
+                        ->toArray();
+                    $attributeValues[] = $values;
+                }
+
+                $variants = [];
+                $generatedSKUs = [];
+
+                while (count($variants) < 5) {
+                    $selectedValues = [];
+                    foreach ($attributeValues as $values) {
+                        if (!empty($values)) {
+                            $selectedValues[] = $values[array_rand($values)];
+                        }
+                    }
+
+                    sort($selectedValues);
+                    $sku = 'SKU-' . $product->id . '-' . implode('-', $selectedValues);
+
+                    if (
+                        in_array($sku, $generatedSKUs) ||
+                        DB::table('product_variants')->where('sku', $sku)->exists()
+                    ) {
+                        continue;
+                    }
+
+                    $generatedSKUs[] = $sku;
+
+                    $price = $product->price_default + rand(1, 50) * 10000;
+                    $stock = rand(5, 20);
+
+                    $variant_id = DB::table('product_variants')->insertGetId([
+                        'product_id' => $product->id,
+                        'sku'        => $sku,
+                        'price'      => $price,
+                        'stock'      => $stock,
+                        'image'      => null,
+                        'status'     => 'active',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    $variants[$variant_id] = $selectedValues;
+                }
+
+                foreach ($variants as $variant_id => $selectedValues) {
+                    foreach ($selectedValues as $attribute_value_id) {
+                        DB::table('variant_attributes')->insert([
+                            'variant_id'         => $variant_id,
+                            'attribute_value_id' => $attribute_value_id,
+                        ]);
+                    }
+                }
             }
+        }
+
+        // Gán hình ảnh cho tất cả variant
+        $variants = ProductVariant::all();
+        foreach ($variants as $index => $variant) {
+            $variant->image = 'product_variants/product_variant' . ($index + 1) . '.jpeg';
+            $variant->save();
         }
     }
 }

@@ -36,7 +36,7 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
-
+                                   
                                     <!-- Giá khuyến mãi -->
                                     <div class="mb-3 col-md-12">
                                         <label for="price_sale" class="form-label">Giá khuyến mãi (nếu có)</label>
@@ -47,7 +47,18 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
-
+                                    @if ($type != 'variant')
+                                    <div class="mb-3 col-md-12">
+                                        <label for="stock" class="form-label">Tồn kho</label>
+                                        <input value="{{ old('stock') }}" name="stock" type="number"
+                                            id="stock"
+                                            class="form-control @error('stock') is-invalid @enderror"
+                                            placeholder="Nhập giá sản phẩm">
+                                        @error('stock')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    @endif
                                     <!-- Danh mục sản phẩm -->
                                     <div class="mb-3 col-md-12">
                                         <label for="categorySelect" class="form-label">Danh mục sản phẩm</label>
@@ -250,7 +261,7 @@
             $('.summernote').summernote({
                 placeholder: 'Nhập mô tả đầy đủ',
                 tabsize: 2,
-                height: 305
+                height: 560
             });
         });
     </script>

@@ -124,24 +124,25 @@
                     </div>
                     <form name="addtocart-form" method="post">
                         <div class="product-single__swatches">
-                            <input id="variant_id" name="variant_id" hidden>
+
 
                             <div id="product-variants" data-variants='@json($variants)'></div>
-
-                            @foreach ($product->attributes as $attribute)
-                                <div class="product-swatch text-swatches">
-                                    <label><strong>{{ $attribute->attribute_name }}</strong></label>
-                                    <div class="swatch-list">
-                                        @foreach ($attribute->attributeValues as $value)
-                                            <input type="radio" name="attribute_{{ $attribute->id }}"
-                                                value="{{ $value->id }}" id="value-{{ $value->id }}">
-                                            <label class="swatch" for="value-{{ $value->id }}"
-                                                title="{{ $value->note }}">{{ $value->value_name }}</label>
-                                        @endforeach
+                            @if ($product->type == 'variant')
+                                <input id="variant_id" name="variant_id" hidden>
+                                @foreach ($product->attributes as $attribute)
+                                    <div class="product-swatch text-swatches">
+                                        <label><strong>{{ $attribute->attribute_name }}</strong></label>
+                                        <div class="swatch-list">
+                                            @foreach ($attribute->attributeValues as $value)
+                                                <input type="radio" name="attribute_{{ $attribute->id }}"
+                                                    value="{{ $value->id }}" id="value-{{ $value->id }}">
+                                                <label class="swatch" for="value-{{ $value->id }}"
+                                                    title="{{ $value->note }}">{{ $value->value_name }}</label>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
-
+                                @endforeach
+                            @endif
                             <!-- Hiển thị giá -->
                             <p id="variant-price" style="display: none; font-size: 1.5rem; font-weight: bold;"></p>
                             <span id="error-message" style="color: red; display: none;" class="mb-2">Không tồn tại sản
@@ -160,7 +161,16 @@
                                 <div class="qty-control__reduce">-</div>
                                 <div class="qty-control__increase">+</div>
                             </div><!-- .qty-control -->
-                            <button type="submit" class="btn btn-primary btn-addtocart">Thêm vào giỏ hàng</button>
+                            @if ($product->type == 'simple')
+                                <input id="variant_id" name="variant_id" value="{{ $product->getFirstVariantId() }}"
+                                    hidden>
+                                <input id="product_type" name="product_type" value="{{ $product->type }}" hidden>
+                                <button type="submit" class="btn btn-primary btn-addtocart simple">Thêm vào giỏ
+                                    hàng</button>
+                            @else
+                                <button type="submit" class="btn btn-primary btn-addtocart">Thêm vào giỏ hàng</button>
+                            @endif
+
                             <a id="view_cart" style="padding: 1.2rem; background:rgb(50, 152, 159)"
                                 href="{{ route('cart.index') }}" class="d-none">
                                 <svg class="d-block text-white" width="20" height="20" viewBox="0 0 20 20"
@@ -659,54 +669,44 @@
         document.addEventListener("DOMContentLoaded", function() {
             const addToCartForm = document.querySelector("form[name='addtocart-form']");
             const viewCartButton = document.getElementById("view_cart");
-            const variantIdInput = document.getElementById("variant_id");
 
-            addToCartForm.addEventListener("submit", async function(event) {
-                event.preventDefault(); // Ngăn chặn reload trang
+            const btnSimple = document.querySelector(".btn.btn-primary.btn-addtocart.simple");
+            const btnVariable = document.querySelector(".btn-addtocart");
 
-                // Kiểm tra trạng thái đăng nhập sử dụng Auth
-                const isLoggedIn = {!! Auth::check() ? 'true' : 'false' !!};
+            // Kiểm tra người dùng đã đăng nhập chưa
+            const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
 
+            // Hàm hiển thị thông báo đăng nhập
+            function showLoginAlert() {
+                // Lưu URL hiện tại vào sessionStorage
+                sessionStorage.setItem('redirectUrl', window.location.href);
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Bạn chưa đăng nhập!',
+                    text: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+                    confirmButtonText: 'Đăng nhập'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Chuyển hướng đến trang đăng nhập
+                        window.location.href = "{{ route('client.login') }}";
+                    }
+                });
+            }
+
+            // Hàm xử lý thêm vào giỏ hàng
+            function addToCartHandler() {
                 if (!isLoggedIn) {
-                    // Lưu URL trang hiện tại vào sessionStorage
-                    sessionStorage.setItem('redirectUrl', window.location.href);
-
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Chưa đăng nhập!',
-                        text: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
-                        showConfirmButton: true,
-                        confirmButtonText: 'Đăng nhập',
-                        showCancelButton: true,
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Chuyển hướng đến trang đăng nhập
-                            window.location.href = "{{ route('client.login') }}";
-                        }
-                    });
+                    showLoginAlert();
                     return;
                 }
 
-                if (!variantIdInput.value) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Chưa chọn biến thể!',
-                        text: 'Vui lòng chọn biến thể sản phẩm trước khi thêm vào giỏ hàng.',
-                        confirmButtonText: 'OK'
-                    });
-                    return;
-                }
+                let formData = new FormData(addToCartForm);
 
-                // Thu thập dữ liệu form
-                let formData = new FormData(this);
-
-                // Gửi AJAX request
                 fetch("{{ route('cart.add') }}", {
                         method: "POST",
                         headers: {
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-                                .content,
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
                         },
                         body: formData,
                     })
@@ -715,33 +715,61 @@
                         if (data.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Sản phẩm đã được thêm vào giỏ hàng!',
-                                confirmButtonText: 'OK',
+                                title: 'Đã thêm vào giỏ hàng!',
                                 timer: 3000,
-                                timerProgressBar: true,
                                 showConfirmButton: false
                             });
-                            viewCartButton.classList.remove(
-                            "d-none"); // Hiển thị nút "Xem giỏ hàng"
+                            viewCartButton.classList.remove("d-none");
                         } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Lỗi!',
-                                text: 'Lỗi: ' + data.message,
-                                confirmButtonText: 'OK',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
+                                text: data.message,
                             });
                         }
                     })
-                    .catch(error => console.error("Lỗi:", error));
-            });
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                    });
+            }
+
+            // Xử lý cho sản phẩm simple
+            if (btnSimple) {
+                btnSimple.addEventListener("click", function(event) {
+                    event.preventDefault(); // Ngăn reload
+                    addToCartHandler(); // Gọi hàm xử lý chung
+                });
+            }
+
+            // Xử lý cho sản phẩm có biến thể
+            if (btnVariable) {
+                btnVariable.addEventListener("click", function(event) {
+                    event.preventDefault(); // Ngăn reload
+
+                    if (!isLoggedIn) {
+                        showLoginAlert();
+                        return;
+                    }
+
+                    const variantIdInput = document.getElementById("variant_id");
+
+                    if (!variantIdInput.value) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Chưa chọn biến thể!',
+                            text: 'Vui lòng chọn biến thể trước khi thêm vào giỏ hàng.',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+
+                    addToCartHandler(); // Gọi hàm xử lý chung
+                });
+            }
         });
     </script>
 
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Chọn tất cả các thông báo
