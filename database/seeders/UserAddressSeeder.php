@@ -17,336 +17,345 @@ class UserAddressSeeder extends Seeder
     {
         $addresses = [
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 1',
                 'ward' => 'Phường Bến Nghé',
                 'street' => '45 Nguyễn Huệ'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Hoàn Kiếm',
                 'ward' => 'Phường Hàng Trống',
                 'street' => '12 Lý Thường Kiệt'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Hải Châu',
                 'ward' => 'Phường Hòa Cường Bắc',
                 'street' => '76 Nguyễn Văn Linh'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Ninh Kiều',
                 'ward' => 'Phường An Phú',
                 'street' => '01 Trần Hưng Đạo'
             ],
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 3',
                 'ward' => 'Phường 6',
                 'street' => '159 Pasteur'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Đống Đa',
                 'ward' => 'Phường Láng Hạ',
                 'street' => '23 Chùa Bộc'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Thanh Khê',
                 'ward' => 'Phường Vĩnh Trung',
                 'street' => '80 Lê Duẩn'
             ],
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 10',
                 'ward' => 'Phường 12',
                 'street' => '22 Lý Thái Tổ'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Ba Đình',
                 'ward' => 'Phường Điện Biên',
                 'street' => '89 Hoàng Diệu'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Bình Thủy',
                 'ward' => 'Phường Bình Thủy',
                 'street' => '66 Nguyễn Trãi'
             ],
             [
-                'city' => 'Cần Thơ',
-                'district' => 'Quận Bình Thủy',
-                'ward' => 'Phường Bình Thủy',
-                'street' => '66 Nguyễn Trãi'
-            ],
-            [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 1',
                 'ward' => 'Phường Bến Nghé',
                 'street' => '12 Lý Tự Trọng'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Cầu Giấy',
                 'ward' => 'Phường Dịch Vọng',
                 'street' => '18 Trần Thái Tông'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Hải Châu',
-                'ward' => 'Phường Hải Châu 1',
+                'ward' => 'Phường Hải Châu I',
                 'street' => '45 Bạch Đằng'
             ],
             [
-                'city' => 'Huế',
+                'city' => 'Thành phố Huế',
                 'district' => 'Thành phố Huế',
                 'ward' => 'Phường Vĩnh Ninh',
                 'street' => '97 Hùng Vương'
             ],
             [
-                'city' => 'Hải Phòng',
+                'city' => 'Thành phố Hải Phòng',
                 'district' => 'Quận Lê Chân',
                 'ward' => 'Phường An Biên',
                 'street' => '200 Trần Nguyên Hãn'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Ninh Kiều',
                 'ward' => 'Phường An Khánh',
                 'street' => '82 Mậu Thân'
             ],
             [
-                'city' => 'Bình Dương',
+                'city' => 'Tỉnh Bình Dương',
                 'district' => 'Thành phố Thủ Dầu Một',
                 'ward' => 'Phường Phú Hòa',
                 'street' => '35 Lê Hồng Phong'
             ],
             [
-                'city' => 'Biên Hòa',
+                'city' => 'Tỉnh Đồng Nai',
                 'district' => 'Thành phố Biên Hòa',
                 'ward' => 'Phường Tân Hiệp',
                 'street' => '105 Đồng Khởi'
             ],
             [
-                'city' => 'Vũng Tàu',
+                'city' => 'Tỉnh Bà Rịa - Vũng Tàu',
                 'district' => 'Thành phố Vũng Tàu',
                 'ward' => 'Phường Thắng Tam',
                 'street' => '60 Hoàng Hoa Thám'
             ],
             [
-                'city' => 'Nha Trang',
+                'city' => 'Tỉnh Khánh Hòa',
                 'district' => 'Thành phố Nha Trang',
                 'ward' => 'Phường Phước Hòa',
                 'street' => '11 Nguyễn Thị Minh Khai'
             ],
             [
-                'city' => 'Đà Lạt',
+                'city' => 'Tỉnh Lâm Đồng',
                 'district' => 'Thành phố Đà Lạt',
                 'ward' => 'Phường 1',
                 'street' => '29 Trần Phú'
             ],
             [
-                'city' => 'Long Xuyên',
+                'city' => 'Tỉnh An Giang',
                 'district' => 'Thành phố Long Xuyên',
                 'ward' => 'Phường Mỹ Long',
                 'street' => '48 Nguyễn Trường Tộ'
             ],
             [
-                'city' => 'Quảng Ngãi',
+                'city' => 'Tỉnh Quảng Ngãi',
                 'district' => 'Thành phố Quảng Ngãi',
                 'ward' => 'Phường Trần Phú',
                 'street' => '88 Hùng Vương'
             ],
+            // Địa chỉ bổ sung
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Tỉnh Quảng Ninh',
+                'district' => 'Thành phố Hạ Long',
+                'ward' => 'Phường Hồng Gai',
+                'street' => '25 Lê Lợi'
+            ],
+            [
+                'city' => 'Tỉnh Nghệ An',
+                'district' => 'Thành phố Vinh',
+                'ward' => 'Phường Lê Lợi',
+                'street' => '72 Nguyễn Thị Minh Khai'
+            ],
+            [
+                'city' => 'Tỉnh Thanh Hóa',
+                'district' => 'Thành phố Thanh Hóa',
+                'ward' => 'Phường Đông Hải',
+                'street' => '19 Đại lộ Lê Lợi'
+            ],
+            [
+                'city' => 'Tỉnh Bình Thuận',
+                'district' => 'Thành phố Phan Thiết',
+                'ward' => 'Phường Đức Nghĩa',
+                'street' => '56 Nguyễn Đình Chiểu'
+            ],
+            [
+                'city' => 'Tỉnh Đắk Lắk',
+                'district' => 'Thành phố Buôn Ma Thuột',
+                'ward' => 'Phường Tân Lợi',
+                'street' => '123 Lê Hồng Phong'
+            ],
+            [
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 1',
                 'ward' => 'Phường Bến Nghé',
                 'street' => '45 Nguyễn Huệ'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Hoàn Kiếm',
                 'ward' => 'Phường Hàng Trống',
                 'street' => '12 Lý Thường Kiệt'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Hải Châu',
                 'ward' => 'Phường Hòa Cường Bắc',
                 'street' => '76 Nguyễn Văn Linh'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Ninh Kiều',
                 'ward' => 'Phường An Phú',
                 'street' => '01 Trần Hưng Đạo'
             ],
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 3',
                 'ward' => 'Phường 6',
                 'street' => '159 Pasteur'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Đống Đa',
                 'ward' => 'Phường Láng Hạ',
                 'street' => '23 Chùa Bộc'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Thanh Khê',
                 'ward' => 'Phường Vĩnh Trung',
                 'street' => '80 Lê Duẩn'
             ],
             [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 10',
                 'ward' => 'Phường 12',
                 'street' => '22 Lý Thái Tổ'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Ba Đình',
                 'ward' => 'Phường Điện Biên',
                 'street' => '89 Hoàng Diệu'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Bình Thủy',
                 'ward' => 'Phường Bình Thủy',
                 'street' => '66 Nguyễn Trãi'
             ],
             [
-                'city' => 'Cần Thơ',
-                'district' => 'Quận Bình Thủy',
-                'ward' => 'Phường Bình Thủy',
-                'street' => '66 Nguyễn Trãi'
-            ],
-            [
-                'city' => 'Hồ Chí Minh',
+                'city' => 'Thành phố Hồ Chí Minh',
                 'district' => 'Quận 1',
                 'ward' => 'Phường Bến Nghé',
                 'street' => '12 Lý Tự Trọng'
             ],
             [
-                'city' => 'Hà Nội',
+                'city' => 'Thành phố Hà Nội',
                 'district' => 'Quận Cầu Giấy',
                 'ward' => 'Phường Dịch Vọng',
                 'street' => '18 Trần Thái Tông'
             ],
             [
-                'city' => 'Đà Nẵng',
+                'city' => 'Thành phố Đà Nẵng',
                 'district' => 'Quận Hải Châu',
-                'ward' => 'Phường Hải Châu 1',
+                'ward' => 'Phường Hải Châu I',
                 'street' => '45 Bạch Đằng'
             ],
             [
-                'city' => 'Huế',
+                'city' => 'Thành phố Huế',
                 'district' => 'Thành phố Huế',
                 'ward' => 'Phường Vĩnh Ninh',
                 'street' => '97 Hùng Vương'
             ],
             [
-                'city' => 'Hải Phòng',
+                'city' => 'Thành phố Hải Phòng',
                 'district' => 'Quận Lê Chân',
                 'ward' => 'Phường An Biên',
                 'street' => '200 Trần Nguyên Hãn'
             ],
             [
-                'city' => 'Cần Thơ',
+                'city' => 'Thành phố Cần Thơ',
                 'district' => 'Quận Ninh Kiều',
                 'ward' => 'Phường An Khánh',
                 'street' => '82 Mậu Thân'
             ],
             [
-                'city' => 'Bình Dương',
+                'city' => 'Tỉnh Bình Dương',
                 'district' => 'Thành phố Thủ Dầu Một',
                 'ward' => 'Phường Phú Hòa',
                 'street' => '35 Lê Hồng Phong'
             ],
             [
-                'city' => 'Biên Hòa',
+                'city' => 'Tỉnh Đồng Nai',
                 'district' => 'Thành phố Biên Hòa',
                 'ward' => 'Phường Tân Hiệp',
                 'street' => '105 Đồng Khởi'
             ],
             [
-                'city' => 'Vũng Tàu',
+                'city' => 'Tỉnh Bà Rịa - Vũng Tàu',
                 'district' => 'Thành phố Vũng Tàu',
                 'ward' => 'Phường Thắng Tam',
                 'street' => '60 Hoàng Hoa Thám'
             ],
             [
-                'city' => 'Nha Trang',
+                'city' => 'Tỉnh Khánh Hòa',
                 'district' => 'Thành phố Nha Trang',
                 'ward' => 'Phường Phước Hòa',
                 'street' => '11 Nguyễn Thị Minh Khai'
             ],
             [
-                'city' => 'Đà Lạt',
+                'city' => 'Tỉnh Lâm Đồng',
                 'district' => 'Thành phố Đà Lạt',
                 'ward' => 'Phường 1',
                 'street' => '29 Trần Phú'
             ],
             [
-                'city' => 'Long Xuyên',
+                'city' => 'Tỉnh An Giang',
                 'district' => 'Thành phố Long Xuyên',
                 'ward' => 'Phường Mỹ Long',
                 'street' => '48 Nguyễn Trường Tộ'
             ],
             [
-                'city' => 'Quảng Ngãi',
+                'city' => 'Tỉnh Quảng Ngãi',
                 'district' => 'Thành phố Quảng Ngãi',
                 'ward' => 'Phường Trần Phú',
                 'street' => '88 Hùng Vương'
-            ], [
-                'city' => 'Bình Dương',
-                'district' => 'Thành phố Thủ Dầu Một',
-                'ward' => 'Phường Phú Hòa',
-                'street' => '35 Lê Hồng Phong'
+            ],
+            // Địa chỉ bổ sung
+            [
+                'city' => 'Tỉnh Quảng Ninh',
+                'district' => 'Thành phố Hạ Long',
+                'ward' => 'Phường Hồng Gai',
+                'street' => '25 Lê Lợi'
             ],
             [
-                'city' => 'Biên Hòa',
-                'district' => 'Thành phố Biên Hòa',
-                'ward' => 'Phường Tân Hiệp',
-                'street' => '105 Đồng Khởi'
+                'city' => 'Tỉnh Nghệ An',
+                'district' => 'Thành phố Vinh',
+                'ward' => 'Phường Lê Lợi',
+                'street' => '72 Nguyễn Thị Minh Khai'
             ],
             [
-                'city' => 'Vũng Tàu',
-                'district' => 'Thành phố Vũng Tàu',
-                'ward' => 'Phường Thắng Tam',
-                'street' => '60 Hoàng Hoa Thám'
+                'city' => 'Tỉnh Thanh Hóa',
+                'district' => 'Thành phố Thanh Hóa',
+                'ward' => 'Phường Đông Hải',
+                'street' => '19 Đại lộ Lê Lợi'
             ],
             [
-                'city' => 'Nha Trang',
-                'district' => 'Thành phố Nha Trang',
-                'ward' => 'Phường Phước Hòa',
-                'street' => '11 Nguyễn Thị Minh Khai'
+                'city' => 'Tỉnh Bình Thuận',
+                'district' => 'Thành phố Phan Thiết',
+                'ward' => 'Phường Đức Nghĩa',
+                'street' => '56 Nguyễn Đình Chiểu'
             ],
             [
-                'city' => 'Đà Lạt',
-                'district' => 'Thành phố Đà Lạt',
-                'ward' => 'Phường 1',
-                'street' => '29 Trần Phú'
+                'city' => 'Tỉnh Đắk Lắk',
+                'district' => 'Thành phố Buôn Ma Thuột',
+                'ward' => 'Phường Tân Lợi',
+                'street' => '123 Lê Hồng Phong'
             ],
-            [
-                'city' => 'Long Xuyên',
-                'district' => 'Thành phố Long Xuyên',
-                'ward' => 'Phường Mỹ Long',
-                'street' => '48 Nguyễn Trường Tộ'
-            ],
-            [
-                'city' => 'Quảng Ngãi',
-                'district' => 'Thành phố Quảng Ngãi',
-                'ward' => 'Phường Trần Phú',
-                'street' => '88 Hùng Vương'
-            ]
         ];
-
+        
         $users = User::orderBy('id')->get();
 
         foreach ($users as $index => $user) {

@@ -74,7 +74,7 @@
                     <h5 class="card-title">Thông tin thanh toán</h5>
                     <p class="card-text">
                         <strong>Phương thức thanh toán:</strong>
-                        @if ($order->payment->payment_method == 'Cash')
+                        @if ($order->payment_method == 'cash')
                             Tiền mặt
                         @elseif ($order->payment->payment_method == 'vnpay')
                             VNPay
@@ -89,9 +89,118 @@
                         </span>
                     </p>
                 </div>
+            </div>
+            @php
+                $status_display = [
+                    'pending' => [
+                        'label' => 'Đang chờ xử lý',
+                        'color' => '#0d6efd',
+                        'icon' => 'bi-cart-plus',
+                        'description' => 'Đơn hàng đã được tạo.',
+                    ],
+                    'confirmed' => [
+                        'label' => 'Đã xác nhận',
+                        'color' => '#0d6efd',
+                        'icon' => 'bi-clipboard-check',
+                        'description' => 'Đơn hàng được xác nhận.',
+                    ],
+                    'processing' => [
+                        'label' => 'Đang xử lý',
+                        'color' => '#ffc107',
+                        'icon' => 'bi-box-seam',
+                        'description' => 'Đơn hàng đang được xử lý.',
+                    ],
+                    'completed' => [
+                        'label' => 'Hoàn tất',
+                        'color' => '#198754',
+                        'icon' => 'bi-check-circle-fill',
+                        'description' => 'Đơn hàng đã hoàn tất.',
+                    ],
+                    'cancelled' => [
+                        'label' => 'Đã hủy',
+                        'color' => '#dc3545',
+                        'icon' => 'bi-x-circle-fill',
+                        'description' => 'Đơn hàng đã bị hủy.',
+                    ],
+                ];
+
+                // Danh sách trạng thái cố định, luôn bắt đầu bằng 'pending'
+                $fixed_statuses = ['pending'];
+
+                // Thêm các trạng thái khác nếu chúng đã hoàn thành
+                $completed_statuses = $order->statusHistories->pluck('new_status')->toArray();
+                $possible_statuses = ['confirmed', 'processing', 'completed', 'cancelled'];
+
+                foreach ($possible_statuses as $status) {
+                    if (in_array($status, $completed_statuses)) {
+                        $fixed_statuses[] = $status;
+                    }
+                }
+
+                // Đảm bảo không có trạng thái trùng lặp
+                $fixed_statuses = array_unique($fixed_statuses);
+            @endphp
+            <div class="card p-3">
+                <h5 class="mb-4">Lịch sử trạng thái đơn hàng</h5>
+                <div class="d-flex flex-wrap justify-content-between align-items-start position-relative"
+                    style="gap: 1.5rem;">
+                    <!-- Connecting line background -->
+                    <div class="position-absolute"
+                        style="top: 24px; left: 90px; right: 90px; height: 4px; background-color: #dee2e6; z-index: 0;">
+                    </div>
+
+                    <?php
+                        $total_statuses = count($fixed_statuses);
+                        $index = 0;
+                        $left_offset = 180;
+                
+                        foreach ($fixed_statuses as $status):
+                            $is_completed = in_array($status, $completed_statuses);
+                            $status_data = $order->statusHistories->firstWhere('new_status', $status);
+                            $color = $is_completed ? $status_display[$status]['color'] : '#6c757d';
+                            $icon = $status_display[$status]['icon'];
+                            $label = $status_display[$status]['label'];
+                            $description = $status_data ? ($status_data['note'] ?: $status_display[$status]['description']) : 'Trạng thái chưa đạt được.';
+                            $changed_at = $status_data ? date('d-m-Y H:i', strtotime($status_data['changed_at'])) : '';
+                        ?>
+                    <!-- Timeline item -->
+                    <div class="text-center position-relative" style="flex: 1; min-width: 180px; z-index: 1;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                            style="width: 48px; height: 48px; background-color: #ffffff; border: 2px solid <?php echo $color; ?>; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="bi <?php echo $icon; ?>" style="font-size: 1.5rem; color: <?php echo $color; ?>;"></i>
+                        </div>
+                        <div class="card border-0 shadow-sm" style="border-radius: 0.5rem; background-color: #ffffff;">
+                            <div class="card-body p-3">
+                                <h6 class="card-title mb-1 fw-semibold"
+                                    style="color: <?php echo $color; ?>; font-size: 1rem;"><?php echo $label; ?></h6>
+                                <small style="color: #6c757d; font-size: 0.85rem;"><?php echo $changed_at; ?></small>
+                                <p class="card-text mb-0 mt-2" style="color: #6c757d; font-size: 0.85rem;">
+                                    <?php echo $description; ?></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php if ($index < $total_statuses - 1): ?>
+                    <!-- Connecting line -->
+                    <?php
+                    $next_status = $fixed_statuses[$index + 1];
+                    $is_next_completed = in_array($next_status, $completed_statuses);
+                    $line_color = $is_completed && $is_next_completed ? $color : '#dee2e6';
+                    ?>
+                    <div class="position-absolute"
+                        style="top: 24px; left: <?php echo $left_offset; ?>px; width: 20%; height: 4px; background-color: <?php echo $line_color; ?>; z-index: 0;">
+                    </div>
+                    <?php $left_offset += 180; ?>
+                    <?php endif; ?>
+
+                    <?php
+                        $index++;
+                    endforeach;
+                    ?>
+                </div>
+
 
             </div>
-
 
             <table class="checkout-cart-items">
                 <thead>
@@ -197,7 +306,6 @@
                     data-allow-cancel="{{ !in_array($order->status, ['cancelled', 'completed']) ? '1' : '0' }}">
                     Hủy đơn hàng
                 </button>
-
                 <a href="{{ $order->status == 'completed' && !$order->refund ? route('refunds.create', $order->id) : 'javascript:void(0)' }}"
                     class="btn btn-sm btn-refund-order" style="background: #d7b20e; color:#fff; border-radius:3px"
                     data-allow-refund="{{ $order->status == 'completed' && !$order->refund ? '1' : '0' }}">
@@ -281,6 +389,7 @@
 
 
 @section('style')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         /* Sidebar */
         .account-sidebar .nav-link {
@@ -421,7 +530,7 @@
                                     showConfirmButton: false
                                 }).then(() => {
                                     location
-                                .reload(); // Hoặc cập nhật lại giao diện nếu muốn
+                                        .reload(); // Hoặc cập nhật lại giao diện nếu muốn
                                 });
                             } else {
                                 Swal.fire({

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('order_code', 50)->unique();
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->foreignId('address_id')->constrained('user_addresses')->onDelete('cascade');
+            $table->enum('payment_method', ['cash','vnpay'])->default('cash');
             $table->foreignId('voucher_id')->nullable()->constrained('vouchers')->nullOnDelete();
             $table->decimal('total_amount', 15, 2)->default(0.00);
             $table->enum('status', ['pending', 'confirmed', 'processing', 'completed', 'cancelled'])->default('pending');

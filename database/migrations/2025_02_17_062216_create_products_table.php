@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price_default', 15, 2);
             $table->decimal('price_sale', 15, 2)->nullable(); // Thêm cột giá khuyến mãi
-            $table->enum('type', ['simple', 'variant'])->default('simple'); // Thêm loại sản phẩm
+            $table->enum('type', ['simple', 'variant'])->default('simple');
+            $table->integer('stock')->nullable();
             $table->text('short_description');
             $table->text('full_description');
             $table->string('avatar');
@@ -30,10 +31,6 @@ return new class extends Migration
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');

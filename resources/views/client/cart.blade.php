@@ -26,7 +26,6 @@
                 </div>
 
             </a>
-
             <div class="shopping-cart">
                 <div class="cart-table__wrapper">
                     <table class="cart-table">
@@ -164,8 +163,8 @@
                                     <button type="button" class="btn btn-primary d-flex align-items-center gap-2"
                                         data-bs-toggle="modal" data-bs-target="#voucherModal"
                                         class="btn btn-sm fw-semibold text-white"
-                                        style="width: 160px;background-color: #c93030; padding: 13px 20px; border-radius: 4px;">
-                                        Xem Voucher
+                                        style="width:200px;background-color: #c93030; padding: 13px 20px; border-radius: 4px;">
+                                        Xem mã giảm giá
                                     </button>
                                 </div>
                             </div>
@@ -175,54 +174,60 @@
                                 <div class="modal-content" style="border: none; box-shadow: 0 0 10px rgba(0,0,0,0.15);">
                                     <div class="modal-header" style="background-color: #f8f9fa;">
                                         <h5 class="modal-title" id="voucherModalLabel"
-                                            style="color: #0d6efd; font-weight: bold; font-size: 1.75rem;">
-                                            Danh sách Voucher
+                                            style="color: #0d6efd; font-weight: bold-semi; font-size: 1.75rem;">
+                                            Danh sách mã giảm giá
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Đóng"></button>
                                     </div>
                                     <div class="modal-body" style="background-color: #fff;">
-                                        <div class="row">
-
-                                            <!-- Voucher 1 -->
+                                        <div class="row g-4">
                                             @foreach ($vouchers as $voucher)
-                                                <div class="col-6">
-                                                    <div class="card h-100"
-                                                        style="border: none; box-shadow: 0 0 6px rgba(0,0,0,0.08);">
-                                                        <div class="card-body">
+                                                <div class="col-12 col-md-6 col-lg-6">
+                                                    <div class="card h-100 rounded-4"
+                                                        style="background-color: #f8f9fa;">
+                                                        <div class="card-body p-4">
                                                             <div
-                                                                class="d-flex justify-content-between align-items-center mb-2">
+                                                                class="d-flex justify-content-between align-items-center mb-3">
                                                                 <span
-                                                                    style="background-color: #ffe0e0; color: #c71c13; font-weight: 600; padding: 4px 8px; border-radius: 4px;">
+                                                                    style="background-color: #ffe1e1; color: #e63946; font-weight: 600; padding: 6px 12px; border-radius: 12px;">
                                                                     GIẢM GIÁ
                                                                 </span>
-                                                                <small style="color: #6c757d;">HSD:
-                                                                    {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}</small>
-
+                                                                <small style="color: #6b7280;">
+                                                                    HSD:
+                                                                    {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}
+                                                                </small>
                                                             </div>
-                                                            <h5 style="font-weight: bold; color: #212529;">
-                                                                {{ $voucher->name }}</h5>
-                                                            <p style="margin-bottom: 4px; color: #6c757d;">Đơn tối thiểu:
+                                                            <h5 class="card-title fw-bold mb-3"
+                                                                style="color: #1e293b; font-size: 1.3rem;">
+                                                                {{ $voucher->name }}
+                                                            </h5>
+                                                            <div class="mb-3">
+                                                                <p style="color: #6b7280; margin-bottom: 4px;">Mã Voucher:
+                                                                </p>
+                                                                <p class="fw-semibold text-center"
+                                                                    style="color: #3b1e1e; font-size: 1.2rem; background-color: #ffe1e1; padding: 8px; border-radius: 8px;">
+                                                                    {{ $voucher->code }}
+                                                                </p>
+                                                            </div>
+                                                            <p style="color: #6b7280; margin-bottom: 8px;">
+                                                                Đơn tối thiểu:
                                                                 {{ number_format($voucher->min_order, 0, ',', '.') }}₫
                                                             </p>
-                                                            <p style="margin-bottom: 4px; color: #6c757d;">Mã: <span
-                                                                    style="font-weight: 600; color: #212529;">{{ $voucher->code }}</span>
+                                                            <p style="color: #6b7280; margin-bottom: 16px;">
+                                                                Đã dùng:
+                                                                {{ $voucher->used_count }}/{{ $voucher->max_uses }}
                                                             </p>
-                                                            <p style="margin-bottom: 8px; color: #6c757d;">Đã
-                                                                dùng:{{ $voucher->used_count }}/{{ $voucher->max_uses }}
-                                                            </p>
-                                                            <button class="btn w-100 btn-copy-code"
-                                                                style="border: 1px solid #c71c13; color: #c71c13;"
+                                                            <button
+                                                                class="btn w-100 btn-copy-code fw-semibold py-2 copy_button"
+                                                                style="border: 2px solid #e63946; color: #e63946; background-color: transparent;"
                                                                 data-code="{{ $voucher->code }}">
                                                                 Sao chép mã
                                                             </button>
-
-
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endforeach
-                                            <!-- Voucher 2 -->
                                         </div>
                                     </div>
                                 </div>
@@ -691,6 +696,17 @@
             opacity: 0;
             transform: translateY(100%);
             pointer-events: none;
+        }
+
+        .btn-copy-code:hover {
+            background-color: #e63946;
+            /* Màu nền khi hover */
+            color: #ffffff;
+            /* Màu chữ khi hover */
+            border: 2px solid #e63946;
+            /* Giữ viền giống ban đầu */
+            transition: all 0.3s ease;
+            /* Hiệu ứng chuyển đổi mượt mà */
         }
     </style>
 @endsection

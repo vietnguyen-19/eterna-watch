@@ -20,6 +20,7 @@ class Order extends Model
         'order_code',
         'user_id',
         'address_id',
+        'payment_method',
         'voucher_id',
         'total_amount',
         'status',
@@ -52,7 +53,7 @@ class Order extends Model
     {
         return $this->belongsTo(UserAddress::class, 'address_id');
     }
-    
+
     public function shipment()
     {
         return $this->hasOne(Shipment::class, 'order_id');
@@ -71,14 +72,14 @@ class Order extends Model
         if (!$this->voucher) {
             return 0; // Không có mã voucher, không có chiết khấu
         }
-    
+
         $orderTotal = $this->orderItems()->sum('total_price');
-        
+
         // Nếu không có sản phẩm nào trong đơn hàng, không có chiết khấu
         if ($orderTotal <= 0) {
             return 0;
         }
-    
+
         // Kiểm tra loại chiết khấu của voucher
         if ($this->voucher->discount_type == 'percent') {
             $discount = $orderTotal * ($this->voucher->discount_value / 100);
@@ -87,7 +88,7 @@ class Order extends Model
         }
         return $discount; // Không vượt quá tổng tiền đơn hàng
     }
-    
+
     public function getShippingFee()
     {
         return $this->shipping_method === 'fixed' ? 100000 : 0;
@@ -99,5 +100,13 @@ class Order extends Model
     public function shippingAddress()
     {
         return $this->hasOne(UserAddress::class, 'user_id', 'user_id')->where('is_default', 1);
+    }
+    // app/Models/Order.php
+
+    public function statusHistories()
+    {
+        return $this->hasMany(StatusHistory::class, 'entity_id')
+            ->where('entity_type', 'order')  // Nếu bạn lưu nhiều loại entity_type, nên filter đúng loại
+            ->orderBy('changed_at', 'asc');  // Sắp xếp theo thời gian thay đổi
     }
 }
