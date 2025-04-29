@@ -5,28 +5,26 @@
         <div class="mb-4 pb-lg-3"></div>
         <div class="mb-4 pb-lg-3"></div>
         <section class="shop-main container d-flex">
-            <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
-                <div class="aside-header d-flex d-lg-none align-items-center">
-                    <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
-                    <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
-                </div><!-- /.aside-header -->
+            <div class="shop-sidebar side-sticky bg-body border-1" id="shopFilter">
                 <div class="pt-4 pt-lg-0"></div>
-                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4" role="search">
+                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4"
+                    role="search">
                     <div class="input-group shadow-sm" style="max-width: 500px;">
-                        <input type="text" name="query" class="form-control form-control-lg" placeholder="Tìm sản phẩm..." aria-label="Search" required>
+                        <input type="text" name="query" class="form-control form-control-lg"
+                            placeholder="Tìm sản phẩm..." aria-label="Search" required>
                         <input type="hidden" name="type" value="product">
                         <button class="btn btn-outline-secondary w-auto px-3" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
-                                    1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 
-                                    5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0
+                                                1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5
+                                                5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                             </svg>
                         </button>
                     </div>
                 </form>
-                
-                
+
+
                 <div class="pt-4 pt-lg-0"></div>
                 <div class="accordion" id="categories-list">
                     <div class="accordion-item mb-4 pb-3">
@@ -51,9 +49,11 @@
                                     @foreach ($categories as $category)
                                         <li class="list-item">
                                             <a href="{{ route('client.shop', ['category_id' => $category->id]) }}"
-                                                class="menu-link py-1">
-                                                {{ $category->name }} <span
-                                                    class="text-muted">({{ $category->products_count }})</span>
+                                                class="menu-link py-1 d-flex justify-content-between align-items-center">
+                                                <span>{{ $category->name }}</span>
+                                                <span style="background: #585858" class="badge text-white">
+                                                    {{ str_pad($category->products_count, 2, '0', STR_PAD_LEFT) }}
+                                                </span>
                                             </a>
                                         </li>
                                     @endforeach
@@ -86,9 +86,11 @@
                                         @if ($brand->parent_id === null)
                                             <li class="list-item">
                                                 <a href="{{ route('client.shop', ['brand' => $brand->name]) }}"
-                                                    class="menu-link py-1">
-                                                    {{ $brand->name }} <span
-                                                        class="text-muted">({{ $brand->products_count }})</span>
+                                                    class="menu-link py-1 d-flex justify-content-between align-items-center">
+                                                    <span>{{ $brand->name }}</span>
+                                                    <span class="badge text-white" style="background: #585858;">
+                                                        {{ str_pad($brand->products_count, 2, '0', STR_PAD_LEFT) }}
+                                                    </span>
                                                 </a>
                                             </li>
                                         @endif
@@ -148,7 +150,7 @@
                     <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
                         <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Trang chủ</a>
                         <span class="breadcrumb-separator menu-link fw-bold ps-1 pe-1">|</span>
-                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Mua hàng</a>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-bold">Cửa hàng</a>
                     </div><!-- /.breadcrumb -->
 
                     <div
@@ -206,10 +208,60 @@
                     </div><!-- /.shop-acs -->
                 </div><!-- /.d-flex justify-content-between -->
                 @if (Route::currentRouteName() == 'client.search')
-                    <p class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
+                    <p
+                        class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
                         Kết quả tìm kiếm cho: "{{ request('query') }}"
                     </p>
                 @endif
+                @if (request('category_id'))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #0d6efd;">
+                        <span style="">Đang lọc theo danh mục:</span>
+                        <span style="font-weight: 600;">
+                            {{ optional(\App\Models\Category::find(request('category_id')))->name ?? 'Không xác định' }}
+                        </span>
+                    </div>
+                @endif
+
+                @if (request('brand'))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #198754;">
+                        <span style="">Đang lọc theo thương hiệu:</span>
+                        <span style="font-weight: 600;">{{ request('brand') }}</span>
+                    </div>
+                @endif
+
+                @php
+                    $filterMessages = [
+                        'best_selling' => 'Sản phẩm bán chạy',
+                        'az' => 'Tên: A → Z',
+                        'za' => 'Tên: Z → A',
+                        'price_asc' => 'Giá: Thấp đến Cao',
+                        'price_desc' => 'Giá: Cao đến Thấp',
+                        'date_old' => 'Ngày đăng: Cũ nhất',
+                        'date_new' => 'Ngày đăng: Mới nhất',
+                    ];
+                @endphp
+
+                @if (request('filter') && isset($filterMessages[request('filter')]))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #ffc107;">
+                        <span style="">Đang sắp xếp theo:</span>
+                        <span style="font-weight: 600;">{{ $filterMessages[request('filter')] }}</span>
+                    </div>
+                @endif
+
+                @if (request('min_price') && request('max_price'))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #0dcaf0;">
+                        <span style="">Đang lọc theo khoảng giá:</span>
+                        <span style="font-weight: 600;">
+                            từ {{ number_format(request('min_price'), 0, ',', '.') }}₫
+                            đến {{ number_format(request('max_price'), 0, ',', '.') }}₫
+                        </span>
+                    </div>
+                @endif
+
 
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
 
@@ -299,7 +351,6 @@
             });
         });
     </script>
-    
 @endsection
 @section('style')
     <!-- CSS noUiSlider -->

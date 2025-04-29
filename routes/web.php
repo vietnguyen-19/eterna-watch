@@ -195,10 +195,10 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
 
       
 
-        Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy'); // Xoá mềm
-        Route::get('/trash', [OrderController::class, 'trash'])->name('trash'); // Danh sách đã xoá
-        Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore'); // Khôi phục
-        Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
+        Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy')->middleware('permission:delete_orders'); // Xoá mềm
+        Route::get('/trash', [OrderController::class, 'trash'])->name('trash')->middleware('permission:delete_orders'); // Danh sách đã xoá
+        Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore')->middleware('permission:delete_orders'); // Khôi phục
+        Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_orders'); // Xoá vĩnh viễn
     });
    
     

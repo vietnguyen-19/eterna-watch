@@ -3,6 +3,7 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
         <div class="mb-4 pb-lg-3"></div>
+        <div class="mb-4 pb-lg-3"></div>
         <section class="shop-main container d-flex">
             <div sty class="shop-sidebar side-sticky bg-body border-1 p-3 shadow-sm" id="shopFilter">
                 <div class="aside-header d-flex d-lg-none align-items-center">
@@ -89,7 +90,7 @@
                         <div class="col-lg-12">
                             <article class="card shadow-sm border-0">
                                 <div class="card-body p-4">
-                                    <h1 class="card-title text-center mb-3">{{ $post->title }}</h1>
+                                    <h2 style="font-size: 3rem" class="card-title text-center mb-3">{{ $post->title }}</h2>
                                     <div
                                         class="d-flex justify-content-center flex-wrap text-muted small mb-4 align-items-center">
                                         <span class="me-3">By <strong>{{ $post->user->name }}</strong></span>
@@ -100,24 +101,34 @@
                                                 class="btn btn-sm bg-primary text-white me-1">{{ $item->name }}</span>
                                         @endforeach
                                     </div>
-                                    <img loading="lazy" class="h-auto"
+                                    <img loading="lazy" class="h-auto py-3 mb-5"
                                         src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}" width="100%"
                                         height="auto" alt="">
                                     <div class="content-editor text-dark">
                                         {!! $post->content !!}
                                     </div>
+                                    <div class="mt-4">
+                                        <strong>Tags:</strong>
+                                        @foreach ($post->tags as $item)
+                                            <span class="btn btn-outline-primary btn-sm me-2" style="border-radius: 0;"><a
+                                                    href="{{ route('client.blog', ['tag' => $item->name]) }}">{{ $item->name }}</a></span>
+                                        @endforeach
+                                    </div>
+
                                 </div>
                             </article>
 
                             <nav class="mt-4 d-flex justify-content-between">
-                                <a href="{{ route('client.blog.detail', $post->id-1) }}" class="btn btn-outline-secondary d-flex align-items-center">
+                                <a href="{{ route('client.blog.detail', $post->id - 1) }}"
+                                    class="btn btn-outline-secondary d-flex align-items-center">
                                     <svg class="me-2" width="7" height="11" viewBox="0 0 7 11"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <use href="#icon_prev_sm" />
                                     </svg>
                                     <span>Bài viết trước</span>
                                 </a>
-                                <a href="{{ route('client.blog.detail', $post->id+1) }}" class="btn btn-outline-secondary d-flex align-items-center">
+                                <a href="{{ route('client.blog.detail', $post->id + 1) }}"
+                                    class="btn btn-outline-secondary d-flex align-items-center">
                                     <span class="me-2">Bài viết tiếp theo</span>
                                     <svg width="7" height="11" viewBox="0 0 7 11"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -248,7 +259,7 @@
                                                             <div class="reply-form" id="reply-form-{{ $comment->id }}"
                                                                 style="display: none; margin-top: 15px; width:100%">
                                                                 <form
-                                                                    action="{{ route('comments.reply', ['comment' => $comment->id, 'entity_id' => $comment->entity_id,'entity_type' => $comment->entity_type, ]) }}"
+                                                                    action="{{ route('comments.reply', ['comment' => $comment->id, 'entity_id' => $comment->entity_id, 'entity_type' => $comment->entity_type]) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     <textarea name="content" rows="2" placeholder="Viết câu trả lời..."
@@ -339,8 +350,8 @@
                     <div class="blog-single__review-form mt-4 p-4 border rounded shadow-sm">
                         <form class=""method="POST" action="{{ route('comments.store', $post->id) }}">
                             @csrf
-                            <h5 class="fw-bold mb-3">Hãy là người đầu tiên nhận xét về “Áo thun Cotton có thông điệp”</h5>
-                            <p class="text-muted small">Địa chỉ email của bạn sẽ không được công khai. Các trường bắt buộc
+                            <p class="text-dark small"><b>Địa chỉ email của bạn sẽ không được công khai. Các trường bắt
+                                    buộc</b>
                                 được đánh dấu *</p>
                             <input type="hidden" value="post" name="entity_type">
                             <div class="mb-3">

@@ -47,82 +47,50 @@ class ProductSeeder extends Seeder
         ';
 
         $products = [
-            // Rolex - Submariner
-            ['name' => 'Rolex Submariner Black Dial', 'avatar' => 'products/product1.jpeg', 'brand' => 'Submariner', 'category' => 'Đồng hồ lặn', 'price' => 250000000],
-            ['name' => 'Rolex Submariner Green Bezel', 'avatar' => 'products/product2.jpeg', 'brand' => 'Submariner', 'category' => 'Đồng hồ cao cấp', 'price' => 265000000],
+            ['name' => 'Rolex Submariner', 'avatar' => 'products/product1.jpeg', 'brand' => 'Rolex', 'category' => 'Đồng hồ lặn', 'price' => 200000000],
+            ['name' => 'Rolex Daytona', 'avatar' => 'products/product2.jpeg', 'brand' => 'Rolex', 'category' => 'Đồng hồ thể thao', 'price' => 350000000],
+            ['name' => 'Omega Seamaster', 'avatar' => 'products/product3.jpeg', 'brand' => 'Omega', 'category' => 'Đồng hồ lặn', 'price' => 120000000],
+            ['name' => 'Omega Speedmaster', 'avatar' => 'products/product4.jpeg', 'brand' => 'Omega', 'category' => 'Đồng hồ thể thao', 'price' => 150000000],
+            ['name' => 'TAG Heuer Carrera', 'avatar' => 'products/product5.jpeg', 'brand' => 'TAG Heuer', 'category' => 'Đồng hồ thể thao', 'price' => 80000000],
+            ['name' => 'TAG Heuer Monaco', 'avatar' => 'products/product6.jpeg', 'brand' => 'TAG Heuer', 'category' => 'Đồng hồ cao cấp', 'price' => 100000000],
+            ['name' => 'Seiko Prospex', 'avatar' => 'products/product7.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ lặn', 'price' => 15000000],
+            ['name' => 'Seiko Automatic', 'avatar' => 'products/product8.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ cơ', 'price' => 10000000],
+            ['name' => 'Casio G-Shock', 'avatar' => 'products/product9.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ thể thao', 'price' => 3000000],
+            ['name' => 'Casio Edifice', 'avatar' => 'products/product10.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ quartz', 'price' => 2500000],
+            ['name' => 'Tissot Le Locle', 'avatar' => 'products/product11.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ cao cấp', 'price' => 15000000],
+            ['name' => 'Tissot PRX', 'avatar' => 'products/product12.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ thời trang', 'price' => 12000000],
+            ['name' => 'Citizen Eco-Drive', 'avatar' => 'products/product13.jpeg', 'brand' => 'Citizen', 'category' => 'Đồng hồ quartz', 'price' => 8000000],
+            ['name' => 'Citizen Promaster', 'avatar' => 'products/product14.jpeg', 'brand' => 'Citizen', 'category' => 'Đồng hồ lặn', 'price' => 10000000],
+            ['name' => 'Fossil Townsman', 'avatar' => 'products/product15.jpeg', 'brand' => 'Fossil', 'category' => 'Đồng hồ thời trang', 'price' => 5000000],
+            ['name' => 'Fossil Neutra', 'avatar' => 'products/product16.jpeg', 'brand' => 'Fossil', 'category' => 'Đồng hồ dây da', 'price' => 4500000],
+            ['name' => 'Garmin Instinct', 'avatar' => 'products/product17.jpeg', 'brand' => 'Garmin', 'category' => 'Đồng hồ thông minh', 'price' => 7000000],
+            ['name' => 'Garmin Venu', 'avatar' => 'products/product18.jpeg', 'brand' => 'Garmin', 'category' => 'Đồng hồ thông minh', 'price' => 9000000],
+            ['name' => 'Apple Watch Series 9', 'avatar' => 'products/product19.jpeg', 'brand' => 'Apple', 'category' => 'Apple Watch', 'price' => 12000000],
+            ['name' => 'Apple Watch Ultra', 'avatar' => 'products/product20.jpeg', 'brand' => 'Apple', 'category' => 'Apple Watch', 'price' => 20000000],
+            ['name' => 'Rolex Datejust Pair', 'avatar' => 'products/product21.jpeg', 'brand' => 'Rolex', 'category' => 'Đồng hồ cặp tình nhân', 'price' => 400000000],
+            ['name' => 'Tissot Couple', 'avatar' => 'products/product22.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ cặp tình nhân', 'price' => 25000000],
+            ['name' => 'Fossil Anniversary Set', 'avatar' => 'products/product23.jpeg', 'brand' => 'Fossil', 'category' => 'Đồng hồ anniversary', 'price' => 8000000],
+            ['name' => 'Omega Constellation', 'avatar' => 'products/product24.jpeg', 'brand' => 'Omega', 'category' => 'Đồng hồ đính đá', 'price' => 180000000],
+            ['name' => 'Seiko Presage', 'avatar' => 'products/product25.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ dây da', 'price' => 12000000],
+            ['name' => 'Casio Sheen', 'avatar' => 'products/product26.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ dây kim loại', 'price' => 3500000],
+            ['name' => 'Citizen Diamond', 'avatar' => 'products/product27.jpeg', 'brand' => 'Citizen', 'category' => 'Đồng hồ đính đá', 'price' => 9000000],
+            ['name' => 'Fossil Carlie', 'avatar' => 'products/product28.jpeg', 'brand' => 'Fossil', 'category' => 'Đồng hồ thời trang', 'price' => 4000000],
+            ['name' => 'Leather Strap', 'avatar' => 'products/product29.jpeg', 'brand' => 'Tissot', 'category' => 'Dây đồng hồ', 'price' => 1000000],
+            ['name' => 'Watch Box', 'avatar' => 'products/product30.jpeg', 'brand' => 'Fossil', 'category' => 'Hộp đựng đồng hồ', 'price' => 1500000],
+            ['name' => 'Watch Battery', 'avatar' => 'products/product31.jpeg', 'brand' => 'Casio', 'category' => 'Pin đồng hồ', 'price' => 200000],
+            ['name' => 'Sapphire Glass', 'avatar' => 'products/product32.jpeg', 'brand' => 'Seiko', 'category' => 'Kính đồng hồ', 'price' => 500000],
+            ['name' => 'Maintenance Service', 'avatar' => 'products/product33.jpeg', 'brand' => 'Omega', 'category' => 'Hộp đựng đồng hồ', 'price' => 2000000],
+            ['name' => 'Rolex Oyster Perpetual', 'avatar' => 'products/product34.jpeg', 'brand' => 'Rolex', 'category' => 'Đồng hồ cao cấp', 'price' => 150000000],
+            ['name' => 'Apple Watch SE', 'avatar' => 'products/product35.jpeg', 'brand' => 'Apple', 'category' => 'Apple Watch', 'price' => 8000000],
+            ['name' => 'Tissot Wedding Set', 'avatar' => 'products/product36.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ cưới', 'price' => 30000000],
 
-            // Omega - Speedmaster
-            ['name' => 'Omega Speedmaster Moonwatch', 'avatar' => 'products/product3.jpeg', 'brand' => 'Speedmaster', 'category' => 'Đồng hồ thể thao', 'price' => 200000000],
-            ['name' => 'Omega Speedmaster Racing', 'avatar' => 'products/product4.jpeg', 'brand' => 'Speedmaster', 'category' => 'Đồng hồ cơ', 'price' => 180000000],
-
-            // TAG Heuer - Monaco
-            ['name' => 'TAG Heuer Monaco Calibre 11', 'avatar' => 'products/product5.jpeg', 'brand' => 'Monaco', 'category' => 'Đồng hồ thể thao', 'price' => 120000000],
-            ['name' => 'TAG Heuer Monaco Gulf Edition', 'avatar' => 'products/product6.jpeg', 'brand' => 'Monaco', 'category' => 'Đồng hồ cao cấp', 'price' => 125000000],
-
-            // Seiko - Presage
-            ['name' => 'Seiko Presage Cocktail Time', 'avatar' => 'products/product7.jpeg', 'brand' => 'Presage', 'category' => 'Đồng hồ cơ', 'price' => 15000000],
-            ['name' => 'Seiko Presage Sharp Edged', 'avatar' => 'products/product8.jpeg', 'brand' => 'Presage', 'category' => 'Đồng hồ nam', 'price' => 17500000],
-
-            // Casio - G-Shock
-            ['name' => 'Casio G-Shock GA-2100', 'avatar' => 'products/product9.jpeg', 'brand' => 'G-Shock', 'category' => 'Đồng hồ thể thao', 'price' => 3500000],
-            ['name' => 'Casio G-Shock Mudmaster', 'avatar' => 'products/product10.jpeg', 'brand' => 'G-Shock', 'category' => 'Đồng hồ nam', 'price' => 9000000],
-
-            // Citizen - Eco-Drive
-            ['name' => 'Citizen Eco-Drive BM8475', 'avatar' => 'products/product11.jpeg', 'brand' => 'Eco-Drive', 'category' => 'Đồng hồ quartz', 'price' => 4200000],
-            ['name' => 'Citizen Eco-Drive Titanium', 'avatar' => 'products/product12.jpeg', 'brand' => 'Eco-Drive', 'category' => 'Đồng hồ nam', 'price' => 6200000],
-
-            // Fossil - Chronograph
-            ['name' => 'Fossil Townsman Chronograph', 'avatar' => 'products/product13.jpeg', 'brand' => 'Chronograph', 'category' => 'Đồng hồ dây da', 'price' => 4200000],
-            ['name' => 'Fossil Machine Chronograph', 'avatar' => 'products/product14.jpeg', 'brand' => 'Chronograph', 'category' => 'Đồng hồ dây kim loại', 'price' => 4600000],
-
-            // Garmin - Forerunner
-            ['name' => 'Garmin Forerunner 245', 'avatar' => 'products/product15.jpeg', 'brand' => 'Forerunner', 'category' => 'Đồng hồ thông minh', 'price' => 7200000],
-            ['name' => 'Garmin Forerunner 965', 'avatar' => 'products/product16.jpeg', 'brand' => 'Forerunner', 'category' => 'Đồng hồ thể thao', 'price' => 12000000],
-
-            // Apple - Series 9
-            ['name' => 'Apple Watch Series 9 GPS', 'avatar' => 'products/product17.jpeg', 'brand' => 'Apple Watch Series 9', 'category' => 'Apple Watch', 'price' => 11500000],
-            ['name' => 'Apple Watch Series 9 Cellular', 'avatar' => 'products/product18.jpeg', 'brand' => 'Apple Watch Series 9', 'category' => 'Apple Watch', 'price' => 13500000],
-
-            // Tissot - PRX
-            ['name' => 'Tissot PRX Powermatic 80', 'avatar' => 'products/product19.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ cơ', 'price' => 16500000],
-            ['name' => 'Tissot PRX Quartz', 'avatar' => 'products/product20.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ quartz', 'price' => 9500000],
-            // Đồng hồ nữ - thời trang
-            ['name' => 'Michael Kors Runway Rose Gold', 'avatar' => 'products/product21.jpeg', 'brand' => 'Hybrid', 'category' => 'Đồng hồ thời trang', 'price' => 5500000],
-            ['name' => 'Fossil Jacqueline Leather', 'avatar' => 'products/product22.jpeg', 'brand' => 'Hybrid', 'category' => 'Đồng hồ dây da', 'price' => 4500000],
-
-            // Đồng hồ đôi
-            ['name' => 'Citizen Cặp Tình Nhân', 'avatar' => 'products/product23.jpeg', 'brand' => 'Quartz', 'category' => 'Đồng hồ cặp tình nhân', 'price' => 7200000],
-            ['name' => 'Tissot Cặp Đôi Le Locle', 'avatar' => 'products/product24.jpeg', 'brand' => 'Le Locle', 'category' => 'Đồng hồ cưới', 'price' => 22000000],
-
-            // Apple Watch SE
-            ['name' => 'Apple Watch SE 2023', 'avatar' => 'products/product25.jpeg', 'brand' => 'Apple Watch SE', 'category' => 'Apple Watch', 'price' => 8500000],
-            ['name' => 'Apple Watch SE GPS', 'avatar' => 'products/product26.jpeg', 'brand' => 'Apple Watch SE', 'category' => 'Apple Watch', 'price' => 8900000],
-
-            // Phụ kiện đồng hồ
-            ['name' => 'Dây đồng hồ da thật nâu', 'avatar' => 'products/product27.jpeg', 'brand' => 'Sheen', 'category' => 'Dây đồng hồ', 'price' => 550000],
-            ['name' => 'Hộp đựng đồng hồ gỗ 6 ngăn', 'avatar' => 'products/product28.jpeg', 'brand' => 'Edifice', 'category' => 'Hộp đựng đồng hồ', 'price' => 750000],
-
-            // Đồng hồ nữ đính đá
-            ['name' => 'Seiko nữ đính đá vàng hồng', 'avatar' => 'products/product29.jpeg', 'brand' => 'Seiko 5', 'category' => 'Đồng hồ đính đá', 'price' => 4600000],
-            ['name' => 'Citizen nữ đính đá mạ vàng', 'avatar' => 'products/product30.jpeg', 'brand' => 'Quartz', 'category' => 'Đồng hồ đính đá', 'price' => 5200000],
-
-            // Garmin
-            ['name' => 'Garmin Venu 2 Plus', 'avatar' => 'products/product31.jpeg', 'brand' => 'Venu', 'category' => 'Garmin', 'price' => 10500000],
-            ['name' => 'Garmin Fenix 7', 'avatar' => 'products/product32.jpeg', 'brand' => 'Fenix', 'category' => 'Garmin', 'price' => 17000000],
-
-            // Samsung Watch
-            ['name' => 'Samsung Galaxy Watch 5', 'avatar' => 'products/product33.jpeg', 'brand' => 'Smartwatch', 'category' => 'Samsung Galaxy Watch', 'price' => 7500000],
-            ['name' => 'Samsung Galaxy Watch 6 Classic', 'avatar' => 'products/product34.jpeg', 'brand' => 'Smartwatch', 'category' => 'Samsung Galaxy Watch', 'price' => 9500000],
-
-            // Đồng hồ vintage
-            ['name' => 'Seiko Automatic Vintage 1960',  'avatar' => 'products/product35.jpeg', 'brand' => 'Seiko 5', 'category' => 'Đồng hồ vintage', 'price' => 8800000],
-            ['name' => 'Citizen Vintage Japan', 'avatar' => 'products/product36.jpeg', 'brand' => 'Quartz', 'category' => 'Đồng hồ vintage', 'price' => 7900000],
-            ['name' => 'Seiko Presage Cocktail Time','stock'=>100, 'avatar' => 'products/product37.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ cơ', 'price' => 13800000],
-            ['name' => 'Casio G-Shock GA-2100','stock'=>100, 'avatar' => 'products/product38.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ thể thao', 'price' => 3600000],
-            ['name' => 'Citizen Eco-Drive Chandler', 'stock'=>100,'avatar' => 'products/product39.jpeg', 'brand' => 'Citizen', 'category' => 'Đồng hồ năng lượng ánh sáng', 'price' => 4900000],
-            ['name' => 'Orient Bambino Version IV','stock'=>100, 'avatar' => 'products/product40.jpeg', 'brand' => 'Orient', 'category' => 'Đồng hồ cơ', 'price' => 5300000],
-
+            ['name' => 'Seiko Presage Cocktail Time', 'stock' => 100, 'avatar' => 'products/product37.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ cơ', 'price' => 12500000],
+            ['name' => 'Casio G-Shock GA-2100', 'stock' => 100, 'avatar' => 'products/product38.jpeg', 'brand' => 'Casio', 'category' => 'Đồng hồ thể thao', 'price' => 3600000],
+            ['name' => 'Tissot Eco-Drive Chandler', 'stock' => 100, 'avatar' => 'products/product39.jpeg', 'brand' => 'Tissot', 'category' => 'Đồng hồ quartz', 'price' => 6200000],
+            ['name' => 'Seiko Bambino Open Heart', 'stock' => 100, 'avatar' => 'products/product40.jpeg', 'brand' => 'Seiko', 'category' => 'Đồng hồ cơ', 'price' => 7800000],
         ];
+
+
         foreach ($products as $index => $p) {
             $brandId = Brand::where('name', $p['brand'])->first()?->id;
             $categoryId = Category::where('name', $p['category'])->first()?->id;
@@ -134,7 +102,7 @@ class ProductSeeder extends Seeder
                     'short_description' => 'Đồng hồ này là minh chứng cho sự giao thoa hoàn hảo giữa kỹ thuật chế tác thủ công tinh xảo và nghệ thuật thiết kế đỉnh cao, thể hiện đẳng cấp vượt thời gian dành cho những ai trân trọng giá trị thật sự của sự hoàn mỹ. Với phần vỏ được làm từ thép không gỉ 316L cao cấp hoặc vàng 18K nguyên khối, kết hợp cùng mặt kính sapphire chống trầy xước tuyệt đối, sản phẩm mang đến sự bền bỉ và vẻ đẹp trường tồn với thời gian. Bộ máy Automatic Thụy Sĩ được tích hợp bên trong hoạt động bền bỉ, có khả năng trữ cót lên tới 40 giờ, đảm bảo độ chính xác cao và chuyển động êm ái theo từng nhịp đập.',
                     'full_description' => $fullDesc,
                     'price_default' => $p['price'],
-                    'stock'=>$p['stock'] ?? null,
+                    'stock' => $p['stock'] ?? null,
                     'type' => $index < 36 ? 'variant' : 'simple', // <--- Phân loại ở đây
                     'brand_id' => $brandId,
                     'category_id' => $categoryId,

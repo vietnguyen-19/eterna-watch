@@ -34,7 +34,30 @@ class RefundController extends Controller
             'refund_quantity' => 'required|array',
             'refund_quantity.*' => 'nullable|integer|min:0',
             'total_refund_amount' => 'required|numeric',
+
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+        ], [
+            // Custom message tiếng Việt
+            'refund_reason.required' => 'Vui lòng nhập lý do hoàn hàng.',
+            'refund_reason.string' => 'Lý do hoàn hàng phải là dạng văn bản.',
+
+            'refund_quantity.required' => 'Vui lòng nhập số lượng hoàn trả.',
+            'refund_quantity.array' => 'Số lượng hoàn trả phải là một danh sách.',
+            'refund_quantity.*.integer' => 'Số lượng hoàn phải là số nguyên.',
+            'refund_quantity.*.min' => 'Số lượng hoàn trả tối thiểu là 0.',
+
+            'total_refund_amount.required' => 'Vui lòng nhập tổng số tiền hoàn.',
+            'total_refund_amount.numeric' => 'Tổng số tiền hoàn phải là số.',
+
+            'images.required' => 'Vui lòng chọn ít nhất một hình ảnh minh chứng.',
+            'images.array' => 'Hình ảnh phải được chọn dưới dạng danh sách.',
+
+            'images.*.image' => 'Tệp tải lên phải là hình ảnh.',
+            'images.*.mimes' => 'Ảnh minh chứng phải có định dạng: jpeg, png, jpg, gif, svg, webp.',
+            'images.*.max' => 'Mỗi ảnh minh chứng không được vượt quá 2MB.',
         ]);
+
 
         // Kiểm tra total_refund_amount > 0
         if ($validated['total_refund_amount'] <= 0) {
@@ -70,7 +93,7 @@ class RefundController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
                 $path = ImageHandler::saveImage($file, 'image_refunds');
-              
+
 
                 ImageRefund::create([
                     'refund_id' => $refund->id,

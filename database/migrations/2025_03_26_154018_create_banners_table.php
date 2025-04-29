@@ -20,7 +20,7 @@ return new class extends Migration
                 'register',
                 'shop',
                 'blog',
-                'forward_password'
+                'forgot_password'
             ]);
             $table->string('title')->nullable();
             $table->string('image');
