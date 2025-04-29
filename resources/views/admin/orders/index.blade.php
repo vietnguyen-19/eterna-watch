@@ -238,14 +238,14 @@
                                                                 <td class="align-middle">
                                                                     {{ number_format($order->total_amount, 0, ',', '.') }}
                                                                     đ</td>
-                                                                    <td class="align-middle">
-                                                                        @if ($order->payment_method === 'cash')
-                                                                            Tiền mặt
-                                                                        @elseif ($order->payment_method === 'vnpay')
-                                                                            VNPay
-                                                                        @endif
-                                                                    </td>
-                                                                    
+                                                                <td class="align-middle">
+                                                                    @if ($order->payment_method === 'cash')
+                                                                        Tiền mặt
+                                                                    @elseif ($order->payment_method === 'vnpay')
+                                                                        VNPay
+                                                                    @endif
+                                                                </td>
+
                                                                 <td class="align-middle">
                                                                     @switch($order->status)
                                                                         @case('pending')
@@ -280,6 +280,7 @@
                                                                     @endswitch
                                                                 </td>
                                                                 <td class="align-middle">
+                                                                    {{$order->payment->id}}
                                                                     @switch($order->payment->payment_status)
                                                                         @case('pending')
                                                                             <span class="badge bg-warning-subtle text-warning">Chờ

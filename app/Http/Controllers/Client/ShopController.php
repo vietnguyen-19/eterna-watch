@@ -123,7 +123,7 @@ class ShopController extends Controller
             'variants.attributeValues.nameValue',
             'attributes.attributeValues'
         ])->findOrFail($id);
-        $product->increment('view_count'); 
+        $product->increment('view_count');
         $attributes = Attribute::select('id', 'attribute_name')->get();
 
         $parentCategoryId = $product->category->parent_id ?? $product->category_id;
@@ -157,6 +157,7 @@ class ShopController extends Controller
     {
         $comments = Comment::where('entity_id', $productId)
             ->where('entity_type', 'product')
+            ->where('status', 'active') // Thêm điều kiện status
             ->where('parent_id', $parentId)
             ->with('replies') // Để lấy các bình luận con
             ->get();
@@ -188,7 +189,6 @@ class ShopController extends Controller
             }, '=', count($attributeValues))
             ->first();
 
-        dd($productVariant);
         // Kiểm tra nếu không tìm thấy
         if (!$productVariant) {
             return response()->json(['error' => 'Không tìm thấy biến thể sản phẩm'], 404);

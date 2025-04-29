@@ -94,8 +94,12 @@
                                                             @if ($voucher->status == 'active') bg-success
                                                             @elseif($voucher->status == 'inactive') bg-warning
                                                             @else bg-danger @endif">
-                                                                @if ($voucher->status == 'active') Hoạt động
-                                                                @elseif($voucher->status == 'inactive') Vô hiệu hóa
+                                                                @if ($voucher->status == 'active')
+                                                                    Hoạt động
+                                                                @elseif($voucher->status == 'inactive')
+                                                                    Vô hiệu hóa
+                                                                @elseif($voucher->status == 'expired')
+                                                                    Hết hạn
                                                                 @endif
                                                             </span>
                                                         </td>
@@ -110,12 +114,14 @@
                                                                 </li>
                                                                 <!-- Remove Button -->
                                                                 <li class="list-inline-item" title="Xóa">
-                                                                    <form action="{{ route('admin.vouchers.destroy', $voucher->id) }}"
+                                                                    <form
+                                                                        action="{{ route('admin.vouchers.destroy', $voucher->id) }}"
                                                                         method="POST"
                                                                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa voucher này?');">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <button type="submit" class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger btn-icon waves-effect waves-light btn-sm">
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
                                                                     </form>
