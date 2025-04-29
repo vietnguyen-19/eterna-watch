@@ -20,20 +20,12 @@
             position: relative;
         }
 
-<<<<<<< HEAD
-        /* Ảnh nền */
-        .login-bg {
-            background: url('{{ Storage::url($banners['login']->image ?? 'banners/login.jpg') }}') no-repeat center center;
-            background-size: cover;
-            height: 100vh;
-=======
         body::before {
             content: '';
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
             z-index: 1;
->>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
         }
 
         .login-form {

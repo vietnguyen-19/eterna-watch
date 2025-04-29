@@ -26,7 +26,6 @@
                             @enderror
                         </div>
                         <div class="mb-3 col-12">
-<<<<<<< HEAD
                             <select name="parent_id" class="form-control">
                                 <option value="">Chọn danh mục cha</option>
                                 @foreach ($settings as $setting)
@@ -45,12 +44,6 @@
                                 <option value="inactive">Inactive</option>
                             </select>
                             @error('status')
-=======
-                            <label for="value" class="form-label">Tên cài đặt</label>
-                            <input name="value" value="{{ old('value') }}" value="value" type="text" id="value"
-                                class="form-control" placeholder="Nhập nội dung">
-                            @error('value')
->>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -58,11 +51,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-<<<<<<< HEAD
                         <a href="{{ route('admin.settings.create') }}" class="btn btn-success" id="add-btn">Thêm cài đặt</a>
-=======
-                        <button type="submit" class="btn btn-success" id="add-btn">Thêm cài đặt</button>
->>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                         <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                     </div>

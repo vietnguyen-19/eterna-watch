@@ -10,39 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-<<<<<<< HEAD
-        /* Container chính */
-        .login-container {
-            height: 100vh;
-        }
-
-        /* Ảnh nền */
-        .login-bg {
-            background: url('{{ Storage::url($banners['register']->image ?? 'banners/register.jpg') }}') no-repeat center center;
-            background-size: cover;
-            height: 100vh;
-        }
-
-        /* Form đăng nhập */
-        .login-form {
-            max-width: 400px;
-            width: 100%;
-            padding: 30px;
-            background: white;
-        }
-    </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-=======
->>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ Storage::url($banners["login"]->image ?? "avatar/default.jpeg") }}') no-repeat center/cover fixed;
