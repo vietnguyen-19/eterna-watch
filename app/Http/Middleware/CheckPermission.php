@@ -27,8 +27,8 @@ class CheckPermission
         $user->loadMissing('role.permissions');
 
         if (!$user->hasPermission($permission)) {
-            abort(403, 'Bạn không có quyền truy cập!');
-        }
+            return redirect()->back()->with('error', 'Bạn không có quyền hạn để truy cập!');
+        }        
 
         return $next($request);
     }

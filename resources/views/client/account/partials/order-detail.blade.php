@@ -74,12 +74,10 @@
                     <h5 class="card-title">Thông tin thanh toán</h5>
                     <p class="card-text">
                         <strong>Phương thức thanh toán:</strong>
-                        @if ($order->payment_method == 'cash')
+                        @if ($order->payment_method === 'cash')
                             Tiền mặt
-                        @elseif ($order->payment->payment_method == 'vnpay')
-                            VNPay
                         @else
-                            {{ $order->payment->payment_method }}
+                           Thanh toán online VNPay
                         @endif
                         <br>
                         <strong>Trạng thái thanh toán:</strong>
@@ -173,8 +171,8 @@
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1 fw-semibold"
                                     style="color: <?php echo $color; ?>; font-size: 1rem;"><?php echo $label; ?></h6>
-                                <small style="color: #6c757d; font-size: 0.85rem;"><?php echo $changed_at; ?></small>
-                                <p class="card-text mb-0 mt-2" style="color: #6c757d; font-size: 0.85rem;">
+                                <smal font-size: 0.85rem;"><?php echo $changed_at; ?></small>
+                                <p class="card-text mb-0 mt-2 font-size: 0.85rem;">
                                     <?php echo $description; ?></p>
                             </div>
                         </div>
@@ -338,51 +336,83 @@
             @endphp
 
 
-            <div class="card mb-3">
-                <div class="card-header border-radius-0 align-middle bg-white"
-                    style="border-top: 2px solid {{ $borderColor }}">
-                    <h5 class="card-title mb-0 fw-bold">
-                        Thông tin hoàn trả đơn hàng
-                    </h5>
+<div class="card mb-4 border-0 rounded-3" style="box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <!-- Card Header -->
+    <div class="card-header border-0 bg-white py-3" style="border-top: 2px solid {{ $borderColor }};">
+        <h5 class="card-title mb-0 fw-bold" style="color: #212529;">Thông tin hoàn trả đơn hàng</h5>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body p-4">
+        <!-- Refund Information -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <p class="fw-bold mb-1">Ngày yêu cầu</p>
+                <p style="color: #212529;">{{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="fw-bold mb-1">Trạng thái</p>
+                @if ($status == 'pending')
+                    <span class="badge" style="background-color: #fff3cd; color: #664d03; padding: 0.5em 1em; font-size: 0.875rem;">
+                        <i class="bi bi-hourglass-split me-1"></i> Đang chờ duyệt
+                    </span>
+                @elseif ($status == 'approved')
+                    <span class="badge" style="background-color: #d1e7dd; color: #0f5132; padding: 0.5em 1em; font-size: 0.875rem;">
+                        <i class="bi bi-check-circle-fill me-1"></i> Đã duyệt
+                    </span>
+                @else
+                    <span class="badge" style="background-color: #f8d7da; color: #842029; padding: 0.5em 1em; font-size: 0.875rem;">
+                        <i class="bi bi-x-circle-fill me-1"></i> Bị từ chối
+                    </span>
+                @endif
+            </div>
+           
+            <div class="col-md-12">
+                <p class="fw-bold mb-1">Lý do hoàn</p>
+                <p style="color: #212529;">{{ $order->refund->refund_reason }}</p>
+            </div>
+           
+            @if ($status == 'rejected' && $order->refund->rejected_reason)
+                <div class="col-md-12">
+                    <p class="fw-bold mb-1">Lý do từ chối</p>
+                    <p style="color: #212529;">{{ $order->refund->rejected_reason }}</p>
                 </div>
-                <div class="card-body">
-
-                    <p><strong>Lý do hoàn:</strong> {{ $order->refund->refund_reason }}</p>
-                    <p><strong>Ngày yêu cầu:</strong>
-                        {{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
-                    <p><strong>Trạng thái:</strong>
-                        @if ($status == 'pending')
-                            <span style="background-color: #ffc107; color: #000; padding: 2px 6px; border-radius: 4px;">Đang
-                                chờ duyệt</span>
-                        @elseif ($status == 'approved')
-                            <span style="background-color: #28a745; color: #fff; padding: 2px 6px; border-radius: 4px;">Đã
-                                duyệt</span>
-                        @else
-                            <span style="background-color: #dc3545; color: #fff; padding: 2px 6px; border-radius: 4px;">Bị
-                                từ chối</span>
-                        @endif
-                    </p>
-
-                    @if ($status == 'rejected' && $order->refund->rejected_reason)
-                        <p><strong>Lý do từ chối:</strong> {{ $order->refund->rejected_reason }}</p>
-                    @endif
-
-                    <hr>
-                    <p><strong>Sản phẩm hoàn:</strong>
-                    <ul>
-                        @foreach ($order->refund->refundItems as $item)
-                            <li>
-                                {{ $item->orderItem->productVariant->product->name }} -
-                                SL: {{ $item->quantity }} -
-                                Giá: {{ number_format($item->unit_price) }}đ
-                            </li>
-                        @endforeach
-                    </ul>
-
-                    <p><strong>Tổng tiền hoàn:</strong>
-                        {{ number_format($order->refund->total_refund_amount) }}đ</p>
+            @endif
+            <div class="mb-4">
+                <p class="fw-bold mb-3">Sản phẩm hoàn</p>
+                <div class="list-group">
+                    @foreach ($order->refund->refundItems as $item)
+                        <div class="list-group-item border-0 rounded-3 mb-2" style="background-color: #e7e7e7;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1 fw-bold" style="color: #212529;">{{ $item->orderItem->productVariant->product->name }}</p>
+                                    <p class="mb-0 small">Số lượng: {{ $item->quantity }}</p>
+                                </div>
+                                <p class="mb-0 fw-semibold" style="color: #212529;">{{ number_format($item->unit_price) }}đ</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top" style="border-color: #dee2e6;">
+                <p class="fw-bold">Tổng tiền hoàn</p>
+                <p class="fw-bold fs-5" style="color: #212529;">{{ number_format($order->refund->total_refund_amount) }}đ</p>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="my-4" style="border-color: #dee2e6;">
+
+        <!-- Refund Items -->
+        
+
+        <!-- Total Refund Amount -->
+        
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         @endif
     </div>
 @endsection

@@ -89,7 +89,7 @@ class RefundController extends Controller
             'changed_at'  => Carbon::now(),
         ]);
 
-        return redirect()->route('admin.refunds.index')
+        return redirect()->route('admin.refunds.show',$refund->id )
             ->with('success', 'Yêu cầu đã được chấp nhận và cập nhật kho.');
     }
     public function reject(Request $request, Refund $refund)
@@ -116,7 +116,7 @@ class RefundController extends Controller
             'changed_at'  => Carbon::now(),
         ]);
 
-        return redirect()->route('admin.refunds.index')
+        return redirect()->route('admin.refunds.show',$refund->id )
             ->with('warning', 'Yêu cầu đã bị từ chối.');
     }
 }

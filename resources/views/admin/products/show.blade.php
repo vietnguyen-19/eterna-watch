@@ -165,7 +165,7 @@
                                                         <td class="align-middle">
                                                             @php
                                                                 switch ($variant->status) {
-                                                                    case 'in_stock':
+                                                                    case 'active':
                                                                         $class = 'badge bg-success';
                                                                         $text = 'Còn hàng';
                                                                         break;
@@ -173,7 +173,7 @@
                                                                         $class = 'badge bg-danger';
                                                                         $text = 'Hết hàng';
                                                                         break;
-                                                                    case 'pre_order':
+                                                                    case 'inactive':
                                                                         $class = 'badge bg-warning text-dark';
                                                                         $text = 'Đặt trước';
                                                                         break;

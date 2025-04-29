@@ -123,7 +123,7 @@ class ShopController extends Controller
             'variants.attributeValues.nameValue',
             'attributes.attributeValues'
         ])->findOrFail($id);
-
+        $product->increment('view_count'); 
         $attributes = Attribute::select('id', 'attribute_name')->get();
 
         $parentCategoryId = $product->category->parent_id ?? $product->category_id;

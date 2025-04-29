@@ -130,7 +130,7 @@
             </div>
             <div class="image-banner__content container py-3">
                 <h2 class="text-white h1 fw-semi-bold mb-3 mb-xl-4">SẢN PHẨM MỚI</h2>
-                <a href="shop1.html"
+                <a href="{{ route('client.shop', ['filter' => 'date_new']) }}"
                     class="btn btn-outline-primary border-0 fs-13 text-uppercase fw-semi-bold btn-50 d-inline-flex align-items-center justify-content-center">
                     <span>Mua Ngay</span>
                 </a>

@@ -96,11 +96,11 @@
                                             <!-- Thông tin khách hàng -->
                                             <div class="info-list">
                                                 <p class="mb-2">
-                                                    <i class="bi bi-envelope-fill me-2 text-primary"></i>
+
                                                     <strong>Email:</strong> {{ $refund->order->user->email ?? 'N/A' }}
                                                 </p>
                                                 <p class="mb-2">
-                                                    <i class="bi bi-telephone-fill me-2 text-primary"></i>
+
                                                     <strong>Số điện thoại:</strong>
                                                     {{ $refund->order->user->phone ?? 'N/A' }}
                                                 </p>
@@ -127,10 +127,24 @@
                                                 }
                                             }
 
+                                            if (!function_exists('getStatusLabel')) {
+                                                function getStatusLabel($status)
+                                                {
+                                                    $labels = [
+                                                        'pending' => 'Chờ duyệt',
+                                                        'approved' => 'Đã duyệt',
+                                                        'rejected' => 'Bị từ chối',
+                                                    ];
+
+                                                    return $labels[$status] ?? 'Không xác định';
+                                                }
+                                            }
+
                                             $hasPending =
                                                 $statusHistories->contains('old_status', 'pending') ||
                                                 $statusHistories->contains('new_status', 'pending');
                                         @endphp
+
 
                                         <div class="card-body">
                                             <div class="list-group">
@@ -232,7 +246,7 @@
 
                                                         @if ($order->voucher)
                                                             <tr>
-                                                                <th colspan="4" class="text-end">Mã giảm giá đã sử dụng
+                                                                <th colspan="5" class="text-end">Mã giảm giá đã sử dụng
                                                                     trong đơn hàng</th>
                                                                 <td class="text-end">
                                                                     <span
@@ -240,7 +254,7 @@
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <th colspan="4" class="text-end">Giảm giá</th>
+                                                                <th colspan="5" class="text-end">Giảm giá</th>
                                                                 <td class="text-end">
                                                                     -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }}
                                                                     VND
@@ -249,7 +263,7 @@
                                                         @endif
 
                                                         <tr>
-                                                            <th colspan="4" class="text-end"><strong>Tổng hoàn
+                                                            <th colspan="5" class="text-end"><strong>Tổng hoàn
                                                                     trả</strong></th>
                                                             <td class="text-end">
                                                                 <strong>{{ number_format($refund->total_refund_amount, 0, ',', '.') }}
@@ -268,17 +282,25 @@
                                         <div class="card-body">
                                             {{ $refund->refund_reason }}
                                         </div>
+                                        @if ($order->refund->rejected_reason)
+                                            <div style="border-top: 1px rgb(237, 237, 237) solid; "
+                                                class="card-header fw-bold text-danger">
+                                                <strong> Lý do từ chối hoàn hàng</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                {{ $refund->rejected_reason }}
+                                            </div>
+                                        @endif
                                         <div style="border-top: 1px rgb(237, 237, 237) solid; "
                                             class="card-header fw-bold text-primary">
-                                            <strong> Hình ành minh chứng</strong>
+                                            <strong> Hình ảnh minh chứng</strong>
                                         </div>
                                         <div class="card-body">
                                             @foreach ($refund->imageRefunds as $item)
                                                 <img src="{{ Storage::url($item->image) }}" alt="Avatar"
                                                     width="200" height="200" class="me-2 rounded">
-                                                  
                                             @endforeach
-                                           
+
                                         </div>
                                     </div>
 

@@ -115,7 +115,12 @@
                                                             <tr>
                                                                 <td>{{ $refund->id }}</td>
                                                                 <td>{{ $refund->order->user->name }}</td>
-                                                                <td>#{{ $refund->order->id }}</td>
+                                                                <td>
+                                                                    <a href="{{ route('admin.orders.edit', $refund->order->id) }}">
+                                                                        {{ $refund->order->order_code }}
+                                                                    </a>
+                                                                </td>
+                                                                
                                                                 <td>{{ number_format($refund->total_refund_amount) }}đ
                                                                 </td>
                                                                 <td>
