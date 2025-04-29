@@ -20,10 +20,10 @@
 
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-9">
+                                <div class="col-md-12">
                                     <div class="row">
                                         <!-- Tên người dùng -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="name" class="form-label">Tên người dùng</label>
                                             <input value="{{ old('name') }}" name="name" type="text"
                                                 id="name" class="form-control" placeholder="Nhập tên người dùng">
@@ -31,9 +31,18 @@
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
+                                            <label for="avatar" class="form-label">Ảnh đại diện</label>
+                                            <div class="text-center">
+                                                <img src="" alt="Avatar" class="img-fluid rounded mb-2" width="150" height="150" id="avatar-preview" style="display: none;">
+                                                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" onchange="previewImage(this)">
+                                            </div>
+                                            @error('avatar')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                         <!-- Email -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="email" class="form-label">Email</label>
                                             <input value="{{ old('email') }}" name="email" type="email"
                                                 id="email" class="form-control" placeholder="Nhập email">
@@ -43,7 +52,7 @@
                                         </div>
 
                                         <!-- Số điện thoại -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-3">
                                             <label for="phone" class="form-label">Số điện thoại</label>
                                             <input value="{{ old('phone') }}" name="phone" type="text"
                                                 id="phone" class="form-control" placeholder="Nhập số điện thoại">
@@ -53,7 +62,7 @@
                                         </div>
 
                                         <!-- Mật khẩu -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-3">
                                             <label for="password" class="form-label">Mật khẩu</label>
                                             <input name="password" type="password"
                                                 id="password" class="form-control" placeholder="Nhập mật khẩu">
@@ -63,31 +72,36 @@
                                         </div>
 
                                         <!-- Giới tính -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-12">
                                             <label class="form-label">Giới tính</label>
                                             <div class="d-flex gap-3">
-                                                <div class="form-check">
+                                                <!-- Nam -->
+                                                <div class="form-check mr-2">
                                                     <input class="form-check-input" type="radio" name="gender" id="male" value="male" {{ old('gender') == 'male' ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="male">Nam</label>
                                                 </div>
-                                                <div class="form-check">
+                                                <!-- Nữ -->
+                                                <div class="form-check mr-2">
                                                     <input class="form-check-input" type="radio" name="gender" id="female" value="female" {{ old('gender') == 'female' ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="female">Nữ</label>
                                                 </div>
+                                                <!-- Khác -->
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="gender" id="other" value="other" {{ old('gender') == 'other' ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="other">Khác</label>
                                                 </div>
                                             </div>
+                                            <!-- Hiển thị lỗi nếu có -->
                                             @error('gender')
-                                                <div class="text-danger">{{ $message }}</div>
+                                                <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        
 
                                         <!-- Trạng thái -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="status" class="form-label">Trạng thái</label>
-                                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror">
+                                            <select name="status" id="status" class="form-select form-control @error('status') is-invalid @enderror">
                                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
                                                 <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ngưng hoạt động</option>
                                                 <option value="banned" {{ old('status') == 'banned' ? 'selected' : '' }}>Đã khóa</option>
@@ -99,9 +113,9 @@
                                         </div>
 
                                         <!-- Vai trò -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="role_id" class="form-label">Vai trò</label>
-                                            <select name="role_id" id="role_id" class="form-select">
+                                            <select name="role_id" id="role_id" class="form-select form-control">
                                                 <option value="">Chọn vai trò</option>
                                                 @foreach($roles as $role)
                                                     <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
@@ -122,20 +136,6 @@
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                </div>
-
-                                <!-- Avatar -->
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="avatar" class="form-label">Ảnh đại diện</label>
-                                        <div class="text-center">
-                                            <img src="" alt="Avatar" class="img-fluid rounded mb-2" width="150" height="150" id="avatar-preview" style="display: none;">
-                                            <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" onchange="previewImage(this)">
-                                        </div>
-                                        @error('avatar')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <!-- Họ tên người nhận -->
-                                        <div class="mb-3 col-6">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="full_name" class="form-label">Họ tên người nhận</label>
                                             <input value="{{ old('full_name') }}" name="full_name"
                                                 type="text" id="full_name" class="form-control"
@@ -170,7 +170,7 @@
                                         </div>
 
                                         <!-- Số điện thoại người nhận -->
-                                        <div class="mb-3 col-6">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="phone_number" class="form-label">Số điện thoại người nhận</label>
                                             <input value="{{ old('phone_number') }}" name="phone_number"
                                                 type="text" id="phone_number" class="form-control"
@@ -181,7 +181,7 @@
                                         </div>
 
                                         <!-- Địa chỉ chi tiết -->
-                                        <div class="mb-3 col-12">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="street_address" class="form-label">Địa chỉ chi tiết</label>
                                             <input value="{{ old('street_address') }}" name="street_address"
                                                 type="text" id="street_address" class="form-control"
@@ -192,7 +192,7 @@
                                         </div>
 
                                         <!-- Phường/Xã -->
-                                        <div class="mb-3 col-6">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="ward" class="form-label">Phường/Xã</label>
                                             <input value="{{ old('ward') }}" name="ward"
                                                 type="text" id="ward" class="form-control"
@@ -203,7 +203,7 @@
                                         </div>
 
                                         <!-- Quận/Huyện -->
-                                        <div class="mb-3 col-6">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="district" class="form-label">Quận/Huyện</label>
                                             <input value="{{ old('district') }}" name="district"
                                                 type="text" id="district" class="form-control"
@@ -214,7 +214,7 @@
                                         </div>
 
                                         <!-- Thành phố -->
-                                        <div class="mb-3 col-6">
+                                        <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="city" class="form-label">Thành phố</label>
                                             <input value="{{ old('city') }}" name="city"
                                                 type="text" id="city" class="form-control"
@@ -225,7 +225,7 @@
                                         </div>
 
                                         <!-- Quốc gia -->
-                                            <div class="mb-3 col-6">
+                                            <div class="mb-3 col-12 col-sm-12 col-md-12 col-lg-6">
                                             <label for="country" class="form-label">Quốc gia</label>
                                             <input value="{{ old('country') }}" name="country"
                                                 type="text" id="country" class="form-control"

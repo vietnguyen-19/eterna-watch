@@ -61,7 +61,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // ADMIN CHỨC NĂNG (middleware auth + admin)
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
 
     // DASHBOARD
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
@@ -78,7 +78,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [CategoryController::class, 'show'])->name('show')->middleware('permission:view_categories');
         Route::get('{id}/edit', [CategoryController::class, 'edit'])->name('edit')->middleware('permission:edit_categories');
         Route::put('{id}/update', [CategoryController::class, 'update'])->name('update')->middleware('permission:edit_categories');
-        Route::get('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
+        Route::delete('{id}/destroy', [CategoryController::class, 'destroy'])->name('destroy')->middleware('permission:delete_categories');
+
+        Route::get('trash', [CategoryController::class, 'trash'])->name('trash')->middleware('permission:delete_categories');
+        Route::put('restore/{id}', [CategoryController::class, 'restore'])->name('restore')->middleware('permission:delete_categories');
+        Route::delete('force-delete/{id}', [CategoryController::class, 'forceDelete'])->name('force-delete')->middleware('permission:delete_categories');
     });
 
     // BANNER
@@ -118,11 +122,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('{user}', [UserController::class, 'show'])->name('show');
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('{user}', [UserController::class, 'update'])->name('update');
+      
         Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
         Route::delete('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
+        Route::get('/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
+
     });
-    
 
 
     // THUỘC TÍNH SẢN PHẨM
@@ -168,7 +174,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // PHIÊN BẢN SẢN PHẨM
     Route::prefix('productvariants')->name('admin.productvariants.')->group(function () {
         Route::get('/', [ProductVariantController::class, 'index'])->name('index')->middleware('permission:view_products');
-        Route::get('create/{id}', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
+        Route::get('create', [ProductVariantController::class, 'create'])->name('create')->middleware('permission:create_products');
         Route::post('store', [ProductVariantController::class, 'store'])->name('store')->middleware('permission:create_products');
         Route::post('store-many', [ProductVariantController::class, 'storeMany'])->name('store-many');
         Route::get('{id}/edit', [ProductVariantController::class, 'edit'])->name('edit')->middleware('permission:edit_products');
@@ -189,10 +195,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
       
 
-        Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy'); // Xoá mềm
-        Route::get('/trash', [OrderController::class, 'trash'])->name('trash'); // Danh sách đã xoá
-        Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore'); // Khôi phục
-        Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
+        Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy')->middleware('permission:delete_orders'); // Xoá mềm
+        Route::get('/trash', [OrderController::class, 'trash'])->name('trash')->middleware('permission:delete_orders'); // Danh sách đã xoá
+        Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore')->middleware('permission:delete_orders'); // Khôi phục
+        Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_orders'); // Xoá vĩnh viễn
     });
    
     
@@ -245,7 +251,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::get('show/{id}', [PostController::class, 'show'])->name('show')->middleware('permission:view_posts');
         Route::get('{id}/edit', [PostController::class, 'edit'])->name('edit')->middleware('permission:edit_posts');
         Route::put('{id}/update', [PostController::class, 'update'])->name('update')->middleware('permission:edit_posts');
-        Route::delete('{id}/destroy', [PostController::class, 'destroy'])->name('destroy')->middleware('permission:delete_posts');
+       
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy'); // Xoá mềm
+        Route::get('/trash', [PostController::class, 'trash'])->name('trash'); // Danh sách đã xoá
+        Route::post('/restore/{id}', [PostController::class, 'restore'])->name('restore'); // Khôi phục
+        Route::delete('/force-delete/{id}', [PostController::class, 'forceDelete'])->name('forceDelete'); // Xoá vĩnh viễn
     });
 
     // ẢNH

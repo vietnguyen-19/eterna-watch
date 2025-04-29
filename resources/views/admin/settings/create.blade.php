@@ -12,22 +12,21 @@
                 </div>
             </div>
 
-
             <form action="{{ route('admin.settings.store') }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
-                            <label for="name" class="form-label">Tên cài đặt</label>
-                            <input value="{{ old('name') }}" name="name" type="text" id="name"
-                                class="form-control" placeholder="Enter name">
-                            @error('name')
+                            <label for="key" class="form-label">Tên cài đặt</label>
+                            <input name="key" value="{{ old('key') }}" key="key" type="text" id="key"
+                                class="form-control" placeholder="Nhập tên cài đặt">
+                            @error('key')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="mb-3 col-12">
+<<<<<<< HEAD
                             <select name="parent_id" class="form-control">
                                 <option value="">Chọn danh mục cha</option>
                                 @foreach ($settings as $setting)
@@ -46,6 +45,12 @@
                                 <option value="inactive">Inactive</option>
                             </select>
                             @error('status')
+=======
+                            <label for="value" class="form-label">Tên cài đặt</label>
+                            <input name="value" value="{{ old('value') }}" value="value" type="text" id="value"
+                                class="form-control" placeholder="Nhập nội dung">
+                            @error('value')
+>>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -53,7 +58,11 @@
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
+<<<<<<< HEAD
                         <a href="{{ route('admin.settings.create') }}" class="btn btn-success" id="add-btn">Thêm cài đặt</a>
+=======
+                        <button type="submit" class="btn btn-success" id="add-btn">Thêm cài đặt</button>
+>>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                         <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
                         <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                     </div>

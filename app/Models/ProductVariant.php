@@ -10,7 +10,7 @@ class ProductVariant extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['id','product_id', 'sku', 'price', 'stock', 'image','status'];
+    protected $fillable = ['id', 'product_id', 'sku', 'price', 'stock', 'image', 'status'];
 
     public function product()
     {
@@ -20,5 +20,13 @@ class ProductVariant extends Model
     public function attributeValues()
     {
         return $this->hasMany(VariantAttribute::class, 'variant_id');
+    }
+    public function getSoldQuantityAttribute()
+    {
+        return OrderItem::where('variant_id', $this->id)
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'completed'); // chỉ tính đơn đã hoàn thành
+            })
+            ->sum('quantity');
     }
 }

@@ -24,12 +24,16 @@ class CategorySeeder extends Seeder
 
         $parentIds = [];
 
+        $index = 1;
+
         foreach ($categories as $category) {
             $parentIds[$category] = Category::create([
                 'name' => $category,
+                'image' => 'categories/cate' . $index . '.jpg', // Thêm ảnh cho danh mục gốc
                 'parent_id' => null,
                 'status' => 1,
             ])->id;
+            $index++;
         }
 
         // Danh mục con

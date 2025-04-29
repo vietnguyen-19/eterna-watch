@@ -21,7 +21,12 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
+        // Lấy các tham số lọc từ request
         $status = $request->input('status', 'all');
+        $paymentStatus = $request->input('payment_status');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        $paymentMethod = $request->input('payment_method');
 
         // Đếm số lượng đơn hàng theo trạng thái
         $statusCounts = Order::selectRaw("status, COUNT(*) as count")
@@ -38,14 +43,38 @@ class OrderController extends Controller
         // Đếm tổng số đơn hàng
         $statusCounts['all'] = array_sum($statusCounts);
 
-        // Lấy danh sách đơn hàng theo trạng thái
-        $orders = Order::with('orderItems')
-            ->when($status !== 'all', function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Xây dựng query lấy danh sách đơn hàng
+        $query = Order::with(['orderItems', 'payment']);
 
+        // Áp dụng bộ lọc trạng thái đơn hàng
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        // Áp dụng bộ lọc trạng thái thanh toán
+        $query->when($paymentStatus, function ($q) use ($paymentStatus) {
+            $q->whereHas('payment', function ($q2) use ($paymentStatus) {
+                $q2->where('payment_status', $paymentStatus);
+            });
+        });
+
+        $query->when($dateFrom, function ($q) use ($dateFrom) {
+            $q->whereDate('created_at', '>=', $dateFrom);
+        });
+
+        $query->when($dateTo, function ($q) use ($dateTo) {
+            $q->whereDate('created_at', '<=', $dateTo);
+        });
+        $query->when($paymentMethod, function ($q) use ($paymentMethod) {
+            $q->where('payment_method', $paymentMethod);
+        });
+
+
+
+        // Lấy danh sách đơn hàng
+        $orders = $query->orderBy('created_at', 'desc')->get();
+
+        // Trả về view với các dữ liệu cần thiết
         return view('admin.orders.index', compact('orders', 'statusCounts', 'status'));
     }
     public function create()
@@ -182,7 +211,6 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, Order $order)
     {
-
         $newStatus = $request->input('status');
         $currentStatus = $order->status;
 
@@ -199,6 +227,25 @@ class OrderController extends Controller
         if (!isset($validTransitions[$currentStatus]) || !in_array($newStatus, $validTransitions[$currentStatus])) {
             return redirect()->route('admin.orders.edit', $order->id)->with('error', 'Trạng thái không hợp lệ.');
         }
+
+        // Kiểm tra nếu phương thức thanh toán là tiền mặt và trạng thái chuyển sang completed
+        if ($order->payment_method == 'cash' && $newStatus == 'completed') {
+
+            $order->payment->update([
+                'payment_status' => 'completed',
+            ]);
+
+            $st = StatusHistory::create([
+                'entity_id' => $order->payment->id,
+                'entity_type' => 'payment',
+                'old_status' => 'pending',
+                'new_status' => 'completed',
+                'changed_by' => $order->user->id, // Giả sử có người dùng đăng nhập
+                'changed_at' => now(), // Thời gian thay đổi
+            ]);
+        }
+
+        // Ghi lại lịch sử trạng thái
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'order',
@@ -208,12 +255,14 @@ class OrderController extends Controller
             'changed_at' => now(), // Thời gian thay đổi
         ]);
 
+
         // Cập nhật trạng thái
         $order->status = $newStatus;
         $order->save();
 
         return redirect()->route('admin.orders.edit', $order->id)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
     }
+
 
     public function destroy($id)
     {

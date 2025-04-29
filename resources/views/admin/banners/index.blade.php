@@ -8,13 +8,13 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
-                                <h5 class="card-title mb-0">Danh sách banner</h5>
+                                <h5 class="card-title mb-0"><strong>Danh sách banner</strong></h5>
                                 
                                 <div class="d-flex ms-auto">
-                                    <a href="{{ route('admin.banners.trash') }}" class="btn btn-warning mr-2">
+                                    <a href="{{ route('admin.banners.trash') }}" class="btn btn-sm btn-warning mr-2">
                                         <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
                                     </a>
-                                    <a href="{{ route('admin.banners.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('admin.banners.create') }}" class="btn btn-sm btn-primary">
                                         <i class="ri-add-line align-bottom me-1"></i> Thêm banner
                                     </a>
                                 </div>
@@ -44,7 +44,7 @@
                             @endif
 
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="bannerTable">
+                                <table class="table table-bordered table-hover align-middle" id="bannerTable">
                                     <thead class="table-light">
                                         <tr>
                                             <th style="width: 5%">ID</th>
@@ -52,14 +52,14 @@
                                             <th style="width: 30%">Tiêu đề</th>
                                             <th style="width: 15%">Vị trí</th>
                                             <th style="width: 10%">Trạng thái</th>
-                                            <th style="width: 20%">Hành động</th>
+                                            <th style="width: 10%">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($banners as $banner)
                                             <tr>
                                                 <td class="align-middle">{{ $banner->id }}</td>
-                                                <td style="width: 80px;">
+                                                <td style="width:18%;">
                                                     <div style="position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; border-radius: 6px;">
                                                         @if ($banner->image)
                                                             <img src="{{ Storage::url($banner->image ?? 'avatar/default.jpeg') }}"
@@ -75,7 +75,41 @@
                                                 
                                                 
                                                 <td class="align-middle">{{ $banner->title ?? 'Không có tiêu đề' }}</td>
-                                                <td class="align-middle">{{ $banner->position ?? 'Không rõ' }}</td>
+                                                <td class="align-middle ">
+                                                    @switch($banner->position)
+                                                        @case('home_start')
+                                                            Trang chủ - Phần đầu
+                                                            @break
+                                                
+                                                        @case('home_new_product')
+                                                            Trang chủ - Sản phẩm mới
+                                                            @break
+                                                
+                                                        @case('login')
+                                                            Trang đăng nhập
+                                                            @break
+                                                
+                                                        @case('register')
+                                                            Trang đăng ký
+                                                            @break
+                                                
+                                                        @case('shop')
+                                                            Trang cửa hàng
+                                                            @break
+                                                
+                                                        @case('blog')
+                                                            Trang blog
+                                                            @break
+                                                
+                                                        @case('forward_password')
+                                                            Trang quên mật khẩu
+                                                            @break
+                                                
+                                                        @default
+                                                            Không rõ
+                                                    @endswitch
+                                                </td>
+                                                
                                                 <td class="align-middle">
                                                     @if ($banner->is_active == 1)
                                                         <span class="badge bg-success-subtle text-success">Hiển thị</span>
@@ -87,23 +121,21 @@
                                                     @endif
                                                 </td>
 
-                                                <td class="align-middle">
-                                                    <div class="d-flex gap-2">
-                                                        <a href="{{ route('admin.banners.edit', $banner->id) }}"
-                                                            class="btn btn-sm btn-warning mr-1">
+                                                <td class="align-middle text-center">
+                                                    <div class="d-flex justify-content-center gap-2">
+                                                        <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-sm btn-warning mr-1">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <form action="{{ route('admin.banners.destroy', $banner->id) }}" method="POST" class="d-inline"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?');">
-                                                          @csrf
-                                                          @method('DELETE')
-                                                          <button type="submit" class="btn btn-sm btn-danger">
-                                                              <i class="fas fa-trash"></i>
-                                                          </button>
-                                                      </form>
-                                                      
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
-                                                </td>
+                                                </td>                                                
                                             </tr>
                                         @empty
                                             <tr>

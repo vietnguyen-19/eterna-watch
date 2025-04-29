@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -81,12 +82,13 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
 
-            // Xử lý avatar
+
             $avatarPath = null;
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
-                $fileName = time() . '.' . $avatar->getClientOriginalExtension();
-                $avatarPath = $avatar->storeAs('avatar', $fileName, 'public');
+                $avatarName = time() . '_' . $avatar->getClientOriginalName();
+                $avatar->move(public_path('storage/avatar'), $avatarName);
+                $avatarPath = 'avatar/' . $avatarName;
             }
 
             // Tạo người dùng mới
@@ -98,22 +100,9 @@ class UserController extends Controller
                 'gender' => $request->input('gender'),
                 'role_id' => $request->input('role_id'),
                 'status' => $request->input('status'),
+                'email_verified_at' => now(),
                 'note' => $request->input('note'),
                 'avatar' => $avatarPath,
-            ]);
-
-            // Tạo địa chỉ mặc định cho người dùng
-            UserAddress::create([
-                'user_id' => $user->id,
-                'full_name' => $request->input('full_name'),
-                'phone_number' => $request->input('phone_number'),
-                'email' => $request->input('email'),
-                'street_address' => $request->input('street_address'),
-                'ward' => $request->input('ward'),
-                'district' => $request->input('district'),
-                'city' => $request->input('city'),
-                'country' => $request->input('country'),
-                'is_default' => true,
             ]);
 
             DB::commit();
@@ -132,6 +121,8 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
+        
+        
         try {
             DB::beginTransaction();
 
@@ -155,39 +146,60 @@ class UserController extends Controller
             if ($request->hasFile('avatar')) {
                 // Xóa avatar cũ nếu có
                 if ($user->avatar) {
-                    Storage::delete('public/' . $user->avatar);
+                    // Đường dẫn tuyệt đối của avatar cũ
+                    $oldAvatarPath = public_path('storage/' . $user->avatar);
+
+                    // Kiểm tra nếu ảnh cũ tồn tại trên hệ thống
+                    if (file_exists($oldAvatarPath)) {
+                        // Xóa ảnh cũ
+                        unlink($oldAvatarPath);
+                    }
                 }
 
                 // Lưu avatar mới
                 $avatar = $request->file('avatar');
                 $fileName = time() . '.' . $avatar->getClientOriginalExtension();
-                $path = $avatar->storeAs('avatar', $fileName, 'public');
+                $path = 'avatars/' . $fileName;
+
+                // Di chuyển file đến thư mục lưu trữ
+                $avatar->move(public_path('storage/avatars'), $fileName);
+
+                // Cập nhật đường dẫn ảnh mới vào database
                 $user->avatar = $path;
             }
 
             $user->save();
 
             // Cập nhật hoặc tạo mới địa chỉ
-            $addressData = [
-                'full_name' => $request->input('full_name'),
-                'phone_number' => $request->input('phone_number'),
-                'email' => $request->input('email'),
-                'street_address' => $request->input('street_address'),
-                'ward' => $request->input('ward'),
-                'district' => $request->input('district'),
-                'city' => $request->input('city'),
-                'country' => $request->input('country'),
-                'is_default' => true
-            ];
+            $street = $request->input('street_address');
+            $ward = $request->input('ward');
+            $district = $request->input('district');
+            $city = $request->input('city');
 
-            UserAddress::updateOrCreate(
-                ['user_id' => $id, 'is_default' => true],
-                $addressData
-            );
+            // Chỉ khi tất cả các trường đều có giá trị thì mới lưu
+            if ($street && $ward && $district && $city) {
+                $addressData = [
+                    'full_name' => Auth::user()->name,
+                    'phone_number' => Auth::user()->phone,
+                    'email' => Auth::user()->email,
+                    'street_address' => $street,
+                    'ward' => $ward,
+                    'district' => $district,
+                    'city' => $city,
+                    'country' => 'Việt Nam',
+                    'is_default' => true
+                ];
+
+                UserAddress::updateOrCreate(
+                    ['user_id' => $id, 'is_default' => true],
+                    $addressData
+                );
+            }
+
 
             DB::commit();
 
-            return redirect()->route('admin.users.index')->with('success', 'Cập nhật tài khoản thành công!');
+            return redirect()->route('admin.users.show', $id)->with('success', 'Cập nhật tài khoản thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage())->withInput();
@@ -262,5 +274,15 @@ class UserController extends Controller
     {
         $users = User::with('role')->onlyTrashed()->get(); // Phân trang nếu muốn
         return view('admin.users.trash', compact('users'));
+    }
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Đảo trạng thái: nếu đang là 'active' thì chuyển thành 'inactive' và ngược lại
+        $user->status = $user->status === 'active' ? 'inactive' : 'active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'Trạng thái người dùng đã được cập nhật.');
     }
 }

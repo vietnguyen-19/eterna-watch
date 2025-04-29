@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\StatusHistory;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,13 +15,13 @@ class AccountController extends Controller
 
     public function editAccount()
     {
-        return view('client.account.edit_account');
+        return view('client.account.partials.edit_account');
     }
 
 
     public function rePassword()
     {
-        return view('client.account.re_password');
+        return view('client.account.partials.re_password');
     }
 
     public function updatePass(Request $request)
@@ -28,8 +29,14 @@ class AccountController extends Controller
         // Xác thực dữ liệu đầu vào
         $request->validate([
             'current_password' => ['required'],
-            'new_password' => ['required', 'min:8', 'confirmed'], // 'confirmed' kiểm tra với new_password_confirmation
+            'new_password' => ['required', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+            'new_password.confirmed' => 'Mật khẩu mới xác nhận không khớp.',
         ]);
+
 
         // Lấy user hiện tại
         $user = Auth::user();
@@ -52,12 +59,12 @@ class AccountController extends Controller
     public function order()
     {
         $orders = Order::where('user_id', Auth::id())->with(['orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->latest()->get();
-        return view('client.account.order', compact('orders'));
+        return view('client.account.partials.order', compact('orders'));
     }
     public function orderDetail($id)
     {
-        $order = Order::with(['refund.refundItems','orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->findOrFail($id);
-        return view('client.account.order-detail', compact('order'));
+        $order = Order::with(['refund.refundItems', 'orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher','statusHistories'])->findOrFail($id);
+        return view('client.account.partials.order-detail', compact('order'));
     }
     public function cancelOrder($id)
     {
@@ -71,9 +78,17 @@ class AccountController extends Controller
         if (!in_array($order->status, ["pending", "confirmed"])) {
             return response()->json(["success" => false, "message" => "Không thể hủy đơn hàng khi vì đã giao cho bên vận chuyển"], 400);
         }
-
-        $order->status = "Cancelled";
+        StatusHistory::create([
+            'entity_id' => $order->id,
+            'entity_type' => 'order',
+            'old_status' => $order->status,
+            'new_status' => 'cancelled',
+            'changed_by' =>$order->user->id,
+            'changed_at' => now(),
+        ]);
+        $order->status = "cancelled";
         $order->save();
+        
 
         return response()->json(["success" => true, "message" => "Đơn hàng đã được hủy thành công!"]);
     }
@@ -135,7 +150,7 @@ class AccountController extends Controller
 
         // Đường dẫn đầy đủ tới file trong thư mục storage
         $storagePath = public_path('storage/' . $filePath);
-
+        dd($storagePath);
         if (file_exists($storagePath)) {
             unlink($storagePath);
             return response()->json(['success' => true, 'message' => 'File deleted']);
@@ -155,10 +170,6 @@ class AccountController extends Controller
             'phone' => 'required|string',
             'gender' => 'required|in:0,1',
             'avatar' => 'nullable|string', // Avatar là một URL hoặc đường dẫn chuỗi
-            'street_address' => 'nullable|string|max:255',
-            'district' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
         ]);
 
         // Cập nhật thông tin tài khoản
@@ -171,15 +182,7 @@ class AccountController extends Controller
         ]);
 
         // Cập nhật địa chỉ mặc định nếu tồn tại
-        if ($user->defaultAddress) {
-            $user->defaultAddress->update([
-                'street_address' => $request->street_address,
-                'district' => $request->district,
-                'city' => $request->city,
-                'country' => $request->country,
-            ]);
-        }
 
-        return redirect()->route('account.edit')->with('success', 'Cập nhật thông tin thành công!');
+        return redirect()->route('account.edit')->with('success', 'Cập nhật thông tin người dùng thành công!');
     }
 }

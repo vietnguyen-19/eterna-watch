@@ -56,8 +56,8 @@
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label for="rejectReason" class="form-label">Lý do:</label>
-                                                <input type="text" class="form-control" name="reason" id="rejectReason"
-                                                    placeholder="Nhập lý do từ chối..." required>
+                                                <input type="text" class="form-control" name="rejected_reason"
+                                                    id="rejectReason" placeholder="Nhập lý do từ chối..." required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -96,11 +96,11 @@
                                             <!-- Thông tin khách hàng -->
                                             <div class="info-list">
                                                 <p class="mb-2">
-                                                    <i class="bi bi-envelope-fill me-2 text-primary"></i>
+
                                                     <strong>Email:</strong> {{ $refund->order->user->email ?? 'N/A' }}
                                                 </p>
                                                 <p class="mb-2">
-                                                    <i class="bi bi-telephone-fill me-2 text-primary"></i>
+
                                                     <strong>Số điện thoại:</strong>
                                                     {{ $refund->order->user->phone ?? 'N/A' }}
                                                 </p>
@@ -112,29 +112,46 @@
                                         <div class="card-header border-bottom-dashed">
                                             <h5 class="card-title mb-0"><b>Lịch sử trạng thái hoàn hàng</b></h5>
                                         </div>
-                                    
+
                                         @php
                                             if (!function_exists('getStatusColorClass')) {
                                                 function getStatusColorClass($status)
                                                 {
                                                     $colors = [
-                                                        'pending'    => 'badge bg-warning',
-                                                        'approved'   => 'badge bg-success',
-                                                        'rejected'   => 'badge bg-danger',
+                                                        'pending' => 'badge bg-warning',
+                                                        'approved' => 'badge bg-success',
+                                                        'rejected' => 'badge bg-danger',
                                                     ];
-                                    
+
                                                     return $colors[$status] ?? 'badge bg-dark';
                                                 }
                                             }
-                                    
-                                            $hasPending = $statusHistories->contains('old_status', 'pending') || $statusHistories->contains('new_status', 'pending');
+
+                                            if (!function_exists('getStatusLabel')) {
+                                                function getStatusLabel($status)
+                                                {
+                                                    $labels = [
+                                                        'pending' => 'Chờ duyệt',
+                                                        'approved' => 'Đã duyệt',
+                                                        'rejected' => 'Bị từ chối',
+                                                    ];
+
+                                                    return $labels[$status] ?? 'Không xác định';
+                                                }
+                                            }
+
+                                            $hasPending =
+                                                $statusHistories->contains('old_status', 'pending') ||
+                                                $statusHistories->contains('new_status', 'pending');
                                         @endphp
-                                    
+
+
                                         <div class="card-body">
                                             <div class="list-group">
                                                 {{-- Nếu chưa có bản ghi "pending", hiển thị mặc định --}}
                                                 @if (!$hasPending)
-                                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
                                                         <div>
                                                             <span class="badge bg-warning fs-5 px-2 py-1">pending</span>
                                                             <div class="text-muted">
@@ -144,25 +161,28 @@
                                                         <div><strong>Hệ thống</strong></div>
                                                     </div>
                                                 @endif
-                                    
+
                                                 {{-- Hiển thị các lịch sử trạng thái --}}
                                                 @foreach ($statusHistories as $history)
-                                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
                                                         <div>
-                                                            <span class="{{ getStatusColorClass($history->new_status) }} fs-5 px-2 py-1">
+                                                            <span
+                                                                class="{{ getStatusColorClass($history->new_status) }} fs-5 px-2 py-1">
                                                                 {{ $history->new_status }}
                                                             </span>
                                                             <div class="text-muted">
                                                                 {{ \Carbon\Carbon::parse($history->changed_at)->format('d-m-Y H:i:s') }}
                                                             </div>
                                                         </div>
-                                                        <div><strong>{{ $history->user->name ?? 'Hệ thống' }}</strong></div>
+                                                        <div><strong>{{ $history->user->name ?? 'Hệ thống' }}</strong>
+                                                        </div>
                                                     </div>
                                                 @endforeach
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
 
                                 <!-- Cột danh sách sản phẩm hoàn hàng -->
@@ -176,9 +196,11 @@
                                                 <table class="table table-bordered">
                                                     <thead class="">
                                                         <tr>
-                                                            <th>ID Sản phẩm</th>
-                                                            <th>Tên sản phẩm</th>
+                                                            <th>ID</th>
+                                                            <th>Sản phẩm</th>
+                                                            <th>Số lượng trong đơn hàng</th>
                                                             <th>Số lượng hoàn</th>
+
                                                             <th>Giá (VNĐ)</th>
                                                             <th>Thành tiền (VNĐ)</th>
                                                         </tr>
@@ -200,57 +222,51 @@
                                                                         class="me-2 rounded">
                                                                     {{ $product->name }}
                                                                 </td>
-                                                                <td>{{ $item->quantity }}</td>
-                                                                <td>{{ number_format($item->unit_price, 0, ',', '.') }} VND
+                                                                <td>{{ $refundItem->orderItem->quantity }}</td>
+                                                                <td>{{ $refundItem->quantity }}</td>
+                                                                <td>{{ number_format($refundItem->unit_price, 0, ',', '.') }}
+                                                                    VND
                                                                 </td>
-                                                                <td>{{ number_format($item->total_price, 0, ',', '.') }}
+                                                                <td>{{ number_format($refundItem->quantity * $refundItem->unit_price, 0, ',', '.') }}
                                                                     VND</td>
                                                             </tr>
                                                         @endforeach
 
                                                         @php
                                                             $order = $refund->order;
-                                                            $discountAmount = 0;
-                                                            if ($order->voucher) {
-                                                                if ($order->voucher->discount_type === 'percent') {
-                                                                    $discountAmount =
-                                                                        ($subtotal * $order->voucher->discount_value) /
-                                                                        100;
-                                                                } elseif ($order->voucher->discount_type === 'fixed') {
-                                                                    $discountAmount = $order->voucher->discount_value;
-                                                                }
-                                                                $discountAmount = min($discountAmount, $subtotal);
-                                                            }
-                                                            $totalPayment = $subtotal - $discountAmount;
+
                                                         @endphp
 
                                                         <tr>
-                                                            <th colspan="4" class="text-end">Tạm tính</th>
+                                                            <th colspan="5" class="text-end">Đã thanh toán</th>
                                                             <td class="text-end">
-                                                                {{ number_format($subtotal, 0, ',', '.') }} VND</td>
+                                                                {{ number_format($order->total_amount, 0, ',', '.') }} VND
+                                                            </td>
                                                         </tr>
 
                                                         @if ($order->voucher)
                                                             <tr>
-                                                                <th colspan="4" class="text-end">Mã giảm giá</th>
+                                                                <th colspan="5" class="text-end">Mã giảm giá đã sử dụng
+                                                                    trong đơn hàng</th>
                                                                 <td class="text-end">
                                                                     <span
                                                                         class="badge bg-success">{{ $order->voucher->code }}</span>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <th colspan="4" class="text-end">Giảm giá</th>
+                                                                <th colspan="5" class="text-end">Giảm giá</th>
                                                                 <td class="text-end">
-                                                                    -{{ number_format($discountAmount, 0, ',', '.') }} VND
+                                                                    -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }}
+                                                                    VND
                                                                 </td>
                                                             </tr>
                                                         @endif
 
                                                         <tr>
-                                                            <th colspan="4" class="text-end"><strong>Tổng thanh
-                                                                    toán</strong></th>
+                                                            <th colspan="5" class="text-end"><strong>Tổng hoàn
+                                                                    trả</strong></th>
                                                             <td class="text-end">
-                                                                <strong>{{ number_format($totalPayment, 0, ',', '.') }}
+                                                                <strong>{{ number_format($refund->total_refund_amount, 0, ',', '.') }}
                                                                     VND</strong>
                                                             </td>
                                                         </tr>
@@ -264,7 +280,27 @@
                                             <strong> Lý do hoàn hàng</strong>
                                         </div>
                                         <div class="card-body">
-                                            {{ $refund->reason }}
+                                            {{ $refund->refund_reason }}
+                                        </div>
+                                        @if ($order->refund->rejected_reason)
+                                            <div style="border-top: 1px rgb(237, 237, 237) solid; "
+                                                class="card-header fw-bold text-danger">
+                                                <strong> Lý do từ chối hoàn hàng</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                {{ $refund->rejected_reason }}
+                                            </div>
+                                        @endif
+                                        <div style="border-top: 1px rgb(237, 237, 237) solid; "
+                                            class="card-header fw-bold text-primary">
+                                            <strong> Hình ảnh minh chứng</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            @foreach ($refund->imageRefunds as $item)
+                                                <img src="{{ Storage::url($item->image) }}" alt="Avatar"
+                                                    width="200" height="200" class="me-2 rounded">
+                                            @endforeach
+
                                         </div>
                                     </div>
 

@@ -11,17 +11,13 @@ use Illuminate\Support\Str;
 
 class OrderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-
+    
     public function run(): void
     {
-        $variants = DB::table('product_variants')->select('id', 'price')->get()->toArray();
+        $variants = DB::table('product_variants')->select('id', 'price', 'product_id')->get()->toArray();
         if (empty($variants)) {
             throw new \Exception('Không tìm thấy bản ghi trong bảng product_variants.');
         }
-
         $order_count = [
             6 => 7,
             7 => 7,
@@ -43,7 +39,6 @@ class OrderSeeder extends Seeder
             23 => 6,
             24 => 6,
         ];
-
         $orders = [];
         $order_items = [];
         $payments = [];
@@ -91,6 +86,7 @@ class OrderSeeder extends Seeder
                     'order_code' => $order_code,
                     'user_id' => $user_id,
                     'address_id' => $user_id*2-1,
+                    'payment_method' => ['cash','vnpay'][rand(0, 1)],
                     'status' => $latest_status,
                     'total_amount' => $total_amount,
                     'shipping_method' => ['fixed', 'store'][rand(0, 1)],
@@ -117,15 +113,12 @@ class OrderSeeder extends Seeder
                     $previous = $status;
                     $status_time->addMinutes(30);
                 }
-
-                // --- Tạo Payment ---
                 $payment_statuses = ['pending', 'completed', 'failed'];
                 $payment_status = $payment_statuses[array_rand($payment_statuses)];
                 $payment_time = $created_date->copy()->addMinutes(rand(20, 90));
 
                 $payments[] = [
                     'order_id' => $order_id,
-                    'payment_method' => ['cod', 'bank_transfer', 'credit_card'][rand(0, 2)],
                     'amount' => $total_amount,
                     'payment_status' => $payment_status,
                     'transaction_id' => strtoupper(Str::random(10)),
@@ -151,7 +144,6 @@ class OrderSeeder extends Seeder
             }
         }
 
-        // Chèn vào DB
         DB::table('orders')->insert($orders);
         DB::table('order_items')->insert($order_items);
         DB::table('payments')->insert($payments);

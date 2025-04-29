@@ -1,10 +1,11 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link bg-info">
-        <img src="{{ asset('theme/admin/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light"><b>ETERNA WATCH</b></span>
+    <a href="index3.html" class="brand-link bg-info d-flex justify-content-center align-items-center gap-2">
+        <i class="fas fa-clock fa-lg text-white mr-2"></i>
+        <span class="brand-text fw-bold text-white text-uppercase"><strong>Eterna Watch</strong></span>
     </a>
+    
+    
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -15,9 +16,9 @@
                     <li style="background-color: rgb(22, 22, 22); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            @if (Auth::check())
+                            @if (Auth::guard('admin')->check() && (Auth::guard('admin')->user()->role_id == 1 || Auth::guard('admin')->user()->role_id == 2))
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatar/default.jpeg') }}"
+                                    <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatars/default.jpeg') }}"
                                         class="rounded-circle me-2" alt="User Image" width="40" height="40"
                                         style="object-fit: cover; border: 1px solid #ccc;">
                                         <div class="d-flex flex-column justify-content-center ml-3">
@@ -25,7 +26,7 @@
                                             <small class="text-info">{{ Auth::user()->role_id == 1 ? 'Quản trị viên' : 'Nhân viên' }}</small>
 
                                         </div>
-                                        
+
                                 </div>
                             @endif
 
@@ -113,7 +114,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-ticket"></i>
                         <p>
-                            Voucher
+                            Mã giảm giá
                             <i class="nav-icon right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -128,7 +129,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.vouchers.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.vouchers.create') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-plus"></i>
+                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm mới</p>
                             </a>
                         </li>
@@ -184,7 +185,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.banners.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.banners.create') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-plus"></i>
+                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm mới</p>
                             </a>
                         </li>
@@ -241,7 +242,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.posts.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.posts.create') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-plus"></i>
+                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm bài viết mới</p>
                             </a>
                         </li>
@@ -297,7 +298,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.settings.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.settings.create') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-plus"></i>
+                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm cài đặt</p>
                             </a>
                         </li>

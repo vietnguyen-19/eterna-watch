@@ -1,7 +1,7 @@
 <footer class="main-footer">
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-    All rights reserved.
+    <strong>Bản quyền &copy; 2021 - {{ date('Y') }} <a href="#">EternaWatch</a>.</strong>
+    Đã đăng ký bản quyền.
     <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 3.2.0
+        <b>Phiên bản</b> 1.0.0
     </div>
 </footer>

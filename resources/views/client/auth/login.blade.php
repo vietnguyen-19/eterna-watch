@@ -1,89 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
     <meta name="author" content="flexkit">
-
-    <link rel="shortcut icon" href="https://uomo-html.flexkitux.com/images/favicon.ico" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.gstatic.com/">
-
-    <!-- Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
-
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ asset('theme/client/css/plugins/swiper.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('theme/client/css/style.css') }}" type="text/css">
-    @yield('style')
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--[if lt IE 9]>
-    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
-  <![endif]-->
-
-    <!-- Document Title -->
-    <title>EternaWatch | Login</title>
+    <link rel="shortcut icon" href="https://uomo-html.flexkitux.com/images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* Container chính */
-        .login-container {
-            height: 100vh;
+     body {
+            font-family: 'Roboto', sans-serif;
+            background: url('{{ Storage::url($banners["login"]->image ?? "avatar/default.jpeg") }}') no-repeat center/cover fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
+<<<<<<< HEAD
         /* Ảnh nền */
         .login-bg {
             background: url('{{ Storage::url($banners['login']->image ?? 'banners/login.jpg') }}') no-repeat center center;
             background-size: cover;
             height: 100vh;
+=======
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+>>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
         }
 
-        /* Form đăng nhập */
         .login-form {
-            max-width: 400px;
+            width: 25vw; /* Occupy 1/4 of the screen width */
+            max-width: 600px; /* Prevent form from becoming too wide on large screens */
+            min-width: 400px; /* Ensure usability on smaller desktop screens */
+            background: #fff;
+            border-radius: 3px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            z-index: 2;
+            overflow: hidden;
+            border-top: 6px solid #d32f2f;
+            margin: 0 auto;
+        }
+
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 2rem 1.5rem 1rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            width: 200px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
             width: 100%;
-            padding: 30px;
-            background: white;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            object-fit: contain;
         }
 
-        body {
-            font-family: Arial, sans-serif;
+        .card-body {
+            padding: 2rem;
+            text-align: center;
         }
 
-        /* Màn hình loading */
+        .btn-primary {
+            background: #d32f2f;
+            border: none;
+            padding: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background: #b71c1c;
+        }
+
+        .form-floating label {
+            color: #777;
+        }
+
+        .form-control:focus {
+            border-color: #d32f2f;
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.2);
+        }
+
         .loading-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: #f8f9fa;
+            inset: 0;
+            background: #fff;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            z-index: 9999;
         }
 
-        /* Nội dung chính (ẩn ban đầu) */
         .content {
             display: none;
         }
+
+        @media (max-width: 768px) {
+            .login-form {
+                width: 90%; /* Use more width on smaller screens */
+                min-width: 300px; /* Adjust for smaller screens */
+                margin: 1rem;
+            }
+
+            .logo-container {
+                width: 60px;
+                height: 60px;
+            }
+        }
     </style>
+
+    <title>EternaWatch | Đăng nhập</title>
 </head>
 
 <body>
     <div class="loading-overlay" id="loadingScreen"></div>
+
     <div class="content" id="mainContent">
+<<<<<<< HEAD
         <div class="container-fluid">
             <div class="row login-container">
                 <!-- Ảnh nền -->
@@ -138,41 +185,80 @@
                             </div>
                         </form>
                     </div>
+=======
+        <div class="card login-form">
+            <div class="card-header">
+                <div class="logo-container">
+                    <img src="{{ Storage::url($settings['logo_url'] ?? 'avatar/default.jpeg') }}" alt="EternaWatch Logo">
+>>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                 </div>
+            </div>
+            <div class="card-body">
+                <h4 class="fw-bold text-dark mb-2">ĐĂNG NHẬP</h4>
+                @if (session('status'))
+                    <div class="alert alert-success small mb-3">{{ session('status') }}</div>
+                @endif
+
+                <form method="POST" action="{{ route('client.login') }}">
+                    @csrf
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="name@example.com" value="{{ old('email') }}">
+                        <label for="email">Email *</label>
+                        @error('email')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="*******">
+                        <label for="password">Mật khẩu *</label>
+                        @error('password')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="remember" id="remember">
+                            <label class="form-check-label small" for="remember">Nhớ mật khẩu</label>
+                        </div>
+                        <a href="{{ route('password.request') }}" class="small text-muted text-decoration-none">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Bạn chưa có tài khoản?</small>
+                        <a href="{{ route('client.register') }}" class="text-primary text-decoration-none small">Tạo tài khoản mới</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <script src="{{ asset('theme/client/js/theme.js') }}"></script>
+
+    <!-- Spinner + Bootstrap + Custom Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
     <script>
-        // Tạo hiệu ứng loading với Spin.js
-        var target = document.getElementById("loadingScreen");
-        var spinner = new Spinner({
-            lines: 12, // Số tia
-            length: 10, // Chiều dài tia
-            width: 5, // Độ rộng tia
-            radius: 20, // Bán kính vòng
-            color: 'red', // Màu xanh
-            speed: 1, // Tốc độ quay
-            trail: 60 // Hiệu ứng đuôi
+        const target = document.getElementById("loadingScreen");
+        const spinner = new Spinner({
+            lines: 12,
+            length: 10,
+            width: 4,
+            radius: 20,
+            color: '#d32f2f',
+            speed: 1,
+            trail: 60
         }).spin(target);
 
-        // Ẩn loading sau 3 giây và hiển thị nội dung chính
-        setTimeout(function() {
+        setTimeout(() => {
             document.getElementById("loadingScreen").style.display = "none";
-            document.querySelector(".content").style.display = "block"; // Sửa lỗi ID sai
+            document.getElementById("mainContent").style.display = "block";
         }, 1500);
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('theme/client/js/plugins/jquery.min.js') }}"></script>
-    <script src="{{ asset('theme/client/js/plugins/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('theme/client/js/plugins/bootstrap-slider.min.js') }}"></script>
-
     <script src="{{ asset('theme/client/js/plugins/swiper.min.js') }}"></script>
-    <script src="{{ asset('theme/client/js/plugins/countdown.js') }}"></script>
-
-    <!-- Footer Scripts -->
-    <script src="{{ asset('theme/client/js/theme.js') }}"></script>
-
 </body>
 
 </html>

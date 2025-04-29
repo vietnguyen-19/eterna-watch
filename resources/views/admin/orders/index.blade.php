@@ -13,17 +13,104 @@
                                 </div>
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-center gap-2">
-                                        <a href="{{ route('admin.orders.trash') }}" class="btn btn-danger">
+                                        <a href="{{ route('admin.orders.trash') }}" class="btn btn-sm btn-danger">
                                             <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
                                         </a>
-                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
+                                        <a href="{{ route('admin.orders.create') }}" class="btn btn-sm btn-primary">
                                             <i class="ri-add-line align-bottom me-1"></i> Tạo đơn thủ công
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- Thêm vào phần card-body, trước bảng danh sách đơn hàng -->
+                        <div class="card-body bg-light" style="border-bottom: 1px rgb(219, 219, 219) solid">
+                            <div class="filter-form mb-4">
+                                <form method="GET" action="{{ route('admin.orders.index') }}" id="filterForm">
+                                    <div class="row g-3 align-items-end">
+                                        <!-- Trạng thái đơn hàng -->
+                                        <div class="col-md-2">
+                                            <label for="status" class="form-label">Trạng thái đơn hàng</label>
+                                            <select name="status" id="status" class="form-select">
+                                                <option value="all">Tất cả</option>
+                                                <option value="pending"
+                                                    {{ request('status') == 'pending' ? 'selected' : '' }}>Đơn mới
+                                                </option>
+                                                <option value="confirmed"
+                                                    {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã xác
+                                                    nhận</option>
+                                                <option value="processing"
+                                                    {{ request('status') == 'processing' ? 'selected' : '' }}>Đang
+                                                    chuẩn bị</option>
+                                                <option value="completed"
+                                                    {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn
+                                                    thành</option>
+                                                <option value="cancelled"
+                                                    {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <!-- Phương thức thanh toán -->
+                                        <div class="col-md-2">
+                                            <label for="payment_method" class="form-label">Phương thức thanh toán</label>
+                                            <select name="payment_method" id="payment_method" class="form-select">
+                                                <option value="">Tất cả</option>
+                                                <option value="cash"
+                                                    {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Tiền mặt
+                                                </option>
 
+                                                <option value="vnpay"
+                                                    {{ request('payment_method') == 'vnpay' ? 'selected' : '' }}>
+                                                    Thanh toán VNPay</option>
+                                            </select>
+                                        </div>
+                                        <!-- Trạng thái thanh toán -->
+                                        <div class="col-md-2">
+                                            <label for="payment_status" class="form-label">Trạng thái thanh toán</label>
+                                            <select name="payment_status" id="payment_status" class="form-select">
+                                                <option value="">Tất cả</option>
+                                                <option value="pending"
+                                                    {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Chờ xử
+                                                    lý
+                                                </option>
+                                                <option value="completed"
+                                                    {{ request('payment_status') == 'completed' ? 'selected' : '' }}>Hoàn
+                                                    thành</option>
+                                                <option value="failed"
+                                                    {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Thất bại
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Ngày đặt hàng -->
+                                        <div class="col-md-2">
+                                            <label for="date_from" class="form-label">Từ ngày</label>
+                                            <input type="date" name="date_from" id="date_from" class="form-control"
+                                                value="{{ request('date_from') }}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="date_to" class="form-label">Đến ngày</label>
+                                            <input type="date" name="date_to" id="date_to" class="form-control"
+                                                value="{{ request('date_to') }}">
+                                        </div>
+
+
+
+                                        <!-- Nút hành động -->
+                                        <div class="col-md-2 text-end">
+                                            <button type="submit" class="btn btn-info me-2">Áp dụng lọc</button>
+                                            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Xóa
+                                                lọc</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Phần còn lại của Blade template giữ nguyên -->
+                            <div class="tab-content">
+                                <!-- Tabs trạng thái và bảng danh sách đơn hàng -->
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div class="tab-content">
                                 <div>
@@ -121,15 +208,18 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 4%">
-                                                                <input type="checkbox" id="checkAll" class="align-middle">
+                                                                <input type="checkbox" id="checkAll"
+                                                                    class="align-middle">
                                                             </th>
                                                             <th>ID</th>
-                                                            <th>Mã đơn hàng</th>
-                                                            <th>Khách hàng</th>
-                                                            <th style="width: 15%;">Tổng tiền</th>
-                                                            <th style="width: 12%;">Trạng thái</th>
+                                                            <th style="width: 15%;">Mã đơn hàng</th>
+                                                            <th style="width: 10%;">Khách hàng</th>
+                                                            <th style="width: 8%;">Tổng tiền</th>
+                                                            <th style="width: 10%;">PT thanh toán</th>
+                                                            <th style="width: 12%;">TT đơn hàng</th>
+                                                            <th style="width: 12%;">TT thanh toán</th>
                                                             <th style="width: 15%;">Ngày tạo</th>
-                                                            <th style="width: 15%;">Hành động</th>
+                                                            <th style="width: 8%;">Hành động</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -148,27 +238,69 @@
                                                                 <td class="align-middle">
                                                                     {{ number_format($order->total_amount, 0, ',', '.') }}
                                                                     đ</td>
+                                                                    <td class="align-middle">
+                                                                        @if ($order->payment_method === 'cash')
+                                                                            Tiền mặt
+                                                                        @elseif ($order->payment_method === 'vnpay')
+                                                                            VNPay
+                                                                        @endif
+                                                                    </td>
+                                                                    
                                                                 <td class="align-middle">
                                                                     @switch($order->status)
                                                                         @case('pending')
-                                                                            <span class="badge bg-warning text-dark">Chờ xử
-                                                                                lý</span>
+                                                                            <span class="badge bg-warning-subtle text-warning">Chỡ
+                                                                                xác nhận</span>
+                                                                        @break
+
+                                                                        @case('confirmed')
+                                                                            <span class="badge bg-primary-subtle text-info">Đã xác
+                                                                                nhận</span>
                                                                         @break
 
                                                                         @case('processing')
-                                                                            <span class="badge bg-primary">Đang xử lý</span>
+                                                                            <span class="badge bg-primary-subtle text-primary">Đã
+                                                                                giao bên vận chuyển</span>
                                                                         @break
 
                                                                         @case('completed')
-                                                                            <span class="badge bg-success">Hoàn thành</span>
+                                                                            <span
+                                                                                class="badge bg-success-subtle  text-success">Hoàn
+                                                                                thành</span>
                                                                         @break
 
                                                                         @case('cancelled')
-                                                                            <span class="badge bg-danger">Đã hủy</span>
+                                                                            <span class="badge bg-danger text-danger"-subtle>Đã
+                                                                                hủy</span>
                                                                         @break
 
                                                                         @default
-                                                                            <span class="badge bg-secondary">Không xác định</span>
+                                                                            <span class="badge bg-secondary  text-dark">Không xác
+                                                                                định</span>
+                                                                    @endswitch
+                                                                </td>
+                                                                <td class="align-middle">
+                                                                    @switch($order->payment->payment_status)
+                                                                        @case('pending')
+                                                                            <span class="badge bg-warning-subtle text-warning">Chờ
+                                                                                xử
+                                                                                lý</span>
+                                                                        @break
+
+                                                                        @case('completed')
+                                                                            <span
+                                                                                class="badge bg-success-subtle  text-success">Hoàn
+                                                                                thành</span>
+                                                                        @break
+
+                                                                        @case('failed')
+                                                                            <span class="badge bg-danger text-danger"-subtle>Thất
+                                                                                bại</span>
+                                                                        @break
+
+                                                                        @default
+                                                                            <span class="badge bg-secondary text-dark">Không xác
+                                                                                định</span>
                                                                     @endswitch
                                                                 </td>
                                                                 <td class="align-middle">
@@ -180,7 +312,6 @@
                                                                             title="Xem chi tiết">
                                                                             <i class="fas fa-eye"></i>
                                                                         </a>
-
                                                                         <form
                                                                             action="{{ route('admin.orders.destroy', $order->id) }}"
                                                                             method="POST" class="d-inline-block">
@@ -199,7 +330,8 @@
                                                             </tr>
                                                             @empty
                                                                 <tr>
-                                                                    <td colspan="8" class="text-center">Không có đơn hàng nào
+                                                                    <td colspan="8" class="text-center">Không có đơn hàng
+                                                                        nào
                                                                     </td>
                                                                 </tr>
                                                             @endforelse
@@ -259,6 +391,36 @@
                 /* Màu nền khi hover */
                 border-color: #17a2b8;
                 /* Màu viền khi hover */
+            }
+        </style>
+        <style>
+            .avatar-xs {
+                height: 2.2rem;
+                width: 2.2rem;
+            }
+
+            .bg-success-subtle {
+                background-color: rgba(10, 179, 156, .1);
+            }
+
+            .bg-danger-subtle {
+                background-color: rgba(240, 101, 72, .1);
+            }
+
+            .bg-warning-subtle {
+                background-color: rgba(247, 184, 75, .1);
+            }
+
+            .bg-primary-subtle {
+                background-color: rgba(64, 81, 137, .1);
+            }
+
+            .bg-secondary-subtle {
+                background-color: rgba(116, 120, 141, .1);
+            }
+
+            .bg-dark-subtle {
+                background-color: rgba(33, 37, 41, .1);
             }
         </style>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">

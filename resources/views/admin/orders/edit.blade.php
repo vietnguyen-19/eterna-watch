@@ -73,7 +73,7 @@
                                     {{-- Phương thức và Trạng thái thanh toán --}}
                                     <strong>Phương thức thanh toán:</strong>
                                     <span class="badge bg-success">
-                                        {{ $order->payment->payment_method }}
+                                        {{ $order->payment_method }}
                                     </span>
                                     |
                                     <strong>Trạng thái:</strong>
@@ -161,16 +161,6 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="badge badge bg-warning fs-5 px-1 py-1">pending</span>
-                                        <div class="text-muted">
-                                            {{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</div>
-                                    </div>
-                                    <div>
-                                        <b>Hệ thống</b>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

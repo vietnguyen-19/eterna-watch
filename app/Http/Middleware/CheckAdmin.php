@@ -18,20 +18,19 @@ class CheckAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        // Kiểm tra người dùng đã đăng nhập chưa
-        if (!Auth::check()) {
-            return redirect()->route('admin.login'); // Chuyển hướng nếu chưa đăng nhập
+        // Nếu chưa đăng nhập thì chuyển hướng
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('admin.login');
         }
 
-        // Kiểm tra quyền admin
-        $userRole = Auth::user()->role_id;
-        $allowedRoles = [1, 2]; // Mảng quyền cho phép (ví dụ: 1 là admin, 2 là super admin)
-        
-        if (in_array($userRole, $allowedRoles)) {
-            return $next($request); // Nếu người dùng có quyền admin, tiếp tục request
+        // Lấy user đã đăng nhập
+        $user = Auth::guard('admin')->user();
+
+        // Kiểm tra role_id hợp lệ
+        if (!in_array($user->role_id, [1, 2])) {
+            return redirect()->route('admin.login')->with('error', 'Bạn không có quyền truy cập');
         }
 
-        // Nếu không có quyền, chuyển hướng về trang login
-        return redirect()->route('admin.login'); 
+        return $next($request);
     }
 }

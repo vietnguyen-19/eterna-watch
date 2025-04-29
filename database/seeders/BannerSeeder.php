@@ -17,15 +17,15 @@ class BannerSeeder extends Seeder
             [
                 'position' => 'home_start',
                 'title' => 'Khám phá Đồng Hồ Cao Cấp',
-                'image' => 'banners/home_bg.jpg',
+                'image' => 'banners/home_start.jpg',
                 'link' => '/',
                 'description' => 'Mang đến sự đẳng cấp và phong cách thời thượng cho bạn.',
                 'is_active' => true,
             ],
             [
                 'position' => 'home_new_product',
-                'title' => 'Bộ Sưu Tập Mới Nhất',
-                'image' => 'banners/new_watches.jpg',
+                'title' => 'Sản phẩm mới',
+                'image' => 'banners/home_new_product.jpg',
                 'link' => '/products/new',
                 'description' => 'Những mẫu đồng hồ mới ra mắt, hợp xu hướng 2025.',
                 'is_active' => true,
@@ -63,7 +63,7 @@ class BannerSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'position' => 'forward_password',
+                'position' => 'forgot_password',
                 'title' => 'Quên Mật Khẩu?',
                 'image' => 'banners/forgot_password.jpg',
                 'link' => '/password/forgot',

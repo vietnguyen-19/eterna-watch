@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ImageHandler;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
@@ -12,10 +13,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
+
 {
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $users = User::with('defaultAddress')
+            ->where('name', 'like', "%$search%")
+            ->orWhere('email', 'like', "%$search%")
+            ->limit(10)
+            ->get();
+        $filteredUsers = $users->map(function ($user) {
+            return [
+                'id'     => $user->id,
+                'name'   => $user->name,
+                'email'  => $user->email,
+                'phone'  => $user->phone,
+                'address' => $user->defaultAddress ? [
+                    'city'              => $user->defaultAddress->city ?? '',
+                    'district'          => $user->defaultAddress->district ?? '',
+                    'ward'              => $user->defaultAddress->ward ?? '',
+                    'street_address'  => $user->defaultAddress->street_address ?? '',
+                ] : null, // Nếu không có address thì trả về null
+            ];
+        });
+
+        return response()->json($filteredUsers);
+    }
+
     public function index()
     {
-        $posts = Post::with(['user', 'tags', 'categories'])->get();
+        $posts = Post::with(['user', 'tags', 'categories'])->latest()->get();
         return view('admin.posts.index', compact('posts'));
     }
     public function create()
@@ -26,33 +55,35 @@ class PostController extends Controller
     }
     public function store(Request $request)
     {
+
         $request->validate([
-            'email_user'         => 'required|email',
-            'title'         => 'required|string|max:255',
-            'content'       => 'required|string',
-            'excerpt'       => 'nullable|string',
-            'status'        => 'required|in:draft,published,archived',
-            'image'         => 'nullable|image|max:2048',
-            'published_at'  => 'nullable|date',
-            'tags'          => 'nullable|array',
-            'tags.*'        => 'exists:tags,id',
-            'categories'    => 'nullable|array',
-            'categories.*'  => 'exists:categories,id',
+            'title' => 'required|string|max:255',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'status' => 'required|in:draft,published',
+            'image'         => 'required|image|max:2048',
+            'published_at' => 'required|date|after_or_equal:today',
+            'categories' => 'required|array|min:1',
+            'categories.*' => 'exists:categories,id',
+            'tags' => 'required|array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
+
         // Lấy dữ liệu từ request
-        $data = $request->only(['title', 'content', 'excerpt', 'status', 'published_at']);
-        $user = User::where('email', $request->email_user)->first();
-        $data['user_id'] = $user ? $user->id : null;
+        $data = $request->only(['title','user_id', 'content', 'excerpt', 'status', 'published_at']);
+        $user = User::where('id', $request->usser_id)->first();
         // Xử lý file upload ảnh (nếu có)
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('blogs', 'public');
+            $data['image'] = ImageHandler::saveImage($request->file('image'), 'blogs');
         }
 
         // Chuyển đổi published_at về dạng Carbon nếu có giá trị
         if (!empty($data['published_at'])) {
             $data['published_at'] = Carbon::parse($data['published_at']);
         }
+        
         $post = Post::create($data);
 
         // Gán tags và categories (quan hệ nhiều-nhiều)
@@ -64,12 +95,7 @@ class PostController extends Controller
             $post->categories()->sync($request->input('categories'));
         }
 
-        return redirect()->route('admin.posts.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Bài viết được thêm thành công.',
-            ]
-        ]);
+        return redirect()->route('admin.posts.index')->with('success', 'Tạo mới bài viết thành công');
     }
 
     public function edit($id)
@@ -86,27 +112,25 @@ class PostController extends Controller
 
         // Validate dữ liệu
         $request->validate([
-            'title'         => 'required|string|max:255',
-            'content'       => 'required|string',
-            'excerpt'       => 'nullable|string',
-            'status'        => 'required|in:draft,published,archived',
+            'title' => 'required|string|max:255',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'status' => 'required|in:draft,published',
             'image'         => 'nullable|image|max:2048',
-            'published_at'  => 'nullable|date',
-            'tags'          => 'nullable|array',
-            'tags.*'        => 'exists:tags,id',
-            'categories'    => 'nullable|array',
-            'categories.*'  => 'exists:categories,id',
+            'published_at' => 'required|date|after_or_equal:today',
+            'categories' => 'required|array|min:1',
+            'categories.*' => 'exists:categories,id',
+            'tags' => 'required|array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
         $data = $request->only(['title', 'content', 'excerpt', 'status', 'published_at']);
-        $user = User::where('email', $request->email_user)->first();
-        $data['user_id'] = $user ? $user->id : null;
+        $user = User::where('id', $request->user_id)->first();
+
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
-            if ($post->image && Storage::disk('public')->exists($post->image)) {
-                Storage::disk('public')->delete($post->image);
-            }
-            $data['image'] = $request->file('image')->store('posts', 'public');
+            $data['image'] = ImageHandler::updateImage($request->file('image'), $post->image, 'blogs');
         }
 
         if (!empty($data['published_at'])) {
@@ -129,33 +153,58 @@ class PostController extends Controller
             $post->categories()->detach();
         }
 
-        return redirect()->route('admin.posts.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Bài viết được cập nhật thành công.',
-            ]
-        ]);
+        return redirect()->route('admin.posts.index')->with('success', 'Cập nhật bài viết thành công');
     }
+
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
 
-        // Xóa ảnh nếu có
+        // Xoá ảnh nếu có
         if ($post->image && Storage::disk('public')->exists($post->image)) {
-            Storage::disk('public')->delete($post->image);
+            ImageHandler::deleteImage($post->image);
         }
 
-        // Hủy kết nối với tags và categories
+        // Hủy liên kết với tags và categories
         $post->tags()->detach();
         $post->categories()->detach();
 
+        // Xoá mềm
         $post->delete();
 
-        return redirect()->route('admin.posts.index')->with([
-            'thongbao' => [
-                'type' => 'success',
-                'message' => 'Bài viết được đc xóa khỏi danh sách.',
-            ]
-        ]);
+        return redirect()->route('admin.posts.index')
+            ->with('success', 'Bài viết đã được xóa tạm thời.');
+    }
+    public function trash()
+    {
+        $posts = Post::onlyTrashed()->latest()->paginate(10);
+        return view('admin.posts.trash', compact('posts'));
+    }
+    public function restore($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $post->restore();
+
+        return redirect()->route('admin.posts.trash')
+            ->with('success', 'Bài viết đã được khôi phục thành công.');
+    }
+    public function forceDelete($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+
+        // Xoá ảnh nếu có
+        if ($post->image && Storage::disk('public')->exists($post->image)) {
+            ImageHandler::deleteImage($post->image);
+        }
+
+        // Hủy liên kết với tags và categories
+        $post->tags()->detach();
+        $post->categories()->detach();
+
+        // Xoá vĩnh viễn
+        $post->forceDelete();
+
+        return redirect()->route('admin.posts.trash')
+            ->with('success', 'Bài viết đã bị xoá vĩnh viễn.');
     }
 }

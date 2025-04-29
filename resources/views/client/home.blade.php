@@ -14,7 +14,7 @@
                 <h2 class="text-uppercase h1 fw-semi-bold text-center text-white lh-1 mb-4">{{  $banners['home_start']->title ?? '' }}
                 </h2>
                 <div class="d-flex align-items-center text-center justify-content-center">
-                    <a href="shop1.html" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
+                    <a href="{{ route('client.shop') }}" class="btn btn-outline-primary border-0 fs-13 fw-semi-bold text-uppercase">
                         Mua Ngay
                     </a>
                 </div>
@@ -54,7 +54,7 @@
                                 <div class="swiper-slide">
                                     <a href="{{ route('client.shop', ['category_id' => $item->id]) }}">
                                         <img loading="lazy" class="w-100 h-auto mb-3 d-block"
-                                            src="{{ asset('storage/cate/cate' . ($index + 1) . '.jpg') }}" width="330"
+                                            src="{{ Storage::url($item->image ?? 'avatar/default.jpeg') }}" width="330"
                                             height="400" alt=""></a>
                                     <div class="text-center">
                                         <a href="{{ route('client.shop', ['category_id' => $item->id]) }}"
@@ -130,7 +130,7 @@
             </div>
             <div class="image-banner__content container py-3">
                 <h2 class="text-white h1 fw-semi-bold mb-3 mb-xl-4">SẢN PHẨM MỚI</h2>
-                <a href="shop1.html"
+                <a href="{{ route('client.shop', ['filter' => 'date_new']) }}"
                     class="btn btn-outline-primary border-0 fs-13 text-uppercase fw-semi-bold btn-50 d-inline-flex align-items-center justify-content-center">
                     <span>Mua Ngay</span>
                 </a>
@@ -268,31 +268,36 @@
       }'>
                     <div class="swiper-wrapper blog-grid row-cols-xl-3">
                         @foreach ($posts as $post)
-                            <div class="swiper-slide blog-grid__item mb-4">
-                                <div class="blog-card">
-                                    <div class="blog-card__image">
-                                        <img loading="lazy"
-                                            src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}"
-                                            alt="{{ $post->title }}">
-                                    </div>
-                                    <div class="blog-card__content">
-                                        <div class="blog-card__meta">
-                                            <span class="blog-card__author">Tác giả:
-                                                {{ $post->user->name ?? 'Quản trị viên' }}</span>
-                                            <span class="blog-card__date">{{ $post->created_at->format('d/m/Y') }}</span>
-                                        </div>
-                                        <h3 class="blog-card__title">
-                                            <a
-                                                href="{{ route('client.blog.detail', $post->id) }}">{{ $post->title }}</a>
-                                        </h3>
-                                        <p class="blog-card__excerpt">{{ Str::limit($post->content, 100) }}</p>
-                                        <a href="{{ route('client.blog.detail', $post->id) }}"
-                                            class="blog-card__read-more">Xem thêm</a>
-                                    </div>
+                        <div class="swiper-slide blog-grid__item mb-6">
+                            <article class="blog-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105 duration-300">
+                                <div class="blog-card__image relative">
+                                    <img loading="lazy" 
+                                         src="{{ Storage::url($post->image ?? 'avatar/default.jpeg') }}" 
+                                         alt="{{ $post->title }}" 
+                                         class="w-full h-48 object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                                 </div>
-                            </div>
-                        @endforeach
-
+                                <div class="blog-card__content p-6">
+                                    <div class="blog-card__meta flex items-center text-sm text-gray-500 mb-3">
+                                        <span class="blog-card__author">Tác giả: {{ $post->user->name ?? 'Quản trị viên' }}</span>
+                                        <span class="mx-2">•</span>
+                                        <span class="blog-card__date">{{ $post->created_at->format('d/m/Y') }}</span>
+                                    </div>
+                                    <h3 class="blog-card__title text-xl font-semibold text-gray-800 mb-2 line-clamp-2">
+                                        <a href="{{ route('client.blog.detail', $post->id) }}" 
+                                           class="hover:text-blue-600 transition-colors">{{ $post->title }}</a>
+                                    </h3>
+                                    <p class="blog-card__excerpt text-gray-600 text-sm mb-4 line-clamp-3">
+                                        {{ Str::limit(strip_tags($post->content), 100) }}
+                                    </p>
+                                    <a href="{{ route('client.blog.detail', $post->id) }}" 
+                                       class="blog-card__read-more text-blue-600 font-medium hover:underline">
+                                        Xem thêm
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
 
                     </div><!-- /.swiper-wrapper -->
                 </div><!-- /.swiper-container js-swiper-slider -->
@@ -302,92 +307,87 @@
         <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     </main>
 @endsection
+@section('script')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const redirectUrl = sessionStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl'); // Xóa URL sau khi sử dụng
+            window.location.href = redirectUrl; // Chuyển hướng về trang sản phẩm
+        }
+    });
+</script>
+@endsection
 @section('style')
-    <style>
-        .blog-card {
-            background: #fff;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s;
-        }
-
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .blog-card__image img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }
-
-        .blog-card__content {
-            padding: 15px;
-        }
-
-        .blog-card__meta {
-            font-size: 14px;
-            color: #777;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .blog-card__title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .blog-card__title a {
-            color: #333;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .blog-card__title a:hover {
-            color: #e20000;
-        }
-
-        .blog-card__excerpt {
-            font-size: 15px;
-            color: #555;
-            margin-bottom: 15px;
-        }
-
-        .blog-card__read-more {
-            font-size: 14px;
-            color: #e20000;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        .blog-card__read-more:hover {
-            color: #e20000;
-        }
-
-        <style>
-
-        /* Fix chiều cao cho section */
-        section.position-relative {
-            height: 100vh;
-            min-height: 800px;
-            overflow: hidden;
-        }
-
-        /* Đảm bảo ảnh nền phủ kín */
-        .slideshow-bg__img {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-        }
-    </style>
-    </style>
-
+   
+<style>
+    .blog-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+.blog-card:hover {
+    transform: scale(1.05);
+}
+.blog-card__image {
+    position: relative;
+    overflow: hidden;
+}
+.blog-card__image img {
+    width: 100%;
+    height: 192px;
+    object-fit: cover;
+}
+.blog-card__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+}
+.blog-card__content {
+    padding: 1.5rem;
+}
+.blog-card__meta {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+.blog-card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.blog-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+.blog-card__title a:hover {
+    color: #2563eb;
+}
+.blog-card__excerpt {
+    color: #4b5563;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.blog-card__read-more {
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: none;
+}
+.blog-card__read-more:hover {
+    text-decoration: underline;
+}
+</style>
 @endsection

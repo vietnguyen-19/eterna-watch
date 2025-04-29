@@ -34,8 +34,6 @@
                         </div>
 
                         <div class="card-body">
-                         
-
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered align-middle" id="userTable">
                                     <thead class="table-light">
@@ -56,8 +54,13 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="flex-shrink-0 mr-3">
-                                                            <img src="{{ Storage::url($user->avatar ?? 'default-avatar.png') }}"
-                                                                alt="Avatar" class="rounded-circle avatar-xs">
+                                                            @if ($user->avatar)
+                                                                <img src="{{ Storage::url($user->avatar) }}" alt="Avatar"
+                                                                    class="rounded-circle avatar-xs">
+                                                            @else
+                                                                <img src="{{ Storage::url('avatar/default.jpeg') }}"
+                                                                    alt="Avatar" class="rounded-circle avatar-xs">
+                                                            @endif
                                                         </div>
                                                         <div class="flex-grow-1 ms-2">
                                                             <h6 class="mb-0">{{ $user->name }}</h6>
@@ -73,15 +76,7 @@
                                                         @break
 
                                                         @case('inactive')
-                                                            <span class="badge bg-danger-subtle text-danger">Ngưng hoạt động</span>
-                                                        @break
-
-                                                        @case('banned')
-                                                            <span class="badge bg-dark-subtle text-dark">Đã khóa</span>
-                                                        @break
-
-                                                        @case('pending')
-                                                            <span class="badge bg-warning-subtle text-warning">Chờ duyệt</span>
+                                                            <span class="badge bg-danger-subtle text-danger">Đã khóa</span>
                                                         @break
 
                                                         @default
@@ -92,7 +87,7 @@
                                                 <td class="align-middle">
                                                     @if ($user->role)
                                                         <span class="badge bg-primary-subtle text-primary">
-                                                            {{ $user->role->name == 'employee' ? 'Nhân viên' : ($user->role->name == 'user' ? 'Khách hàng' : $user->role->name) }}
+                                                            {{ $user->role->name == 'staff' ? 'Nhân viên' : ($user->role->name == 'customer' ? 'Khách hàng' : ($user->role->name == 'admin' ? 'Quản trị viên' : 'không xác định')) }}
                                                         </span>
                                                     @else
                                                         <span class="badge bg-secondary-subtle text-secondary">Chưa
@@ -102,13 +97,10 @@
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('admin.users.show', $user->id) }}"
-                                                            class="btn btn-sm btn-info">
+                                                            class="btn btn-sm btn-info mr-1">
                                                             <i class="fas fa-info-circle"></i>
                                                         </a>
-                                                        <a href="{{ route('admin.users.edit', $user->id) }}"
-                                                            class="btn btn-sm btn-warning">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
+
                                                         <form action="{{ route('admin.users.destroy', $user->id) }}"
                                                             method="POST" class="d-inline"
                                                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">

@@ -3,33 +3,29 @@
     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
     <main>
         <div class="mb-4 pb-4"></div>
+        <div class="mb-4 pb-lg-3"></div>
         <section class="shop-checkout container">
-            <h2 class="page-title">GIỎ HÀNG</h2>
-            <div class="checkout-steps">
-                <a href="shop_cart.html" class="checkout-steps__item active d-flex align-items-center py-3">
-                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">01</h2>
-                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
-                        <span class="step-title fw-bold">Giỏ hàng</span>
-                        <em class="step-description text-muted">Quản lý danh sách sản phẩm của bạn</em>
-                    </span>
-                </a>
 
-                <a href="shop_checkout.html" class="checkout-steps__item d-flex align-items-center py-3">
-                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">02</h2>
-                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
-                        <span class="step-title fw-bold">Giao hàng và thanh toán</span>
-                        <em class="step-description text-muted">Tiến hành thanh toán</em>
-                    </span>
-                </a>
+            <a href="shop_cart.html" class="d-flex"
+                style="background-color: #f6f6f6; border-radius: 3px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);">
 
-                <a href="shop_order_complete.html" class="checkout-steps__item d-flex align-items-center py-3">
-                    <h2 style="background: #b42020; color:#e9ecef" class="me-1 mb-0 p-2">03</h2>
-                    <span class="checkout-steps__item-title d-flex flex-column justify-content-center text-start">
-                        <span class="step-title fw-bold">Xác nhận</span>
-                        <em class="step-description text-muted">Kiểm tra và gửi đơn hàng</em>
-                    </span>
-                </a>
-            </div>
+                <!-- Cột icon full height -->
+                <div
+                    style="background-color: #242424; padding: 0 35px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-shopping-cart" style="color: white; font-size: 36px;"></i>
+                </div>
+
+                <!-- Phần nội dung -->
+                <div style="padding: 20px;">
+                    <div style="font-size: 1.8rem; color: #b42020; font-weight: bold; margin-bottom: 5px;">
+                        GIỎ HÀNG
+                    </div>
+                    <p style="margin: 0; font-size: 0.95rem; color: #6c757d;">
+                        Quản lý danh sách sản phẩm của bạn
+                    </p>
+                </div>
+
+            </a>
             <div class="shopping-cart">
                 <div class="cart-table__wrapper">
                     <table class="cart-table">
@@ -46,14 +42,16 @@
 
                             </tr>
                         </thead>
-
                         <tbody>
                             @php
                                 $total = $total ?? 0;
                                 $total_amount = $total_amount ?? 0;
                             @endphp
 
-                            @if (empty($cart))
+                            @if (
+                                !isset($cart) ||
+                                    (is_array($cart) && count($cart) == 0) ||
+                                    (is_object($cart) && method_exists($cart, 'isEmpty') && $cart->isEmpty()))
                                 <tr>
                                     <td colspan="7" class="text-center py-4">
                                         <strong>Giỏ hàng của bạn đang trống.</strong>
@@ -87,7 +85,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item">
-                                                <a href="product1_simple.html">
+                                                <a href="{{ route('client.shop.show', $product->id) }}">
                                                     <img style="border: 1px solid #c4bebe;width:88px"
                                                         src="{{ Storage::url($image) }}" alt="">
                                                 </a>
@@ -95,7 +93,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item__detail">
-                                                <h4><a href="product1_simple.html">
+                                                <h4><a href="{{ route('client.shop.show', $product->id) }}">
                                                         <strong>{{ $name ?? 'Sản phẩm không tồn tại' }}</strong></a>
                                                 </h4>
                                                 <ul class="shopping-cart__product-item__options">
@@ -144,19 +142,110 @@
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div class="mb-4 mb-xl-5 pt-xl-1 pb-5"></div>
                     <div id="fixedBar" class="card mt-5">
-                        <div style="border-bottom:1px solid #a7a7a7" class="card-header bg-dark p-2">
-                            <div class="container"> <!-- Thêm container để giới hạn chiều rộng -->
-                                <div class="d-flex justify-content-end align-items-center">
-                                    <div class="position-relative w-50">
-                                        <input class="form-control form-control-sm" type="text" name="discount-code"
+                        <div class="card-header bg-dark border-bottom border-secondary py-3">
+                            <div class="container">
+                                <div
+                                    class="d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-3">
+
+                                    <!-- Nhập mã giảm giá (vuông) -->
+                                    <div class="position-relative w-100 w-md-50">
+                                        <input id="voucherInput" style="border-radius: 3px" type="text"
+                                            name="discount-code" class="form-control form-control-sm pe-5"
                                             placeholder="Nhập mã giảm giá" disabled>
-                                        <button data-total="{{ $total }}" style="background: #1d7bda; color:#fff"
-                                            id="checkVoucher" class="btn fw-medium position-absolute top-0 end-0 h-100 px-4"
-                                            disabled>Kiểm tra</button>
+                                        <button id="checkVoucher" data-total="{{ $total }}"
+                                            class="btn btn-sm fw-semibold position-absolute top-0 end-0 h-100 px-4"
+                                            style="background-color: #1d7bda; color: #fff; border-radius: 4px;" disabled>
+                                            Kiểm tra
+                                        </button>
+                                    </div>
+
+                                    <!-- Nút xem voucher (vuông) -->
+                                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2"
+                                        data-bs-toggle="modal" data-bs-target="#voucherModal"
+                                        class="btn btn-sm fw-semibold text-white"
+                                        style="width:200px;background-color: #c93030; padding: 13px 20px; border-radius: 4px;">
+                                        Xem mã giảm giá
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content border-0 shadow-lg rounded-4">
+                                    <div class="modal-header bg-white">
+                                        <h5 class="modal-title fw-bold text-primary" id="voucherModalLabel"
+                                            style="font-size: 1.8rem;">
+                                            Danh sách mã giảm giá
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body bg-light">
+                                        <div class="row g-4">
+                                            @foreach ($vouchers as $voucher)
+                                                <div class="col-12">
+                                                    <div class="card border-0 rounded-4 shadow-sm overflow-hidden"
+                                                        style="background: linear-gradient(90deg, #ffffff 18%, #ffc107 18%, #ffc107 82%, #ffffff 82%);">
+                                                        <div class="d-flex">
+                                                            <!-- Cột trái -->
+                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4"
+                                                                style="width: 18%; background-color: #fff; border-right: 2px dashed #000;">
+                                                                <p class="fw-bold text-dark mb-0"
+                                                                    style="font-size: 1.2rem; writing-mode: vertical-rl; transform: rotate(180deg);">
+                                                                    GIẢM GIÁ
+                                                                </p>
+                                                            </div>
+
+                                                            <!-- Cột giữa -->
+                                                            <div class="flex-grow-1 p-4 text-center">
+                                                                <h5 class="fw-bold text-dark mb-3"
+                                                                    style="font-size: 1.4rem;">{{ $voucher->name }}</h5>
+                                                                <p class="text-muted mb-2" style="font-size: 1rem;">Đơn
+                                                                    tối thiểu:
+                                                                    {{ number_format($voucher->min_order, 0, ',', '.') }}₫
+                                                                </p>
+                                                                <p class="text-muted mb-3" style="font-size: 1rem;">Hạn sử
+                                                                    dụng:
+                                                                    {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}
+                                                                </p>
+                                                                <div>
+                                                                    <span
+                                                                        class="badge bg-white text-dark border-0 px-4 py-2"
+                                                                        style="font-size: 1.1rem;">Mã:
+                                                                        {{ $voucher->code }}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Cột phải -->
+                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4"
+                                                                style="width: 20%; background-color: #fff; border-left: 2px dashed #000;">
+                                                                <p class="text-muted mb-2" style="font-size: 0.9rem;">Đã
+                                                                    dùng:
+                                                                    {{ $voucher->used_count }}/{{ $voucher->max_uses }}
+                                                                </p>
+                                                                <button
+                                                                    class="btn btn-dark btn-sm fw-semibold copy_button border-0"
+                                                                    data-code="{{ $voucher->code }}"
+                                                                    onclick="copyCode(this)"
+                                                                    style="padding: 8px 16px; font-size: 0.95rem; border-radius: 4px;">
+                                                                    Sao chép mã
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Script sao chép mã -->
+
+
+
+
 
                         <div class="card-body bg-dark p-2">
                             <div class="container"> <!-- Thêm container để giới hạn chiều rộng -->
@@ -197,6 +286,7 @@
     </main>
 @endsection
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkAll = document.querySelector("#check-all");
@@ -248,12 +338,19 @@
                 let stock = parseInt(input.closest(".input-group").querySelector(".qty-increase").dataset.stock);
                 console.log(stock);
                 if (quantity > stock) {
-                    alert(
-                        `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`
-                    );
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Vượt quá tồn kho!',
+                        text: `Số lượng bạn yêu cầu vượt quá số lượng tồn kho. Tối đa có thể mua là ${stock} sản phẩm.`,
+                        timer: 3500,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+
                     input.value = stock; // Đặt lại số lượng về tối đa tồn kho
                     return;
                 }
+
                 fetch("/cart/update", {
                         method: "POST",
                         headers: {
@@ -433,12 +530,29 @@
                     .then(data => {
                         if (data.valid) {
                             appliedDiscount = data.discount;
-                            alert(`Mã giảm giá hợp lệ! Giảm ${data.discount}đ.`);
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: 'Mã giảm giá hợp lệ.',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false
+                            });
+
                             updateTotalAmount();
                         } else {
-                            alert(data.message || "Mã giảm giá không hợp lệ!");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi!',
+                                text: data.message || 'Mã giảm giá không hợp lệ!',
+                                timer: 2000,
+                                timerProgressBar: true,
+                                showConfirmButton: false
+                            });
                         }
                     });
+
             });
 
             updateVoucherStatus();
@@ -470,6 +584,59 @@
 
             observer.observe(footer);
         });
+    </script>
+
+    <!-- Script JavaScript -->
+    <!-- SweetAlert2 CDN -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function copyCode(btn) {
+            const code = btn.getAttribute('data-code');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã sao chép!',
+                        text: '🎉 Mã: ' + code,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }).catch(err => {
+                    console.error('Lỗi khi sao chép: ', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: '❗ Không thể sao chép mã.',
+                    });
+                });
+            } else {
+                // Fallback cho trình duyệt không hỗ trợ clipboard API
+                const tempInput = document.createElement('input');
+                tempInput.value = code;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                try {
+                    document.execCommand('copy');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã sao chép!',
+                        text: '🎉 Mã: ' + code,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } catch (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: '❗ Không thể sao chép mã.',
+                    });
+                }
+                document.body.removeChild(tempInput);
+            }
+        }
     </script>
 @endsection
 @section('style')
@@ -529,6 +696,17 @@
             opacity: 0;
             transform: translateY(100%);
             pointer-events: none;
+        }
+
+        .btn-copy-code:hover {
+            background-color: #e63946;
+            /* Màu nền khi hover */
+            color: #ffffff;
+            /* Màu chữ khi hover */
+            border: 2px solid #e63946;
+            /* Giữ viền giống ban đầu */
+            transition: all 0.3s ease;
+            /* Hiệu ứng chuyển đổi mượt mà */
         }
     </style>
 @endsection

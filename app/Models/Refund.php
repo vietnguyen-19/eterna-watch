@@ -11,7 +11,8 @@ class Refund extends Model
     protected $fillable = [
         'order_id',
         'total_refund_amount',
-        'reason',
+        'refund_reason',
+        'rejected_reason',
         'status',
     ];
 
@@ -23,6 +24,10 @@ class Refund extends Model
     public function refundItems()
     {
         return $this->hasMany(RefundItem::class);
+    }
+    public function imageRefunds()
+    {
+        return $this->hasMany(ImageRefund::class);
     }
     public function entity()
     {

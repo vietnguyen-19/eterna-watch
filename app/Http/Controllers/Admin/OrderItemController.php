@@ -35,7 +35,7 @@ class OrderItemController extends Controller
                 ] : null, // Nếu không có address thì trả về null
             ];
         });
-       
+
         return response()->json($filteredUsers);
     }
 
@@ -182,7 +182,7 @@ class OrderItemController extends Controller
         $newTotal = $orderTotal - $discount;
 
         return response()->json([
-            'voucher_id'=> $voucher->id,
+            'voucher_id' => $voucher->id,
             'valid'    => true,
             'message'  => 'Voucher hợp lệ.',
             'discount' => $discount,

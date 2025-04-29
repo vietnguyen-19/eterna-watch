@@ -91,13 +91,14 @@ class CommentController extends Controller
     }
     public function reply(Request $request)
     {
+      
         Comment::create([
             'content' => $request->input('content'),
             'parent_id' => $request->input('parent_id'),
             'user_id' => auth()->id(),
             'entity_id' => $request->input('entity_id'),
             'entity_type' => $request->input('entity_type'),
-            'status' => 'pending',
+            'status' => 'approved',
         ]);
 
         return response()->json(['message' => 'Trả lời bình luận thành công!']);

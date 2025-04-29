@@ -89,7 +89,7 @@
                         </div>
 
 
-
+                        @if ($data->type != 'simple')
                         <!-- Các biến thể của sản phẩm -->
                         <div class="card" id="customerList">
                             <div class="card-header border-bottom-dashed">
@@ -115,6 +115,8 @@
                                                     <th class="text-left" scope="col">Biến thể</th>
                                                     <th scope="col">SKU</th>
                                                     <th scope="col">Giá</th>
+                                                    <th scope="col">Tồn kho</th>
+                                                    <th scope="col">Đã bán</th>
                                                     <th scope="col">Trạng thái</th>
                                                     <th scope="col">Thao tác</th>
 
@@ -159,10 +161,11 @@
                                                                 class="text-muted">VND</span>
                                                         </td>
                                                         <td class="text-center align-middle">{{ $variant->stock }}</td>
+                                                        <td class="text-center align-middle">{{ $variant->sold_quantity }}</td>
                                                         <td class="align-middle">
                                                             @php
                                                                 switch ($variant->status) {
-                                                                    case 'in_stock':
+                                                                    case 'active':
                                                                         $class = 'badge bg-success';
                                                                         $text = 'Còn hàng';
                                                                         break;
@@ -170,7 +173,7 @@
                                                                         $class = 'badge bg-danger';
                                                                         $text = 'Hết hàng';
                                                                         break;
-                                                                    case 'pre_order':
+                                                                    case 'inactive':
                                                                         $class = 'badge bg-warning text-dark';
                                                                         $text = 'Đặt trước';
                                                                         break;
@@ -214,6 +217,7 @@
                                 <div id="variants-combinations"></div>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
