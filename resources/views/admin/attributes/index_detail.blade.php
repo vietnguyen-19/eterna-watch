@@ -36,7 +36,7 @@
 
                                     <input type="hidden" name="attribute_id" value="{{ $attribute->id }}">
                                     <div class="mb-3 col-12">
-                                        <label for="value_name" class="form-label">Gía trị thuộc tính</label>
+                                        <label for="value_name" class="form-label">Giá trị thuộc tính</label>
                                         <input value="{{ old('value_name') }}" name="value_name" type="text"
                                             id="value_name" class="form-control" placeholder="Enter name">
                                         @error('value_name')
