@@ -122,67 +122,10 @@
     <div class="loading-overlay" id="loadingScreen"></div>
 
     <div class="content" id="mainContent">
-<<<<<<< HEAD
-        <div class="container-fluid">
-            <div class="row login-container">
-                <!-- Ảnh nền -->
-                <div class="col-lg-9 col-md-6 d-none d-md-block login-bg"></div>
-
-                <!-- Form đăng nhập -->
-                <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
-                    <div class="login-form">
-                        <img width="100%" src="{{ Storage::url($settings['logo_url'] ?? 'banners/login.jpg') }}"
-                            alt="Uomo" class="mb-5">
-                        <h3 class="text-uppercase text-center mb-4">Đăng nhập</h3>
-
-                        @if (session('status'))
-                            <div class="alert alert-success">
-                                {{ session('status') }}
-                            </div>
-                        @endif
-                        <form class="aside-content" method="POST" action="{{ route('client.login') }}">
-                            @csrf
-                            <div class="form-floating mb-3">
-                                <input name="email" type="email" class="form-control"
-                                    placeholder="name@example.com">
-                                <label>Email *</label>
-                                @error('email')
-                                    <div style="color:red">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input name="password" type="password" class="form-control"
-                                    placeholder="*******">
-                                <label>Mật khẩu *</label>
-                                @error('password')
-                                    <div style="color:red">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="d-flex mb-3">
-                                <div class="form-check">
-                                    <input name="remember" class="form-check-input" type="checkbox">
-                                    <label class="form-check-label">Nhớ mật khẩu</label>
-                                </div>
-                                <a href="{{ route('password.request') }}" class="ms-auto text-decoration-none">Quên mật
-                                    khẩu?</a>
-                            </div>
-
-                            <button class="btn btn-primary w-100" type="submit">Đăng nhập</button>
-
-                            <div class="text-center mt-3">
-                                <span>Bạn chưa có tài khoản?</span>
-                                <a href="{{ route('client.register') }}" class="text-decoration-none">Tạo tài khoản
-                                    mới</a>
-                            </div>
-                        </form>
-                    </div>
-=======
         <div class="card login-form">
             <div class="card-header">
                 <div class="logo-container">
                     <img src="{{ Storage::url($settings['logo_url'] ?? 'avatar/default.jpeg') }}" alt="EternaWatch Logo">
->>>>>>> 9b95acde68fc38ab020af9ae15f6ac7ec067b213
                 </div>
             </div>
             <div class="card-body">
