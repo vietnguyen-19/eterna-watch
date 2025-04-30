@@ -70,15 +70,6 @@
                                                                         class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                         Sửa
                                                                     </a>
-                                                                    <form
-                                                                        action="{{ route('admin.settings.destroy', $item->id) }}"
-                                                                        method="POST" style="display:inline-block;"
-                                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit"
-                                                                            class="btn btn-sm btn-danger">Xóa</button>
-                                                                    </form>
                                                                 </li>
                                                             </ul>
                                                         </td>
