@@ -6,16 +6,16 @@
             <div class="row">
                 <div class="col-12">
                     @if (session('thongbao'))
-                        <div id="thongbao-alert"
-                            class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
-                            role="alert">
-                            <i class="ri-notification-off-line label-icon"></i><strong>
-                                {{ session('thongbao.message') }}</strong>
+                                    <div id="thongbao-alert"
+                                        class="alert alert-{{ session('thongbao.type') }} alert-dismissible bg-{{ session('thongbao.type') }} text-white alert-label-icon fade show"
+                                        role="alert">
+                                        <i class="ri-notification-off-line label-icon"></i><strong>
+                                            {{ session('thongbao.message') }}</strong>
 
-                        </div>
-                        @php
-                            session()->forget('thongbao');
-                        @endphp
+                                    </div>
+                                    @php
+                                        session()->forget('thongbao');
+                                    @endphp
                     @endif
                     <div class="card">
                         <div class="card-header">
@@ -70,6 +70,14 @@
                                                                         class="btn btn-warning btn-icon waves-effect waves-light btn-sm">
                                                                         Sửa
                                                                     </a>
+                                                                    <form action="{{ route('settings.destroy', $setting->id) }}"
+                                                                        method="POST" style="display:inline-block;"
+                                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-danger">Xóa</button>
+                                                                    </form>
                                                                 </li>
                                                             </ul>
                                                         </td>
@@ -105,7 +113,7 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#danhmucTable').DataTable({
                 "paging": true, // Bật phân trang
                 "lengthMenu": [5, 20, 50], // Số dòng hiển thị mỗi trang
@@ -131,7 +139,7 @@
 
     <script>
         // Tự động đóng thông báo sau 5 giây (5000ms)
-        setTimeout(function() {
+        setTimeout(function () {
             var alert = document.getElementById('thongbao-alert');
             if (alert) {
                 // Sử dụng Bootstrap để đóng alert
