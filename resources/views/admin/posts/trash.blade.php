@@ -4,6 +4,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
+              
+
                 <div class="card" id="trashList">
                     <div class="card-header border-bottom-dashed">
                         <div class="row g-4 align-items-center">
@@ -15,9 +17,11 @@
                                     <a href="{{ route('admin.posts.index') }}" class="btn btn-sm btn-secondary mr-1">
                                         <i class="ri-delete-bin-line align-bottom me-1"></i> Quay về danh sách
                                     </a>
+                                   
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
 
                     <div class="card-body">

@@ -35,7 +35,7 @@
                                                 
                                                 <th class="sort" data-sort="published_at">Ngày đăng</th>
                                                 <th class="sort" data-sort="published_at">Trạng thái</th>
-                                                <th class="sort" data-sort="action">Hành động</th>
+                                                <th class="sort" data-sort="action">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -43,7 +43,7 @@
                                                 <tr>
                                                     <!-- Title -->
                                                     <td class="align-middle">
-                                                       {{ $post->id }}
+                                                       {{ $post->id }}</a>
                                                     </td>
                                                     <td class="align-middle">
                                                         {{ $post->title }}
@@ -102,11 +102,17 @@
                                                 </tr>
                                             @endforeach
                                         </tbody>
+                                       
                                     </table>
+                                    
+
                                 </div>
+
                             </div>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -125,6 +131,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
     <!-- Sweet Alerts js -->
+
+
+    <!-- Sweet alert init js-->
     <script src="{{ asset('theme/velzon/assets/js/pages/sweetalerts.init.js') }}"></script>
 
     <script src="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
@@ -175,34 +184,34 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"
         type="text/css" />
-    <style>
-        .avatar-xs {
-            height: 2.2rem;
-            width: 2.2rem;
-        }
+        <style>
+            .avatar-xs {
+                height: 2.2rem;
+                width: 2.2rem;
+            }
 
-        .bg-success-subtle {
-            background-color: rgba(10, 179, 156, .1);
-        }
+            .bg-success-subtle {
+                background-color: rgba(10, 179, 156, .1);
+            }
 
-        .bg-danger-subtle {
-            background-color: rgba(240, 101, 72, .1);
-        }
+            .bg-danger-subtle {
+                background-color: rgba(240, 101, 72, .1);
+            }
 
-        .bg-warning-subtle {
-            background-color: rgba(247, 184, 75, .1);
-        }
+            .bg-warning-subtle {
+                background-color: rgba(247, 184, 75, .1);
+            }
 
-        .bg-primary-subtle {
-            background-color: rgba(64, 81, 137, .1);
-        }
+            .bg-primary-subtle {
+                background-color: rgba(64, 81, 137, .1);
+            }
 
-        .bg-secondary-subtle {
-            background-color: rgba(116, 120, 141, .1);
-        }
+            .bg-secondary-subtle {
+                background-color: rgba(116, 120, 141, .1);
+            }
 
-        .bg-dark-subtle {
-            background-color: rgba(33, 37, 41, .1);
-        }
-    </style>
+            .bg-dark-subtle {
+                background-color: rgba(33, 37, 41, .1);
+            }
+        </style>
 @endsection
