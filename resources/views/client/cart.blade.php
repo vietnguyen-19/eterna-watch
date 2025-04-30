@@ -172,63 +172,53 @@
                         <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content border-0 shadow-lg rounded-4">
-                                    <div class="modal-header bg-white">
-                                        <h5 class="modal-title fw-bold text-primary" id="voucherModalLabel"
-                                            style="font-size: 1.8rem;">
+                                    <div class="modal-header bg-white border-bottom-0">
+                                        <h5 class="modal-title fw-bold text-primary text-center" id="voucherModalLabel"
+                                            style="font-size: 1.2rem;">
                                             Danh sách mã giảm giá
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Đóng"></button>
                                     </div>
-                                    <div class="modal-body bg-light">
+                                    <div class="modal-body bg-light" style="max-height: 630px; overflow-y: auto;">
                                         <div class="row g-4">
                                             @foreach ($vouchers as $voucher)
-                                                <div class="col-12">
-                                                    <div class="card border-0 rounded-4 shadow-sm overflow-hidden"
-                                                        style="background: linear-gradient(90deg, #ffffff 18%, #ffc107 18%, #ffc107 82%, #ffffff 82%);">
-                                                        <div class="d-flex">
-                                                            <!-- Cột trái -->
-                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4"
-                                                                style="width: 18%; background-color: #fff; border-right: 2px dashed #000;">
-                                                                <p class="fw-bold text-dark mb-0"
-                                                                    style="font-size: 1.2rem; writing-mode: vertical-rl; transform: rotate(180deg);">
-                                                                    GIẢM GIÁ
-                                                                </p>
-                                                            </div>
-
-                                                            <!-- Cột giữa -->
-                                                            <div class="flex-grow-1 p-4 text-center">
-                                                                <h5 class="fw-bold text-dark mb-3"
-                                                                    style="font-size: 1.4rem;">{{ $voucher->name }}</h5>
-                                                                <p class="text-muted mb-2" style="font-size: 1rem;">Đơn
-                                                                    tối thiểu:
+                                                <div class="col-md-6 col-12">
+                                                    <div class="card shadow-sm border-0 rounded-4 h-100"
+                                                        style="background-color: #fff;">
+                                                        <div class="d-flex flex-column flex-md-row h-100">
+                                                            <!-- Nội dung chính -->
+                                                            <div class="flex-grow-1 p-4">
+                                                                <h5 class="fw-bold text-dark mb-2"
+                                                                    style="font-size: 1.1rem;">
+                                                                    {{ $voucher->name }}
+                                                                </h5>
+                                                                <p class="text-muted mb-1" style="font-size: 0.95rem;">
+                                                                    Đơn tối thiểu:
                                                                     {{ number_format($voucher->min_order, 0, ',', '.') }}₫
                                                                 </p>
-                                                                <p class="text-muted mb-3" style="font-size: 1rem;">Hạn sử
-                                                                    dụng:
+                                                                <p class="text-muted mb-2" style="font-size: 0.95rem;">
+                                                                    Hạn dùng:
                                                                     {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}
                                                                 </p>
-                                                                <div>
-                                                                    <span
-                                                                        class="badge bg-white text-dark border-0 px-4 py-2"
-                                                                        style="font-size: 1.1rem;">Mã:
-                                                                        {{ $voucher->code }}</span>
-                                                                </div>
+                                                                <span
+                                                                    style="background-color: #ffc107; color: #000; padding: 6px 12px; border-radius: 6px; font-size: 1rem;">
+                                                                    Mã: {{ $voucher->code }}
+                                                                </span>
                                                             </div>
 
                                                             <!-- Cột phải -->
-                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4"
-                                                                style="width: 20%; background-color: #fff; border-left: 2px dashed #000;">
-                                                                <p class="text-muted mb-2" style="font-size: 0.9rem;">Đã
-                                                                    dùng:
+                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4 border-start"
+                                                                style="min-width: 140px; background-color: #f8f9fa;">
+                                                                <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                                                                    Đã dùng:
                                                                     {{ $voucher->used_count }}/{{ $voucher->max_uses }}
                                                                 </p>
-                                                                <button
-                                                                    class="btn btn-dark btn-sm fw-semibold copy_button border-0"
+                                                                <button class="btn btn-dark btn-sm fw-semibold copy_button"
                                                                     data-code="{{ $voucher->code }}"
                                                                     onclick="copyCode(this)"
-                                                                    style="padding: 8px 16px; font-size: 0.95rem; border-radius: 4px;">
-                                                                    Sao chép mã
+                                                                    style="padding: 8px 16px; font-size: 0.95rem; border-radius: 6px;">
+                                                                    Sao chép
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -512,21 +502,60 @@
             // Kiểm tra mã giảm giá
             checkVoucherBtn.addEventListener("click", function() {
                 let voucherCode = discountInput.value.trim();
-                if (!voucherCode) return alert("Vui lòng nhập mã giảm giá!");
-                let totalProductAmount = parseFloat(this.dataset.total);
+                if (!voucherCode) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cảnh báo!',
+                        text: 'Vui lòng nhập mã giảm giá!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                    return;
+                }
+
+                // Tính tổng tiền của các sản phẩm được chọn
+                updateCheckItems();
+                let totalProductAmount = 0;
+                checkItems.forEach(item => {
+                    if (item.checked) {
+                        let row = item.closest("tr");
+                        let price = parseFloat(row.querySelector(".shopping-cart__product-price")
+                            .textContent.replace(/\D/g, ""));
+                        let quantity = parseInt(row.querySelector(".qty-input").value);
+                        totalProductAmount += price * quantity;
+                    }
+                });
+
+                if (totalProductAmount === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cảnh báo!',
+                        text: 'Vui lòng chọn ít nhất một sản phẩm để áp dụng mã giảm giá!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                    return;
+                }
 
                 fetch("/cart/check_voucher", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
                         },
                         body: JSON.stringify({
                             code: voucherCode,
-                            total: totalProductAmount
-                        })
+                            total: totalProductAmount,
+                        }),
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! Status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.valid) {
                             appliedDiscount = data.discount;
@@ -534,10 +563,10 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Thành công!',
-                                text: 'Mã giảm giá hợp lệ.',
-                                timer: 2000,
+                                html: `${data.message}<br>Tổng mới: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.newTotal)}`,
+                                timer: 3000,
                                 timerProgressBar: true,
-                                showConfirmButton: false
+                                showConfirmButton: false,
                             });
 
                             updateTotalAmount();
@@ -546,13 +575,23 @@
                                 icon: 'error',
                                 title: 'Lỗi!',
                                 text: data.message || 'Mã giảm giá không hợp lệ!',
-                                timer: 2000,
+                                timer: 3000,
                                 timerProgressBar: true,
-                                showConfirmButton: false
+                                showConfirmButton: false,
                             });
                         }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: 'Không thể kết nối đến server. Vui lòng thử lại!',
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        });
                     });
-
             });
 
             updateVoucherStatus();

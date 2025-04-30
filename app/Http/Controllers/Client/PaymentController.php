@@ -325,4 +325,5 @@ class PaymentController extends Controller
             ->route('account.order')
             ->with('success', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
+    
 }

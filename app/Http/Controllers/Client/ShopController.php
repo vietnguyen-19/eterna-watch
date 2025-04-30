@@ -121,7 +121,7 @@ class ShopController extends Controller
             'brand',
             'category.parent',
             'variants.attributeValues.nameValue',
-            'attributes.attributeValues'
+            'attributes.attributeValues',
         ])->findOrFail($id);
         $product->increment('view_count');
         $attributes = Attribute::select('id', 'attribute_name')->get();
@@ -144,7 +144,7 @@ class ShopController extends Controller
             ];
         });
         $comments = $this->getCommentsWithReplies($product->id);
-
+      
         return view('client.product', [
             'product' => $product,
             'attributes' => $attributes,
@@ -157,7 +157,7 @@ class ShopController extends Controller
     {
         $comments = Comment::where('entity_id', $productId)
             ->where('entity_type', 'product')
-            ->where('status', 'active') // Thêm điều kiện status
+            ->where('status', '!=', 'rejected') // Lấy tất cả trạng thái trừ rejected
             ->where('parent_id', $parentId)
             ->with('replies') // Để lấy các bình luận con
             ->get();

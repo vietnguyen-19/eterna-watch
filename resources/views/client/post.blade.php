@@ -485,6 +485,16 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form[action="{{ route('comments.store', $post->id) }}"]');
+            
+            form.addEventListener('submit', function () {
+                sessionStorage.setItem('redirectUrl', window.location.href);
+            });
+        });
+    </script>
+    
 @endsection
 @section('style')
 @endsection

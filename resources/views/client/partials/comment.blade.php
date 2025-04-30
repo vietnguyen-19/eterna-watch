@@ -3,7 +3,7 @@
     <div class="review-container" style="display: flex; gap: 15px;">
         <!-- Avatar -->
         <div class="">
-            <img loading="lazy" src="{{ Storage::url($comment->user->avatar ?? 'avatar/default.jpeg') }}"
+            <img loading="lazy" src="{{ Storage::url($comment->user->avatar) }}"
                 alt="{{ $comment->user->name }}"
                 style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
         </div>

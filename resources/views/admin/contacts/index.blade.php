@@ -19,7 +19,6 @@
                                 </div>
                             </div>
                         </div>
-    
                         <!-- Tabs -->
                         <div class="card-body">
                             <div class="tab-content">

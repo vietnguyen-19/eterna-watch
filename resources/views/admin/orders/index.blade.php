@@ -280,7 +280,6 @@
                                                                     @endswitch
                                                                 </td>
                                                                 <td class="align-middle">
-                                                                    {{$order->payment->id}}
                                                                     @switch($order->payment->payment_status)
                                                                         @case('pending')
                                                                             <span class="badge bg-warning-subtle text-warning">Chờ
@@ -337,18 +336,7 @@
                                                                 </tr>
                                                             @endforelse
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>ID</th>
-                                                                <th>Mã đơn hàng</th>
-                                                                <th>Khách hàng</th>
-                                                                <th>Tổng tiền</th>
-                                                                <th>Trạng thái</th>
-                                                                <th>Ngày tạo</th>
-                                                                <th>Hành động</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
                                             </div>
