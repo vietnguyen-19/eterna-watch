@@ -6,6 +6,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
+                <!-- Thông báo lỗi -->
                 @if (session('error'))
                     <div class="alert alert-error"
                         style="display: flex; align-items: center; padding: 8px 12px; margin-bottom: 12px; background: #ffe6e6; color: #d32f2f; border-radius: 4px; font-size: 14px;">
@@ -14,6 +15,7 @@
                     </div>
                 @endif
 
+                <!-- Thông báo thành công -->
                 @if (session('success'))
                     <div class="alert alert-success"
                         style="display: flex; align-items: center; padding: 8px 12px; margin-bottom: 12px; background: #e6ffe6; color: #2e7d32; border-radius: 4px; font-size: 14px;">
@@ -21,6 +23,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
+
                 <div class="contact-container shadow-lg mt-2">
                     <div class="form-wrapper">
                         <div class="form-header">
