@@ -83,7 +83,7 @@ class VoucherSeeder extends Seeder
                 'used_count' => 0,
                 'start_date' => Carbon::now(),
                 'expires_at' => Carbon::now()->addDays(90),
-                'status' => 'inactive',
+                'status' => 'expired',
             ],
             [
                 'name' => 'Giảm 2 Triệu Cho Đơn Trên 15 Triệu',

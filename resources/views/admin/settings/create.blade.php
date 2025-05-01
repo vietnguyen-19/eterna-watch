@@ -26,7 +26,7 @@
                             @enderror
                         </div>
                         <div class="mb-3 col-12">
-                            <label for="value" class="form-label">Tên cài đặt</label>
+                            <label for="value" class="form-label">Nội dung cài đặt</label>
                             <input name="value" value="{{ old('value') }}" value="value" type="text" id="value"
                                 class="form-control" placeholder="Nhập nội dung">
                             @error('value')
