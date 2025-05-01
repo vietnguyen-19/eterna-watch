@@ -14,37 +14,51 @@ class CommentController extends Controller
 {
     public function store(Request $request, $id)
     {
-
-        // Kiểm tra xem người dùng đã đăng nhập chưa
+        
+        // 1. Kiểm tra đăng nhập
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Bạn cần đăng nhập để gửi bình luận.');
         }
+
+        $user = Auth::user();
+
+        // 2. Kiểm tra loại thực thể: chỉ 'product' và 'post'
         $rules = [
             'content' => 'required|string|max:1000',
             'entity_type' => 'required|in:product,post',
         ];
 
-        if ($request->entity_type === 'product') {
-            $rules['rating'] = 'required|integer|between:1,5';
-        }
+        // 3. Nếu là đánh giá sản phẩm thì cần rating và kiểm tra đã mua
         if ($request->entity_type === 'product') {
             $rules['rating'] = 'required|integer|between:1,5';
 
-            // ✅ Lấy danh sách variant_id của sản phẩm đó
+            // Kiểm tra đã từng đánh giá sản phẩm chưa
+            $alreadyComment = Comment::where('user_id', $user->id)
+                ->where('entity_type', 'product')
+                ->where('entity_id', $id)
+                ->exists();
+
+            if ($alreadyComment) {
+                return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi.');
+            }
+
+            // Lấy tất cả variant_id của sản phẩm
             $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
 
-            // ✅ Kiểm tra người dùng đã mua ít nhất 1 variant nào của sản phẩm chưa
-            $daMua = Order::where('user_id', Auth::id())
-                ->where('status', 'completed') // hoặc 'thanh_cong' tùy hệ thống
+            // Kiểm tra đã mua ít nhất 1 variant thành công
+            $hasPurchased = Order::where('user_id', $user->id)
+                ->where('status', 'completed') // có thể sửa lại theo status của bạn
                 ->whereHas('orderItems', function ($query) use ($variantIds) {
                     $query->whereIn('variant_id', $variantIds);
                 })
                 ->exists();
 
-            if (!$daMua) {
+            if (!$hasPurchased) {
                 return redirect()->back()->with('error', 'Chỉ khách hàng đã mua sản phẩm mới có thể đánh giá.');
             }
         }
+
+        // 4. Xác thực dữ liệu
         $messages = [
             'content.required' => 'Nội dung bình luận không được để trống.',
             'content.max' => 'Nội dung bình luận không được vượt quá 1000 ký tự.',
@@ -54,23 +68,19 @@ class CommentController extends Controller
             'rating.integer' => 'Đánh giá phải là số nguyên.',
             'rating.between' => 'Đánh giá phải từ 1 đến 5 sao.',
         ];
-
         $request->validate($rules, $messages);
 
-        // Tạo bình luận mới
+        // 5. Lưu bình luận
         $comment = new Comment();
-        $comment->user_id = Auth::id(); // Lấy ID người dùng hiện tại
-        $comment->entity_id = $id; // ID sản phẩm hoặc bài viết
-        $comment->entity_type = $request->entity_type; // Loại thực thể
+        $comment->user_id = $user->id;
+        $comment->entity_type = $request->entity_type;
+        $comment->entity_id = $id;
         $comment->content = $request->content;
-        $comment->rating = $request->entity_type === 'product' ? $request->rating : null; // Chỉ lưu rating nếu là product
-        $comment->status = 'pending'; // Trạng thái mặc định là chờ duyệt
-        $comment->parent_id = $request->parent_id ?? null; // Nếu là bình luận con, gán parent_id
-
-        // Lưu bình luận vào cơ sở dữ liệu
+        $comment->rating = $request->entity_type === 'product' ? $request->rating : null;
+        $comment->status = 'pending';
+        $comment->parent_id = $request->parent_id ?? null;
         $comment->save();
 
-        // Trả về thông báo thành công hoặc chuyển hướng về trang trước đó
         return redirect()->back()->with('success', 'Bình luận của bạn đã được gửi thành công!');
     }
 

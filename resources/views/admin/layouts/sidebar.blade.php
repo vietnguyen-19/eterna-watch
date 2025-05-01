@@ -276,6 +276,16 @@
                 </li>
 
                 {{-- Quản lý cài đặt --}}
+                <li
+                    class="nav-item {{ Request::is('admin/contacts*') ? 'menu-open' : '' }}">
+                    <a href="{{ route('admin.contacts.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-phone"></i>
+                        <p>
+                            Liên hệ
+                          
+                        </p>
+                    </a>
+                </li>
                 <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}"
                     class="nav-item {{ Request::is('admin/settings*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">

@@ -70,10 +70,7 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-    public function getAvatarAttribute($value)
-    {
-        return $value ? $value : 'avatars/default.jpeg';
-    }
+   
     public function getSoldQuantityAttribute()
     {
         // Nếu sản phẩm có biến thể

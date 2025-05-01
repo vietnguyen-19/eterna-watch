@@ -286,10 +286,10 @@
                                         <div style="color: rgb(188, 0, 0); "
                                             class="product-card__price d-flex mb-1 fw-bold">
                                             @if ($product->min_price == $product->max_price)
-                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->min_price, 0, ',', '.') }} đ
                                             @else
                                                 {{ number_format($product->min_price, 0, ',', '.') }} -
-                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->max_price, 0, ',', '.') }} đ
                                             @endif
                                         </div>
 

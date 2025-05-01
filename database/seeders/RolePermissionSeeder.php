@@ -90,6 +90,7 @@ class RolePermissionSeeder extends Seeder
 
             // ===== Settings (Cài đặt) =====
             'manage_settings',
+            'manage_contacts'
         ];
 
         // Tạo từng permission nếu chưa có
@@ -132,6 +133,7 @@ class RolePermissionSeeder extends Seeder
             'create_posts',
 
             'view_users',
+            'manage_contacts'
 
         ];
         $staffRole->syncPermissions($staffPermissions);

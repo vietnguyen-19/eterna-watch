@@ -56,7 +56,7 @@
                                                     <tr>
                                                         <th class="text-muted">Giá mặc định</th>
                                                         <td class="fs-5">
-                                                            {{ number_format($data->price_default, 0, ',', '.') }} VND
+                                                            {{ number_format($data->price_default, 0, ',', '.') }} đ
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -158,7 +158,7 @@
                                                             {{ $variant->sku }}</td>
                                                         <td class="text-center text-nowrap align-middle">
                                                             {{ number_format($variant->price, 0, ',', '.') }} <span
-                                                                class="text-muted">VND</span>
+                                                                class="text-muted">đ</span>
                                                         </td>
                                                         <td class="text-center align-middle">{{ $variant->stock }}</td>
                                                         <td class="text-center align-middle">{{ $variant->sold_quantity }}</td>

@@ -86,10 +86,10 @@
                                                     <td class="align-middle"> {{ $product->brand->name }}</td>
                                                     <td class="align-middle">
                                                         @if($product->type=='simple')
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} đ
                                                         @else    
                                                         {{ number_format($product->min_price, 0, ',', '.') }} -
-                                                        {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                                        {{ number_format($product->max_price, 0, ',', '.') }} đ
                                                         @endif
                                                         
                                                       </td>

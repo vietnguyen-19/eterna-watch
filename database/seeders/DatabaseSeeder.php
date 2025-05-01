@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ShipmentSeeder::class);
         $this->call(SettingsSeeder::class);
         $this->call(RolePermissionSeeder::class);
+        $this->call(ContactSeeder::class);
     }
 }
 
