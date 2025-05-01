@@ -42,6 +42,19 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
+
+Route::get('/email/verify', [EmailVerificationController::class, 'showVerificationNotice'])
+
+    ->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationLink'])
+
+    ->name('verification.send');
 /*
 |--------------------------------------------------------------------------
 | Public Pages
@@ -87,8 +100,7 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
     Route::get('/dashboard', fn() => view('client.dashboard'))->name('client.dashboard');
 
     // Email Verification
-    Route::get('/email/verify', [EmailVerificationController::class, 'showVerificationNotice'])->name('verification.notice');
-    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendVerificationLink'])->middleware('throttle:6,1')->name('verification.send');
+
 
     // Checkout
     Route::prefix('checkout')->group(function () {
@@ -130,7 +142,7 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
     Route::prefix('account')->group(function () {
         Route::resource('addresses', AddressController::class);
         Route::put('addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
-        
+
         Route::get('edit_detail', [AccountController::class, 'editAccount'])->name('account.edit');
         Route::post('update', [AccountController::class, 'update'])->name('account.update');
         Route::get('order', [AccountController::class, 'order'])->name('account.order');
@@ -144,6 +156,5 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
 });
 
 // Route xác minh email - không cần auth nhưng cần signed
-Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-    ->middleware('signed')->name('verification.verify');
+
 Route::prefix('addresses')->resource('accounts', AccountController::class);

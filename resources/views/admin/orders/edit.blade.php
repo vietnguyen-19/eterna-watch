@@ -149,13 +149,13 @@
                                 <div class="col-sm-3 invoice-col">
                                     Đến
                                     <address>
-                                        <strong>{{ $order->user->name }}</strong><br>
+                                        <strong>{{ $order->address->full_name }}</strong><br>
                                         {{ $order->address->street_address }},
                                         P.{{ $order->address->ward }}<br>
                                         Q. {{ $order->address->district }}, TP.
                                         {{ $order->address->city }}, Việt Nam<br>
-                                        Phone: {{ $order->user->phone }}<br>
-                                        Email: {{ $order->user->email }}
+                                        Phone: {{ $order->address->phone_number }}<br>
+                                        Email: {{ $order->address->email }}
                                     </address>
                                 </div>
                             </div>

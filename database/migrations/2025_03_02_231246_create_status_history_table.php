@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id');
             $table->unsignedBigInteger('entity_id'); // ID của thực thể
             $table->enum('entity_type', ['order', 'payment', 'shipment','refund']); // Loại thực thể
-            $table->string('old_status', 50);
+            $table->string('old_status', 50)->nullable();
             $table->string('new_status', 50);
             $table->unsignedBigInteger('changed_by')->nullable(); // Cho phép NULL
             $table->timestamp('changed_at')->useCurrent();

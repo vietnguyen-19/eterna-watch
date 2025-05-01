@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderPlacedMail;
+
 
 class PaymentController extends Controller
 {
@@ -35,6 +38,7 @@ class PaymentController extends Controller
 
     public function checkout(Request $request)
     {
+      
         $validatedData = $request->validate([
             'full_name'       => 'required|string|max:255',
             'phone_number'    => 'required|string|max:20',
@@ -56,7 +60,7 @@ class PaymentController extends Controller
         ]);
 
         DB::beginTransaction();
-        try {
+        
             if ($request->input('type_address') == 'new') {
                 $address = UserAddress::create([
                     'user_id'        => Auth::user()->id,
@@ -74,7 +78,7 @@ class PaymentController extends Controller
             } else {
                 $address = Auth::user()->defaultAddress;
             }
-
+           
             $order = Order::create([
                 'user_id'      => Auth::id(),
                 'voucher_id'   => $validatedData['voucher_id'] ?? null,
@@ -83,7 +87,7 @@ class PaymentController extends Controller
                 'status'       => 'pending',
                 'order_code'   => 'ORD-' . time() . '-' . Str::upper(Str::random(4)),
             ]);
-
+         
             $shipment = Shipment::create([
                 'order_id'        => $order->id,
                 'shipping_method' => $validatedData['shipping_method'],
@@ -128,18 +132,13 @@ class PaymentController extends Controller
             return $validatedData['payment_method'] === 'cash'
                 ? $this->payWithCash($order->id)
                 : $this->payWithVNPay($order->id);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'error' => 'Lỗi khi đặt hàng: ' . $e->getMessage()
-            ], 500);
-        }
+      
     }
 
     public function payWithVNPay($orderId)
     {
-        $order = Order::findOrFail($orderId);
 
+        $order = Order::findOrFail($orderId);
         // Thông tin từ VNPay Sandbox
         $vnp_TmnCode = "V55UHDTK";
         $vnp_HashSecret = "BLQMOCDUF9OSQ9K9JWNYJTZE8DVYWH3H";
@@ -285,6 +284,7 @@ class PaymentController extends Controller
                 'txn_ref' => $vnp_TxnRef,
                 'transaction_no' => $transactionNo,
             ]);
+            Mail::to($order->user->email)->send(new OrderPlacedMail($order));
 
             return redirect()
                 ->route('account.order')
@@ -359,7 +359,7 @@ class PaymentController extends Controller
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'order',
-            'old_status' => 'pending',
+            'old_status' => null,
             'new_status' => 'pending',
             'changed_by' => $order->user->id,
             'changed_at' => now(),
@@ -370,6 +370,8 @@ class PaymentController extends Controller
             $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
             CartDetail::whereIn('variant_id', $variantIds)->delete();
         }
+        // Gửi email sau khi tạo đơn thành công
+        Mail::to($order->user->email)->send(new OrderPlacedMail($order));
 
         return redirect()
             ->route('account.order')
