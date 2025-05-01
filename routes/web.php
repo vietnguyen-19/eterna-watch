@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\RefundController;
 
 
@@ -108,7 +109,6 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
         Route::get('/trash', [VoucherController::class, 'trash'])->name('trash')->middleware('permission:view_vouchers');
         Route::post('/{id}/restore', [VoucherController::class, 'restore'])->name('restore')->middleware('permission:restore_vouchers');
         Route::delete('/{id}/force-delete', [VoucherController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_vouchers');
-
     });
 
 
@@ -122,12 +122,11 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
         Route::get('{user}', [UserController::class, 'show'])->name('show');
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('{user}', [UserController::class, 'update'])->name('update');
-      
+
         Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::post('{user}/restore', [UserController::class, 'restore'])->name('restore');
         Route::delete('{user}/force-delete', [UserController::class, 'forceDelete'])->name('force-delete');
         Route::get('/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
-
     });
 
 
@@ -193,20 +192,27 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
         Route::post('{order}/send-shipment', [ShipmentController::class, 'store'])->name('admin.shipments.send')->middleware('permission:edit_orders');
         Route::post('{order}/status', [OrderController::class, 'updateStatus'])->name('status')->middleware('permission:edit_orders');
 
-      
+
 
         Route::delete('/{id}', [OrderController::class, 'destroy'])->name('destroy')->middleware('permission:delete_orders'); // Xoá mềm
         Route::get('/trash', [OrderController::class, 'trash'])->name('trash')->middleware('permission:delete_orders'); // Danh sách đã xoá
         Route::post('/restore/{id}', [OrderController::class, 'restore'])->name('restore')->middleware('permission:delete_orders'); // Khôi phục
         Route::delete('/force-delete/{id}', [OrderController::class, 'forceDelete'])->name('forceDelete')->middleware('permission:delete_orders'); // Xoá vĩnh viễn
     });
-   
-    
+
+
     Route::prefix('refunds')->group(function () {
         Route::get('/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
         Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('admin.refunds.show');
         Route::post('/refunds/{refund}/approve', [RefundController::class, 'approve'])->name('admin.refunds.approve');
         Route::post('/refunds/{refund}/reject', [RefundController::class, 'reject'])->name('admin.refunds.reject');
+
+        Route::post('refunds/{refund}/approve/vnpay', [RefundController::class, 'approveVNPayRefund'])
+            ->name('admin.refunds.approve.vnpay');
+
+        // Duyệt hoàn tiền COD
+        Route::post('refunds/{refund}/approve/cod', [RefundController::class, 'approveCodRefund'])
+            ->name('admin.refunds.approve.cod');
     });
 
     Route::prefix('order_items')->group(function () {
@@ -251,7 +257,7 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
         Route::get('show/{id}', [PostController::class, 'show'])->name('show')->middleware('permission:view_posts');
         Route::get('{id}/edit', [PostController::class, 'edit'])->name('edit')->middleware('permission:edit_posts');
         Route::put('{id}/update', [PostController::class, 'update'])->name('update')->middleware('permission:edit_posts');
-       
+
         Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy'); // Xoá mềm
         Route::get('/trash', [PostController::class, 'trash'])->name('trash'); // Danh sách đã xoá
         Route::post('/restore/{id}', [PostController::class, 'restore'])->name('restore'); // Khôi phục
@@ -265,4 +271,13 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
 
     // CÀI ĐẶT
     Route::resource('settings', SettingController::class)->names('admin.settings')->middleware('permission:manage_settings');
+
+    Route::get('/contacts', [ContactController::class, 'index'])->name('admin.contacts.index')->middleware('permission:manage_contacts');
+    Route::get('/contacts/{id}', [ContactController::class, 'show'])->name('admin.contacts.show')->middleware('permission:manage_contacts');
+    Route::patch('/contacts/{id}/update', [ContactController::class, 'updateStatus'])->name('admin.contacts.update')->middleware('permission:manage_contacts');
+
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('admin.contacts.destroy')->middleware('permission:manage_contacts');
+    Route::get('/contacts/trash', [ContactController::class, 'trash'])->name('admin.contacts.trash')->middleware('permission:manage_contacts');
+    Route::post('/contacts/{id}/restore', [ContactController::class, 'restore'])->name('admin.contacts.restore')->middleware('permission:manage_contacts');
+    Route::delete('/contacts/{id}/force-delete', [ContactController::class, 'forceDelete'])->name('admin.contacts.forceDelete')->middleware('permission:manage_contacts');
 });

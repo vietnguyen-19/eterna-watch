@@ -71,7 +71,7 @@
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#accordion-filter-size" aria-expanded="true"
                                 aria-controls="accordion-filter-size">
-                                <strong> Tags</strong>
+                                Tags
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -87,15 +87,12 @@
                                 <div class="d-flex flex-wrap">
                                     @foreach ($tags as $tag)
                                         <a href="{{ route('client.blog', ['tag' => $tag->name]) }}"
-                                            class="btn btn-sm btn-outline-light mb-3 me-3"
-                                            style="background: rgb(250, 250, 250);width: 100%; text-align: center; flex-shrink: 0; min-width: 100px; flex-grow: 0;">
-                                            {{ $tag->name }}
-                                        </a>
+                                            class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">
+                                            {{ $tag->name }}</a>
                                     @endforeach
                                 </div>
                             </div>
                         </div>
-
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion -->
             </div><!-- /.shop-sidebar -->

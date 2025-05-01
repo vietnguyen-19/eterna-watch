@@ -292,7 +292,7 @@ class CartController extends Controller
         }
 
         // Kiểm tra trạng thái voucher (ví dụ: active)
-        if ($voucher->status !== 'active') {
+        if ($voucher->status === 'inactive') {
             return response()->json([
                 'valid'    => false,
                 'message'  => 'Voucher không khả dụng.',

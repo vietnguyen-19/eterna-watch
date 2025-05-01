@@ -17,6 +17,9 @@ class Payment extends Model
         'amount',
         'payment_status',
         'transaction_id',
+        'txn_ref',
+        'transaction_no',
+        'transaction_date', 
         'payment_date',
     ];
 

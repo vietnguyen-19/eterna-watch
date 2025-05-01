@@ -13,12 +13,12 @@
                                         <h5 class="card-title mb-0">Danh sách vai trò</h5>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                {{-- <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.roles.create') }}" class="btn btn-success"><i
                                                 class="ri-add-line align-bottom me-1"></i>Thêm vai trò</a>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-body">
@@ -30,8 +30,8 @@
                                         <tr>
                                             <th>STT</th>
                                             <th>Tên vai trò</th>
-                                            <th>Người dùng</th>
-                                            <th>Thao tác</th>
+                                            <th >Số tài khoản</th>
+                                            <th class="text-center">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -41,7 +41,7 @@
                                                 <td>{{ $role->name }}</td>
 
                                                 <td>{{ $role->users->count() ?? 0 }}</td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a href="{{ route('admin.roles.show', $role->id) }}" class="btn btn-info btn-sm" title="Xem chi tiết">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
@@ -50,14 +50,14 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 
-                                                    <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" style="display: inline-block;"
+                                                    {{-- <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" style="display: inline-block;"
                                                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-sm" title="Xóa vai trò">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
-                                                    </form>
+                                                    </form> --}}
                                                 </td>
                                                 
                                             </tr>
@@ -77,12 +77,12 @@
                                         <h5 class="card-title mb-0">Danh sách phân quyền</h5>
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                {{-- <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.permissions.create') }}" class="btn btn-success"><i
                                                 class="ri-add-line align-bottom me-1"></i>Thêm phân quyền</a>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-body">
@@ -100,7 +100,7 @@
                                         <tr>
                                             <th>STT</th>
                                             <th>Tên phân quyền</th>
-                                            <th>Thao tác</th>
+                                            <th class="text-center" style="width: 15%">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -108,13 +108,13 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $permission->name }}</td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a href="{{ route('admin.permissions.edit', $permission->id) }}" 
                                                         class="btn btn-warning btn-sm" title="Sửa phân quyền">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 
-                                                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" 
+                                                    {{-- <form action="{{ route('admin.permissions.destroy', $permission->id) }}" 
                                                         method="POST" style="display: inline-block;"
                                                         onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này?');">
                                                         @csrf
@@ -122,7 +122,7 @@
                                                         <button type="submit" class="btn btn-danger btn-sm" title="Xóa phân quyền">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
-                                                    </form>
+                                                    </form> --}}
                                                 </td>
                                                 
                                             </tr>
@@ -148,6 +148,26 @@
     <script>
         $(document).ready(function() {
             $('#permissionTable').DataTable({
+                "pageLength": 10,
+                "lengthMenu": [10, 25, 50],
+                "order": [
+                    [0, 'desc']
+                ],
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Trang _PAGE_ / _PAGES_",
+                    "infoEmpty": "Không có dữ liệu",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
+                    }
+                }
+            });
+            $('#roleTable').DataTable({
                 "pageLength": 10,
                 "lengthMenu": [10, 25, 50],
                 "order": [

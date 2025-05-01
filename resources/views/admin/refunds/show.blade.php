@@ -23,21 +23,55 @@
                                     </span>
                                 </h5>
 
-                                <div class="d-flex gap-2">
-                                    {{-- Nút duyệt --}}
-                                    <form method="POST" action="{{ route('admin.refunds.approve', $refund) }}">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success"
-                                            onclick="return confirm('Xác nhận duyệt hoàn hàng?')">
-                                            <i class="bi bi-check-circle me-1"></i> Duyệt
-                                        </button>
-                                    </form>
+                                <div class="d-flex gap-2 align-items-center">
+                                    {{-- Hiển thị trạng thái hiện tại --}}
 
-                                    {{-- Nút mở modal từ chối --}}
-                                    <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal"
-                                        data-bs-target="#rejectModal">
-                                        <i class="bi bi-x-circle me-1"></i> Từ chối
-                                    </button>
+                                    {{-- Nút duyệt và từ chối --}}
+                                    @if ($refund->status != 'approved' && $refund->status != 'rejected')
+                                        {{-- Nút duyệt --}}
+                                        @if ($refund->order->payment_method == 'vnpay')
+                                            {{-- Duyệt và hoàn tiền VNPay --}}
+                                            <form method="POST"
+                                                action="{{ route('admin.refunds.approve.vnpay', $refund) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success"
+                                                    onclick="return confirm('Duyệt hoàn tiền qua VNPay?')">
+                                                    <i class="bi bi-credit-card"></i> Duyệt và hoàn tiền VNPay
+                                                </button>
+                                            </form>
+                                        @else
+                                            {{-- Duyệt đơn hoàn COD --}}
+                                            <form method="POST" action="{{ route('admin.refunds.approve.cod', $refund) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success"
+                                                    onclick="return confirm('Xác nhận duyệt hoàn hàng (COD)?')">
+                                                    <i class="bi bi-check-circle"></i> Duyệt hoàn hàng
+                                                </button>
+                                            </form>
+                                        @endif
+                                        {{-- Nút mở modal từ chối --}}
+                                        <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal"
+                                            data-bs-target="#rejectModal">
+                                            <i class="bi bi-x-circle me-1"></i> Từ chối
+                                        </button>
+                                    @else
+                                        {{-- Nút bị vô hiệu hóa khi trạng thái là approved hoặc rejected --}}
+                                        @if ($refund->order->payment_method == 'vnpay')
+                                            <button type="button" class="btn btn-success" disabled
+                                                title="Yêu cầu đã {{ $refund->status == 'approved' ? 'được duyệt' : 'bị từ chối' }}">
+                                                <i class="bi bi-credit-card"></i> Duyệt và hoàn tiền VNPay
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-success" disabled
+                                                title="Yêu cầu đã {{ $refund->status == 'approved' ? 'được duyệt' : 'bị từ chối' }}">
+                                                <i class="bi bi-check-circle"></i> Duyệt hoàn hàng
+                                            </button>
+                                        @endif
+                                        <button type="button" class="btn btn-danger ml-1" disabled
+                                            title="Yêu cầu đã {{ $refund->status == 'approved' ? 'được duyệt' : 'bị từ chối' }}">
+                                            <i class="bi bi-x-circle me-1"></i> Từ chối
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -79,8 +113,19 @@
                                 <!-- Cột thông tin người dùng -->
                                 <div class="col-md-3">
                                     <div class="card mb-4">
-                                        <div class="card-header fw-semibold text-primary">
-                                            <strong> Thông tin khách hàng</strong>
+                                        <div class="card-header">
+                                            <div class="row g-4 align-items-center">
+                                                <div class="col-sm">
+                                                    <h5 class="card-title mb-0"><b>Thông tin khách hàng</b></h5>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                                        <a href="{{ route('admin.users.show',$refund->order->user->id) }}" class="btn btn-sm btn-info">
+                                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Chi tiết
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="card-body">
                                             <div class="d-flex align-items-center mb-4">
@@ -95,11 +140,11 @@
 
                                             <!-- Thông tin khách hàng -->
                                             <div class="info-list">
-                                                <p class="mb-2">
+                                                <p class="mb-2 text-center">
 
                                                     <strong>Email:</strong> {{ $refund->order->user->email ?? 'N/A' }}
                                                 </p>
-                                                <p class="mb-2">
+                                                <p class="mb-2 text-center">
 
                                                     <strong>Số điện thoại:</strong>
                                                     {{ $refund->order->user->phone ?? 'N/A' }}
@@ -108,6 +153,99 @@
 
                                         </div>
                                     </div>
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <div class="row g-4 align-items-center">
+                                                <div class="col-sm">
+                                                    <h5 class="card-title mb-0"><b>Thông tin đơn hàng</b></h5>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                                        <a href="{{ route('admin.orders.edit',$refund->order->id) }}" class="btn btn-sm btn-info">
+                                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Chi tiết
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div class="info-list">
+                                                <p class="mb-2 d-flex justify-content-between">
+                                                    <strong>PT thanh toán:</strong>
+                                                    <span>{{ strtoupper($refund->order->payment_method) }}</span>
+                                                </p>
+
+                                                <p class="mb-2 d-flex justify-content-between">
+                                                    <strong>TT thanh toán:</strong>
+                                                    <span>
+                                                        @php
+                                                            $status =
+                                                                $refund->order->payment->payment_status ?? 'unknown';
+                                                            $paymentStatusLabels = [
+                                                                'completed' => 'Thành công',
+                                                                'pending' => 'Đang xử lý',
+                                                                'failed' => 'Thất bại',
+                                                                
+                                                            ];
+                                                            $paymentStatusColors = [
+                                                                'completed' => 'success',
+                                                                'pending' => 'warning',
+                                                                'failed' => 'danger',
+                                                                'canceled' => 'secondary',
+                                                                'unknown' => 'dark',
+                                                            ];
+                                                        @endphp
+                                                        <span
+                                                            class="badge bg-{{ $paymentStatusColors[$status] ?? 'dark' }}">
+                                                            {{ $paymentStatusLabels[$status] ?? ucfirst($status) }}
+                                                        </span>
+                                                    </span>
+                                                </p>
+
+                                                <p class="mb-2 d-flex justify-content-between">
+                                                    <strong>TT đơn hàng:</strong>
+                                                    <span>
+                                                        @php
+                                                            $orderStatus = $refund->order->status ?? 'unknown';
+                                                            $orderStatusLabels = [
+                                                                'pending' => 'Chờ xác nhận',
+                                                                'processing' => 'Đang xử lý',
+                                                                'shipping' => 'Đang giao',
+                                                                'completed' => 'Đã hoàn tất',
+                                                                'cancelled' => 'Đã hủy',
+                                                            ];
+                                                            $orderStatusColors = [
+                                                                'pending' => 'secondary',
+                                                                'processing' => 'info',
+                                                                'shipping' => 'warning',
+                                                                'completed' => 'success',
+                                                                'cancelled' => 'danger',
+                                                                'unknown' => 'dark',
+                                                            ];
+                                                        @endphp
+                                                        <span
+                                                            class="badge bg-{{ $orderStatusColors[$orderStatus] ?? 'dark' }}">
+                                                            {{ $orderStatusLabels[$orderStatus] ?? ucfirst($orderStatus) }}
+                                                        </span>
+                                                    </span>
+                                                </p>
+
+                                                @php
+                                                    $completedHistory = $refund->order->statusHistories->firstWhere(
+                                                        'new_status',
+                                                        'completed',
+                                                    );
+                                                @endphp
+                                                <p class="mb-0 d-flex justify-content-between">
+                                                    <strong>Ngày hoàn tất:</strong>
+                                                    <span>{{ $completedHistory ? \Carbon\Carbon::parse($completedHistory->changed_at)->format('d/m/Y H:i') : 'Chưa hoàn tất' }}</span>
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
                                     <div class="card" id="refundStatusHistory">
                                         <div class="card-header border-bottom-dashed">
                                             <h5 class="card-title mb-0"><b>Lịch sử trạng thái hoàn hàng</b></h5>
@@ -132,7 +270,7 @@
                                                 {
                                                     $labels = [
                                                         'pending' => 'Chờ duyệt',
-                                                        'approved' => 'Đã duyệt',
+                                                        'approved' => 'Đã chấp nhận',
                                                         'rejected' => 'Bị từ chối',
                                                     ];
 
@@ -144,8 +282,6 @@
                                                 $statusHistories->contains('old_status', 'pending') ||
                                                 $statusHistories->contains('new_status', 'pending');
                                         @endphp
-
-
                                         <div class="card-body">
                                             <div class="list-group">
                                                 {{-- Nếu chưa có bản ghi "pending", hiển thị mặc định --}}
@@ -153,7 +289,8 @@
                                                     <div
                                                         class="list-group-item d-flex justify-content-between align-items-center">
                                                         <div>
-                                                            <span class="badge bg-warning fs-5 px-2 py-1">pending</span>
+                                                            <span
+                                                                class="badge bg-warning fs-5 px-2 py-1">{{ getStatusLabel('pending') }}</span>
                                                             <div class="text-muted">
                                                                 {{ \Carbon\Carbon::parse($refund->created_at)->format('d-m-Y H:i:s') }}
                                                             </div>
@@ -162,14 +299,13 @@
                                                     </div>
                                                 @endif
 
-                                                {{-- Hiển thị các lịch sử trạng thái --}}
                                                 @foreach ($statusHistories as $history)
                                                     <div
                                                         class="list-group-item d-flex justify-content-between align-items-center">
                                                         <div>
                                                             <span
                                                                 class="{{ getStatusColorClass($history->new_status) }} fs-5 px-2 py-1">
-                                                                {{ $history->new_status }}
+                                                                {{ getStatusLabel($history->new_status) }}
                                                             </span>
                                                             <div class="text-muted">
                                                                 {{ \Carbon\Carbon::parse($history->changed_at)->format('d-m-Y H:i:s') }}
@@ -179,6 +315,7 @@
                                                         </div>
                                                     </div>
                                                 @endforeach
+
                                             </div>
                                         </div>
                                     </div>
@@ -201,8 +338,8 @@
                                                             <th>Số lượng trong đơn hàng</th>
                                                             <th>Số lượng hoàn</th>
 
-                                                            <th>Giá (VNĐ)</th>
-                                                            <th>Thành tiền (VNĐ)</th>
+                                                            <th>Giá (đ)</th>
+                                                            <th>Thành tiền (đ)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -225,10 +362,10 @@
                                                                 <td>{{ $refundItem->orderItem->quantity }}</td>
                                                                 <td>{{ $refundItem->quantity }}</td>
                                                                 <td>{{ number_format($refundItem->unit_price, 0, ',', '.') }}
-                                                                    VND
+                                                                  đ
                                                                 </td>
                                                                 <td>{{ number_format($refundItem->quantity * $refundItem->unit_price, 0, ',', '.') }}
-                                                                    VND</td>
+                                                                  đ</td>
                                                             </tr>
                                                         @endforeach
 
@@ -240,7 +377,7 @@
                                                         <tr>
                                                             <th colspan="5" class="text-end">Đã thanh toán</th>
                                                             <td class="text-end">
-                                                                {{ number_format($order->total_amount, 0, ',', '.') }} VND
+                                                                {{ number_format($order->total_amount, 0, ',', '.') }} đ
                                                             </td>
                                                         </tr>
 
@@ -257,7 +394,7 @@
                                                                 <th colspan="5" class="text-end">Giảm giá</th>
                                                                 <td class="text-end">
                                                                     -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }}
-                                                                    VND
+                                                                  đ
                                                                 </td>
                                                             </tr>
                                                         @endif
@@ -267,7 +404,7 @@
                                                                     trả</strong></th>
                                                             <td class="text-end">
                                                                 <strong>{{ number_format($refund->total_refund_amount, 0, ',', '.') }}
-                                                                    VND</strong>
+                                                                  đ</strong>
                                                             </td>
                                                         </tr>
                                                     </tbody>

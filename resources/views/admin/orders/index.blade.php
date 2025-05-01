@@ -238,14 +238,14 @@
                                                                 <td class="align-middle">
                                                                     {{ number_format($order->total_amount, 0, ',', '.') }}
                                                                     đ</td>
-                                                                    <td class="align-middle">
-                                                                        @if ($order->payment_method === 'cash')
-                                                                            Tiền mặt
-                                                                        @elseif ($order->payment_method === 'vnpay')
-                                                                            VNPay
-                                                                        @endif
-                                                                    </td>
-                                                                    
+                                                                <td class="align-middle">
+                                                                    @if ($order->payment_method === 'cash')
+                                                                        Tiền mặt
+                                                                    @elseif ($order->payment_method === 'vnpay')
+                                                                        VNPay
+                                                                    @endif
+                                                                </td>
+
                                                                 <td class="align-middle">
                                                                     @switch($order->status)
                                                                         @case('pending')
@@ -336,18 +336,7 @@
                                                                 </tr>
                                                             @endforelse
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>ID</th>
-                                                                <th>Mã đơn hàng</th>
-                                                                <th>Khách hàng</th>
-                                                                <th>Tổng tiền</th>
-                                                                <th>Trạng thái</th>
-                                                                <th>Ngày tạo</th>
-                                                                <th>Hành động</th>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                     </table>
                                                 </div>
                                             </div>

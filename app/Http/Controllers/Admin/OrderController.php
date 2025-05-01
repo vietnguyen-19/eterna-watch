@@ -45,7 +45,7 @@ class OrderController extends Controller
 
         // Xây dựng query lấy danh sách đơn hàng
         $query = Order::with(['orderItems', 'payment']);
-
+      
         // Áp dụng bộ lọc trạng thái đơn hàng
         if ($status !== 'all') {
             $query->where('status', $status);
