@@ -58,6 +58,7 @@
                                                 <th class="sort" data-sort="phone">Giá</th>
                                                 <th style="width:8%" class="sort" data-sort="phone">Đã bán</th>
                                                 <th style="width:8%" class="sort" data-sort="phone">Tồn kho</th>
+                                                <th style="width:8%" class="sort" data-sort="phone">Lượt xem</th>
                                                 <th class="sort" data-sort="created_at">Trạng thái</th>
                                                 <th class="sort" data-sort="action">Hành động</th>
                                             </tr>
@@ -84,12 +85,17 @@
 
                                                     <td class="align-middle"> {{ $product->brand->name }}</td>
                                                     <td class="align-middle">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
-                                                        
+                                                        @if($product->type=='simple')
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} đ
+                                                        @else    
                                                         {{ number_format($product->min_price, 0, ',', '.') }} -
-                                                        {{ number_format($product->max_price, 0, ',', '.') }} VND</td>
+                                                        {{ number_format($product->max_price, 0, ',', '.') }} đ
+                                                        @endif
+                                                        
+                                                      </td>
                                                     <td class="align-middle"> {{ $product->sold_quantity }}</td>
                                                     <td class="align-middle"> {{ $product->current_stock }}</td>
+                                                    <td class="align-middle"> {{ $product->view_count }}</td>
                                                     <td class="align-middle">
                                                         <span
                                                             class="badge

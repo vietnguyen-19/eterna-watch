@@ -142,6 +142,30 @@
                                         </div>
                                     </div>
                                 @endforeach
+                            @else
+                            @if($product->stock > 0)
+                            <p style="margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; font-size: 20px; color: #000;">
+                                    Giá:
+                                </span>
+                                <span style="font-weight: 700; font-size: 26px; color: #dc3545; margin-left: 6px;">
+                                    {{ number_format($product->price_default, 0, ',', '.') }}₫
+                                </span>
+                                <small style="color: #198754; margin-left: 10px; font-size: 15px;">
+                                    (Còn {{ $product->current_stock }} sản phẩm)
+                                </small>
+                            </p>
+                        @else
+                            <p style="margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; font-size: 20px; color: #000;">
+                                    Giá:
+                                </span>
+                                <span style="font-weight: 700; font-size: 26px; color: #6c757d; margin-left: 6px;">
+                                    Hết hàng
+                                </span>
+                            </p>
+                        @endif
+                        
                             @endif
                             <!-- Hiển thị giá -->
                             <p id="variant-price" style="display: none; font-size: 1.5rem; font-weight: bold;"></p>
@@ -150,9 +174,6 @@
                             <!-- Nút Clear -->
                             <button type="button" id="clear-selection" class="btn btn-sm mb-3"
                                 style="display: none; background: rgb(1, 143, 153); color: white;">Clear</button>
-
-
-
                         </div>
                         <div class="product-single__addtocart">
                             <div class="qty-control position-relative">

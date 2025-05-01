@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->text('message');
-            $table->enum('status', ['pending', 'processed'])->default('pending');
+            $table->enum('status', ['new', 'read', 'done'])->default('new');
             $table->timestamp('sent_at')->useCurrent();
+            $table->timestamps();
+
         });
     }
 

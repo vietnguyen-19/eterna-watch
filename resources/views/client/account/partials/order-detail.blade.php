@@ -15,7 +15,7 @@
                     } elseif ($order->status == 'processing') {
                         $mauChu = '#0c5460'; // xanh đậm
                         $mauNen = '#d1ecf1'; // xanh nhạt
-                        $tenTrangThai = 'Đang xử lý';
+                        $tenTrangThai = 'Đang vận chuyển';
                     } elseif ($order->status == 'completed') {
                         $mauChu = '#155724'; // xanh lá đậm
                         $mauNen = '#d4edda'; // xanh lá nhạt
@@ -74,12 +74,10 @@
                     <h5 class="card-title">Thông tin thanh toán</h5>
                     <p class="card-text">
                         <strong>Phương thức thanh toán:</strong>
-                        @if ($order->payment_method == 'cash')
+                        @if ($order->payment_method === 'cash')
                             Tiền mặt
-                        @elseif ($order->payment->payment_method == 'vnpay')
-                            VNPay
                         @else
-                            {{ $order->payment->payment_method }}
+                            Thanh toán online VNPay
                         @endif
                         <br>
                         <strong>Trạng thái thanh toán:</strong>
@@ -96,25 +94,25 @@
                         'label' => 'Đang chờ xử lý',
                         'color' => '#0d6efd',
                         'icon' => 'bi-cart-plus',
-                        'description' => 'Đơn hàng đã được tạo.',
+                        'description' => 'Đơn hàng đã được tạo thành công.',
                     ],
                     'confirmed' => [
                         'label' => 'Đã xác nhận',
                         'color' => '#0d6efd',
                         'icon' => 'bi-clipboard-check',
-                        'description' => 'Đơn hàng được xác nhận.',
+                        'description' => 'Đơn hàng được cửa hàng xác nhận.',
                     ],
                     'processing' => [
-                        'label' => 'Đang xử lý',
+                        'label' => 'Đang vận chuyển',
                         'color' => '#ffc107',
                         'icon' => 'bi-box-seam',
-                        'description' => 'Đơn hàng đang được xử lý.',
+                        'description' => 'Đơn hàng đang được vận chuyển',
                     ],
                     'completed' => [
                         'label' => 'Hoàn tất',
                         'color' => '#198754',
                         'icon' => 'bi-check-circle-fill',
-                        'description' => 'Đơn hàng đã hoàn tất.',
+                        'description' => 'Đơn hàng hoàn tất đến khách hàng.',
                     ],
                     'cancelled' => [
                         'label' => 'Đã hủy',
@@ -173,9 +171,9 @@
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1 fw-semibold"
                                     style="color: <?php echo $color; ?>; font-size: 1rem;"><?php echo $label; ?></h6>
-                                <small style="color: #6c757d; font-size: 0.85rem;"><?php echo $changed_at; ?></small>
-                                <p class="card-text mb-0 mt-2" style="color: #6c757d; font-size: 0.85rem;">
-                                    <?php echo $description; ?></p>
+                                <smal font-size: 0.85rem;"><?php echo $changed_at; ?></small>
+                                    <p class="card-text mb-0 mt-2 font-size: 0.85rem;">
+                                        <?php echo $description; ?></p>
                             </div>
                         </div>
                     </div>
@@ -210,6 +208,9 @@
                         <th class="fw-bold text-center">Giá</th>
                         <th class="fw-bold text-center">Số lượng</th>
                         <th class="fw-bold text-end">Tổng cộng</th>
+                        @if ($order->status == 'completed')
+                            <th class="fw-bold text-end">Hành động</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -231,25 +232,115 @@
                                     <ul class="shopping-cart__product-item__options">
                                         @foreach ($item->productVariant->attributeValues as $value)
                                             <li>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
-                                                {{ $value->nameValue->value_name ?? 'Không xác định' }}
-                                            </li>
+                                                {{ $value->nameValue->value_name ?? 'Không xác định' }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
                             </td>
                             <td class="text-center">
-                                <span
-                                    class="shopping-cart__product-price">{{ number_format($item->unit_price, 0, ',', '.') }}đ</span>
+                                <span class="shopping-cart__product-price">
+                                    {{ number_format($item->unit_price, 0, ',', '.') }}đ
+                                </span>
                             </td>
                             <td class="text-center">
                                 <span class="shopping-cart__product-price">{{ $item->quantity }}</span>
                             </td>
                             <td class="text-end">
-                                <span
-                                    class="shopping-cart__product-price">{{ number_format($item->total_price, 0, ',', '.') }}đ</span>
+                                <span class="shopping-cart__product-price">
+                                    {{ number_format($item->total_price, 0, ',', '.') }}đ
+                                </span>
                             </td>
+
+                            @if ($order->status == 'completed')
+                                <td class="text-end">
+                                    @php
+                                        $daDanhGia = \App\Models\Comment::where('user_id', auth()->id())
+                                            ->where('entity_type', 'product')
+                                            ->where('entity_id', $item->productVariant->product->id)
+                                            ->exists();
+                                        $modalId = 'reviewModal_' . $item->id; // mỗi modal là duy nhất
+                                    @endphp
+
+                                    @php
+                                        $buttonStyle =
+                                            'width: 110px; padding: 6px 14px; font-weight: 500; font-size: 0.9rem; border: none; border-radius: 3px;';
+                                    @endphp
+
+                                    @if ($daDanhGia)
+                                        <button class="btn btn-sm"
+                                            style="{{ $buttonStyle }} background-color: #22c55e; color: #ffffff;">
+                                            Đã đánh giá
+                                        </button>
+                                    @else
+                                        <button class="btn btn-sm"
+                                            style="{{ $buttonStyle }} background-color: #f97316; color: #ffffff;"
+                                            data-bs-toggle="modal" data-bs-target="#{{ $modalId }}"
+                                            onmouseover="this.style.backgroundColor='#ea580c';"
+                                            onmouseout="this.style.backgroundColor='#f97316';">
+                                            Đánh giá
+                                        </button>
+                                    @endif
+
+                                    {{-- Modal đánh giá --}}
+                                    <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
+                                        aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content" style="border-radius: 2px;">
+                                                <div class="modal-header"
+                                                    style="background-color: #d0d0d0; color: #ffffff; border-radius: 2px 2px 0 0;">
+                                                    <h5 class="modal-title" id="{{ $modalId }}Label">
+                                                        <strong>Đánh giá sản phẩm
+                                                            "{{ $item->productVariant->product->name }}"</strong>
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body p-4">
+                                                    <div class="product-single__review-form">
+                                                        <form method="POST"
+                                                            action="{{ route('comments.store', $item->productVariant->product->id) }}">
+                                                            @csrf
+                                                            
+                                                            <div class="select-star-rating mb-4">
+                                                                <span class="star-rating d-flex gap-1">
+                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                        <svg class="star-rating__star-icon" width="16"
+                                                                            height="16" fill="#ccc"
+                                                                            viewBox="0 0 12 12"
+                                                                            xmlns="http://www.w3.org/2000/svg">
+                                                                            <path
+                                                                                d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
+                                                                        </svg>
+                                                                    @endfor
+                                                                </span>
+                                                                <input name="rating" type="hidden"
+                                                                    id="form-input-rating-{{ $item->id }}"
+                                                                    value="">
+                                                            </div>
+
+                                                            <input type="hidden" name="entity_type" value="product">
+                                                            <div class="mb-4">
+                                                                <textarea name="content" class="form-control" rows="6" placeholder="Nội dung đánh giá của bạn"></textarea>
+                                                            </div>
+
+                                                            <div class="text-end">
+                                                                <button type="submit" class="btn"
+                                                                    style="background-color: #f97316; color: #ffffff;">
+                                                                    Gửi đánh giá
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{-- End Modal --}}
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
+
                 </tbody>
             </table>
             @php
@@ -301,19 +392,19 @@
             </table>
             <hr>
             <div class="text-end">
-                <button class="btn btn-sm btn-cancel-order" style="background: #bd2c0b; color:#fff; border-radius:3px"
-                    data-order-id="{{ $order->id }}"
-                    data-allow-cancel="{{ !in_array($order->status, ['cancelled', 'completed']) ? '1' : '0' }}">
-                    Hủy đơn hàng
-                </button>
-                <a href="{{ $order->status == 'completed' && !$order->refund ? route('refunds.create', $order->id) : 'javascript:void(0)' }}"
-                    class="btn btn-sm btn-refund-order" style="background: #d7b20e; color:#fff; border-radius:3px"
-                    data-allow-refund="{{ $order->status == 'completed' && !$order->refund ? '1' : '0' }}">
-                    Hoàn trả đơn hàng
-                </a>
-
+                @if (in_array($order->status, ['pending', 'confirmed']))
+                    <button class="btn btn-sm btn-cancel-order" style="background: #bd2c0b; color:#fff; border-radius:3px"
+                        data-order-id="{{ $order->id }}" data-allow-cancel="1">
+                        Hủy đơn hàng
+                    </button>
+                @endif
+                @if ($order->status == 'completed' && !$order->refund)
+                    <a href="{{ route('refunds.create', $order->id) }}" class="btn btn-sm btn-refund-order"
+                        style="background: #d7b20e; color:#fff; border-radius:3px" data-allow-refund="1">
+                        Hoàn trả đơn hàng
+                    </a>
+                @endif
             </div>
-
         </div>
         @if ($order->refund)
             @php
@@ -338,51 +429,102 @@
             @endphp
 
 
-            <div class="card mb-3">
-                <div class="card-header border-radius-0 align-middle bg-white"
-                    style="border-top: 2px solid {{ $borderColor }}">
-                    <h5 class="card-title mb-0 fw-bold">
-                        Thông tin hoàn trả đơn hàng
-                    </h5>
+            <div class="card mb-4" style="border: 1px #000000 solid">
+                <!-- Card Header -->
+                <div class="card-header border-0 bg-white py-3" style="border-top: 2px solid {{ $borderColor }};">
+                    <h5 class="card-title mb-0 fw-bold" style="color: #212529;">Thông tin hoàn trả đơn hàng</h5>
                 </div>
-                <div class="card-body">
 
-                    <p><strong>Lý do hoàn:</strong> {{ $order->refund->refund_reason }}</p>
-                    <p><strong>Ngày yêu cầu:</strong>
-                        {{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
-                    <p><strong>Trạng thái:</strong>
-                        @if ($status == 'pending')
-                            <span style="background-color: #ffc107; color: #000; padding: 2px 6px; border-radius: 4px;">Đang
-                                chờ duyệt</span>
-                        @elseif ($status == 'approved')
-                            <span style="background-color: #28a745; color: #fff; padding: 2px 6px; border-radius: 4px;">Đã
-                                duyệt</span>
-                        @else
-                            <span style="background-color: #dc3545; color: #fff; padding: 2px 6px; border-radius: 4px;">Bị
-                                từ chối</span>
+                <!-- Card Body -->
+                <div class="card-body p-4" style="background-color: #f8f9fa; border-radius: 8px;">
+                    <!-- Refund Information -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Ngày yêu cầu</p>
+                            <p class="fw-medium" style="color: #1a1a1a;">
+                                {{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Trạng thái</p>
+                            @if ($status == 'pending')
+                                <span class="badge d-inline-flex align-items-center"
+                                    style="background-color: #fef3c7; color: #92400e; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
+                                    <i class="bi bi-hourglass-split me-1"></i> Đang chờ duyệt
+                                </span>
+                            @elseif ($status == 'approved')
+                                <span class="badge d-inline-flex align-items-center"
+                                    style="background-color: #d1fae5; color: #065f46; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Đã duyệt
+                                </span>
+                            @else
+                                <span class="badge d-inline-flex align-items-center"
+                                    style="background-color: #fee2e2; color: #991b1b; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
+                                    <i class="bi bi-x-circle-fill me-1"></i> Bị từ chối
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="col-md-12">
+                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Lý do hoàn</p>
+                            <p class="fw-medium"
+                                style="color: #1a1a1a; background-color: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                {{ $order->refund->refund_reason }}
+                            </p>
+                        </div>
+
+                        @if ($status == 'rejected' && $order->refund->rejected_reason)
+                            <div class="col-md-12">
+                                <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Lý do từ chối</p>
+                                <p class="fw-medium"
+                                    style="color: #1a1a1a; background-color: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                    {{ $order->refund->rejected_reason }}
+                                </p>
+                            </div>
                         @endif
-                    </p>
+                    </div>
 
-                    @if ($status == 'rejected' && $order->refund->rejected_reason)
-                        <p><strong>Lý do từ chối:</strong> {{ $order->refund->rejected_reason }}</p>
-                    @endif
+                    <!-- Refund Items -->
+                    <div class="mb-4">
+                        <p class="fw-semibold mb-3 text-muted" style="font-size: 0.9rem;">Sản phẩm hoàn</p>
+                        <div class="list-group">
+                            @foreach ($order->refund->refundItems as $item)
+                                <div class="list-group-item border-0 rounded-3 mb-2"
+                                    style="background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.08); transition: transform 0.2s; padding: 15px;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="mb-1 fw-semibold" style="color: #1a1a1a; font-size: 1rem;">
+                                                {{ $item->orderItem->productVariant->product->name }}
+                                            </p>
+                                            <p class="mb-0 text-muted" style="font-size: 0.85rem;">Số lượng:
+                                                {{ $item->quantity }}</p>
+                                        </div>
+                                        <p class="mb-0 fw-semibold" style="color: #1a1a1a; font-size: 1rem;">
+                                            {{ number_format($item->unit_price) }}₫
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
 
-                    <hr>
-                    <p><strong>Sản phẩm hoàn:</strong>
-                    <ul>
-                        @foreach ($order->refund->refundItems as $item)
-                            <li>
-                                {{ $item->orderItem->productVariant->product->name }} -
-                                SL: {{ $item->quantity }} -
-                                Giá: {{ number_format($item->unit_price) }}đ
-                            </li>
-                        @endforeach
-                    </ul>
+                    <!-- Total Refund Amount -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top"
+                        style="border-color: #e5e7eb;">
+                        <p class="fw-semibold text-muted" style="font-size: 0.9rem;">Tổng tiền hoàn</p>
+                        <p class="fw-bold" style="color: #1a1a1a; font-size: 1.25rem;">
+                            {{ number_format($order->refund->total_refund_amount) }}₫
+                        </p>
+                    </div>
 
-                    <p><strong>Tổng tiền hoàn:</strong>
-                        {{ number_format($order->refund->total_refund_amount) }}đ</p>
+                    <!-- Divider -->
+                    <hr class="my-4" style="border-color: #e5e7eb;">
                 </div>
             </div>
+
+            <!-- Bootstrap JS Bundle CDN -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+            </script>
         @endif
     </div>
 @endsection
@@ -596,6 +738,30 @@
                     }
                 });
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.select-star-rating').forEach(function(container) {
+                const stars = container.querySelectorAll('.star-rating__star-icon');
+                const input = container.querySelector('input[name="rating"]');
+
+                stars.forEach((star, index) => {
+                    star.style.cursor = 'pointer';
+                    star.addEventListener('click', function() {
+                        const rating = index + 1;
+
+                        // Cập nhật input
+                        input.value = rating;
+
+                        // Highlight sao
+                        stars.forEach((s, i) => {
+                            s.querySelector('path').setAttribute('fill', i <
+                                rating ? '#f97316' : '#ccc');
+                        });
+                    });
+                });
+            });
         });
     </script>
 @endsection

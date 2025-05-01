@@ -45,7 +45,7 @@ class OrderController extends Controller
 
         // Xây dựng query lấy danh sách đơn hàng
         $query = Order::with(['orderItems', 'payment']);
-
+      
         // Áp dụng bộ lọc trạng thái đơn hàng
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -211,7 +211,6 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, Order $order)
     {
-
         $newStatus = $request->input('status');
         $currentStatus = $order->status;
 
@@ -228,6 +227,25 @@ class OrderController extends Controller
         if (!isset($validTransitions[$currentStatus]) || !in_array($newStatus, $validTransitions[$currentStatus])) {
             return redirect()->route('admin.orders.edit', $order->id)->with('error', 'Trạng thái không hợp lệ.');
         }
+
+        // Kiểm tra nếu phương thức thanh toán là tiền mặt và trạng thái chuyển sang completed
+        if ($order->payment_method == 'cash' && $newStatus == 'completed') {
+
+            $order->payment->update([
+                'payment_status' => 'completed',
+            ]);
+
+            $st = StatusHistory::create([
+                'entity_id' => $order->payment->id,
+                'entity_type' => 'payment',
+                'old_status' => 'pending',
+                'new_status' => 'completed',
+                'changed_by' => $order->user->id, // Giả sử có người dùng đăng nhập
+                'changed_at' => now(), // Thời gian thay đổi
+            ]);
+        }
+
+        // Ghi lại lịch sử trạng thái
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'order',
@@ -237,12 +255,14 @@ class OrderController extends Controller
             'changed_at' => now(), // Thời gian thay đổi
         ]);
 
+
         // Cập nhật trạng thái
         $order->status = $newStatus;
         $order->save();
 
         return redirect()->route('admin.orders.edit', $order->id)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
     }
+
 
     public function destroy($id)
     {

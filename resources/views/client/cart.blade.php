@@ -85,7 +85,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item">
-                                                <a href="product1_simple.html">
+                                                <a href="{{ route('client.shop.show', $product->id) }}">
                                                     <img style="border: 1px solid #c4bebe;width:88px"
                                                         src="{{ Storage::url($image) }}" alt="">
                                                 </a>
@@ -93,7 +93,7 @@
                                         </td>
                                         <td>
                                             <div class="shopping-cart__product-item__detail">
-                                                <h4><a href="product1_simple.html">
+                                                <h4><a href="{{ route('client.shop.show', $product->id) }}">
                                                         <strong>{{ $name ?? 'Sản phẩm không tồn tại' }}</strong></a>
                                                 </h4>
                                                 <ul class="shopping-cart__product-item__options">
@@ -171,59 +171,56 @@
                         </div>
                         <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel">
                             <div class="modal-dialog modal-xl">
-                                <div class="modal-content" style="border: none; box-shadow: 0 0 10px rgba(0,0,0,0.15);">
-                                    <div class="modal-header" style="background-color: #f8f9fa;">
-                                        <h5 class="modal-title" id="voucherModalLabel"
-                                            style="color: #0d6efd; font-weight: bold-semi; font-size: 1.75rem;">
+                                <div class="modal-content border-0 shadow-lg rounded-4">
+                                    <div class="modal-header bg-white border-bottom-0">
+                                        <h5 class="modal-title fw-bold text-primary text-center" id="voucherModalLabel"
+                                            style="font-size: 1.2rem;">
                                             Danh sách mã giảm giá
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Đóng"></button>
                                     </div>
-                                    <div class="modal-body" style="background-color: #fff;">
+                                    <div class="modal-body bg-light" style="max-height: 630px; overflow-y: auto;">
                                         <div class="row g-4">
                                             @foreach ($vouchers as $voucher)
-                                                <div class="col-12 col-md-6 col-lg-6">
-                                                    <div class="card h-100 rounded-4"
-                                                        style="background-color: #f8f9fa;">
-                                                        <div class="card-body p-4">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-3">
-                                                                <span
-                                                                    style="background-color: #ffe1e1; color: #e63946; font-weight: 600; padding: 6px 12px; border-radius: 12px;">
-                                                                    GIẢM GIÁ
-                                                                </span>
-                                                                <small style="color: #6b7280;">
-                                                                    HSD:
+                                                <div class="col-md-6 col-12">
+                                                    <div class="card shadow-sm border-0 rounded-4 h-100"
+                                                        style="background-color: #fff;">
+                                                        <div class="d-flex flex-column flex-md-row h-100">
+                                                            <!-- Nội dung chính -->
+                                                            <div class="flex-grow-1 p-4">
+                                                                <h5 class="fw-bold text-dark mb-2"
+                                                                    style="font-size: 1.1rem;">
+                                                                    {{ $voucher->name }}
+                                                                </h5>
+                                                                <p class="text-muted mb-1" style="font-size: 0.95rem;">
+                                                                    Đơn tối thiểu:
+                                                                    {{ number_format($voucher->min_order, 0, ',', '.') }}₫
+                                                                </p>
+                                                                <p class="text-muted mb-2" style="font-size: 0.95rem;">
+                                                                    Hạn dùng:
                                                                     {{ \Carbon\Carbon::parse($voucher->expires_at)->format('d/m/Y') }}
-                                                                </small>
-                                                            </div>
-                                                            <h5 class="card-title fw-bold mb-3"
-                                                                style="color: #1e293b; font-size: 1.3rem;">
-                                                                {{ $voucher->name }}
-                                                            </h5>
-                                                            <div class="mb-3">
-                                                                <p style="color: #6b7280; margin-bottom: 4px;">Mã Voucher:
                                                                 </p>
-                                                                <p class="fw-semibold text-center"
-                                                                    style="color: #3b1e1e; font-size: 1.2rem; background-color: #ffe1e1; padding: 8px; border-radius: 8px;">
-                                                                    {{ $voucher->code }}
-                                                                </p>
+                                                                <span
+                                                                    style="background-color: #ffc107; color: #000; padding: 6px 12px; border-radius: 6px; font-size: 1rem;">
+                                                                    Mã: {{ $voucher->code }}
+                                                                </span>
                                                             </div>
-                                                            <p style="color: #6b7280; margin-bottom: 8px;">
-                                                                Đơn tối thiểu:
-                                                                {{ number_format($voucher->min_order, 0, ',', '.') }}₫
-                                                            </p>
-                                                            <p style="color: #6b7280; margin-bottom: 16px;">
-                                                                Đã dùng:
-                                                                {{ $voucher->used_count }}/{{ $voucher->max_uses }}
-                                                            </p>
-                                                            <button
-                                                                class="btn w-100 btn-copy-code fw-semibold py-2 copy_button"
-                                                                style="border: 2px solid #e63946; color: #e63946; background-color: transparent;"
-                                                                data-code="{{ $voucher->code }}">
-                                                                Sao chép mã
-                                                            </button>
+
+                                                            <!-- Cột phải -->
+                                                            <div class="d-flex flex-column justify-content-center align-items-center p-4 border-start"
+                                                                style="min-width: 140px; background-color: #f8f9fa;">
+                                                                <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                                                                    Đã dùng:
+                                                                    {{ $voucher->used_count }}/{{ $voucher->max_uses }}
+                                                                </p>
+                                                                <button class="btn btn-dark btn-sm fw-semibold copy_button"
+                                                                    data-code="{{ $voucher->code }}"
+                                                                    onclick="copyCode(this)"
+                                                                    style="padding: 8px 16px; font-size: 0.95rem; border-radius: 6px;">
+                                                                    Sao chép
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -233,6 +230,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Script sao chép mã -->
+
+
+
 
 
                         <div class="card-body bg-dark p-2">
@@ -500,21 +502,60 @@
             // Kiểm tra mã giảm giá
             checkVoucherBtn.addEventListener("click", function() {
                 let voucherCode = discountInput.value.trim();
-                if (!voucherCode) return alert("Vui lòng nhập mã giảm giá!");
-                let totalProductAmount = parseFloat(this.dataset.total);
+                if (!voucherCode) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cảnh báo!',
+                        text: 'Vui lòng nhập mã giảm giá!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                    return;
+                }
+
+                // Tính tổng tiền của các sản phẩm được chọn
+                updateCheckItems();
+                let totalProductAmount = 0;
+                checkItems.forEach(item => {
+                    if (item.checked) {
+                        let row = item.closest("tr");
+                        let price = parseFloat(row.querySelector(".shopping-cart__product-price")
+                            .textContent.replace(/\D/g, ""));
+                        let quantity = parseInt(row.querySelector(".qty-input").value);
+                        totalProductAmount += price * quantity;
+                    }
+                });
+
+                if (totalProductAmount === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Cảnh báo!',
+                        text: 'Vui lòng chọn ít nhất một sản phẩm để áp dụng mã giảm giá!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                    return;
+                }
 
                 fetch("/cart/check_voucher", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
                         },
                         body: JSON.stringify({
                             code: voucherCode,
-                            total: totalProductAmount
-                        })
+                            total: totalProductAmount,
+                        }),
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! Status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.valid) {
                             appliedDiscount = data.discount;
@@ -522,10 +563,10 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Thành công!',
-                                text: 'Mã giảm giá hợp lệ.',
-                                timer: 2000,
+                                html: `${data.message}<br>Tổng mới: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.newTotal)}`,
+                                timer: 3000,
                                 timerProgressBar: true,
-                                showConfirmButton: false
+                                showConfirmButton: false,
                             });
 
                             updateTotalAmount();
@@ -534,13 +575,23 @@
                                 icon: 'error',
                                 title: 'Lỗi!',
                                 text: data.message || 'Mã giảm giá không hợp lệ!',
-                                timer: 2000,
+                                timer: 3000,
                                 timerProgressBar: true,
-                                showConfirmButton: false
+                                showConfirmButton: false,
                             });
                         }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: 'Không thể kết nối đến server. Vui lòng thử lại!',
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        });
                     });
-
             });
 
             updateVoucherStatus();
@@ -578,65 +629,53 @@
     <!-- SweetAlert2 CDN -->
 
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.btn-copy-code');
-
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const code = this.getAttribute('data-code');
-
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(code).then(() => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code +
-                                    '" đã được sao chép vào clipboard!',
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        }).catch(err => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã. Lỗi: ' + err,
-                                timer: 2000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        });
-                    } else {
-                        const textarea = document.createElement('textarea');
-                        textarea.value = code;
-                        document.body.appendChild(textarea);
-                        textarea.select();
-                        try {
-                            document.execCommand('copy');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: 'Mã "' + code + '" đã được sao chép vào clipboard!',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        } catch (err) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi!',
-                                text: 'Không thể sao chép mã.',
-                                timer: 3000,
-                                timerProgressBar: true,
-                                showConfirmButton: false
-                            });
-                        }
-                        document.body.removeChild(textarea);
-                    }
+        function copyCode(btn) {
+            const code = btn.getAttribute('data-code');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã sao chép!',
+                        text: '🎉 Mã: ' + code,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }).catch(err => {
+                    console.error('Lỗi khi sao chép: ', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: '❗ Không thể sao chép mã.',
+                    });
                 });
-            });
-        });
+            } else {
+                // Fallback cho trình duyệt không hỗ trợ clipboard API
+                const tempInput = document.createElement('input');
+                tempInput.value = code;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                try {
+                    document.execCommand('copy');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã sao chép!',
+                        text: '🎉 Mã: ' + code,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } catch (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: '❗ Không thể sao chép mã.',
+                    });
+                }
+                document.body.removeChild(tempInput);
+            }
+        }
     </script>
 @endsection
 @section('style')

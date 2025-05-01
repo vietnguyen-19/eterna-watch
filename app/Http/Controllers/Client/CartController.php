@@ -56,60 +56,62 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-     
-
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Bạn cần đăng nhập để có thể thực hiện hành động!'
             ]);
         }
+
         $request->validate([
             'variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1',
-            'type'=>'nullable'
+            'type' => 'nullable'
         ]);
-       
-        if($request->type == 'simple'){
-            $variant = ProductVariant::with('product')->findOrFail($request->variant_id);
-        }else{
-            $variant = ProductVariant::with('product', 'attributeValues.nameValue.attribute')->findOrFail($request->variant_id);
-        }
-       
+
+        $variant = ProductVariant::with([
+            'product',
+            $request->type !== 'simple' ? 'attributeValues.nameValue.attribute' : null
+        ])->findOrFail($request->variant_id);
+
         if ($request->quantity > $variant->stock) {
             return response()->json([
                 'success' => false,
                 'message' => 'Số lượng đặt hàng vượt quá tồn kho!'
             ]);
         }
-        
-        if (Auth::check()) {
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-            $cartDetail = CartDetail::firstOrNew([
-                'cart_id' => $cart->id,
-                'variant_id' => $request->variant_id
+        $cart = Cart::firstOrCreate([
+            'user_id' => Auth::id()
+        ]);
+
+        $cartDetail = CartDetail::firstOrNew([
+            'cart_id' => $cart->id,
+            'variant_id' => $request->variant_id
+        ]);
+
+        // Tính tổng số lượng mới
+        $newQuantity = ($cartDetail->exists ? $cartDetail->quantity : 0) + $request->quantity;
+
+        if ($newQuantity > $variant->stock) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tổng số lượng trong giỏ hàng vượt quá tồn kho!'
             ]);
+        }
 
-            // Kiểm tra số lượng mới có vượt quá tồn kho không
-            $newQuantity = ($cartDetail->exists ? $cartDetail->quantity : 0) + $request->quantity;
-            if ($newQuantity > $variant->stock) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tổng số lượng trong giỏ hàng vượt quá tồn kho!'
-                ]);
-            }
-            // Nếu hợp lệ, cập nhật số lượng sản phẩm trong giỏ hàng
-            $cartDetail->quantity = $newQuantity;
-            $cartDetail->price = $variant->price;
-            $cartDetail->save();
-            
-        } 
+        // Cập nhật lại thông tin giỏ hàng
+        $cartDetail->quantity = $newQuantity;
+        $cartDetail->price = $variant->price;
+        $cartDetail->save();
+
         return response()->json([
-            'success' => 'Sản phẩm đã được thêm vào giỏ hàng.',
-            'cart' => Auth::check() ? CartDetail::where('cart_id', $cart->id)->count() : count(session('cart', []))
+            'success' => true,
+            'message' => 'Sản phẩm đã được thêm vào giỏ hàng.',
+            'cart_count' => CartDetail::where('cart_id', $cart->id)->count()
         ]);
     }
+
 
 
     // Xem giỏ hàng
@@ -290,7 +292,7 @@ class CartController extends Controller
         }
 
         // Kiểm tra trạng thái voucher (ví dụ: active)
-        if ($voucher->status !== 'active') {
+        if ($voucher->status === 'inactive') {
             return response()->json([
                 'valid'    => false,
                 'message'  => 'Voucher không khả dụng.',

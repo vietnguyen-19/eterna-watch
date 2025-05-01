@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\StatusHistory;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,9 +78,17 @@ class AccountController extends Controller
         if (!in_array($order->status, ["pending", "confirmed"])) {
             return response()->json(["success" => false, "message" => "Không thể hủy đơn hàng khi vì đã giao cho bên vận chuyển"], 400);
         }
-
+        StatusHistory::create([
+            'entity_id' => $order->id,
+            'entity_type' => 'order',
+            'old_status' => $order->status,
+            'new_status' => 'cancelled',
+            'changed_by' =>$order->user->id,
+            'changed_at' => now(),
+        ]);
         $order->status = "cancelled";
         $order->save();
+        
 
         return response()->json(["success" => true, "message" => "Đơn hàng đã được hủy thành công!"]);
     }

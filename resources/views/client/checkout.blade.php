@@ -207,7 +207,7 @@
 
 
                             <!-- Ghi chú đơn hàng -->
-                            <div class="col-md-12">
+                            <div class="col-md-12" style="display: none">
                                 <div class="mt-3 mb-5">
                                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
                                         placeholder="Ghi chú đơn hàng (nếu có)" cols="30" rows="4">{{ old('note', Auth::check() ? Auth::user()->note : '') }}</textarea>

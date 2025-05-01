@@ -1,11 +1,15 @@
 <!-- resources/views/partials/comment.blade.php -->
-<div id="comment-container-{{$comment->id}}" style="border-bottom: 1px solid #eee; padding: 20px 0; width: 100%">
+<div id="comment-container-{{ $comment->id }}" style="border-bottom: 1px solid #eee; padding: 20px 0; width: 100%">
     <div class="review-container" style="display: flex; gap: 15px;">
         <!-- Avatar -->
         <div class="">
-            <img loading="lazy" src="{{ Storage::url($comment->user->avatar ?? 'avatar/default.jpeg') }}"
-                alt="{{ $comment->user->name }}"
-                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+            @if (in_array($comment->user->role_id, [1, 2]))
+                <img loading="lazy" src="{{ asset('storage/products/eterna_avatar.png') }}" alt="EternaWatch"
+                    style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+            @else
+                <img loading="lazy" src="{{ Storage::url($comment->user->avatar) }}" alt="{{ $comment->user->name }}"
+                    style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+            @endif
         </div>
 
         <!-- Nội dung review -->
@@ -13,7 +17,8 @@
             <div class="review-header"
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h6 style="margin: 0; font-size: 16px; font-weight: 600;">
-                    {{ $comment->user->name }}
+                    {{ in_array($comment->user->role_id, [1, 2]) ? 'EternaWatch Shop' : $comment->user->name }}
+
                     <span style="font-size: 12px; color: #888; font-weight: normal;">
                         | {{ $comment->created_at->format('F d, Y') }}
                     </span>
@@ -56,7 +61,7 @@
                         </a>
                     </div>
                     <div class="review-action">
-                        <a  href="#" class="delete-btn" data-comment-id="{{ $comment->id }}"
+                        <a href="#" class="delete-btn" data-comment-id="{{ $comment->id }}"
                             data-comment-id="{{ $comment->id }}"
                             style="color: #e74c3c; font-size: 13px; text-decoration: none; font-style: italic;">
                             <i>Xóa</i>
@@ -64,7 +69,6 @@
                     </div>
 
                     <!-- Nút Sửa -->
-                 
                 @endif
             </div>
 

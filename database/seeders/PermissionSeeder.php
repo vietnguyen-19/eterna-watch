@@ -83,6 +83,7 @@ class PermissionSeeder extends Seeder
 
             // ===== Settings (Cài đặt) =====
             'manage_settings',
+            'manage_contacts'
         ];
 
         $permissions = [];

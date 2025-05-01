@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('used_count')->default(0); // Số lần đã sử dụng
             $table->dateTime('start_date')->nullable(); // Ngày bắt đầu
             $table->dateTime('expires_at')->nullable(); // Hạn sử dụng
-            $table->enum('status', ['active', 'expired'])->default('active'); // Trạng thái
+            $table->enum('status', ['active', 'expired','inactive'])->default('active'); // Trạng thái
             $table->timestamps();
         });
     }

@@ -57,7 +57,7 @@
                                                 <tr>
                                                     <th class="text-muted">Giá mặc định</th>
                                                     <td class="fs-5">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} đ
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -312,7 +312,7 @@
                                                         <td class="align-middle">
                                                             @php
                                                                 switch ($variant->status) {
-                                                                    case 'in_stock':
+                                                                    case 'active':
                                                                         $class = 'badge bg-success';
                                                                         $text = 'Còn hàng';
                                                                         break;
@@ -320,7 +320,7 @@
                                                                         $class = 'badge bg-danger';
                                                                         $text = 'Hết hàng';
                                                                         break;
-                                                                    case 'pre_order':
+                                                                    case 'inactive':
                                                                         $class = 'badge bg-warning text-dark';
                                                                         $text = 'Đặt trước';
                                                                         break;

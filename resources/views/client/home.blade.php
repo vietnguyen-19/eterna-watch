@@ -103,10 +103,10 @@
                                         <div style="color: rgb(188, 0, 0); "
                                             class="product-card__price d-flex mb-1 fw-bold">
                                             @if ($product->min_price == $product->max_price)
-                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->min_price, 0, ',', '.') }} đ
                                             @else
                                                 {{ number_format($product->min_price, 0, ',', '.') }} -
-                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->max_price, 0, ',', '.') }} đ
                                             @endif
                                         </div>
 
@@ -130,7 +130,7 @@
             </div>
             <div class="image-banner__content container py-3">
                 <h2 class="text-white h1 fw-semi-bold mb-3 mb-xl-4">SẢN PHẨM MỚI</h2>
-                <a href="shop1.html"
+                <a href="{{ route('client.shop', ['filter' => 'date_new']) }}"
                     class="btn btn-outline-primary border-0 fs-13 text-uppercase fw-semi-bold btn-50 d-inline-flex align-items-center justify-content-center">
                     <span>Mua Ngay</span>
                 </a>
@@ -201,10 +201,10 @@
                                         <div style="color: rgb(188, 0, 0); "
                                             class="product-card__price d-flex mb-1 fw-bold">
                                             @if ($product->min_price == $product->max_price)
-                                                {{ number_format($product->min_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->min_price, 0, ',', '.') }} đ
                                             @else
                                                 {{ number_format($product->min_price, 0, ',', '.') }} -
-                                                {{ number_format($product->max_price, 0, ',', '.') }} VND
+                                                {{ number_format($product->max_price, 0, ',', '.') }} đ
                                             @endif
                                         </div>
 

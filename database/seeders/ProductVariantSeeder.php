@@ -15,35 +15,33 @@ class ProductVariantSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        // Lấy danh sách sản phẩm
-        $products = DB::table('products')->select('id', 'price_default', 'stock', 'type', 'avatar')->get();
-
+        $products = Product::select('id', 'price_default', 'stock', 'type', 'avatar')->get();
 
         foreach ($products as $product) {
             if ($product->type === 'simple') {
-                // Nếu sản phẩm là simple, chỉ tạo 1 biến thể duy nhất
-                DB::table('product_variants')->insert([
+                ProductVariant::create([
                     'product_id' => $product->id,
-                    'sku'        => 'SKU-' . $product->id,
-                    'price'      => $product->price_default,
-                    'stock'      => $product->stock ?? 10,
-                    'image'      => $product->avatar,
-                    'status'     => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'sku' => 'SKU-' . $product->id . '-SIMPLE',
+                    'price' => $product->price_default,
+                    'stock' => $product->stock ?? 50,
+                    'image' => $product->avatar,
+                    'status' => 'active',
                 ]);
             } else {
-                // Nếu sản phẩm là variable, tạo nhiều biến thể như trước
-                $attributes = DB::table('attributes')->inRandomOrder()->limit(2)->pluck('id');
+                $attributes = DB::table('attributes')->inRandomOrder()->limit(2)->pluck('id')->toArray();
+
+                if (empty($attributes)) {
+                    continue;
+                }
 
                 foreach ($attributes as $attribute_id) {
                     DB::table('product_has_attributes')->insert([
-                        'product_id'   => $product->id,
+                        'product_id' => $product->id,
                         'attribute_id' => $attribute_id,
-                        'created_at'   => now(),
-                        'updated_at'   => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
 
@@ -53,27 +51,26 @@ class ProductVariantSeeder extends Seeder
                         ->where('attribute_id', $attribute_id)
                         ->pluck('id')
                         ->toArray();
+                    if (empty($values)) {
+                        continue 2; // Bỏ qua sản phẩm này
+                    }
                     $attributeValues[] = $values;
                 }
 
                 $variants = [];
                 $generatedSKUs = [];
+                $maxVariants = min(5, count($attributeValues[0]) * count($attributeValues[1] ?? [1]));
 
-                while (count($variants) < 5) {
+                while (count($variants) < $maxVariants) {
                     $selectedValues = [];
                     foreach ($attributeValues as $values) {
-                        if (!empty($values)) {
-                            $selectedValues[] = $values[array_rand($values)];
-                        }
+                        $selectedValues[] = $values[array_rand($values)];
                     }
 
                     sort($selectedValues);
                     $sku = 'SKU-' . $product->id . '-' . implode('-', $selectedValues);
 
-                    if (
-                        in_array($sku, $generatedSKUs) ||
-                        DB::table('product_variants')->where('sku', $sku)->exists()
-                    ) {
+                    if (in_array($sku, $generatedSKUs)) {
                         continue;
                     }
 
@@ -82,24 +79,22 @@ class ProductVariantSeeder extends Seeder
                     $price = $product->price_default + rand(1, 50) * 10000;
                     $stock = rand(5, 20);
 
-                    $variant_id = DB::table('product_variants')->insertGetId([
+                    $variant = ProductVariant::create([
                         'product_id' => $product->id,
-                        'sku'        => $sku,
-                        'price'      => $price,
-                        'stock'      => $stock,
-                        'image'      => null,
-                        'status'     => 'active',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'sku' => $sku,
+                        'price' => $price,
+                        'stock' => $stock,
+                        'image' => null,
+                        'status' => 'active',
                     ]);
 
-                    $variants[$variant_id] = $selectedValues;
+                    $variants[$variant->id] = $selectedValues;
                 }
 
                 foreach ($variants as $variant_id => $selectedValues) {
                     foreach ($selectedValues as $attribute_value_id) {
                         DB::table('variant_attributes')->insert([
-                            'variant_id'         => $variant_id,
+                            'variant_id' => $variant_id,
                             'attribute_value_id' => $attribute_value_id,
                         ]);
                     }
@@ -107,10 +102,10 @@ class ProductVariantSeeder extends Seeder
             }
         }
 
-        // Gán hình ảnh cho tất cả variant
-        $variants = ProductVariant::all();
+        $variants = ProductVariant::whereNull('image')->get();
         foreach ($variants as $index => $variant) {
-            $variant->image = 'product_variants/product_variant' . ($index + 1) . '.jpeg';
+            $imagePath = 'product_variants/product_variant' . ($index + 1) . '.jpeg';
+            $variant->image = $imagePath;
             $variant->save();
         }
     }

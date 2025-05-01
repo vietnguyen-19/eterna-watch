@@ -11,16 +11,18 @@
                     <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
                 </div><!-- /.aside-header -->
                 <div class="pt-4 pt-lg-0"></div>
-                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4" role="search">
+                <form action="{{ route('client.search') }}" method="GET" class="d-flex justify-content-center my-4"
+                    role="search">
                     <div class="input-group shadow-sm" style="max-width: 500px;">
-                        <input type="text" name="query" class="form-control form-control-lg" placeholder="Tìm sản phẩm..." aria-label="Search" required>
+                        <input type="text" name="query" class="form-control form-control-lg"
+                            placeholder="Tìm bài viết..." aria-label="Search" required>
                         <input type="hidden" name="type" value="post">
                         <button class="btn btn-outline-secondary w-auto px-3" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 
-                                    1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 
-                                    5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0
+                                                            1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5
+                                                            5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                             </svg>
                         </button>
                     </div>
@@ -33,7 +35,7 @@
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#accordion-filter-1" aria-expanded="true"
                                 aria-controls="accordion-filter-1">
-                                Danh mục
+                                <strong> Danh mục</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -101,8 +103,8 @@
                         <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium"><strong>Trang
                                 chủ</strong></a>
                         <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">|</span>
-                        <a href="#"
-                            class="menu-link menu-link_us-s text-uppercase fw-medium"><strong>Blog</strong></a>
+                        <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium"><strong>Tin
+                                tức</strong></a>
                     </div><!-- /.breadcrumb -->
 
                     <div
@@ -121,7 +123,7 @@
                                 {{ $currentFilter == 'az' ? 'selected' : '' }}>Theo bảng chữ cái, A-Z</option>
                             <option value="{{ route('client.blog', ['filter' => 'za']) }}"
                                 {{ $currentFilter == 'za' ? 'selected' : '' }}>Theo bảng chữ cái, Z-A</option>
-                            <option value="{{ route('client.blog', ['filter' => 'price_asc']) }}"
+                            <option value="{{ route('client.blog', ['filter' => 'feature']) }}"
                                 {{ $currentFilter == 'feature' ? 'selected' : '' }}>Bài viết nổi bật</option>
                             <option value="{{ route('client.blog', ['filter' => 'date_old']) }}"
                                 {{ $currentFilter == 'date_old' ? 'selected' : '' }}>Ngày: Cũ đến mới</option>
@@ -157,6 +159,37 @@
                         class="text-center text-primary my-4 p-2 border-left border-4 border-primary rounded shadow-sm bg-light fw-bold">
                         Kết quả tìm kiếm cho: "{{ request('query') }}"
                     </p>
+                @endif
+                @if (request('category'))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #ad0b0b;">
+                        <span style="">Đang lọc theo danh mục:</span>
+                        <span style="font-weight: 600;">{{ request('category') }}</span>
+                    </div>
+                @endif
+                @if (request('tag'))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #ad0b0b;">
+                        <span style="">Đang lọc theo tag:</span>
+                        <span style="font-weight: 600;">{{ request('tag') }}</span>
+                    </div>
+                @endif
+                @php
+                    $filterMessages = [
+                        'feature' => 'Lượt xem',
+                        'az' => 'Tên: A → Z',
+                        'za' => 'Tên: Z → A',
+                        'date_old' => 'Ngày đăng: Cũ nhất',
+                        'date_new' => 'Ngày đăng: Mới nhất',
+                    ];
+                @endphp
+
+                @if (request('filter') && isset($filterMessages[request('filter')]))
+                    <div
+                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #ad0b0b;">
+                        <span style="">Đang sắp xếp theo:</span>
+                        <span style="font-weight: 600;">{{ $filterMessages[request('filter')] }}</span>
+                    </div>
                 @endif
                 <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
                     @foreach ($posts as $post)

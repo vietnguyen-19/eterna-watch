@@ -56,7 +56,7 @@
                                                     <tr>
                                                         <th class="text-muted">Giá mặc định</th>
                                                         <td class="fs-5">
-                                                            {{ number_format($data->price_default, 0, ',', '.') }} VND
+                                                            {{ number_format($data->price_default, 0, ',', '.') }} đ
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -158,14 +158,14 @@
                                                             {{ $variant->sku }}</td>
                                                         <td class="text-center text-nowrap align-middle">
                                                             {{ number_format($variant->price, 0, ',', '.') }} <span
-                                                                class="text-muted">VND</span>
+                                                                class="text-muted">đ</span>
                                                         </td>
                                                         <td class="text-center align-middle">{{ $variant->stock }}</td>
                                                         <td class="text-center align-middle">{{ $variant->sold_quantity }}</td>
                                                         <td class="align-middle">
                                                             @php
                                                                 switch ($variant->status) {
-                                                                    case 'in_stock':
+                                                                    case 'active':
                                                                         $class = 'badge bg-success';
                                                                         $text = 'Còn hàng';
                                                                         break;
@@ -173,7 +173,7 @@
                                                                         $class = 'badge bg-danger';
                                                                         $text = 'Hết hàng';
                                                                         break;
-                                                                    case 'pre_order':
+                                                                    case 'inactive':
                                                                         $class = 'badge bg-warning text-dark';
                                                                         $text = 'Đặt trước';
                                                                         break;

@@ -47,39 +47,80 @@
                             <div class="row invoice-info">
                                 <div class="col-sm-6 invoice-col">
                                     @php
-                                        $paymentStatus = strtolower($order->payment->payment_status);
-                                        $orderStatus = strtolower($order->status);
+                                        // Ánh xạ trạng thái sang tiếng Việt
+                                        function getVietnameseStatus($status)
+                                        {
+                                            return match (strtolower($status)) {
+                                                'pending' => 'Đang chờ',
+                                                'confirmed' => 'Đã xác nhận',
+                                                'processing' => 'Đang xử lý',
+                                                'completed' => 'Hoàn thành',
+                                                'failed' => 'Thất bại',
+                                                'cancelled' => 'Đã hủy',
+                                                'refunded' => 'Đã hoàn tiền', // Nếu bạn có trạng thái này
+                                                default => 'Không xác định',
+                                            };
+                                        }
 
+                                        // Ánh xạ phương thức thanh toán sang tiếng Việt
+                                        function getVietnamesePaymentMethod($method)
+                                        {
+                                            return match (strtolower($method)) {
+                                                'cashh' => 'Thanh toán khi nhận hàng',
+                                                'vnpay' => 'TT online VNPay',
+                                                default => $method ?? 'Không xác định',
+                                            };
+                                        }
+
+                                        // Hàm lấy màu badge
                                         function getBadgeColor($status)
                                         {
-                                            return match ($status) {
+                                            return match (strtolower($status)) {
                                                 'pending' => 'warning',
                                                 'confirmed' => 'info',
                                                 'processing' => 'primary',
                                                 'completed' => 'success',
                                                 'failed', 'cancelled' => 'danger',
+                                                'refunded' => 'secondary', // Màu cho trạng thái hoàn tiền
                                                 default => 'secondary',
                                             };
                                         }
 
-                                        $paymentBadge = getBadgeColor($paymentStatus);
+                                        // Lấy trạng thái đơn hàng và thanh toán
+                                        $orderStatus = strtolower($order->status);
+                                        $paymentStatus = $order->payment
+                                            ? strtolower($order->payment->payment_status)
+                                            : 'unknown';
+                                        $paymentMethod = $order->payment_method ?? 'unknown';
+
+                                        // Lấy màu badge
                                         $orderBadge = getBadgeColor($orderStatus);
+                                        $paymentBadge = getBadgeColor($paymentStatus);
                                     @endphp
+
+                                    <!-- Hiển thị trạng thái đơn hàng -->
                                     <strong>Trạng thái đơn hàng:</strong>
                                     <span class="badge bg-{{ $orderBadge }} text-dark">
-                                        {{ ucfirst($orderStatus) }}
+                                        {{ getVietnameseStatus($orderStatus) }}
                                     </span><br>
 
-                                    {{-- Phương thức và Trạng thái thanh toán --}}
+                                    <!-- Phương thức và trạng thái thanh toán -->
                                     <strong>Phương thức thanh toán:</strong>
                                     <span class="badge bg-success">
-                                        {{ $order->payment_method }}
+                                        {{ getVietnamesePaymentMethod($paymentMethod) }}
                                     </span>
                                     |
                                     <strong>Trạng thái:</strong>
-                                    <span class="badge bg-{{ $paymentBadge }} text-dark">
-                                        {{ ucfirst($paymentStatus) }}
-                                    </span><br>
+                                    @if ($order->payment)
+                                        <span class="badge bg-{{ $paymentBadge }} text-dark">
+                                            {{ getVietnameseStatus($paymentStatus) }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary text-dark">
+                                            Chưa thanh toán
+                                        </span>
+                                    @endif
+                                    <br>
 
                                     Hình thức vận chuyển:
                                     <b>{{ $order->shipment_method == 'fixed' ? 'Giao hàng tận nơi' : 'Nhận tại cửa hàng' }}</b><br>
@@ -87,7 +128,7 @@
                                     Giá trị đơn hàng:
                                     <b> <span
                                             class="text-primary fw-bold">{{ number_format($order->total_amount, 0, ',', '.') }}
-                                            VND</span></b><br>
+                                            đ</span></b><br>
 
                                     Ngày đặt hàng:
                                     <b><span
@@ -95,7 +136,7 @@
                                 </div>
 
                                 <div class="col-sm-3 invoice-col">
-                                    From
+                                    Gửi từ
                                     <address>
                                         <strong>EternaWatch Shop.</strong><br>
                                         Số 8 Trịnh Văn Bô, Phương Canh<br>
@@ -106,7 +147,7 @@
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-sm-3 invoice-col">
-                                    To
+                                    Đến
                                     <address>
                                         <strong>{{ $order->user->name }}</strong><br>
                                         {{ $order->address->street_address }},
@@ -132,26 +173,38 @@
                                 function getStatusColorClass($status)
                                 {
                                     $statusColors = [
-                                        'pending' => 'badge bg-warning', // Màu vàng cho trạng thái pending
-                                        'confirmed' => 'badge bg-info', // Màu xanh cho trạng thái confirmed
-                                        'processing' => 'badge bg-primary', // Màu xanh đậm cho trạng thái processing
-                                        'completed' => 'badge bg-success', // Màu xanh lá cho trạng thái completed
-                                        'cancelled' => 'badge bg-danger', // Màu đỏ cho trạng thái cancelled
+                                        'pending' => 'badge bg-warning', // Màu vàng cho trạng thái chờ xử lý
+                                        'confirmed' => 'badge bg-info', // Màu xanh cho trạng thái đã xác nhận
+                                        'processing' => 'badge bg-primary', // Màu xanh đậm cho trạng thái đang xử lý
+                                        'completed' => 'badge bg-success', // Màu xanh lá cho trạng thái hoàn thành
+                                        'cancelled' => 'badge bg-danger', // Màu đỏ cho trạng thái đã hủy
                                     ];
-
+                
                                     return $statusColors[$status] ?? 'bg-secondary'; // Mặc định màu xám nếu không có trạng thái nào khớp
+                                }
+                
+                                function translateStatus($status)
+                                {
+                                    $statusTranslations = [
+                                        'pending' => 'Chờ xử lý',
+                                        'confirmed' => 'Đã xác nhận',
+                                        'processing' => 'Đang xử lý',
+                                        'completed' => 'Hoàn thành',
+                                        'cancelled' => 'Đã hủy',
+                                    ];
+                
+                                    return $statusTranslations[$status] ?? $status; // Trả về trạng thái gốc nếu không có bản dịch
                                 }
                             }
                         @endphp
-
+                
                         <div class="card-body">
                             <div class="list-group">
-
                                 @foreach ($statusHistories as $history)
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
                                             <span
-                                                class="badge {{ getStatusColorClass($history->new_status) }} fs-5 px-1 py-1">{{ $history->new_status }}</span>
+                                                class="badge {{ getStatusColorClass($history->new_status) }} fs-5 px-1 py-1">{{ translateStatus($history->new_status) }}</span>
                                             <div class="text-muted">
                                                 {{ \Carbon\Carbon::parse($history->changed_at)->format('d-m-Y H:i:s') }}
                                             </div>
@@ -161,21 +214,9 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="badge badge bg-warning fs-5 px-1 py-1">pending</span>
-                                        <div class="text-muted">
-                                            {{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</div>
-                                    </div>
-                                    <div>
-                                        <b>Hệ thống</b>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
                 <div class="col-lg-9">
                     <div class="card" id="customerList">
@@ -220,10 +261,10 @@
                                             </td>
                                             <td class="align-middle">{{ $item->quantity }}</td>
                                             <td class="align-middle">
-                                                {{ number_format($item->unit_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->unit_price, 0, ',', '.') }} đ
                                             </td>
                                             <td class="align-middle">
-                                                {{ number_format($item->total_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->total_price, 0, ',', '.') }} đ
                                             </td>
                                         </tr>
                                     @endforeach
@@ -248,7 +289,7 @@
                                     <tr>
                                         <th colspan="4" class="text-end">Tạm tính</th>
                                         <td class="text-end">{{ number_format($subtotal, 0, ',', '.') }}
-                                            VND</td>
+                                            đ</td>
                                     </tr>
 
                                     @if ($order->voucher)
@@ -260,14 +301,14 @@
                                         <tr>
                                             <th colspan="4" class="text-end">Giảm giá</th>
                                             <td class="text-end">-{{ number_format($discountAmount, 0, ',', '.') }}
-                                                VND</td>
+                                                đ</td>
                                         </tr>
                                     @endif
 
                                     <tr>
                                         <th colspan="4" class="text-end"><strong>Tổng thanh toán</strong></th>
                                         <td class="text-end">
-                                            <strong>{{ number_format($totalPayment, 0, ',', '.') }} VND</strong>
+                                            <strong>{{ number_format($totalPayment, 0, ',', '.') }} đ</strong>
                                         </td>
                                     </tr>
                                 </tbody>

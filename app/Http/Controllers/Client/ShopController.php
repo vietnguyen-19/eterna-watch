@@ -121,9 +121,9 @@ class ShopController extends Controller
             'brand',
             'category.parent',
             'variants.attributeValues.nameValue',
-            'attributes.attributeValues'
+            'attributes.attributeValues',
         ])->findOrFail($id);
-
+        $product->increment('view_count');
         $attributes = Attribute::select('id', 'attribute_name')->get();
 
         $parentCategoryId = $product->category->parent_id ?? $product->category_id;
@@ -144,7 +144,7 @@ class ShopController extends Controller
             ];
         });
         $comments = $this->getCommentsWithReplies($product->id);
-
+      
         return view('client.product', [
             'product' => $product,
             'attributes' => $attributes,
@@ -157,6 +157,7 @@ class ShopController extends Controller
     {
         $comments = Comment::where('entity_id', $productId)
             ->where('entity_type', 'product')
+            ->where('status', '!=', 'rejected') // Lấy tất cả trạng thái trừ rejected
             ->where('parent_id', $parentId)
             ->with('replies') // Để lấy các bình luận con
             ->get();
@@ -188,7 +189,6 @@ class ShopController extends Controller
             }, '=', count($attributeValues))
             ->first();
 
-        dd($productVariant);
         // Kiểm tra nếu không tìm thấy
         if (!$productVariant) {
             return response()->json(['error' => 'Không tìm thấy biến thể sản phẩm'], 404);
