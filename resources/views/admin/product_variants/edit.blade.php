@@ -57,7 +57,7 @@
                                                 <tr>
                                                     <th class="text-muted">Giá mặc định</th>
                                                     <td class="fs-5">
-                                                        {{ number_format($product->price_default, 0, ',', '.') }} VND
+                                                        {{ number_format($product->price_default, 0, ',', '.') }} đ
                                                     </td>
                                                 </tr>
                                                 <tr>

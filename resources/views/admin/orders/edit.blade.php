@@ -128,7 +128,7 @@
                                     Giá trị đơn hàng:
                                     <b> <span
                                             class="text-primary fw-bold">{{ number_format($order->total_amount, 0, ',', '.') }}
-                                            VND</span></b><br>
+                                            đ</span></b><br>
 
                                     Ngày đặt hàng:
                                     <b><span
@@ -261,10 +261,10 @@
                                             </td>
                                             <td class="align-middle">{{ $item->quantity }}</td>
                                             <td class="align-middle">
-                                                {{ number_format($item->unit_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->unit_price, 0, ',', '.') }} đ
                                             </td>
                                             <td class="align-middle">
-                                                {{ number_format($item->total_price, 0, ',', '.') }} VND
+                                                {{ number_format($item->total_price, 0, ',', '.') }} đ
                                             </td>
                                         </tr>
                                     @endforeach
@@ -289,7 +289,7 @@
                                     <tr>
                                         <th colspan="4" class="text-end">Tạm tính</th>
                                         <td class="text-end">{{ number_format($subtotal, 0, ',', '.') }}
-                                            VND</td>
+                                            đ</td>
                                     </tr>
 
                                     @if ($order->voucher)
@@ -301,14 +301,14 @@
                                         <tr>
                                             <th colspan="4" class="text-end">Giảm giá</th>
                                             <td class="text-end">-{{ number_format($discountAmount, 0, ',', '.') }}
-                                                VND</td>
+                                                đ</td>
                                         </tr>
                                     @endif
 
                                     <tr>
                                         <th colspan="4" class="text-end"><strong>Tổng thanh toán</strong></th>
                                         <td class="text-end">
-                                            <strong>{{ number_format($totalPayment, 0, ',', '.') }} VND</strong>
+                                            <strong>{{ number_format($totalPayment, 0, ',', '.') }} đ</strong>
                                         </td>
                                     </tr>
                                 </tbody>

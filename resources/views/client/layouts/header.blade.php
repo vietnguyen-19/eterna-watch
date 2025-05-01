@@ -135,7 +135,7 @@
                             {{-- Nếu đã đăng nhập, hiển thị avatar và dropdown --}}
                             <a href="#" class="dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                <img src="{{ Storage::url(Auth::guard('web')->user()->avatar ?? 'avatar/default.jpeg') }}"
+                                <img src="{{ Storage::url(Auth::guard('web')->user()->avatar) }}"
                                     alt="Avatar" class="rounded-circle border border-secondary" width="40"
                                     height="40">
                             </a>
@@ -145,7 +145,7 @@
                                 class="dropdown-menu dropdown-menu-end bg-dark text-white mt-2"
                                 aria-labelledby="userDropdown" style="min-width: 400px;">
                                 <li class="text-center">
-                                    <img src="{{ Storage::url(Auth::guard('web')->user()->avatar ?? 'avatar/default.jpeg') }}"
+                                    <img src="{{ Storage::url(Auth::guard('web')->user()->avatar) }}"
                                         alt="Avatar" class="rounded-circle border border-light mb-2" width="70"
                                         height="70">
                                     <p class="mb-0 fw-bold">{{ Auth::guard('web')->user()->name }}</p>

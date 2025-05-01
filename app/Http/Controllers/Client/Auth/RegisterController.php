@@ -49,7 +49,7 @@ class RegisterController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'avatar' => 'avatar/default.jpeg',
+            'avatar' => null,
             'note' => null,
             'role_id' => 3, // Mặc định là user bình thường
             'status' => 'active',

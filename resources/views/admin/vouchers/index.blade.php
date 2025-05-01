@@ -69,12 +69,12 @@
                                                                 {{ $voucher->discount_value }}%
                                                             @else
                                                                 {{ number_format($voucher->discount_value, 0, ',', '.') }}
-                                                                VNĐ
+                                                               đ
                                                             @endif
                                                         </td>
                                                         <td class="align-middle">
                                                             @if ($voucher->min_order)
-                                                                {{ number_format($voucher->min_order, 0, ',', '.') }} VNĐ
+                                                                {{ number_format($voucher->min_order, 0, ',', '.') }}đ
                                                             @else
                                                                 Không yêu cầu
                                                             @endif

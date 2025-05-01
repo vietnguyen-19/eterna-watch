@@ -206,6 +206,13 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
         Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('admin.refunds.show');
         Route::post('/refunds/{refund}/approve', [RefundController::class, 'approve'])->name('admin.refunds.approve');
         Route::post('/refunds/{refund}/reject', [RefundController::class, 'reject'])->name('admin.refunds.reject');
+
+        Route::post('refunds/{refund}/approve/vnpay', [RefundController::class, 'approveVNPayRefund'])
+            ->name('admin.refunds.approve.vnpay');
+
+        // Duyệt hoàn tiền COD
+        Route::post('refunds/{refund}/approve/cod', [RefundController::class, 'approveCodRefund'])
+            ->name('admin.refunds.approve.cod');
     });
 
     Route::prefix('order_items')->group(function () {
@@ -273,5 +280,4 @@ Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
     Route::get('/contacts/trash', [ContactController::class, 'trash'])->name('admin.contacts.trash')->middleware('permission:manage_contacts');
     Route::post('/contacts/{id}/restore', [ContactController::class, 'restore'])->name('admin.contacts.restore')->middleware('permission:manage_contacts');
     Route::delete('/contacts/{id}/force-delete', [ContactController::class, 'forceDelete'])->name('admin.contacts.forceDelete')->middleware('permission:manage_contacts');
-
 });

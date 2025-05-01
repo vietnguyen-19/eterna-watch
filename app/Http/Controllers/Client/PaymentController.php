@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\ProductVariant;
+use App\Models\Refund;
 use App\Models\Shipment;
 use App\Models\StatusHistory;
 use App\Models\User;
@@ -19,6 +20,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,9 +32,9 @@ class PaymentController extends Controller
         $order = Order::with(['orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher'])->findOrFail($id);
         return view('client.complete-order', compact('order'));
     }
+
     public function checkout(Request $request)
     {
-
         $validatedData = $request->validate([
             'full_name'       => 'required|string|max:255',
             'phone_number'    => 'required|string|max:20',
@@ -42,12 +45,10 @@ class PaymentController extends Controller
             'city'            => 'required|string|max:255',
             'country'         => 'nullable|string|max:255',
             'note'            => 'nullable|string|max:1000',
-
-            'cart_items'                 => 'required|array|min:1',
-            'cart_items.*.variant_id'    => 'required|integer|exists:product_variants,id',
-            'cart_items.*.price'         => 'required|numeric|min:0',
-            'cart_items.*.quantity'      => 'required|integer|min:1',
-
+            'cart_items'      => 'required|array|min:1',
+            'cart_items.*.variant_id' => 'required|integer|exists:product_variants,id',
+            'cart_items.*.price'      => 'required|numeric|min:0',
+            'cart_items.*.quantity'   => 'required|integer|min:1',
             'voucher_id'      => 'nullable|integer|exists:vouchers,id',
             'total_amount'    => 'required|numeric|min:0',
             'shipping_method' => 'required|string|in:free,store,fixed',
@@ -56,7 +57,6 @@ class PaymentController extends Controller
 
         DB::beginTransaction();
         try {
-
             if ($request->input('type_address') == 'new') {
                 $address = UserAddress::create([
                     'user_id'        => Auth::user()->id,
@@ -75,16 +75,14 @@ class PaymentController extends Controller
                 $address = Auth::user()->defaultAddress;
             }
 
-            // Tạo đơn hàng
             $order = Order::create([
                 'user_id'      => Auth::id(),
                 'voucher_id'   => $validatedData['voucher_id'] ?? null,
-                'address_id' =>  $address->id,
+                'address_id'   => $address->id,
                 'total_amount' => $validatedData['total_amount'],
                 'status'       => 'pending',
                 'order_code'   => 'ORD-' . time() . '-' . Str::upper(Str::random(4)),
             ]);
-
 
             $shipment = Shipment::create([
                 'order_id'        => $order->id,
@@ -97,10 +95,9 @@ class PaymentController extends Controller
                 'shipped_date'    => now(),
                 'delivered_date'  => null,
             ]);
-            // Xử lý sản phẩm trong đơn hàng
+
             foreach ($validatedData['cart_items'] as $item) {
                 $variant = ProductVariant::with('product')->find($item['variant_id']);
-
                 if (!$variant || $variant->stock < $item['quantity']) {
                     throw new \Exception('Sản phẩm không đủ hàng: ' . ($variant ? $variant->id : 'Không tìm thấy'));
                 }
@@ -114,7 +111,7 @@ class PaymentController extends Controller
                 ]);
 
                 $variant->decrement('stock', $item['quantity']);
-                if($variant->product->type =='simple'){
+                if ($variant->product->type == 'simple') {
                     $variant->product->decrement('stock', $item['quantity']);
                 }
                 if ($variant->stock <= 0) {
@@ -122,14 +119,12 @@ class PaymentController extends Controller
                 }
             }
 
-            // Cập nhật voucher nếu có
             if (!empty($validatedData['voucher_id'])) {
                 Voucher::where('id', $validatedData['voucher_id'])->increment('used_count');
             }
 
             DB::commit();
 
-            // Xử lý thanh toán
             return $validatedData['payment_method'] === 'cash'
                 ? $this->payWithCash($order->id)
                 : $this->payWithVNPay($order->id);
@@ -141,13 +136,8 @@ class PaymentController extends Controller
         }
     }
 
-    /**
-     * Tạo user mới nếu chưa có
-     */
-
     public function payWithVNPay($orderId)
     {
-
         $order = Order::findOrFail($orderId);
 
         // Thông tin từ VNPay Sandbox
@@ -157,12 +147,28 @@ class PaymentController extends Controller
         $vnp_Returnurl = route('payment.vnpay.callback');
 
         // Dữ liệu gửi đến VNPay
-        $vnp_TxnRef = $order->id . '_' . time();
+        $vnp_TxnRef = 'ORD_' . $order->id . '_' . time();
         $vnp_Amount = $order->total_amount * 100;
         $vnp_Locale = 'vn';
-        $vnp_OrderInfo = "Thanh toán đơn hàng #$order->id";
+        $vnp_OrderInfo = "Thanh toán đơn hàng #{$order->id}";
         $vnp_OrderType = 'billpayment';
         $vnp_CreateDate = date('YmdHis');
+
+        // Lưu thông tin thanh toán tạm thời
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'payment_method' => 'VNPay',
+            'amount' => $order->total_amount,
+            'payment_status' => 'pending',
+            'txn_ref' => $vnp_TxnRef,
+            'payment_date' => now(),
+        ]);
+
+        Log::info('Tạo yêu cầu thanh toán VNPay (môi trường thử nghiệm)', [
+            'order_id' => $order->id,
+            'txn_ref' => $vnp_TxnRef,
+            'amount' => $vnp_Amount,
+        ]);
 
         // Tạo URL thanh toán
         $inputData = array(
@@ -203,31 +209,52 @@ class PaymentController extends Controller
 
         return redirect($vnp_Url);
     }
+
     public function vnPayCallback(Request $request)
     {
         $inputData = $request->all();
-        $order_id = explode('_', $inputData['vnp_TxnRef'])[0];
+        $vnp_TxnRef = $inputData['vnp_TxnRef'];
+        $order_id = explode('_', $vnp_TxnRef)[1]; // Lấy order_id từ vnp_TxnRef
         $order = Order::findOrFail($order_id);
 
-        $transactionId = $inputData['vnp_TransactionNo'] ?? null;
-        $userId = auth()->id() ?? 1; // Nếu không có người dùng đăng nhập
+        $transactionNo = $inputData['vnp_TransactionNo'] ?? null;
+        $transactionDate = $inputData['vnp_PayDate'] ?? null;
+        $userId = auth()->id() ?? 1;
+
+        Log::info('Phản hồi từ VNPay callback (môi trường thử nghiệm)', [
+            'order_id' => $order_id,
+            'vnp_TxnRef' => $vnp_TxnRef,
+            'vnp_TransactionNo' => $transactionNo,
+            'vnp_PayDate' => $transactionDate,
+            'vnp_ResponseCode' => $inputData['vnp_ResponseCode'] ?? 'N/A',
+        ]);
+
+        // Tìm bản ghi thanh toán hiện có
+        $payment = Payment::where('order_id', $order->id)->where('txn_ref', $vnp_TxnRef)->first();
+
+        if (!$payment) {
+            Log::error('Không tìm thấy bản ghi thanh toán cho VNPay callback', [
+                'order_id' => $order_id,
+                'vnp_TxnRef' => $vnp_TxnRef,
+            ]);
+            return redirect()->route('account.order')->with('error', "Lỗi hệ thống: Không tìm thấy thông tin thanh toán cho đơn hàng #{$order->order_code}.");
+        }
 
         if ($inputData['vnp_ResponseCode'] == '00') {
-            // Thành công
-            // Cập nhật trạng thái đơn hàng (nếu có thêm logic)
+            // Thanh toán thành công
             $order->payment_method = 'vnpay';
+            $order->status = 'pending'; // Chờ xử lý đơn hàng
             $order->save();
 
-            Payment::create([
-                'order_id' => $order->id,
-                'payment_method' => 'VNPay',
-                'amount' => $order->total_amount,
+            $payment->update([
                 'payment_status' => 'completed',
-                'transaction_id' => $transactionId,
+                'transaction_id' => $vnp_TxnRef, // Lưu vnp_TxnRef làm transaction_id
+                'transaction_no' => $transactionNo,
+                'transaction_date' => $transactionDate,
             ]);
 
             StatusHistory::create([
-                'entity_id' => $order->payment->id,
+                'entity_id' => $payment->id,
                 'entity_type' => 'payment',
                 'old_status' => 'pending',
                 'new_status' => 'completed',
@@ -238,12 +265,13 @@ class PaymentController extends Controller
             StatusHistory::create([
                 'entity_id' => $order->id,
                 'entity_type' => 'order',
-                'old_status' =>'pending',
+                'old_status' => 'pending',
                 'new_status' => 'pending',
                 'changed_by' => $order->user->id,
                 'changed_at' => now(),
             ]);
-            // Xoá giỏ hàng sau khi thanh toán thành công
+
+            // Xóa giỏ hàng
             session()->forget('cart');
             $cart = Cart::where('user_id', Auth::id())->first();
             if ($cart) {
@@ -251,27 +279,34 @@ class PaymentController extends Controller
                 $cart->delete();
             }
 
+            Log::info('Thanh toán VNPay thành công (môi trường thử nghiệm)', [
+                'order_id' => $order->id,
+                'payment_id' => $payment->id,
+                'txn_ref' => $vnp_TxnRef,
+                'transaction_no' => $transactionNo,
+            ]);
+
             return redirect()
                 ->route('account.order')
                 ->with('success', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
         } else {
-
-            Payment::create([
-                'order_id' => $order->id,
-                'payment_method' => 'VNPay',
-                'amount' => $order->total_amount,
-                'payment_status' => 'failed',
-                'transaction_id' => $transactionId,
-            ]);
+            // Thanh toán thất bại
             $order->payment_method = 'vnpay';
             $order->status = 'cancelled';
             $order->save();
 
+            $payment->update([
+                'payment_status' => 'failed',
+                'transaction_id' => $vnp_TxnRef,
+                'transaction_no' => $transactionNo,
+                'transaction_date' => $transactionDate,
+            ]);
+
             StatusHistory::create([
-                'entity_id' => $order->id,
+                'entity_id' => $payment->id,
                 'entity_type' => 'payment',
                 'old_status' => 'pending',
-                'new_status' => 'fail',
+                'new_status' => 'failed',
                 'changed_by' => $userId,
                 'changed_at' => now(),
             ]);
@@ -281,15 +316,26 @@ class PaymentController extends Controller
                 'entity_type' => 'order',
                 'old_status' => 'pending',
                 'new_status' => 'cancelled',
-                'changed_by' =>$order->user->id,
+                'changed_by' => $order->user->id,
                 'changed_at' => now(),
             ]);
+
+            // Xóa giỏ hàng
             session()->forget('cart');
             $cart = Cart::where('user_id', Auth::id())->first();
             if ($cart) {
                 CartDetail::where('cart_id', $cart->id)->delete();
                 $cart->delete();
             }
+
+            Log::error('Thanh toán VNPay thất bại (môi trường thử nghiệm)', [
+                'order_id' => $order->id,
+                'payment_id' => $payment->id,
+                'txn_ref' => $vnp_TxnRef,
+                'response_code' => $inputData['vnp_ResponseCode'],
+                'message' => $inputData['vnp_ResponseMessage'] ?? 'Không có thông báo',
+            ]);
+
             return redirect()
                 ->route('account.order')
                 ->with('error', "Thanh toán thất bại cho đơn hàng #{$order->order_code}. Đơn hàng đã được hệ thống hủy tự động.");
@@ -300,30 +346,33 @@ class PaymentController extends Controller
     {
         $order = Order::findOrFail($order_id);
         $order->payment_method = 'cash';
-        $order->status = 'pending'; // Chờ nhận tiền
+        $order->status = 'pending';
         $order->save();
 
         Payment::create([
             'order_id' => $order->id,
             'amount' => $order->total_amount,
             'payment_status' => 'pending',
+            'payment_date' => now(),
         ]);
+
         StatusHistory::create([
             'entity_id' => $order->id,
             'entity_type' => 'order',
             'old_status' => 'pending',
             'new_status' => 'pending',
-            'changed_by' =>$order->user->id,
+            'changed_by' => $order->user->id,
             'changed_at' => now(),
         ]);
+
         session()->forget('cart');
         if ($order) {
             $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
             CartDetail::whereIn('variant_id', $variantIds)->delete();
         }
+
         return redirect()
             ->route('account.order')
             ->with('success', "Đơn hàng #{$order->order_code} đã được đặt thành công. Vui lòng theo dõi trạng thái đơn hàng.");
     }
-    
 }

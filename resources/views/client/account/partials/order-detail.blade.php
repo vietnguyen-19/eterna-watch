@@ -232,35 +232,40 @@
                                     <ul class="shopping-cart__product-item__options">
                                         @foreach ($item->productVariant->attributeValues as $value)
                                             <li>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
-                                                {{ $value->nameValue->value_name ?? 'Không xác định' }}
-                                            </li>
+                                                {{ $value->nameValue->value_name ?? 'Không xác định' }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
                             </td>
                             <td class="text-center">
-                                <span
-                                    class="shopping-cart__product-price">{{ number_format($item->unit_price, 0, ',', '.') }}đ</span>
+                                <span class="shopping-cart__product-price">
+                                    {{ number_format($item->unit_price, 0, ',', '.') }}đ
+                                </span>
                             </td>
                             <td class="text-center">
                                 <span class="shopping-cart__product-price">{{ $item->quantity }}</span>
                             </td>
                             <td class="text-end">
-                                <span
-                                    class="shopping-cart__product-price">{{ number_format($item->total_price, 0, ',', '.') }}đ</span>
+                                <span class="shopping-cart__product-price">
+                                    {{ number_format($item->total_price, 0, ',', '.') }}đ
+                                </span>
                             </td>
+
                             @if ($order->status == 'completed')
                                 <td class="text-end">
                                     @php
                                         $daDanhGia = \App\Models\Comment::where('user_id', auth()->id())
                                             ->where('entity_type', 'product')
-                                            ->where('entity_id', $item->productVariant->product->id) // hoặc $order->id nếu đó là product_id
+                                            ->where('entity_id', $item->productVariant->product->id)
                                             ->exists();
+                                        $modalId = 'reviewModal_' . $item->id; // mỗi modal là duy nhất
                                     @endphp
 
-                                  
+                                    @php
+                                        $buttonStyle =
+                                            'width: 110px; padding: 6px 14px; font-weight: 500; font-size: 0.9rem; border: none; border-radius: 3px;';
+                                    @endphp
 
-                                    @php $buttonStyle = "width: 110px; padding: 6px 14px; font-weight: 500; font-size: 0.9rem; border: none; border-radius: 3px;"; @endphp
                                     @if ($daDanhGia)
                                         <button class="btn btn-sm"
                                             style="{{ $buttonStyle }} background-color: #22c55e; color: #ffffff;">
@@ -269,20 +274,21 @@
                                     @else
                                         <button class="btn btn-sm"
                                             style="{{ $buttonStyle }} background-color: #f97316; color: #ffffff;"
-                                            data-bs-toggle="modal" data-bs-target="#reviewModal_{{ $order->id }}"
+                                            data-bs-toggle="modal" data-bs-target="#{{ $modalId }}"
                                             onmouseover="this.style.backgroundColor='#ea580c';"
                                             onmouseout="this.style.backgroundColor='#f97316';">
                                             Đánh giá
                                         </button>
                                     @endif
 
-                                    <div class="modal fade" id="reviewModal_{{ $order->id }}" tabindex="-1"
-                                        aria-labelledby="reviewModalLabel_{{ $order->id }}" aria-hidden="true">
+                                    {{-- Modal đánh giá --}}
+                                    <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
+                                        aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content" style="border-radius: 2px;">
                                                 <div class="modal-header"
-                                                    style="background-color: #f97316; color: #ffffff; border-radius: 2px 2px 0 0;">
-                                                    <h5 class="modal-title" id="reviewModalLabel_{{ $order->id }}">
+                                                    style="background-color: #d0d0d0; color: #ffffff; border-radius: 2px 2px 0 0;">
+                                                    <h5 class="modal-title" id="{{ $modalId }}Label">
                                                         <strong>Đánh giá sản phẩm
                                                             "{{ $item->productVariant->product->name }}"</strong>
                                                     </h5>
@@ -294,72 +300,33 @@
                                                         <form method="POST"
                                                             action="{{ route('comments.store', $item->productVariant->product->id) }}">
                                                             @csrf
-
-                                                            @if ($errors->any())
-                                                                <div style="border-radius: 2px"
-                                                                    class="alert alert-danger alert-dismissible fade show"
-                                                                    role="alert">
-                                                                    <strong>⚠ Có lỗi xảy ra:</strong>
-                                                                    <ul>
-                                                                        @foreach ($errors->all() as $error)
-                                                                            <li>{{ $error }}</li>
-                                                                        @endforeach
-                                                                    </ul>
-                                                                    <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="alert" aria-label="Close"></button>
-                                                                </div>
-                                                            @endif
-
+                                                            
                                                             <div class="select-star-rating mb-4">
-
                                                                 <span class="star-rating d-flex gap-1">
-                                                                    <!-- Giữ nguyên các SVG star -->
-                                                                    <svg class="star-rating__star-icon" width="16"
-                                                                        height="16" fill="#ccc" viewBox="0 0 12 12"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                    </svg>
-                                                                    <svg class="star-rating__star-icon" width="16"
-                                                                        height="16" fill="#ccc" viewBox="0 0 12 12"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                    </svg>
-                                                                    <svg class="star-rating__star-icon" width="16"
-                                                                        height="16" fill="#ccc" viewBox="0 0 12 12"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                    </svg>
-                                                                    <svg class="star-rating__star-icon" width="16"
-                                                                        height="16" fill="#ccc" viewBox="0 0 12 12"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                    </svg>
-                                                                    <svg class="star-rating__star-icon" width="16"
-                                                                        height="16" fill="#ccc" viewBox="0 0 12 12"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                    </svg>
-                                                                    <!-- Lặp lại các SVG khác tương tự -->
+                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                        <svg class="star-rating__star-icon" width="16"
+                                                                            height="16" fill="#ccc"
+                                                                            viewBox="0 0 12 12"
+                                                                            xmlns="http://www.w3.org/2000/svg">
+                                                                            <path
+                                                                                d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
+                                                                        </svg>
+                                                                    @endfor
                                                                 </span>
                                                                 <input name="rating" type="hidden"
-                                                                    id="form-input-rating" value="">
+                                                                    id="form-input-rating-{{ $item->id }}"
+                                                                    value="">
                                                             </div>
-                                                            <input type="hidden" value="product" name="entity_type">
+
+                                                            <input type="hidden" name="entity_type" value="product">
                                                             <div class="mb-4">
-                                                                <textarea name="content" id="form-input-review" class="form-control"
-                                                                    style="border-radius: 2px; border: 1px solid #d1d5db; resize: vertical;" placeholder="Đánh giá của bạn"
-                                                                    cols="30" rows="6"></textarea>
+                                                                <textarea name="content" class="form-control" rows="6" placeholder="Nội dung đánh giá của bạn"></textarea>
                                                             </div>
 
                                                             <div class="text-end">
                                                                 <button type="submit" class="btn"
-                                                                    style="background-color: #f97316; color: #ffffff; border: none; border-radius: 2px; padding: 8px 20px; font-weight: 500; font-size: 0.9rem;">
-                                                                    Gửi bình luận và đánh giá
+                                                                    style="background-color: #f97316; color: #ffffff;">
+                                                                    Gửi đánh giá
                                                                 </button>
                                                             </div>
                                                         </form>
@@ -368,10 +335,12 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {{-- End Modal --}}
                                 </td>
                             @endif
                         </tr>
                     @endforeach
+
                 </tbody>
             </table>
             @php
@@ -769,6 +738,30 @@
                     }
                 });
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.select-star-rating').forEach(function(container) {
+                const stars = container.querySelectorAll('.star-rating__star-icon');
+                const input = container.querySelector('input[name="rating"]');
+
+                stars.forEach((star, index) => {
+                    star.style.cursor = 'pointer';
+                    star.addEventListener('click', function() {
+                        const rating = index + 1;
+
+                        // Cập nhật input
+                        input.value = rating;
+
+                        // Highlight sao
+                        stars.forEach((s, i) => {
+                            s.querySelector('path').setAttribute('fill', i <
+                                rating ? '#f97316' : '#ccc');
+                        });
+                    });
+                });
+            });
         });
     </script>
 @endsection

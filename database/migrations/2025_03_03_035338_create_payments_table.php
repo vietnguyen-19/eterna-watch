@@ -17,11 +17,15 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->enum('payment_status', ['pending', 'completed', 'failed'])->default('pending');
             $table->string('transaction_id', 100)->nullable();
+            $table->string('txn_ref', 100)->nullable();
+            $table->string('transaction_no', 100)->nullable();
+            $table->string('transaction_date', 14)->nullable();
             $table->timestamp('payment_date')->useCurrent();
             $table->timestamps();
-
+        
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
+        
     }
 
     /**

@@ -4,7 +4,7 @@
         @if ($orders->isEmpty())
             <div class="alert alert-info text-center" style="padding: 30px; border-radius: 5px; background-color: #f8f9fa;">
                 <h5>🛒 Bạn chưa có đơn hàng nào.</h5>
-                <a href="{{ route('home') }}" class="btn btn-primary mt-3">
+                <a href="{{ route('client.shop') }}" class="btn btn-primary mt-3">
                     Mua sắm ngay
                 </a>
             </div>

@@ -14,36 +14,37 @@ class CommentController extends Controller
 {
     public function store(Request $request, $id)
     {
+        
         // 1. Kiểm tra đăng nhập
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Bạn cần đăng nhập để gửi bình luận.');
         }
-    
+
         $user = Auth::user();
-    
+
         // 2. Kiểm tra loại thực thể: chỉ 'product' và 'post'
         $rules = [
             'content' => 'required|string|max:1000',
             'entity_type' => 'required|in:product,post',
         ];
-    
+
         // 3. Nếu là đánh giá sản phẩm thì cần rating và kiểm tra đã mua
         if ($request->entity_type === 'product') {
             $rules['rating'] = 'required|integer|between:1,5';
-    
+
             // Kiểm tra đã từng đánh giá sản phẩm chưa
             $alreadyComment = Comment::where('user_id', $user->id)
                 ->where('entity_type', 'product')
                 ->where('entity_id', $id)
                 ->exists();
-    
+
             if ($alreadyComment) {
                 return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi.');
             }
-    
+
             // Lấy tất cả variant_id của sản phẩm
             $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
-    
+
             // Kiểm tra đã mua ít nhất 1 variant thành công
             $hasPurchased = Order::where('user_id', $user->id)
                 ->where('status', 'completed') // có thể sửa lại theo status của bạn
@@ -51,12 +52,12 @@ class CommentController extends Controller
                     $query->whereIn('variant_id', $variantIds);
                 })
                 ->exists();
-    
+
             if (!$hasPurchased) {
                 return redirect()->back()->with('error', 'Chỉ khách hàng đã mua sản phẩm mới có thể đánh giá.');
             }
         }
-    
+
         // 4. Xác thực dữ liệu
         $messages = [
             'content.required' => 'Nội dung bình luận không được để trống.',
@@ -68,7 +69,7 @@ class CommentController extends Controller
             'rating.between' => 'Đánh giá phải từ 1 đến 5 sao.',
         ];
         $request->validate($rules, $messages);
-    
+
         // 5. Lưu bình luận
         $comment = new Comment();
         $comment->user_id = $user->id;
@@ -79,10 +80,10 @@ class CommentController extends Controller
         $comment->status = 'pending';
         $comment->parent_id = $request->parent_id ?? null;
         $comment->save();
-    
+
         return redirect()->back()->with('success', 'Bình luận của bạn đã được gửi thành công!');
     }
-    
+
     public function reply(Request $request, $commentId, $entityId)
     {
 
