@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Helpers\ImageHandler;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\StatusHistory;
@@ -63,7 +64,7 @@ class AccountController extends Controller
     }
     public function orderDetail($id)
     {
-        $order = Order::with(['refund.refundItems', 'orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher','statusHistories'])->findOrFail($id);
+        $order = Order::with(['refund.refundItems', 'orderItems.productVariant.product', 'orderItems.productVariant.attributeValues.nameValue', 'entity', 'payment', 'voucher', 'statusHistories'])->findOrFail($id);
         return view('client.account.partials.order-detail', compact('order'));
     }
     public function cancelOrder($id)
@@ -83,84 +84,20 @@ class AccountController extends Controller
             'entity_type' => 'order',
             'old_status' => $order->status,
             'new_status' => 'cancelled',
-            'changed_by' =>$order->user->id,
+            'changed_by' => $order->user->id,
             'changed_at' => now(),
         ]);
         $order->status = "cancelled";
         $order->save();
-        
+
 
         return response()->json(["success" => true, "message" => "Đơn hàng đã được hủy thành công!"]);
     }
 
-    public function uploadImage(Request $request)
-    {
 
-
-        if (!$request->hasFile('avatar')) {
-            return response()->json(['success' => false, 'message' => 'No image uploaded'], 400);
-        }
-
-        $file = $request->file('avatar');
-
-        if (!$file->isValid()) {
-            return response()->json(['success' => false, 'message' => 'Invalid image'], 400);
-        }
-
-        // Tạo tên file mới để tránh trùng
-        $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-        // Đường dẫn lưu file vào thư mục public/storage/avatars
-        $destinationPath = public_path('storage/avatars');
-
-        // Kiểm tra nếu thư mục chưa tồn tại thì tạo mới
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0777, true);
-        }
-
-        // Di chuyển file vào thư mục đích
-        $file->move($destinationPath, $fileName);
-
-        // Trả về đường dẫn public có thể truy cập ảnh
-        $publicPath =  'avatars/' . $fileName;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Upload thành công',
-            'path' => $publicPath
-        ]);
-    }
-
-    public function removeImage(Request $request)
-    {
-        // Lấy dữ liệu từ body của request
-        $filePath = $request->getContent();
-
-        // Kiểm tra xem dữ liệu có phải JSON không
-        $decodedData = json_decode($filePath, true);
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            // Nếu là JSON, lấy giá trị từ mảng (giả sử có key "path")
-            $filePath = $decodedData['path'] ?? null;
-        }
-
-        if (empty($filePath)) {
-            return response()->json(['success' => false, 'message' => 'File path is empty'], 400);
-        }
-
-        // Đường dẫn đầy đủ tới file trong thư mục storage
-        $storagePath = public_path('storage/' . $filePath);
-        dd($storagePath);
-        if (file_exists($storagePath)) {
-            unlink($storagePath);
-            return response()->json(['success' => true, 'message' => 'File deleted']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'File not found'], 404);
-    }
     public function update(Request $request)
     {
-
+       
         $user = Auth::user();
 
         // Xác thực dữ liệu
@@ -169,16 +106,21 @@ class AccountController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'required|string',
             'gender' => 'required|in:0,1',
-            'avatar' => 'nullable|string', // Avatar là một URL hoặc đường dẫn chuỗi
+            'avatar' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
+        if ($request->hasFile('avatar')) {
+            $avatarPath = ImageHandler::updateImage($request->file('avatar'), Auth::user()->avatar, 'avatars');
+        } else {
+            $avatarPath = $request->avatar_hidden ?? Auth::user()->avatar;
+        }
         // Cập nhật thông tin tài khoản
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'gender' => $request->gender,
-            'avatar' => $request->avatar_hidden, // Avatar là một chuỗi URL hoặc đường dẫn
+            'avatar' => $avatarPath,
         ]);
 
         // Cập nhật địa chỉ mặc định nếu tồn tại

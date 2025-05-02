@@ -23,7 +23,7 @@
                         GIAO HÀNG VÀ THANH TOÁN
                     </div>
                     <p style="margin: 0; font-size: 0.95rem; color: #6c757d;">
-                        GIAO HÀNG VÀ THANH TOÁN
+                        Giao hàng toàn quốc, thanh toán khi nhận hàng hoặc qua VNPay.
                     </p>
                 </div>
 
@@ -32,185 +32,176 @@
                 @csrf
                 <div class="checkout-form">
                     <div class="billing-info__wrapper col-xl-4">
-                        <h4>THÔNG TIN KHÁCH HÀNG</h4>
+                        <h4 class="mb-3"><strong>THÔNG TIN GIAO HÀNG</strong></h4>
+                    
                         <div class="row">
-                            <!-- Họ và tên -->
+                            <!-- Chọn kiểu thông tin -->
                             <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('full_name') is-invalid @enderror"
-                                        id="full_name" name="full_name"
-                                        value="{{ old('full_name', Auth::check() ? Auth::user()->name : '') }}"
-                                        placeholder="Họ và Tên">
-                                    <label for="full_name">Họ và Tên *</label>
-                                    @error('full_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Số điện thoại -->
-                            <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="text" class="form-control @error('phone_number') is-invalid @enderror"
-                                        id="phone_number" name="phone_number"
-                                        value="{{ old('phone_number', Auth::check() ? Auth::user()->phone : '') }}"
-                                        placeholder="Số điện thoại">
-                                    <label for="phone_number">Số điện thoại *</label>
-                                    @error('phone_number')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="col-md-12">
-                                <div class="form-floating my-2">
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                        id="email" name="email"
-                                        value="{{ old('email', Auth::check() ? Auth::user()->email : '') }}"
-                                        placeholder="Email">
-                                    <label for="email">Email *</label>
-                                    @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-
-                            <!-- Chọn kiểu địa chỉ -->
-                            <div class="col-md-12">
-
                                 @php
-                                    $coDiaChiMacDinh = Auth::check() && Auth::user()->defaultAddress;
+                                    $hasDefaultInfo =
+                                        Auth::check() &&
+                                        Auth::user()->defaultAddress &&
+                                        Auth::user()->name &&
+                                        Auth::user()->phone &&
+                                        Auth::user()->email;
                                 @endphp
-                            
-                                @if ($coDiaChiMacDinh)
-                                    <!-- Nếu có địa chỉ mặc định -->
+
+                                @if ($hasDefaultInfo)
                                     <div class="form-check my-2">
-                                        <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_mac_dinh" value="mac_dinh" checked>
-                                        <label class="form-check-label" for="dia_chi_mac_dinh">Sử dụng địa chỉ mặc định</label>
+                                        <input class="form-check-input" type="radio" name="info_option" id="info_mac_dinh"
+                                            value="mac_dinh" checked>
+                                        <label class="form-check-label" for="info_mac_dinh">Sử dụng thông tin mặc
+                                            định</label>
                                     </div>
                                 @endif
-                            
+
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="dia_chi_option" id="dia_chi_moi" value="them_moi" {{ !$coDiaChiMacDinh ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="dia_chi_moi">
-                                        Thêm địa chỉ mới
-                                    </label>
+                                    <input class="form-check-input" type="radio" name="info_option" id="info_moi"
+                                        value="moi" {{ !$hasDefaultInfo ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="info_moi">Nhập thông tin mới</label>
                                 </div>
-                            
-                                @if (!$coDiaChiMacDinh)
-                                    <!-- Nếu KHÔNG có địa chỉ mặc định -->
+
+                                @if (!$hasDefaultInfo)
                                     <div class="alert alert-warning mb-3">
-                                        Bạn chưa có địa chỉ mặc định. Vui lòng <a href="{{ route('account.edit') }}" class="fw-bold text-danger">thêm địa chỉ mới</a> trước khi tiếp tục thanh toán.
+                                        Bạn chưa có thông tin mặc định. Vui lòng <a href="{{ route('account.edit') }}"
+                                            class="fw-bold text-danger">cập nhật thông tin</a> hoặc nhập thông tin mới bên
+                                        dưới.
                                     </div>
                                 @endif
-                            
                             </div>
-                            
-                            @if ($coDiaChiMacDinh)
-                                <!-- Địa chỉ mặc định -->
-                                <div id="diaChiMacDinh" class="col-md-12">
-                                    <div class="form-floating my-2">
-                                        <input type="text" class="form-control" id="dia_chi_day_du" name="dia_chi_day_du"
-                                            value="{{ trim(optional(Auth::user()->defaultAddress)->street_address . ', ' . optional(Auth::user()->defaultAddress)->ward . ', ' . optional(Auth::user()->defaultAddress)->district . ', ' . optional(Auth::user()->defaultAddress)->city, ', ') }}"
-                                            placeholder="Địa chỉ đầy đủ" readonly>
+
+                            <!-- Thông tin mặc định -->
+                            @if ($hasDefaultInfo)
+                                <div id="infoMacDinh" class="col-md-12">
+                                    <div class="card p-3 mb-3">
+                                        <p><strong>Họ và Tên:</strong> {{ Auth::user()->name }}</p>
+                                        <p><strong>Số điện thoại:</strong> {{ Auth::user()->phone }}</p>
+                                        <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
+                                        <p><strong>Địa chỉ:</strong>
+                                            {{ trim(optional(Auth::user()->defaultAddress)->street_address . ', ' . optional(Auth::user()->defaultAddress)->ward . ', ' . optional(Auth::user()->defaultAddress)->district . ', ' . optional(Auth::user()->defaultAddress)->city, ', ') }}
+                                        </p>
                                     </div>
-                            
-                                    <!-- Hidden fields chỉ dùng khi địa chỉ mặc định được chọn -->
-                                    <input type="hidden" name="type_address" value="default">
-                                    <input type="hidden" name="street_address" value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
-                                    <input type="hidden" name="ward" value="{{ optional(Auth::user()->defaultAddress)->ward }}">
-                                    <input type="hidden" name="district" value="{{ optional(Auth::user()->defaultAddress)->district }}">
-                                    <input type="hidden" name="city" value="{{ optional(Auth::user()->defaultAddress)->city }}">
+
+                                    <!-- Hidden fields cho thông tin mặc định -->
+                                    <input type="hidden" name="full_name" value="{{ Auth::user()->name }}">
+                                    <input type="hidden" name="phone_number" value="{{ Auth::user()->phone }}">
+                                    <input type="hidden" name="email" value="{{ Auth::user()->email }}">
+                                    <input type="hidden" name="street_address"
+                                        value="{{ optional(Auth::user()->defaultAddress)->street_address }}">
+                                    <input type="hidden" name="ward"
+                                        value="{{ optional(Auth::user()->defaultAddress)->ward }}">
+                                    <input type="hidden" name="district"
+                                        value="{{ optional(Auth::user()->defaultAddress)->district }}">
+                                    <input type="hidden" name="city"
+                                        value="{{ optional(Auth::user()->defaultAddress)->city }}">
                                 </div>
                             @endif
-                            
-                            <!-- Địa chỉ mới -->
-                            <div id="themDiaChiMoi" style="display: {{ !$coDiaChiMacDinh ? 'block' : 'none' }};">
+
+                            <!-- Thông tin mới -->
+                            <div id="infoMoi" style="display: {{ !$hasDefaultInfo ? 'block' : 'none' }};">
+                                <!-- Họ và tên -->
                                 <input type="hidden" name="type_address" value="new">
-                                
-                                <!-- Tỉnh/Thành -->
                                 <div class="col-md-12">
                                     <div class="form-floating my-2">
-                                        <select id="city" name="city" class="form-select">
+                                        <input type="text" class="form-control @error('full_name') is-invalid @enderror"
+                                            id="full_name" name="full_name"
+                                            value="{{ old('full_name', Auth::check() ? Auth::user()->name : '') }}"
+                                            placeholder="Họ và Tên" required>
+                                        <label for="full_name">Họ và Tên *</label>
+                                        @error('full_name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Số điện thoại -->
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <input type="text"
+                                            class="form-control @error('phone_number') is-invalid @enderror"
+                                            id="phone_number" name="phone_number"
+                                            value="{{ old('phone_number', Auth::check() ? Auth::user()->phone : '') }}"
+                                            placeholder="Số điện thoại" required>
+                                        <label for="phone_number">Số điện thoại *</label>
+                                        @error('phone_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-12">
+                                    <div class="form-floating my-2">
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                            id="email" name="email"
+                                            value="{{ old('email', Auth::check() ? Auth::user()->email : '') }}"
+                                            placeholder="Email" required>
+                                        <label for="email">Email *</label>
+                                        @error('email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Địa chỉ -->
+                                <div class="col-md-12">
+                                  
+                                    <div class="form-floating my-2">
+                                        <select id="city" name="city"
+                                            class="form-select @error('city') is-invalid @enderror" required>
                                             <option value="">-- Chọn Tỉnh/Thành phố --</option>
                                         </select>
-                                        <label for="city">Tỉnh/Thành phố</label>
+                                        <label for="city">Tỉnh/Thành phố *</label>
+                                        @error('city')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                </div>
-                            
-                                <!-- Quận/Huyện -->
-                                <div class="col-md-12">
+
+                                    <!-- Quận/Huyện -->
                                     <div class="form-floating my-2">
-                                        <select id="district" name="district" class="form-select">
+                                        <select id="district" name="district"
+                                            class="form-select @error('district') is-invalid @enderror" required>
                                             <option value="">-- Chọn Quận/Huyện --</option>
                                         </select>
-                                        <label for="district">Quận/Huyện</label>
+                                        <label for="district">Quận/Huyện *</label>
+                                        @error('district')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                </div>
-                            
-                                <!-- Phường/Xã -->
-                                <div class="col-md-12">
+
+                                    <!-- Phường/Xã -->
                                     <div class="form-floating my-2">
-                                        <select id="ward" name="ward" class="form-select">
+                                        <select id="ward" name="ward"
+                                            class="form-select @error('ward') is-invalid @enderror" required>
                                             <option value="">-- Chọn Phường/Xã --</option>
                                         </select>
-                                        <label for="ward">Phường/Xã</label>
+                                        <label for="ward">Phường/Xã *</label>
+                                        @error('ward')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                </div>
-                            
-                                <!-- Địa chỉ cụ thể -->
-                                <div class="col-md-12">
+
+                                    <!-- Địa chỉ cụ thể -->
                                     <div class="form-floating my-2">
-                                        <input type="text" class="form-control" id="street_address" name="street_address"
-                                            value="{{ old('street_address') }}" placeholder="Địa chỉ cụ thể">
+                                        <input type="text"
+                                            class="form-control @error('street_address') is-invalid @enderror"
+                                            id="street_address" name="street_address"
+                                            value="{{ old('street_address', Auth::check() && Auth::user()->defaultAddress ? Auth::user()->defaultAddress->street_address : '') }}"
+                                            placeholder="Địa chỉ cụ thể" required>
                                         <label for="street_address">Địa chỉ cụ thể *</label>
+                                        @error('street_address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Script xử lý hiển thị & kích hoạt trường -->
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const macDinhRadio = document.getElementById('dia_chi_mac_dinh');
-                                    const moiRadio = document.getElementById('dia_chi_moi');
-                                    const diaChiMacDinhDiv = document.getElementById('diaChiMacDinh');
-                                    const themDiaChiMoiDiv = document.getElementById('themDiaChiMoi');
-                            
-                                    const toggleDiaChi = () => {
-                                        const isMacDinh = macDinhRadio.checked;
-                            
-                                        diaChiMacDinhDiv.style.display = isMacDinh ? 'block' : 'none';
-                                        themDiaChiMoiDiv.style.display = isMacDinh ? 'none' : 'block';
-                            
-                                        // Bật/tắt các input trong form thêm địa chỉ mới
-                                        const newAddressInputs = themDiaChiMoiDiv.querySelectorAll('select, input');
-                                        newAddressInputs.forEach(el => {
-                                            el.disabled = isMacDinh;
-                                        });
-                            
-                                        // Ẩn/hiện các input hidden nếu cần thiết
-                                        const hiddenInputs = diaChiMacDinhDiv.querySelectorAll('input[type="hidden"]');
-                                        hiddenInputs.forEach(el => {
-                                            el.disabled = !isMacDinh;
-                                        });
-                                    };
-                            
-                                    macDinhRadio.addEventListener('change', toggleDiaChi);
-                                    moiRadio.addEventListener('change', toggleDiaChi);
-                            
-                                    toggleDiaChi(); // Khởi tạo ban đầu
-                                });
-                            </script>
-                            
-
 
                             <!-- Ghi chú đơn hàng -->
-                            <div class="col-md-12" style="display: none">
-                                <div class="mt-3 mb-5">
+                            <div class="col-md-12">
+                                <div class="form-floating my-2">
                                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
-                                        placeholder="Ghi chú đơn hàng (nếu có)" cols="30" rows="4">{{ old('note', Auth::check() ? Auth::user()->note : '') }}</textarea>
+                                        placeholder="Ghi chú đơn hàng (nếu có)" rows="4">{{ old('note', Auth::check() ? Auth::user()->note ?? '' : '') }}</textarea>
+                                    <label for="note">Ghi chú đơn hàng (tùy chọn)</label>
                                     @error('note')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -218,11 +209,115 @@
                             </div>
                         </div>
 
+                        <!-- Script xử lý hiển thị thông tin -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const macDinhRadio = document.getElementById('info_mac_dinh');
+                                const moiRadio = document.getElementById('info_moi');
+                                const infoMacDinhDiv = document.getElementById('infoMacDinh');
+                                const infoMoiDiv = document.getElementById('infoMoi');
+
+                                const toggleInfo = () => {
+                                    const isMacDinh = macDinhRadio && macDinhRadio.checked;
+
+                                    if (infoMacDinhDiv) {
+                                        infoMacDinhDiv.style.display = isMacDinh ? 'block' : 'none';
+                                    }
+                                    infoMoiDiv.style.display = isMacDinh ? 'none' : 'block';
+
+                                    // Bật/tắt các input trong form thông tin mới
+                                    const newInfoInputs = infoMoiDiv.querySelectorAll('input, select, textarea');
+                                    newInfoInputs.forEach(el => {
+                                        el.disabled = isMacDinh;
+                                    });
+
+                                    // Bật/tắt các input hidden trong thông tin mặc định
+                                    if (infoMacDinhDiv) {
+                                        const hiddenInputs = infoMacDinhDiv.querySelectorAll('input[type="hidden"]');
+                                        hiddenInputs.forEach(el => {
+                                            el.disabled = !isMacDinh;
+                                        });
+                                    }
+                                };
+
+                                if (macDinhRadio) {
+                                    macDinhRadio.addEventListener('change', toggleInfo);
+                                }
+                                moiRadio.addEventListener('change', toggleInfo);
+
+                                toggleInfo(); // Khởi tạo ban đầu
+
+                                // Xử lý liên kết Tỉnh/Quận/Phường
+                                const citySelect = document.getElementById('city');
+                                const districtSelect = document.getElementById('district');
+                                const wardSelect = document.getElementById('ward');
+
+                                async function fetchCities() {
+                                    try {
+                                        // Thay bằng API thực tế của bạn (ví dụ: GHN)
+                                        const response = await fetch('https://api.example.com/cities');
+                                        const cities = await response.json();
+                                        cities.forEach(city => {
+                                            const option = document.createElement('option');
+                                            option.value = city.id;
+                                            option.textContent = city.name;
+                                            citySelect.appendChild(option);
+                                        });
+                                    } catch (error) {
+                                        console.error('Lỗi khi tải danh sách tỉnh/thành:', error);
+                                    }
+                                }
+
+                                async function fetchDistricts(cityId) {
+                                    districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+                                    wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                                    if (cityId) {
+                                        try {
+                                            const response = await fetch(`https://api.example.com/districts?city=${cityId}`);
+                                            const districts = await response.json();
+                                            districts.forEach(district => {
+                                                const option = document.createElement('option');
+                                                option.value = district.id;
+                                                option.textContent = district.name;
+                                                districtSelect.appendChild(option);
+                                            });
+                                        } catch (error) {
+                                            console.error('Lỗi khi tải danh sách quận/huyện:', error);
+                                        }
+                                    }
+                                }
+
+                                async function fetchWards(districtId) {
+                                    wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                                    if (districtId) {
+                                        try {
+                                            const response = await fetch(`https://api.example.com/wards?district=${districtId}`);
+                                            const wards = await response.json();
+                                            wards.forEach(ward => {
+                                                const option = document.createElement('option');
+                                                option.value = ward.id;
+                                                option.textContent = ward.name;
+                                                wardSelect.appendChild(option);
+                                            });
+                                        } catch (error) {
+                                            console.error('Lỗi khi tải danh sách phường/xã:', error);
+                                        }
+                                    }
+                                }
+
+                                citySelect.addEventListener('change', () => fetchDistricts(citySelect.value));
+                                districtSelect.addEventListener('change', () => fetchWards(districtSelect.value));
+
+                                fetchCities();
+                            });
+                        </script>
+                        
+
                     </div>
                     <div class="checkout__totals-wrapper">
                         <div class="sticky-content">
                             <div style="width:100%" class="checkout__totals">
-                                <h3>Đơn hàng của bạn</h3>
+                                <h4 class="mb-3"><strong>SẢN PHẨM TRONG ĐƠN HÀNG</strong></h4>
                                 <table class="checkout-cart-items">
                                     <thead>
                                         <tr>

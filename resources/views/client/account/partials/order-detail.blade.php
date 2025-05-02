@@ -3,39 +3,10 @@
     <div class="checkout__totals-wrapper">
         <div style="width: 100%" class="checkout__totals">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                @php
-                    if ($order->status == 'pending') {
-                        $mauChu = '#856404'; // cam đậm
-                        $mauNen = '#fff3cd'; // cam nhạt
-                        $tenTrangThai = 'Đang chờ xử lý';
-                    } elseif ($order->status == 'confirmed') {
-                        $mauChu = '#004085'; // xanh dương đậm
-                        $mauNen = '#cce5ff'; // xanh dương nhạt
-                        $tenTrangThai = 'Đã xác nhận';
-                    } elseif ($order->status == 'processing') {
-                        $mauChu = '#0c5460'; // xanh đậm
-                        $mauNen = '#d1ecf1'; // xanh nhạt
-                        $tenTrangThai = 'Đang vận chuyển';
-                    } elseif ($order->status == 'completed') {
-                        $mauChu = '#155724'; // xanh lá đậm
-                        $mauNen = '#d4edda'; // xanh lá nhạt
-                        $tenTrangThai = 'Hoàn tất';
-                    } elseif ($order->status == 'cancelled') {
-                        $mauChu = '#721c24'; // đỏ đậm
-                        $mauNen = '#f8d7da'; // đỏ nhạt
-                        $tenTrangThai = 'Đã hủy';
-                    } else {
-                        $mauChu = '#383d41'; // xám đậm
-                        $mauNen = '#e2e3e5'; // xám nhạt
-                        $tenTrangThai = 'Không xác định';
-                    }
-                @endphp
+             
 
                 <h4 class="mb-0 d-flex align-items-center gap-2">
-                    Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong> | TTĐH:
-                    <span class="badge px-3 py-1" style="color: {{ $mauChu }}; background-color: {{ $mauNen }};">
-                        {{ $tenTrangThai }}
-                    </span>
+                    Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong> 
                 </h4>
 
 
@@ -138,6 +109,38 @@
                 // Đảm bảo không có trạng thái trùng lặp
                 $fixed_statuses = array_unique($fixed_statuses);
             @endphp
+            <div class="card p-3 mb-3">
+                <h5 class="mb-2">Địa chỉ giao hàng</h5>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tbody style="font-size: 0.9rem; color: #333;">
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold; width: 150px;">Họ và
+                                tên:</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ $order->address->full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Số điện thoại:</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ $order->address->phone_number }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Email:</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ $order->address->email }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">Địa chỉ:</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                                {{ $order->address->street_address }},
+                                {{ $order->address->ward }},
+                                {{ $order->address->district }},
+                                {{ $order->address->city }},
+                                {{ $order->address->country }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="card p-3">
                 <h5 class="mb-4">Lịch sử trạng thái đơn hàng</h5>
                 <div class="d-flex flex-wrap justify-content-between align-items-start position-relative"
@@ -300,7 +303,7 @@
                                                         <form method="POST"
                                                             action="{{ route('comments.store', $item->productVariant->product->id) }}">
                                                             @csrf
-                                                            
+
                                                             <div class="select-star-rating mb-4">
                                                                 <span class="star-rating d-flex gap-1">
                                                                     @for ($i = 1; $i <= 5; $i++)
@@ -429,98 +432,83 @@
             @endphp
 
 
-            <div class="card mb-4" style="border: 1px #000000 solid">
-                <!-- Card Header -->
-                <div class="card-header border-0 bg-white py-3" style="border-top: 2px solid {{ $borderColor }};">
-                    <h5 class="card-title mb-0 fw-bold" style="color: #212529;">Thông tin hoàn trả đơn hàng</h5>
-                </div>
+            <!-- Simplified Refund Card Layout -->
+            <div
+                style="background-color:#ffffff; border:1px solid #131313; padding:15px; font-family: sans-serif;">
+                <h3 style="font-size:1.5em; color:#343a40; margin-bottom:15px;">Hoàn trả đơn hàng</h3>
 
-                <!-- Card Body -->
-                <div class="card-body p-4" style="background-color: #f8f9fa; border-radius: 8px;">
-                    <!-- Refund Information -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Ngày yêu cầu</p>
-                            <p class="fw-medium" style="color: #1a1a1a;">
-                                {{ $order->refund->created_at->format('d/m/Y H:i') }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Trạng thái</p>
-                            @if ($status == 'pending')
-                                <span class="badge d-inline-flex align-items-center"
-                                    style="background-color: #fef3c7; color: #92400e; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
-                                    <i class="bi bi-hourglass-split me-1"></i> Đang chờ duyệt
-                                </span>
-                            @elseif ($status == 'approved')
-                                <span class="badge d-inline-flex align-items-center"
-                                    style="background-color: #d1fae5; color: #065f46; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Đã duyệt
-                                </span>
-                            @else
-                                <span class="badge d-inline-flex align-items-center"
-                                    style="background-color: #fee2e2; color: #991b1b; padding: 0.5em 1em; font-size: 0.9rem; border-radius: 12px;">
-                                    <i class="bi bi-x-circle-fill me-1"></i> Bị từ chối
-                                </span>
-                            @endif
-                        </div>
-
-                        <div class="col-md-12">
-                            <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Lý do hoàn</p>
-                            <p class="fw-medium"
-                                style="color: #1a1a1a; background-color: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                                {{ $order->refund->refund_reason }}
-                            </p>
-                        </div>
-
-                        @if ($status == 'rejected' && $order->refund->rejected_reason)
-                            <div class="col-md-12">
-                                <p class="fw-semibold mb-1 text-muted" style="font-size: 0.9rem;">Lý do từ chối</p>
-                                <p class="fw-medium"
-                                    style="color: #1a1a1a; background-color: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                                    {{ $order->refund->rejected_reason }}
-                                </p>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- Refund Items -->
-                    <div class="mb-4">
-                        <p class="fw-semibold mb-3 text-muted" style="font-size: 0.9rem;">Sản phẩm hoàn</p>
-                        <div class="list-group">
-                            @foreach ($order->refund->refundItems as $item)
-                                <div class="list-group-item border-0 rounded-3 mb-2"
-                                    style="background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.08); transition: transform 0.2s; padding: 15px;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="mb-1 fw-semibold" style="color: #1a1a1a; font-size: 1rem;">
-                                                {{ $item->orderItem->productVariant->product->name }}
-                                            </p>
-                                            <p class="mb-0 text-muted" style="font-size: 0.85rem;">Số lượng:
-                                                {{ $item->quantity }}</p>
-                                        </div>
-                                        <p class="mb-0 fw-semibold" style="color: #1a1a1a; font-size: 1rem;">
-                                            {{ number_format($item->unit_price) }}₫
-                                        </p>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Total Refund Amount -->
-                    <div class="d-flex justify-content-between align-items-center pt-3 border-top"
-                        style="border-color: #e5e7eb;">
-                        <p class="fw-semibold text-muted" style="font-size: 0.9rem;">Tổng tiền hoàn</p>
-                        <p class="fw-bold" style="color: #1a1a1a; font-size: 1.25rem;">
-                            {{ number_format($order->refund->total_refund_amount) }}₫
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px; flex:1;">
+                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px;">Ngày yêu cầu:</p>
+                        <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                            {{ $order->refund->created_at->format('d/m/Y H:i') }}
                         </p>
                     </div>
+                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px; flex:1;">
+                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px;">Trạng thái:</p>
+                        <div>
+                            @if ($status == 'pending')
+                                <span
+                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#664d03; background-color:#fff3cd; border-radius:5px;"><i
+                                        class="bi bi-hourglass-split me-1"></i>Chờ duyệt</span>
+                            @elseif ($status == 'approved')
+                                <span
+                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#155724; background-color:#d4edda; border-radius:5px;"><i
+                                        class="bi bi-check-circle-fill me-1"></i>Đã duyệt</span>
+                            @else
+                                <span
+                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#721c24; background-color:#f8d7da; border-radius:5px;"><i
+                                        class="bi bi-x-circle-fill me-1"></i>Từ chối</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Divider -->
-                    <hr class="my-4" style="border-color: #e5e7eb;">
+                <div style="margin-bottom:15px;">
+                    <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Lý do hoàn:</p>
+                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px;">
+                        <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                            {{ $order->refund->refund_reason }}
+                        </p>
+                    </div>
+                </div>
+                @if ($status == 'rejected' && $order->refund->rejected_reason)
+                    <div style="margin-bottom:15px;">
+                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Lý do từ chối:</p>
+                        <div style="background-color:#e9ecef; padding:10px; border-radius:5px;">
+                            <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                                {{ $order->refund->rejected_reason }}
+                            </p>
+                        </div>
+                    </div>
+                @endif
+
+                <div>
+                    <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Sản phẩm hoàn:</p>
+                    <ul style="list-style:none; padding:0;">
+                        @foreach ($order->refund->refundItems as $item)
+                            <li
+                                style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #ced4da;">
+                                <div>
+                                    <p style="font-size:1.2em; color:#212529; margin-bottom:5px;">
+                                        {{ $item->orderItem->productVariant->product->name }}</p>
+                                    <p style="font-size:1.1em; color:#6c757d; margin-bottom:0;">Số lượng:
+                                        {{ $item->quantity }}</p>
+                                </div>
+                                <p style="font-size:1.2em; color:#212529; font-weight:bold;">
+                                    {{ number_format($item->unit_price) }}₫</p>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div
+                    style="background-color:#e9ecef; padding:15px; border-radius:5px; margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <p style="font-size:1.2em; color:#212529; font-weight:bold; margin-bottom:0;">Tổng tiền hoàn:</p>
+                    <p style="font-size:1.4em; color:#28a745; font-weight:bold; margin-bottom:0;">
+                        {{ number_format($order->refund->total_refund_amount) }}₫</p>
                 </div>
             </div>
-
             <!-- Bootstrap JS Bundle CDN -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">

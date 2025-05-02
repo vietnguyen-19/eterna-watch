@@ -84,9 +84,9 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ],
             [
-                'name' => 'Hoàng Nhật Nam',
-                'email' => 'nhatnamhoang@gmail.com',
-                'phone' => '0966112233',
+                'name' => 'Lê Vân',
+                'email' => 'lethivan@gmail.com',
+                'phone' => '0966112783',
                 'password' => Hash::make('password'),
                 'gender' => 'male',
                 'avatar' => 'avatars/avatar7.jpeg',

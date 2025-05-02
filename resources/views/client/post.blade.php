@@ -59,7 +59,7 @@
                             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#accordion-filter-size" aria-expanded="true"
                                 aria-controls="accordion-filter-size">
-                                Tags
+                                <strong> Tags</strong>
                                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <g aria-hidden="true" stroke="none" fill-rule="evenodd">
@@ -70,17 +70,19 @@
                             </button>
                         </h5>
                         <div id="accordion-filter-size" class="accordion-collapse collapse show border-0"
-                            aria-labelledby="accordion-heading-size" data-bs-parent="#size-filters">
+                            aria-labelledby="accordion-heading-size">
                             <div class="accordion-body px-0 pb-0">
-                                <div class="d-flex flex-wrap">
+                                <div class="d-flex flex-column">
                                     @foreach ($tags as $tag)
                                         <a href="{{ route('client.blog', ['tag' => $tag->name]) }}"
-                                            class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">
-                                            {{ $tag->name }}</a>
+                                            class="swatch-size btn btn-sm btn-outline-light mb-2 text-center w-100">
+                                            {{ $tag->name }}
+                                        </a>
                                     @endforeach
                                 </div>
                             </div>
                         </div>
+
                     </div><!-- /.accordion-item -->
                 </div><!-- /.accordion -->
             </div><!-- /.shop-sidebar -->
@@ -486,15 +488,14 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form[action="{{ route('comments.store', $post->id) }}"]');
-            
-            form.addEventListener('submit', function () {
+
+            form.addEventListener('submit', function() {
                 sessionStorage.setItem('redirectUrl', window.location.href);
             });
         });
     </script>
-    
 @endsection
 @section('style')
 @endsection

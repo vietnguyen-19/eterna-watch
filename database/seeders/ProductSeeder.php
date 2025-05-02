@@ -17,34 +17,36 @@ class ProductSeeder extends Seeder
 
     {
         $fullDesc = '
-        <h5>Đồng Hồ Đeo Tay Cao Cấp – Tinh Hoa Của Thời Gian</h5>
-        
+    <div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #333;">
+        <h5 style="font-size: 18px; color: #b42020;">Đồng hồ đeo tay cao cấp – Tinh hoa của thời gian</h5>
         <p>Đồng hồ không chỉ đơn thuần là công cụ để đo thời gian, mà còn là một phụ kiện thời trang thể hiện phong cách, cá tính và gu thẩm mỹ của người sở hữu. Một chiếc đồng hồ cao cấp là món đồ không thể thiếu trong bộ sưu tập của những người yêu thích sự sang trọng và đẳng cấp. Đồng hồ không chỉ giúp bạn dễ dàng theo dõi thời gian mà còn là điểm nhấn ấn tượng, thu hút ánh nhìn trong mọi hoàn cảnh.</p>
-        
-        <h5>Chất Liệu Cao Cấp – Độ Bền Vượt Thời Gian</h5>
+
+        <h5 style="font-size: 18px; color: #b42020;">Chất liệu cao cấp – Độ bền vượt thời gian</h5>
         <p>Đồng hồ cao cấp thường được chế tác từ những chất liệu cao cấp như <strong>thép không gỉ 316L</strong> cho phần vỏ, mang lại sự bền bỉ và khả năng chống oxy hóa, giúp sản phẩm giữ được vẻ đẹp hoàn hảo theo thời gian. Dây đeo được làm từ <strong>da thật</strong> mềm mại hoặc <strong>cao su siêu bền</strong>, mang lại cảm giác thoải mái khi đeo và dễ dàng điều chỉnh phù hợp với cổ tay của người sử dụng. Mặt kính đồng hồ được làm từ kính <strong>sapphire</strong> cao cấp, chống trầy xước và mang lại độ trong suốt tuyệt vời, giúp bạn dễ dàng xem giờ một cách rõ ràng nhất.</p>
-        
-        <h5>Thiết Kế Tinh Tế – Phù Hợp Với Mọi Dự Tiệc</h5>
+
+        <h5 style="font-size: 18px; color: #b42020;">Thiết kế tinh tế – Phù hợp với mọi dự tiệc</h5>
         <p>Với sự kết hợp giữa các chi tiết kim, vạch chỉ giờ và mặt đồng hồ, chiếc đồng hồ cao cấp mang lại sự cân đối và hài hòa, khiến người đeo luôn cảm thấy tự tin và thoải mái. Thiết kế mặt đồng hồ tinh tế với kiểu dáng <strong>tròn</strong> hoặc <strong>vuông</strong> cùng màu sắc trung tính, phù hợp với nhiều phong cách thời trang khác nhau, từ trang phục công sở đến những bộ đồ dạ tiệc sang trọng. Đặc biệt, với khả năng chống nước lên đến <strong>50m</strong>, đồng hồ vẫn có thể hoạt động tốt khi bạn rửa tay hay đi mưa nhẹ mà không lo hỏng hóc.</p>
-        
-        <h5>Độ Chính Xác Tuyệt Vời – Chỉ Số Đồng Hồ Chính Xác Cao</h5>
+
+        <h5 style="font-size: 18px; color: #b42020;">Độ chính xác tuyệt vời – Chỉ số đồng hồ chính xác cao</h5>
         <p>Được trang bị bộ máy <strong>quartz</strong> hoặc <strong>automatic</strong> với độ chính xác cao, chiếc đồng hồ này đảm bảo rằng bạn luôn biết thời gian chính xác nhất mà không phải lo lắng về việc điều chỉnh đồng hồ quá thường xuyên. Đồng hồ có khả năng hoạt động ổn định, thậm chí khi thay đổi múi giờ hay trong môi trường có sự thay đổi về nhiệt độ và độ ẩm.</p>
-        
-        <h5>Tính Năng Đa Dạng – Phù Hợp Mọi Nhu Cầu</h5>
-        <ul>
-          <li><strong>Chức năng bấm giờ (Chronograph):</strong> Thích hợp cho những ai yêu thích thể thao, giúp theo dõi thời gian chính xác trong mỗi lần thi đấu.</li>
-          <li><strong>Chức năng ngày/giờ:</strong> Giúp bạn dễ dàng xem ngày và giờ mà không cần phải tra cứu lịch trên điện thoại.</li>
-          <li><strong>Đèn nền sáng:</strong> Đảm bảo bạn có thể xem giờ ngay cả trong bóng tối, đặc biệt khi di chuyển vào ban đêm.</li>
+
+        <h5 style="font-size: 18px; color: #b42020;">Tính năng đa dạng – Phù hợp mọi nhu cầu</h5>
+        <ul style="margin-left: 20px; padding-left: 0;">
+            <li><strong>Chức năng bấm giờ (Chronograph):</strong> Thích hợp cho những ai yêu thích thể thao, giúp theo dõi thời gian chính xác trong mỗi lần thi đấu.</li>
+            <li><strong>Chức năng ngày/giờ:</strong> Giúp bạn dễ dàng xem ngày và giờ mà không cần phải tra cứu lịch trên điện thoại.</li>
+            <li><strong>Đèn nền sáng:</strong> Đảm bảo bạn có thể xem giờ ngay cả trong bóng tối, đặc biệt khi di chuyển vào ban đêm.</li>
         </ul>
-        
-        <h5>Đồng Hồ Cao Cấp – Đầu Tư Xứng Đáng</h5>
+
+        <h5 style="font-size: 18px; color: #b42020;">Đồng hồ cao cấp – Đầu tư xứng đáng</h5>
         <p>Đồng hồ cao cấp không chỉ là một món đồ trang sức, mà còn là một sự đầu tư lâu dài. Với thiết kế bền vững, chất liệu cao cấp và bộ máy hoạt động ổn định, chiếc đồng hồ này sẽ luôn đồng hành cùng bạn trong suốt những năm tháng tới. Đặc biệt, nếu được bảo quản và bảo dưỡng đúng cách, đồng hồ có thể trở thành món đồ có giá trị gia tăng theo thời gian.</p>
-        
-        <h5>Bảo Hành Và Dịch Vụ Khách Hàng Tận Tâm</h5>
+
+        <h5 style="font-size: 18px; color: #b42020;">Bảo hành và dịch vụ khách hàng tận tâm</h5>
         <p>Đồng hồ cao cấp đi kèm với chính sách bảo hành lên đến <strong>5 năm</strong> cho bộ máy và <strong>1 năm</strong> cho dây đeo, kính. Ngoài ra, bạn còn nhận được sự hỗ trợ tận tình từ đội ngũ dịch vụ khách hàng của chúng tôi, đảm bảo chiếc đồng hồ luôn hoạt động trong tình trạng tốt nhất. Chúng tôi cũng cung cấp dịch vụ thay dây đồng hồ, sửa chữa và bảo dưỡng sản phẩm ngay tại cửa hàng.</p>
-        
-        <p>Với những ưu điểm vượt trội về chất lượng, tính năng và thiết kế, chiếc đồng hồ cao cấp là sự lựa chọn hoàn hảo dành cho những ai yêu thích sự tinh tế và đẳng cấp. Đừng để thời gian trôi qua mà không sở hữu một sản phẩm xứng tầm, giúp bạn ghi dấu ấn cá nhân trong mỗi khoảnh khắc.</p>
-        ';
+
+        <p style="font-weight: bold;">Với những ưu điểm vượt trội về chất lượng, tính năng và thiết kế, chiếc đồng hồ cao cấp là sự lựa chọn hoàn hảo dành cho những ai yêu thích sự tinh tế và đẳng cấp. Đừng để thời gian trôi qua mà không sở hữu một sản phẩm xứng tầm, giúp bạn ghi dấu ấn cá nhân trong mỗi khoảnh khắc.</p>
+    </div>
+';
+
 
         $products = [
             ['name' => 'Rolex Submariner', 'avatar' => 'products/product1.jpeg', 'brand' => 'Rolex', 'category' => 'Đồng hồ lặn', 'price' => 200000000],
