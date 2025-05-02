@@ -84,7 +84,7 @@
                                                                 <td class="align-middle">
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="m-3">
-                                                                            <a href="{{route('admin.users.show',$comment->user->id)}}"
+                                                                            <a href="{{ route('admin.users.show', $comment->user->id) }}"
                                                                                 class="user-name text-info"><b>{{ $comment->user->name }}</b></a><br>
                                                                             <span
                                                                                 class="user-email">{{ $comment->user->email }}</span>
@@ -109,7 +109,7 @@
                                                                                     data-content="{{ $comment->content }}">
                                                                                     Sửa
                                                                                 </button>
-                                                                                @endif
+                                                                            @endif
                                                                             <button
                                                                                 class="btn btn-info btn-xs reply-comment"
                                                                                 data-id="{{ $comment->id }}"
@@ -153,8 +153,9 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    <a href="{{route('admin.posts.edit',$comment->entity->id)}}">
-                                                                    {{ $comment->entity?->title ?? 'N/A' }}</a>
+                                                                    <a
+                                                                        href="{{ route('admin.posts.edit', $comment->entity->id) }}">
+                                                                        {{ $comment->entity?->title ?? 'N/A' }}</a>
                                                                 </td>
 
                                                                 <td>
@@ -186,9 +187,9 @@
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title">Sửa Bình Luận</h5>
                                                                                 <button type="button" class="close"
-                                                                                id="closeEditModal">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
+                                                                                    id="closeEditModal">
+                                                                                    <span aria-hidden="true">&times;</span>
+                                                                                </button>
                                                                             </div>
                                                                             <div class="modal-body">
                                                                                 <div class="form-group">
@@ -321,7 +322,7 @@
                 /* Màu nền khi hover */
                 border-color: #17a2b8;
                 /* Màu
-                                                                                                        viền khi hover */
+                                                                                                                viền khi hover */
             }
 
             .table-smaller {

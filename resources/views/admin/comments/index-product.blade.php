@@ -84,7 +84,7 @@
                                                                 <td class="align-middle">
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="m-3">
-                                                                            <a href="{{route('admin.users.show',$comment->user->id)}}"
+                                                                            <a href="{{ route('admin.users.show', $comment->user->id) }}"
                                                                                 class="user-name text-info"><b>{{ $comment->user->name }}</b></a><br>
                                                                             <span
                                                                                 class="user-email">{{ $comment->user->email }}</span>
@@ -102,8 +102,7 @@
                                                                         @endif
                                                                         <br>
                                                                         @if (isset($comment->rating))
-                                                                            Đánh giá | <span
-                                                                                class="text-info"></span>
+                                                                            Đánh giá | <span class="text-info"></span>
                                                                             @for ($i = 0; $i < $comment->rating; $i++)
                                                                                 <i style="width: 16px"
                                                                                     class="fa-solid fa-star text-warning"></i>
@@ -113,6 +112,14 @@
                                                                         <div>
                                                                             <br>
                                                                             <div class="btn-group">
+                                                                                @if ($comment->user->id == Auth::id())
+                                                                                    <button type="button"
+                                                                                        class="btn btn-primary btn-xs edit-comment"
+                                                                                        data-id="{{ $comment->id }}"
+                                                                                        data-content="{{ $comment->content }}">
+                                                                                        Sửa
+                                                                                    </button>
+                                                                                @endif
                                                                                 <button
                                                                                     class="btn btn-info btn-xs reply-comment"
                                                                                     data-id="{{ $comment->id }}"
@@ -159,7 +166,9 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                   <a href="{{route('admin.products.show',$comment->entity->id)}}"> {{ optional($comment->entity)->name }}</a>
+                                                                    <a
+                                                                        href="{{ route('admin.products.show', $comment->entity->id) }}">
+                                                                        {{ optional($comment->entity)->name }}</a>
 
                                                                 </td>
                                                                 <td>
@@ -190,7 +199,8 @@
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title">Sửa Bình Luận</h5>
                                                                                 <button type="button" class="close"
-                                                                                    data-dismiss="modal" aria-label="Close">
+                                                                                    data-dismiss="modal"
+                                                                                    aria-label="Close">
                                                                                     <span aria-hidden="true">&times;</span>
                                                                                 </button>
                                                                             </div>
