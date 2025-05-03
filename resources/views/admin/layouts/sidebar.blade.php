@@ -4,8 +4,8 @@
         <i class="fas fa-clock fa-lg text-white mr-2"></i>
         <span class="brand-text fw-bold text-white text-uppercase"><strong>Eterna Watch</strong></span>
     </a>
-    
-    
+
+
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -16,16 +16,18 @@
                     <li style="background-color: rgb(22, 22, 22); border-radius: 4px" class="nav-item">
                         <a href="#" class="nav-link  d-flex align-items-center" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            @if (Auth::guard('admin')->check() && (Auth::guard('admin')->user()->role_id == 1 || Auth::guard('admin')->user()->role_id == 2))
+                            @if (Auth::guard('admin')->check() &&
+                                    (Auth::guard('admin')->user()->role_id == 1 || Auth::guard('admin')->user()->role_id == 2))
                                 <div class="d-flex align-items-center">
                                     <img src="{{ Storage::url(Auth::user()->avatar ?? 'avatars/default.jpeg') }}"
                                         class="rounded-circle me-2" alt="User Image" width="40" height="40"
                                         style="object-fit: cover; border: 1px solid #ccc;">
-                                        <div class="d-flex flex-column justify-content-center ml-3">
-                                            <p class="text-white fw-semibold mb-0">{{ Auth::user()->name }}</p>
-                                            <small class="text-info">{{ Auth::user()->role_id == 1 ? 'Quản trị viên' : 'Nhân viên' }}</small>
+                                    <div class="d-flex flex-column justify-content-center ml-3">
+                                        <p class="text-white fw-semibold mb-0">{{ Auth::user()->name }}</p>
+                                        <small
+                                            class="text-info">{{ Auth::user()->role_id == 1 ? 'Quản trị viên' : 'Nhân viên' }}</small>
 
-                                        </div>
+                                    </div>
 
                                 </div>
                             @endif
@@ -59,14 +61,40 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 {{-- Bảng điều khiển --}}
-                <li class="nav-item">
+                <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}" class="nav-item">
                     <a href="{{ route('admin.dashboard.revenue') }}"
                         class="nav-link {{ Request::routeIs('admin.dashboard.revenue') ? 'active' : '' }}">
                         <i class="nav-icon fa-solid fa-square-poll-vertical"></i>
-                        <p>Bảng điều khiển</p>
+                        <p>Thống kê</p>
                     </a>
                 </li>
+                {{-- Quản lý đơn hàng --}}
+                <li class="nav-item {{ Request::is('admin/orders*') ?  'menu-open active' : '' }}">
+                    <a href="{{ route('admin.orders.index') }}  " class="nav-link">
+                        <i class="nav-icon fa-solid fa-cart-plus"></i>
+                        <p>
+                            Đơn hàng
+                            <i class="nav-icon right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.orders.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.orders.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Danh sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.refunds.index') }}"
+                                class="nav-link {{ Request::routeIs('admin.refunds.index') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-caret-right"></i>
+                                <p>Quản lí hoàn hàng</p>
+                            </a>
+                        </li>
 
+                    </ul>
+                </li>
                 {{-- Quản lý sản phẩm --}}
                 <li
                     class="nav-item {{ Request::is('admin/products*') || Request::is('admin/attributes*') || Request::is('admin/categories*') || Request::is('admin/brands*') ? 'menu-open' : '' }}">
@@ -129,44 +157,17 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.vouchers.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.vouchers.create') ? 'active' : '' }}">
-                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm mới</p>
                             </a>
                         </li>
                     </ul>
                 </li>
 
-                {{-- Quản lý đơn hàng --}}
-                <li class="nav-item {{ Request::is('admin/orders*') ? 'menu-open' : '' }}">
-                    <a href="{{ route('admin.orders.index') }}  " class="nav-link">
-                        <i class="nav-icon fa-solid fa-cart-plus"></i>
-                        <p>
-                            Đơn hàng
-                            <i class="nav-icon right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="text-sm align-middle text-sm align-middle nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.orders.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.orders.index') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Danh sách</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.refunds.index') }}"
-                                class="nav-link {{ Request::routeIs('admin.refunds.index') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-caret-right"></i>
-                                <p>Quản lí hoàn hàng</p>
-                            </a>
-                        </li>
 
-                    </ul>
-                </li>
 
                 <!-- quản lý bann er -->
-                <li style="display: {{ auth()->user()->role_id == 1 ? 'block' : 'none' }}"
-                    class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ Request::is('admin/banners*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-images"></i>
                         <p>
@@ -185,7 +186,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.banners.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.banners.create') ? 'active' : '' }}">
-                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm mới</p>
                             </a>
                         </li>
@@ -242,7 +243,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.posts.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.posts.create') ? 'active' : '' }}">
-                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm bài viết mới</p>
                             </a>
                         </li>
@@ -276,13 +277,12 @@
                 </li>
 
                 {{-- Quản lý cài đặt --}}
-                <li
-                    class="nav-item {{ Request::is('admin/contacts*') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ Request::is('admin/contacts*') ? 'menu-open' : '' }}">
                     <a href="{{ route('admin.contacts.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-phone"></i>
                         <p>
                             Liên hệ
-                          
+
                         </p>
                     </a>
                 </li>
@@ -308,7 +308,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.settings.create') }}"
                                 class="nav-link {{ Request::routeIs('admin.settings.create') ? 'active' : '' }}">
-                               <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
+                                <i class="nav-icon fa-solid fa-caret-right nav-icon"></i>
                                 <p>Thêm cài đặt</p>
                             </a>
                         </li>
@@ -317,6 +317,5 @@
 
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
 </aside>

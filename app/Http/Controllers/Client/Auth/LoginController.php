@@ -27,32 +27,42 @@ class LoginController extends Controller
             'password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.',
             'password.max'      => 'Mật khẩu không được vượt quá 255 ký tự.',
         ]);
-
+       
         // Kiểm tra đăng nhập
-        if (Auth::guard('web')->attempt($validated, $request->has('remember'))) {
-            $user = Auth::guard('web')->user();
-
+        if (Auth::attempt($validated, $request->has('remember'))) {
+            $user = Auth::user();
+        
+            // Kiểm tra nếu người dùng không tồn tại
+            if (!$user) {
+                return back()->withErrors(['email' => 'Thông tin đăng nhập không chính xác.']);
+            }
+        
             // Kiểm tra email đã xác minh chưa
             if (!$user->hasVerifiedEmail()) {
                 Auth::guard('web')->logout();
                 return redirect()->back()->withErrors(['email' => 'Vui lòng xác minh email trước khi đăng nhập.']);
             }
-
+        
+            // Kiểm tra trạng thái tài khoản
             if ($user->status != 'active') {
                 Auth::guard('web')->logout();
                 return redirect()->back()->withErrors(['email' => 'Tài khoản của bạn đã bị khóa.']);
             }
+        
             // Kiểm tra quyền truy cập
             if ($user->role_id == 3) {
                 return redirect()->route('client.home');
             }
-            if ($user->role_id == 1||$user->role_id ==2) {
+        
+            if ($user->role_id == 1 || $user->role_id == 2) {
                 // Admin đăng nhập => chuyển đến trang quản trị admin
                 return redirect()->route('admin.login');
             }
+        
             Auth::guard('web')->logout();
             return redirect()->route('client.home')->withErrors(['email' => 'Bạn không có quyền truy cập.']);
         }
+        
 
         return back()->withErrors(['email' => 'Thông tin đăng nhập không chính xác.']);
     }

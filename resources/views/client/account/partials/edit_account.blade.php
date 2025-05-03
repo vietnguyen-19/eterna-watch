@@ -3,7 +3,7 @@
     <div class="row">
         <!-- Card Thông tin tài khoản -->
         <div class="col-md-12">
-            <form name="account_edit_form" class="needs-validation" novalidate="" method="POST"
+            <form name="account_edit_form" class="needs-validation" novalidate="" method="POST" enctype="multipart/form-data"
                 action="{{ route('account.update') }}">
                 @csrf
                 <div class="card shadow-sm">
@@ -49,14 +49,27 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="col-md-12 text-center">
-                                    <input type="file" id="avatar" name="avatar" class="filepond">
-                                    <input type="hidden" id="avatar-hidden" name="avatar_hidden"
-                                        value="{{ Auth::user()->avatar ?? '' }}">
+                                <div class="col-md-12 mb-3">
+                                    <label for="image" class="form-label">Chọn ảnh mới (nếu muốn thay)</label>
+
+                                    <div class="input-group">
+                                        <input type="file"
+                                            class="form-control d-none @error('image') is-invalid @enderror" id="avatar"
+                                            name="avatar" accept="image/*" onchange="previewImage(this)">
+                                        <label class="input-group-text btn btn-outline-primary w-100" for="avatar">
+                                            <i class="fas fa-cloud-upload-alt mr-2"></i> Chọn ảnh
+                                        </label>
+                                    </div>
+
+                                    @error('avatar')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+
+                                    <div class="mt-3">
+                                        <img src="{{ Storage::url(Auth::user()->avatar) }}" id="previewImageTag"
+                                            alt="Ảnh hiện tại" class="img-thumbnail w-100">
+                                    </div>
                                 </div>
-                                @error('avatar')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
 
 
                             </div>
@@ -189,87 +202,21 @@
 @endsection
 
 @section('script')
-    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            FilePond.registerPlugin(FilePondPluginImagePreview);
+        function previewImage(input) {
+            const file = input.files[0];
+            const preview = document.getElementById('previewImageTag');
+            const container = document.getElementById('previewContainer');
 
-            const avatarInput = document.getElementById("avatar");
-            const avatarHidden = document.getElementById("avatar-hidden");
-
-            const pond = FilePond.create(avatarInput, {
-                allowMultiple: false,
-                allowImagePreview: true,
-                imagePreviewHeight: 200,
-                labelIdle: "Kéo & thả ảnh hoặc <span class='filepond--label-action'>chọn ảnh</span>",
-                server: {
-                    process: {
-                        url: "{{ url('/account/upload-image') }}",
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        onload: (response) => {
-                            try {
-                                let res = JSON.parse(response);
-                                if (res.success) {
-                                    avatarHidden.value = res.path;
-                                } else {
-                                    alert("Lỗi: " + (res.message || "Không thể tải ảnh lên."));
-                                }
-                            } catch (error) {
-                                console.error("Lỗi JSON:", error);
-                                alert("Lỗi không xác định khi tải ảnh lên.");
-                            }
-                        }
-                    },
-                    revert: (filename, load) => {
-                        fetch("{{ url('/account/remove-image') }}", {
-                                method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    path: avatarHidden.value
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    avatarHidden.value = "";
-                                } else {
-                                    alert("Lỗi: " + (data.message || "Không thể xóa ảnh."));
-                                }
-                                load();
-                            })
-                            .catch(error => {
-                                console.error("Lỗi khi xóa ảnh:", error);
-                                alert("Lỗi kết nối đến server.");
-                                load();
-                            });
-                    }
-                }
-            });
-
-            // ✅ Thêm ảnh cũ vào FilePond sau khi khởi tạo
-            let oldImage = "{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : '' }}";
-            if (oldImage) {
-                fetch(oldImage)
-                    .then(res => {
-                        if (res.ok) {
-                            pond.addFile(oldImage, {
-                                source: oldImage
-                            });
-                        } else {
-                            console.error("Ảnh không tồn tại hoặc không thể tải.");
-                        }
-                    })
-                    .catch(error => console.error("Lỗi khi tải ảnh:", error));
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
             }
-        });
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
@@ -300,8 +247,6 @@
     @endif
 @endsection
 @section('style')
-    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
-    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <style>
         /* Sidebar */

@@ -8,7 +8,7 @@
                 <div class="tab-menu">
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item">Doanh thu</a>
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item tab-active">Khách hàng</a>
-                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Kho hàng</a>
+                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Sản phẩm săp hết</a>
                 </div>
             </div>
 
@@ -41,44 +41,55 @@
                 @endphp
 
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-left gap-2 flex-wrap">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="card-title mb-0 text-dark">Thống kê tài khoản</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-start flex-wrap mb-4">
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'all']) }}"
-                                class="btn btn-light border {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tất cả
                             </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'today']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'today' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Hôm nay
                             </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'week']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'week' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'week' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tuần này
                             </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'month']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'month' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'month' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tháng này
                             </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'year']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'year' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary mr-5 {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Năm
                             </a>
                             <form action="{{ route('admin.dashboard.customer') }}" method="GET"
-                                class="d-flex align-items-center">
-                                <input type="hidden" name="filter" value="custom">
-                                <input class="form-control form-control-sm mx-2" type="date" name="from_date"
-                                    value="{{ $fromDate }}">
-                                <span>-</span>
-                                <input class="form-control form-control-sm mx-2" type="date" name="to_date"
-                                    value="{{ $toDate }}">
-                                <button type="submit" class="btn btn-primary btn-sm">Xem</button>
+                                class="d-flex align-items-center gap-2">
+                              
+                                <input class="form-control form-control-sm" type="date" name="from_date"
+                                    value="{{ $fromDate }}" style="max-width: 150px; height: 2.5rem;">
+                                <span class="text-muted px-2">đến</span>
+                                <input class="form-control form-control-sm" type="date" name="to_date"
+                                    value="{{ $toDate }}" style="max-width: 150px; height: 2.5rem;">
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                    style="height: 2.5rem; border-radius: 0;">Xem</button>
                             </form>
                         </div>
-                    </div>
-                    <div class="card-header">
-                        <h5 class="mb-0">Thống kê tài khoản: <b>{{ $title }}</b></h5>
+                        <div class="bg-light rounded-md p-3">
+                            <h5 class="mb-0 text-dark">Thống kê tài khoản: <span
+                                    class="fw-semibold">{{ $title }}</span></h5>
+                        </div>
                     </div>
                 </div>
+
             </div>
             <div class="col-lg-4">
                 <div class="small-box bg-primary">

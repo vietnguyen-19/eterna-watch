@@ -112,7 +112,7 @@
     <script src="{{ asset('theme/client/js/theme.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/spin.js@2.3.2/spin.min.js"></script>
-    
+
     <!--Start of Tawk.to Script-->
     <script type="text/javascript">
         var Tawk_API = Tawk_API || {},
@@ -177,6 +177,22 @@
         }
     </style>
     @include('client.layouts.messenger')
+
+
+    <div class="gtranslate_wrapper"></div>
+    <script>
+      window.gtranslateSettings = {
+        default_language: "vi",
+        languages: ["vi", "en", "zh-CN"],
+        wrapper_selector: ".gtranslate_wrapper",
+        alt_flags: { en: "usa" },
+      };
+    </script>
+    <script
+      src="https://cdn.gtranslate.net/widgets/latest/float.js"
+      defer
+    ></script>
+
 </body>
 
 <!-- Mirrored from uomo-html.flexkitux.com/Demo19/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 07 Mar 2025 02:20:34 GMT -->

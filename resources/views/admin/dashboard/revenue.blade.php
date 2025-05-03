@@ -8,7 +8,7 @@
                 <div class="tab-menu">
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item tab-active">Doanh thu</a>
                     <a href="{{ route('admin.dashboard.customer') }}" class="tab-item">Khách hàng</a>
-                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Kho hàng</a>
+                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Sản phẩm săp hết</a>
                 </div>
             </div>
 
@@ -43,104 +43,138 @@
                 @endphp
 
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-left gap-2 flex-wrap">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-start gap-2 flex-wrap mb-4">
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'all']) }}"
-                                class="btn btn-light border {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tất cả
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'today']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'today' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Hôm nay
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'week']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'week' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'week' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tuần này
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'month']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'month' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'month' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Tháng này
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'year']) }}"
-                                class="btn btn-light border {{ $currentFilter == 'year' ? 'active' : '' }}">
+                                class="btn btn-outline-secondary {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
                                 Năm
                             </a>
                             <form action="{{ route('admin.dashboard.revenue') }}" method="GET"
-                                class="d-flex align-items-center">
+                                class="d-flex align-items-center gap-2">
+                                @csrf
                                 <input type="hidden" name="filter" value="custom">
-                                <input class="form-control form-control-sm mx-2" type="date" name="from_date"
-                                    value="{{ $fromDate }}">
-                                <span>-</span>
-                                <input class="form-control form-control-sm mx-2" type="date" name="to_date"
-                                    value="{{ $toDate }}">
-                                <button type="submit" class="btn btn-primary btn-sm">Xem</button>
+                                <span class="text-muted px-2">Từ </span>
+                                <input class="form-control form-control-sm" type="date" name="from_date"
+                                    value="{{ $fromDate }}" style="max-width: 150px; height: 2.5rem;">
+                                <span class="text-muted px-2">đến </span>
+                                <input class="form-control form-control-sm" type="date" name="to_date"
+                                    value="{{ $toDate }}" style="max-width: 150px; height: 2.5rem;">
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                    style="height: 2.5rem; border-radius: 0;">Xem</button>
                             </form>
                         </div>
-                    </div>
-                    <div class="card-header">
-                        <h5 class="mb-0">Thống kê doanh thu: <b>{{ $title }}</b></h5>
+                        <div class="bg-light rounded-md p-3">
+                            <h5 class="mb-0 text-dark">Thống kê doanh thu: <span
+                                    class="fw-semibold">{{ $title }}</span></h5>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
 
             <div class="col-lg-4">
-                <div class="small-box bg-primary">
-                    <div class="inner">
-                        <h3 class="">{{ number_format($totalRevenue) }} đ</h3>
-                        <p>Tổng doanh thu</p>
+                <a href="#" class="text-decoration-none">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3 class="">{{ number_format($totalRevenue) }} đ</h3>
+                            <p>Tổng doanh thu</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="small-box-footer">
+                        </div>
                     </div>
-                    <a href="#" class="small-box-footer">
-
-                    </a>
-                </div>
+                </a>
             </div>
             <div class="col-lg-2">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ number_format($totalOrders) }}</h3>
-                        <p>Số đơn hàng</p>
+                <a href="{{ route('admin.orders.index', ['status' => 'all']) }}" class="text-decoration-none">
+                    <div class="small-box bg-info" style="border-radius: 4px;">
+                        <div class="inner">
+                            <h3>{{ number_format($totalOrders) }}</h3>
+                            <p>Số đơn hàng</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="small-box-footer" style="border-radius: 4px;">
+                        </div>
                     </div>
-                    <a style="border-radius: 4px" href="#" class="small-box-footer">
-                    </a>
-                </div>
+                </a>
             </div>
             <div class="col-lg-2">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3 class="">{{ number_format($successfulOrders) }}</h3>
-                        <p>Đơn thành công</p>
+                <a href="{{ route('admin.orders.index', ['status' => 'completed']) }}" class="text-decoration-none">
+                    <div class="small-box bg-success" style="border-radius: 4px;">
+                        <div class="inner">
+                            <h3 class="">{{ number_format($successfulOrders) }}</h3>
+                            <p>Đơn thành công</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="small-box-footer" style="border-radius: 4px;">
+                        </div>
                     </div>
-                    <a style="border-radius: 4px" href="#" class="small-box-footer">
-                    </a>
-                </div>
+                </a>
             </div>
             <div class="col-lg-2">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3 >{{ number_format($failedOrders) }}</h3>
-                        <p>Đơn thất bại</p>
+                <a href="{{ route('admin.orders.index', ['status' => 'cancelled']) }}" class="text-decoration-none">
+                    <div class="small-box bg-danger" style="border-radius: 4px;">
+                        <div class="inner">
+                            <h3>{{ number_format($failedOrders) }}</h3>
+                            <p>Đơn thất bại</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="small-box-footer" style="border-radius: 4px;">
+                        </div>
                     </div>
-                    <a style="border-radius: 4px" href="#" class="small-box-footer">
-                    </a>
-                </div>
+                </a>
             </div>
             <div class="col-lg-2">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3 >{{ number_format($pendingOrders) }}</h3>
-                        <p>Đang xử lý</p>
+                <a href="#" class="text-decoration-none">
+                    <div class="small-box bg-warning" style="border-radius: 4px;">
+                        <div class="inner">
+                            <h3>{{ number_format($pendingOrders) }}</h3>
+                            <p>Đang xử lý</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="small-box-footer" style="border-radius: 4px;">
+                        </div>
                     </div>
-                    <a style="border-radius: 4px" href="#" class="small-box-footer">
-                    </a>
-                </div>
+                </a>
             </div>
 
             <!-- Biểu đồ doanh thu (col-9) -->
             <div class="col-lg-12">
-                <div class="card bg-gradient-primary">
-                    <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
-                        <h3 class="card-title">
+                <div class="card">
+                    <div class="card-header ui-sortable-handle" style="cursor: move;">
+                        <h3 class="card-title text-info">
                             Biểu đồ doanh thu
                         </h3>
                         <!-- card tools -->
@@ -159,58 +193,42 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <div class="card bg-gradient-success">
-                    <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
-                        <h3 class="card-title">
-                            Danh sách đơn hàng
-                        </h3>
-                        <!-- card tools -->
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse"
-                                title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                        <!-- /.card-tools -->
+                <div class="card">
+                    <div class="card-header ui-sortable-handle" style="cursor: move;">
+                        <h3 class="card-title text-info">Danh sách đơn hàng trong khoảng thời gian được chọn</h3>
+                        
                     </div>
                     <div class="card-body bg-white">
-                        <div class="table-responsive mt-4">
-                            <table class="table table-bordered" id="orderTable">
+                        <div class="table-responsive mt-3">
+                            <table class="table table-hover table-bordered" id="orderTable">
                                 <thead>
-                                    <tr>
-                                        <th style="width: 4%">
-                                            <input type="checkbox" id="checkAll" class="align-middle">
-                                        </th>
+                                    <tr class="text-center text-uppercase">
+                                      
                                         <th>ID</th>
                                         <th>Mã đơn hàng</th>
                                         <th>Khách hàng</th>
-                                        <th style="width: 15%;">Tổng tiền</th>
+                                     
                                         <th style="width: 12%;">Trạng thái</th>
                                         <th style="width: 15%;">Ngày tạo</th>
-                                        <th style="width: 15%;">Hành động</th>
+                                        <th style="width: 15%;">Tổng tiền</th>
+                                        <th style="width: 10%;">Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($orders as $order)
-                                        <tr>
-                                            <td class="align-middle">
-                                                <input type="checkbox" class="checkbox-item"
-                                                    value="{{ $order->id }}">
-                                            </td>
-                                            <td class="align-middle">{{ $order->id }}</td>
-                                            <td class="align-middle">
-                                                <strong>{{ $order->order_code }}</strong>
-                                            </td>
-                                            <td class="align-middle">
-                                                {{ $order->user->name ?? 'Khách vãng lai' }}</td>
-                                            <td class="align-middle">
-                                                {{ number_format($order->total_amount, 0, ',', '.') }}
-                                                đ</td>
-                                            <td class="align-middle">
+                                        <tr class="align-middle">
+                                            <td class="text-left">{{ $order->id }}</td>
+                                            <td><strong>{{ $order->order_code }}</strong></td>
+                                            <td>{{ $order->user->name ?? 'Khách vãng lai' }}</td>
+                                          
+                                            <td>
                                                 @switch($order->status)
                                                     @case('pending')
-                                                        <span class="badge bg-warning text-dark">Chờ xử
-                                                            lý</span>
+                                                        <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                                    @break
+
+                                                    @case('confirmed')
+                                                        <span class="badge bg-warning text-dark">Đã xác nhận</span>
                                                     @break
 
                                                     @case('processing')
@@ -229,44 +247,129 @@
                                                         <span class="badge bg-secondary">Không xác định</span>
                                                 @endswitch
                                             </td>
-                                            <td class="align-middle">
-                                                {{ $order->created_at->format('d/m/Y H:i') }}</td>
-                                            <td class="align-middle">
-                                                <div class="btn-group">
-                                                    <a href="{{route('admin.orders.edit', $order->id)}}" class="btn btn-info btn-sm">
-                                                        Chi tiết
-                                                    </a>
-
-                                                </div>
+                                            <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                            <td>{{ number_format($order->total_amount, 0, ',', '.') }} đ</td>
+                                            <td class="text-center">
+                                                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-sm btn-info" title="Chi tiết đơn hàng">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
                                             </td>
+                                            
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center">Không có đơn hàng nào
-                                                </td>
+                                                <td colspan="8" class="text-center text-muted">Không có đơn hàng nào</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th></th>
-                                            <th>ID</th>
-                                            <th>Mã đơn hàng</th>
-                                            <th>Khách hàng</th>
-                                            <th>Tổng tiền</th>
-                                            <th>Trạng thái</th>
-                                            <th>Ngày tạo</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <!-- /.card-body-->
                 </div>
+
+                {{-- Thống kê sản phẩm --}}
+                <style>
+                    .top-1 { background-color: #fff3cd !important; font-weight: bold; border-left: 4px solid #ffc107; }
+                    .top-2 { background-color: #fff8e1 !important; font-weight: bold; border-left: 4px solid #ffecb3; }
+                    .top-3 { background-color: #fffde7 !important; font-weight: bold; border-left: 4px solid #fff59d; }
+                </style>
+                
+                <div class="col-lg-6 mt-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title text-info mb-0">Top sản phẩm bán chạy</h3>
+                          
+                        </div>
+                        <div class="card-body bg-white">
+                            @if (count($products) > 0)
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-hover table-bordered table-sm">
+                                        <thead class="text-center text-uppercase bg-light">
+                                            <tr>
+                                                <th style="width:5%">STT</th>
+                                                <th class="text-left">Tên sản phẩm</th>
+                                                <th>Số lượng bán</th>
+                                                <th class="text-right">Doanh thu</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                usort($products, fn($a, $b) => $b['quantity'] - $a['quantity']);
+                                                $top10Products = array_slice($products, 0, 10);
+                                            @endphp
+                                            @foreach ($top10Products as $index => $product)
+                                                @php
+                                                    $topClass = match(true) {
+                                                        $index === 0 => 'top-1',
+                                                        $index === 1 => 'top-2',
+                                                        $index === 2 => 'top-3',
+                                                        default => ''
+                                                    };
+                                                @endphp
+                                                <tr class="text-center {{ $topClass }}">
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td class="text-left">{{ $product['product_name'] ?? 'N/A' }}</td>
+                                                    <td>{{ $product['quantity'] }}</td>
+                                                    <td class="text-right">{{ number_format($product['total_price'], 0, ',', '.') }} đ</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mt-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title text-info mb-0">Top khách hàng</h3>
+                           
+                        </div>
+                        <div class="card-body bg-white">
+                            @if (isset($top10Users) && count($top10Users) > 0)
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-hover table-bordered table-sm">
+                                        <thead class="text-center bg-light text-uppercase">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-left">Tên Người Dùng</th>
+                                                <th class="text-right">Tổng Doanh Thu</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($top10Users as $index => $user)
+                                                @php
+                                                    $topClass = match(true) {
+                                                        $index === 0 => 'top-1',
+                                                        $index === 1 => 'top-2',
+                                                        $index === 2 => 'top-3',
+                                                        default => ''
+                                                    };
+                                                @endphp
+                                                <tr class="text-center {{ $topClass }}">
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td class="text-left">{{ $user->name }}</td>
+                                                    <td class="text-right">{{ number_format($user->total_revenue) }} đ</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <p class="text-muted">Không có dữ liệu để hiển thị.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                
+
             </div>
-        </div>
+
         </div>
 
         <!-- Font Awesome -->
@@ -337,30 +440,33 @@
 
         <script>
             $(document).ready(function() {
-                if ($('#orderTable tbody tr').length > 1) { // Chỉ khởi tạo DataTables khi có dữ liệu
-                    $('#orderTable').DataTable({
-                        "paging": true,
-                        "lengthMenu": [25, 50, 100],
-                        "searching": true,
-                        "ordering": true,
-                        "autoWidth": false,
-                        "responsive": true,
-                        "info": true,
-                        "language": {
-                            "lengthMenu": "Hiển thị _MENU_ dòng",
-                            "zeroRecords": "Không tìm thấy dữ liệu",
-                            "info": "Đang hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                            "infoEmpty": "Không có dữ liệu",
-                            "search": "Tìm kiếm:",
-                            "paginate": {
-                                "first": "Trang đầu",
-                                "last": "Trang cuối",
-                                "next": "Sau",
-                                "previous": "Trước"
+                // Khởi tạo DataTables cho các bảng được chỉ định
+                ['#orderTable', '#productTable'].forEach(function(tableId) {
+                    if ($(tableId + ' tbody tr').length > 1) {
+                        $(tableId).DataTable({
+                            "paging": true,
+                            "lengthMenu": [10, 25, 100],
+                            "searching": true,
+                            "ordering": true,
+                            "autoWidth": false,
+                            "responsive": true,
+                            "info": true,
+                            "language": {
+                                "lengthMenu": "Hiển thị _MENU_ dòng",
+                                "zeroRecords": "Không tìm thấy dữ liệu",
+                                "info": "Đang hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                                "infoEmpty": "Không có dữ liệu",
+                                "search": "Tìm kiếm:",
+                                "paginate": {
+                                    "first": "Trang đầu",
+                                    "last": "Trang cuối",
+                                    "next": "Sau",
+                                    "previous": "Trước"
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
 
 
