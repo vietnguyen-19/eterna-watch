@@ -25,6 +25,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
                             <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog">
@@ -49,6 +51,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            
                             <div class="card-body">
                                 <div class="body row">
 
