@@ -143,29 +143,28 @@
                                     </div>
                                 @endforeach
                             @else
-                            @if($product->stock > 0)
-                            <p style="margin-bottom: 0.5rem;">
-                                <span style="font-weight: 600; font-size: 20px; color: #000;">
-                                    Giá:
-                                </span>
-                                <span style="font-weight: 700; font-size: 26px; color: #dc3545; margin-left: 6px;">
-                                    {{ number_format($product->price_default, 0, ',', '.') }}₫
-                                </span>
-                                <small style="color: #198754; margin-left: 10px; font-size: 15px;">
-                                    (Còn {{ $product->current_stock }} sản phẩm)
-                                </small>
-                            </p>
-                        @else
-                            <p style="margin-bottom: 0.5rem;">
-                                <span style="font-weight: 600; font-size: 20px; color: #000;">
-                                    Giá:
-                                </span>
-                                <span style="font-weight: 700; font-size: 26px; color: #6c757d; margin-left: 6px;">
-                                    Hết hàng
-                                </span>
-                            </p>
-                        @endif
-                        
+                                @if ($product->stock > 0)
+                                    <p style="margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; font-size: 20px; color: #000;">
+                                            Giá:
+                                        </span>
+                                        <span style="font-weight: 700; font-size: 26px; color: #dc3545; margin-left: 6px;">
+                                            {{ number_format($product->price_default, 0, ',', '.') }}₫
+                                        </span>
+                                        <small style="color: #198754; margin-left: 10px; font-size: 15px;">
+                                            (Còn {{ $product->current_stock }} sản phẩm)
+                                        </small>
+                                    </p>
+                                @else
+                                    <p style="margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; font-size: 20px; color: #000;">
+                                            Giá:
+                                        </span>
+                                        <span style="font-weight: 700; font-size: 26px; color: #6c757d; margin-left: 6px;">
+                                            Hết hàng
+                                        </span>
+                                    </p>
+                                @endif
                             @endif
                             <!-- Hiển thị giá -->
                             <p id="variant-price" style="display: none; font-size: 1.5rem; font-weight: bold;"></p>
@@ -263,6 +262,37 @@
                                         </div>
                                     @endif
                                     <div class="notification-container"></div>
+                                    <div style="border:1px solid rgb(189, 189, 189)" class="rating-summary mb-4 p-4">
+                                        <h5>Đánh giá sản phẩm</h5>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <strong style="font-size: 2rem;">{{ $ratingSummary['average'] }}</strong>
+                                            <div class="ms-2">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i
+                                                        class="bi bi-star{{ $i <= round($ratingSummary['average']) ? '-fill text-warning' : '' }}"></i>
+                                                @endfor
+                                                <div>{{ $ratingSummary['total'] }} lượt đánh giá</div>
+                                            </div>
+                                        </div>
+
+                                        @for ($i = 5; $i >= 1; $i--)
+                                            @php
+                                                $count = $ratingSummary['stars'][$i];
+                                                $percent =
+                                                    $ratingSummary['total'] > 0
+                                                        ? round(($count / $ratingSummary['total']) * 100)
+                                                        : 0;
+                                            @endphp
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="me-1" style="width: 50px;">{{ $i }} sao</span>
+                                                <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                    <div class="progress-bar"
+                                                        style="background: rgb(255, 179, 0);width: {{ $percent }}%;"></div>
+                                                </div>
+                                                <span>{{ $count }}</span>
+                                            </div>
+                                        @endfor
+                                    </div>
 
                                     <div class="" style="width:100%; margin: 0 auto;">
                                         @foreach ($comments as $comment)
@@ -316,14 +346,16 @@
                                                         <div class="review-actions"
                                                             style="display: flex; gap: 15px; margin-top: 8px;">
                                                             <!-- Nút Trả lời -->
-                                                            <div class="review-action">
-                                                                <a href="#" class="reply-btn"
-                                                                    data-comment-id="{{ $comment->id }}"
-                                                                    data-entity-id="{{ $comment->entity_id }}"
-                                                                    style="color: #3c6ae7; font-size: 13px; text-decoration: none; font-style: italic;">
-                                                                    <i>Trả lời</i>
-                                                                </a>
-                                                            </div>
+                                                            @if ($comment->user_id !== Auth::id())
+                                                                <div class="review-action">
+                                                                    <a href="#" class="reply-btn"
+                                                                        data-comment-id="{{ $comment->id }}"
+                                                                        data-entity-id="{{ $comment->entity_id }}"
+                                                                        style="color: #3c6ae7; font-size: 13px; text-decoration: none; font-style: italic;">
+                                                                        <i>Trả lời</i>
+                                                                    </a>
+                                                                </div>
+                                                            @endif
 
                                                             <!-- Nút Xóa và Sửa (chỉ hiển thị nếu bình luận thuộc về người dùng hiện tại) -->
                                                             @if (Auth::check() && Auth::id() === $comment->user_id)
@@ -638,7 +670,7 @@
             function updatePrice() {
 
 
-                
+
                 let selectedAttributes = [...document.querySelectorAll("input[type='radio']:checked")]
                     .map(input => parseInt(input.value))
                     .filter(value => !isNaN(value));

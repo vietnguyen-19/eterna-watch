@@ -15,6 +15,8 @@
                                 <div class="col-6">
                                     <form action="{{ route('admin.orders.status', $order->id) }}" method="POST">
                                         @csrf
+
+
                                         <div class="d-flex align-items-center justify-content-end gap-3">
                                             <select name="status" id="status" class="form-control form-select w-auto"
                                                 required>
@@ -49,6 +51,7 @@
                                             </select>
                                             <button type="submit" class="btn btn-info ml-2">Cập nhật trạng thái</button>
                                         </div>
+
                                         @error('status')
                                             <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
@@ -381,6 +384,8 @@
 @endsection
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
+
     @if (session('success'))
         <script>
             Swal.fire({

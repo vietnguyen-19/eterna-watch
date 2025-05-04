@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\LayoutServiceProvider::class,
         App\Providers\GeminiServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
 
     ])->toArray(),
 

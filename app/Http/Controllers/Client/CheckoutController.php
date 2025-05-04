@@ -38,7 +38,6 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-
         $orderItems = json_decode($request->input('order_items'), true);
         if (!$orderItems || !is_array($orderItems)) {
             return redirect()->back()->with('error', 'Dữ liệu giỏ hàng không hợp lệ.');
@@ -54,6 +53,7 @@ class CheckoutController extends Controller
         // Khởi tạo các biến
         $totalFirst = 0;
         $totalItems = 0;
+        $variantDetails = []; // Khởi tạo mảng để tránh lỗi undefined
 
         // Lấy danh sách variant_id từ orderItems
         $variantIds = array_column($orderItems, 'variant_id');
@@ -70,6 +70,14 @@ class CheckoutController extends Controller
 
             if ($variant) { // Chỉ xử lý nếu tìm thấy sản phẩm
                 $quantity = max(1, (int) $item['quantity']); // Đảm bảo số lượng hợp lệ
+
+                // Kiểm tra tồn kho
+                if ($variant->stock == 0) {
+                    return redirect()->back()->with('error', "Sản phẩm {$variant->product->name} (Variant ID: {$variant->id}) hiện tại đã hết hàng.");
+                } elseif ($variant->stock < $quantity) {
+                    return redirect()->back()->with('error', "Sản phẩm {$variant->product->name} (Variant ID: {$variant->id}) không đủ tồn kho. Chỉ còn {$variant->stock} sản phẩm.");
+                }
+
                 $subtotal = $variant->price * $quantity;
 
                 $variantDetails[] = [
