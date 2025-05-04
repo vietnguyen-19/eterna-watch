@@ -24,6 +24,8 @@
                                         <h5 class="card-title mb-0">Danh sách </h5>
                                     </div>
                                 </div>
+
+
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.permissions.create') }}"
@@ -34,6 +36,7 @@
                             </div>
                         </div>
 
+                        
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
