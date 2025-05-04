@@ -20,6 +20,16 @@ class Order extends Model
         'order_code',
         'user_id',
         'address_id',
+
+        'name',
+        'order_user_id',
+        'full_name',
+        'phone_number',
+        'email',
+        'street_address',
+        'ward',
+        'district',
+        'city',
         'payment_method',
         'voucher_id',
         'total_amount',
@@ -108,5 +118,16 @@ class Order extends Model
         return $this->hasMany(StatusHistory::class, 'entity_id')
             ->where('entity_type', 'order')  // Nếu bạn lưu nhiều loại entity_type, nên filter đúng loại
             ->orderBy('changed_at', 'asc');  // Sắp xếp theo thời gian thay đổi
+    }
+
+    public function allowedStatusTransitions()
+    {
+        return match ($this->status) {
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['processing', 'cancelled'],
+            'processing' => ['completed', 'cancelled'],
+            'completed' => [],
+            'cancelled' => []
+        };
     }
 }

@@ -74,8 +74,15 @@
                                                         <td class="text-left text-info fw-bold">{{ $parent->name }}</td>
                                                         <td>
                                                             <span
-                                                                class="badge {{ $parent->status ? 'badge-success' : 'badge-danger' }}">
-                                                                {{ $parent->status ? 'Active' : 'Inactive' }}
+                                                                class="badge
+                                                                 @if ($parent->status == 'active') bg-success
+                                                                @elseif($parent->status == 'inactive') bg-warning
+                                                                @else bg-danger @endif">
+                                                                @if ($parent->status == 'active')
+                                                                    Hiển thị
+                                                                @elseif($parent->status == 'inactive')
+                                                                    Tạm ẩn
+                                                                @endif
                                                             </span>
                                                         </td>
                                                         <td>{{ $parent->created_at->format('Y-m-d') }}</td>
@@ -107,8 +114,15 @@
                                                             </td>
                                                             <td>
                                                                 <span
-                                                                    class="badge {{ $child->status ? 'badge-success' : 'badge-danger' }}">
-                                                                    {{ $child->status ? 'Active' : 'Inactive' }}
+                                                                    class="badge
+                                                                     @if ($child->status == 'active') bg-success
+                                                                    @elseif($child->status == 'inactive') bg-warning
+                                                                    @else bg-danger @endif">
+                                                                    @if ($child->status == 'active')
+                                                                        Hiển thị
+                                                                    @elseif($child->status == 'inactive')
+                                                                        Tạm ẩn
+                                                                    @endif
                                                                 </span>
                                                             </td>
                                                             <td>{{ $child->created_at->format('Y-m-d') }}</td>

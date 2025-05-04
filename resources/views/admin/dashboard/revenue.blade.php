@@ -8,7 +8,7 @@
                 <div class="tab-menu">
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item tab-active">Doanh thu</a>
                     <a href="{{ route('admin.dashboard.customer') }}" class="tab-item">Khách hàng</a>
-                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Sản phẩm săp hết</a>
+                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Hết hàng</a>
                 </div>
             </div>
 
@@ -45,13 +45,13 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <div class="d-flex justify-content-start gap-2 flex-wrap mb-4">
-                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'all']) }}"
-                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
+                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'month']) }}"
+                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'month' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
                                 style="border-radius: 0; height: 2.5rem;">
-                                Tất cả
+                                Tháng này
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'today']) }}"
-                                class="btn btn-outline-secondary {{ $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : '' }}"
+                                class="btn btn-outline-secondary {{  $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : ''  }}"
                                 style="border-radius: 0; height: 2.5rem;">
                                 Hôm nay
                             </a>
@@ -60,15 +60,15 @@
                                 style="border-radius: 0; height: 2.5rem;">
                                 Tuần này
                             </a>
-                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'month']) }}"
-                                class="btn btn-outline-secondary {{ $currentFilter == 'month' ? 'active bg-primary text-white border-primary' : '' }}"
-                                style="border-radius: 0; height: 2.5rem;">
-                                Tháng này
-                            </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'year']) }}"
                                 class="btn btn-outline-secondary {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
                                 style="border-radius: 0; height: 2.5rem;">
                                 Năm
+                            </a>
+                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'all']) }}"
+                                class="btn btn-outline-secondary {{ $currentFilter == 'all' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
+                                Tất cả
                             </a>
                             <form action="{{ route('admin.dashboard.revenue') }}" method="GET"
                                 class="d-flex align-items-center gap-2">
@@ -76,14 +76,17 @@
                                 <input type="hidden" name="filter" value="custom">
                                 <span class="text-muted px-2">Từ </span>
                                 <input class="form-control form-control-sm" type="date" name="from_date"
-                                    value="{{ $fromDate }}" style="max-width: 150px; height: 2.5rem;">
+                                    value="{{ $fromDate ?? now()->toDateString() }}"
+                                    style="max-width: 150px; height: 2.5rem;">
                                 <span class="text-muted px-2">đến </span>
                                 <input class="form-control form-control-sm" type="date" name="to_date"
-                                    value="{{ $toDate }}" style="max-width: 150px; height: 2.5rem;">
+                                    value="{{ $toDate ?? now()->toDateString() }}"
+                                    style="max-width: 150px; height: 2.5rem;">
                                 <button type="submit" class="btn btn-primary btn-sm"
                                     style="height: 2.5rem; border-radius: 0;">Xem</button>
                             </form>
                         </div>
+
                         <div class="bg-light rounded-md p-3">
                             <h5 class="mb-0 text-dark">Thống kê doanh thu: <span
                                     class="fw-semibold">{{ $title }}</span></h5>
@@ -196,18 +199,18 @@
                 <div class="card">
                     <div class="card-header ui-sortable-handle" style="cursor: move;">
                         <h3 class="card-title text-info">Danh sách đơn hàng trong khoảng thời gian được chọn</h3>
-                        
+
                     </div>
                     <div class="card-body bg-white">
                         <div class="table-responsive mt-3">
                             <table class="table table-hover table-bordered" id="orderTable">
                                 <thead>
                                     <tr class="text-center text-uppercase">
-                                      
+
                                         <th>ID</th>
                                         <th>Mã đơn hàng</th>
                                         <th>Khách hàng</th>
-                                     
+
                                         <th style="width: 12%;">Trạng thái</th>
                                         <th style="width: 15%;">Ngày tạo</th>
                                         <th style="width: 15%;">Tổng tiền</th>
@@ -220,7 +223,7 @@
                                             <td class="text-left">{{ $order->id }}</td>
                                             <td><strong>{{ $order->order_code }}</strong></td>
                                             <td>{{ $order->user->name ?? 'Khách vãng lai' }}</td>
-                                          
+
                                             <td>
                                                 @switch($order->status)
                                                     @case('pending')
@@ -250,11 +253,12 @@
                                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                             <td>{{ number_format($order->total_amount, 0, ',', '.') }} đ</td>
                                             <td class="text-center">
-                                                <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-sm btn-info" title="Chi tiết đơn hàng">
+                                                <a href="{{ route('admin.orders.edit', $order->id) }}"
+                                                    class="btn btn-sm btn-info" title="Chi tiết đơn hàng">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
-                                            
+
                                         </tr>
                                         @empty
                                             <tr>
@@ -270,16 +274,30 @@
 
                 {{-- Thống kê sản phẩm --}}
                 <style>
-                    .top-1 { background-color: #fff3cd !important; font-weight: bold; border-left: 4px solid #ffc107; }
-                    .top-2 { background-color: #fff8e1 !important; font-weight: bold; border-left: 4px solid #ffecb3; }
-                    .top-3 { background-color: #fffde7 !important; font-weight: bold; border-left: 4px solid #fff59d; }
+                    .top-1 {
+                        background-color: #fff3cd !important;
+                        font-weight: bold;
+                        border-left: 4px solid #ffc107;
+                    }
+
+                    .top-2 {
+                        background-color: #fff8e1 !important;
+                        font-weight: bold;
+                        border-left: 4px solid #ffecb3;
+                    }
+
+                    .top-3 {
+                        background-color: #fffde7 !important;
+                        font-weight: bold;
+                        border-left: 4px solid #fff59d;
+                    }
                 </style>
-                
+
                 <div class="col-lg-6 mt-4">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="card-title text-info mb-0">Top sản phẩm bán chạy</h3>
-                          
+
                         </div>
                         <div class="card-body bg-white">
                             @if (count($products) > 0)
@@ -300,18 +318,19 @@
                                             @endphp
                                             @foreach ($top10Products as $index => $product)
                                                 @php
-                                                    $topClass = match(true) {
+                                                    $topClass = match (true) {
                                                         $index === 0 => 'top-1',
                                                         $index === 1 => 'top-2',
                                                         $index === 2 => 'top-3',
-                                                        default => ''
+                                                        default => '',
                                                     };
                                                 @endphp
                                                 <tr class="text-center {{ $topClass }}">
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td class="text-left">{{ $product['product_name'] ?? 'N/A' }}</td>
+                                                    <td class="text-left">{!! $product['product_name'] ?? 'N/A' !!}</td>
                                                     <td>{{ $product['quantity'] }}</td>
-                                                    <td class="text-right">{{ number_format($product['total_price'], 0, ',', '.') }} đ</td>
+                                                    <td class="text-right">
+                                                        {{ number_format($product['total_price'], 0, ',', '.') }} đ</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -323,12 +342,12 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-6 mt-4">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="card-title text-info mb-0">Top khách hàng</h3>
-                           
+
                         </div>
                         <div class="card-body bg-white">
                             @if (isset($top10Users) && count($top10Users) > 0)
@@ -344,11 +363,11 @@
                                         <tbody>
                                             @foreach ($top10Users as $index => $user)
                                                 @php
-                                                    $topClass = match(true) {
+                                                    $topClass = match (true) {
                                                         $index === 0 => 'top-1',
                                                         $index === 1 => 'top-2',
                                                         $index === 2 => 'top-3',
-                                                        default => ''
+                                                        default => '',
                                                     };
                                                 @endphp
                                                 <tr class="text-center {{ $topClass }}">
@@ -366,7 +385,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
             </div>
 
@@ -482,70 +501,144 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                var ctx = document.getElementById('chartDoanhThu').getContext('2d');
+                const ctx = document.getElementById('chartDoanhThu').getContext('2d');
 
-                var chart = new Chart(ctx, {
+                // Tạo gradient fill
+                const gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
+                gradientFill.addColorStop(0, 'rgba(0, 123, 255, 0.4)');
+                gradientFill.addColorStop(1, 'rgba(0, 123, 255, 0.1)');
+
+                const chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: @json($labels), // Trục X: ngày/tháng
+                        labels: @json($labels),
                         datasets: [{
                             label: 'Doanh thu (VNĐ)',
-                            data: @json($dataDoanhThu), // Giá trị doanh thu
-                            borderColor: 'blue',
-                            backgroundColor: 'rgba(0, 0, 255, 0.2)', // Màu nền với độ trong suốt
-                            borderWidth: 2,
-                            pointRadius: 5, // Kích thước điểm dữ liệu
-                            pointBackgroundColor: 'blue', // Màu của điểm dữ liệu
-                            fill: true
+                            data: @json($dataDoanhThu),
+                            borderColor: '#2563eb',
+                            backgroundColor: gradientFill,
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#2563eb',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: '#1d4ed8',
+                            fill: true,
+                            tension: 0.4
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false, // Giúp tùy chỉnh chiều cao dễ dàng
+                        maintainAspectRatio: false,
                         plugins: {
                             title: {
                                 display: true,
                                 text: 'Biểu đồ Doanh Thu',
                                 font: {
-                                    size: 18
-                                }
+                                    size: 20,
+                                    family: 'Inter, sans-serif',
+                                    weight: '600'
+                                },
+                                padding: {
+                                    top: 15,
+                                    bottom: 30
+                                },
+                                color: '#1f2937'
                             },
                             tooltip: {
+                                backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                                titleFont: {
+                                    size: 14,
+                                    family: 'Inter, sans-serif'
+                                },
+                                bodyFont: {
+                                    size: 13,
+                                    family: 'Inter, sans-serif'
+                                },
+                                padding: 12,
+                                cornerRadius: 8,
                                 callbacks: {
                                     label: function(context) {
-                                        let value = context.raw || 0;
+                                        const value = context.raw || 0;
                                         return ' ' + new Intl.NumberFormat('vi-VN', {
                                             style: 'currency',
                                             currency: 'VND'
                                         }).format(value);
                                     }
                                 }
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                        family: 'Inter, sans-serif'
+                                    },
+                                    padding: 20,
+                                    color: '#374151'
+                                }
                             }
                         },
                         scales: {
                             x: {
+                                grid: {
+                                    display: false
+                                },
                                 title: {
                                     display: true,
                                     text: 'Thời gian',
                                     font: {
-                                        size: 14
-                                    }
+                                        size: 15,
+                                        family: 'Inter, sans-serif',
+                                        weight: '600'
+                                    },
+                                    color: '#1f2937'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 13,
+                                        family: 'Inter, sans-serif'
+                                    },
+                                    color: '#4b5563'
                                 }
                             },
                             y: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false
+                                },
                                 title: {
                                     display: true,
                                     text: 'Doanh thu (VNĐ)',
                                     font: {
-                                        size: 14
-                                    }
+                                        size: 15,
+                                        family: 'Inter, sans-serif',
+                                        weight: '600'
+                                    },
+                                    color: '#1f2937'
                                 },
                                 ticks: {
                                     callback: function(value) {
                                         return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
-                                    }
+                                    },
+                                    font: {
+                                        size: 13,
+                                        family: 'Inter, sans-serif'
+                                    },
+                                    color: '#4b5563',
+                                    padding: 10
                                 }
                             }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
                         }
                     }
                 });

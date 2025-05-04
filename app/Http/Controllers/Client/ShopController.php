@@ -143,14 +143,39 @@ class ShopController extends Controller
                 'attributes' => $variant->attributeValues->pluck('attribute_value_id')->toArray(), // Lấy danh sách ID thuộc tính
             ];
         });
+        // Gọi logic cũ để lấy danh sách bình luận có replies
         $comments = $this->getCommentsWithReplies($product->id);
+
+        // Thống kê đánh giá sao
+        $allRatings = \App\Models\Comment::where('entity_id', $product->id)
+            ->where('entity_type', 'product')
+            ->where('status', '!=', 'rejected')
+            ->whereNull('parent_id')
+            ->whereNotNull('rating')
+            ->pluck('rating');
+
+        $ratingSummary = [
+            'total' => $allRatings->count(),
+            'average' => $allRatings->avg() ? round($allRatings->avg(), 1) : 0,
+            'stars' => [
+                5 => $allRatings->filter(fn($r) => $r == 5)->count(),
+                4 => $allRatings->filter(fn($r) => $r == 4)->count(),
+                3 => $allRatings->filter(fn($r) => $r == 3)->count(),
+                2 => $allRatings->filter(fn($r) => $r == 2)->count(),
+                1 => $allRatings->filter(fn($r) => $r == 1)->count(),
+            ]
+        ];
+
       
+
+
         return view('client.product', [
             'product' => $product,
             'attributes' => $attributes,
             'productRelated' => $productRelated,
             'variants' => $variants, // Gửi biến thể xuống view
-            'comments' => $comments, // Gửi biến thể xuống view
+            'comments' => $comments,
+            'ratingSummary'=>$ratingSummary // Gửi biến thể xuống view
         ]);
     }
     public function getCommentsWithReplies($productId, $parentId = null)

@@ -16,6 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained()
                 ->onDelete('cascade');
+            $table->foreignId('order_id')
+                ->nullable()
+                ->constrained('orders')
+                ->onDelete('set null');
             $table->unsignedBigInteger('entity_id');
             $table->string('entity_type');
             $table->text('content');
@@ -24,7 +28,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('comments')
                 ->onDelete('cascade');
-            $table->enum('status',['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 
 

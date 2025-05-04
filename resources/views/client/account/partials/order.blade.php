@@ -65,20 +65,21 @@
                                 style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px dashed #eee;">
                                 <!-- Hình ảnh sản phẩm (nếu có) -->
                                 <div style="width: 60px; height: 60px; margin-right: 10px;">
-                                    <img src="{{ Storage::url($item->productVariant->image) }}"
-                                        alt="{{ $item->productVariant->product->name }}"
-                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px;">
+
+                                    <img src="{{ Storage::url($item->image ?? 'default-avatar.png') }}" alt="product image">
+
                                 </div>
                                 <!-- Thông tin sản phẩm -->
                                 <div style="flex-grow: 1;">
-                                    <div><strong>{{ $item->productVariant->product->name }} x
+                                    <div><strong>{{ $item->product_name }} x
                                             <span style="color: #d3401f">
                                                 {{ $item->quantity }}</span></strong></div>
-                                    @foreach ($item->productVariant->attributeValues as $value)
-                                        <small>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
-                                            {{ $value->nameValue->value_name ?? 'Không xác định' }}
-                                        </small><br>
-                                    @endforeach
+                                    <ul class="mb-0 small text-muted">
+                                        @foreach ($item->value_attribute_objects as $attrVal)
+                                            <li>{{ $attrVal->attribute->attribute_name }}: {{ $attrVal->value_name }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
 
                                 </div>
                                 <div>Giá: {{ number_format($item->productVariant->price, 0, ',', '.') }}đ

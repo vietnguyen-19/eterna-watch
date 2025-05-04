@@ -15,6 +15,8 @@
                                 <div class="col-6">
                                     <form action="{{ route('admin.orders.status', $order->id) }}" method="POST">
                                         @csrf
+
+
                                         <div class="d-flex align-items-center justify-content-end gap-3">
                                             <select name="status" id="status" class="form-control form-select w-auto"
                                                 required>
@@ -26,16 +28,28 @@
                                                         'completed' => 'Hoàn thành',
                                                         'cancelled' => 'Đã hủy',
                                                     ];
+                                                    $currentStatus = $order->status;
                                                 @endphp
-                                                @foreach ($statuses as $key => $label)
-                                                    <option value="{{ $key }}"
-                                                        {{ old('status', $order->status) == $key ? 'selected' : '' }}>
-                                                        {{ $label }}
-                                                    </option>
-                                                @endforeach
+                                                <option value="{{ $currentStatus }}" selected hidden>
+                                                    {{ $statuses[$currentStatus] }}
+                                                </option>
+
+                                                @if (empty($allowedTransitions))
+                                                    <option disabled>Không thể tiếp tục</option>
+                                                @else
+                                                    @foreach ($statuses as $key => $label)
+                                                        @if (in_array($key, $allowedTransitions))
+                                                            <option value="{{ $key }}"
+                                                                {{ old('status', $order->status) == $key ? 'selected' : '' }}>
+                                                                {{ $label }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </select>
                                             <button type="submit" class="btn btn-info ml-2">Cập nhật trạng thái</button>
                                         </div>
+
                                         @error('status')
                                             <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
@@ -48,42 +62,49 @@
                                 <div class="col-sm-6 invoice-col">
                                     @php
                                         // Ánh xạ trạng thái sang tiếng Việt
-                                        function getVietnameseStatus($status)
-                                        {
-                                            return match (strtolower($status)) {
-                                                'pending' => 'Đang chờ',
-                                                'confirmed' => 'Đã xác nhận',
-                                                'processing' => 'Đang xử lý',
-                                                'completed' => 'Hoàn thành',
-                                                'failed' => 'Thất bại',
-                                                'cancelled' => 'Đã hủy',
-                                                'refunded' => 'Đã hoàn tiền', // Nếu bạn có trạng thái này
-                                                default => 'Không xác định',
-                                            };
+
+                                        // app/Helpers/OrderHelper.php
+
+                                        if (!function_exists('getVietnameseStatus')) {
+                                            function getVietnameseStatus($status)
+                                            {
+                                                return match (strtolower($status)) {
+                                                    'pending' => 'Đang chờ',
+                                                    'confirmed' => 'Đã xác nhận',
+                                                    'processing' => 'Đang xử lý',
+                                                    'completed' => 'Hoàn thành',
+                                                    'failed' => 'Thất bại',
+                                                    'cancelled' => 'Đã hủy',
+                                                    'refunded' => 'Đã hoàn tiền',
+                                                    default => 'Không xác định',
+                                                };
+                                            }
                                         }
 
-                                        // Ánh xạ phương thức thanh toán sang tiếng Việt
-                                        function getVietnamesePaymentMethod($method)
-                                        {
-                                            return match (strtolower($method)) {
-                                                'cashh' => 'Thanh toán khi nhận hàng',
-                                                'vnpay' => 'TT online VNPay',
-                                                default => $method ?? 'Không xác định',
-                                            };
+                                        if (!function_exists('getVietnamesePaymentMethod')) {
+                                            function getVietnamesePaymentMethod($method)
+                                            {
+                                                return match (strtolower($method)) {
+                                                    'cashh' => 'Thanh toán khi nhận hàng',
+                                                    'vnpay' => 'TT online VNPay',
+                                                    default => $method ?? 'Không xác định',
+                                                };
+                                            }
                                         }
 
-                                        // Hàm lấy màu badge
-                                        function getBadgeColor($status)
-                                        {
-                                            return match (strtolower($status)) {
-                                                'pending' => 'warning',
-                                                'confirmed' => 'info',
-                                                'processing' => 'primary',
-                                                'completed' => 'success',
-                                                'failed', 'cancelled' => 'danger',
-                                                'refunded' => 'secondary', // Màu cho trạng thái hoàn tiền
-                                                default => 'secondary',
-                                            };
+                                        if (!function_exists('getBadgeColor')) {
+                                            function getBadgeColor($status)
+                                            {
+                                                return match (strtolower($status)) {
+                                                    'pending' => 'warning',
+                                                    'confirmed' => 'info',
+                                                    'processing' => 'primary',
+                                                    'completed' => 'success',
+                                                    'failed', 'cancelled' => 'danger',
+                                                    'refunded' => 'secondary',
+                                                    default => 'secondary',
+                                                };
+                                            }
                                         }
 
                                         // Lấy trạng thái đơn hàng và thanh toán
@@ -149,13 +170,13 @@
                                 <div class="col-sm-3 invoice-col">
                                     Đến
                                     <address>
-                                        <strong>{{ $order->address->full_name }}</strong><br>
-                                        {{ $order->address->street_address }},
-                                        P.{{ $order->address->ward }}<br>
-                                        Q. {{ $order->address->district }}, TP.
-                                        {{ $order->address->city }}, Việt Nam<br>
-                                        Phone: {{ $order->address->phone_number }}<br>
-                                        Email: {{ $order->address->email }}
+                                        <strong>{{ $order->full_name }}</strong><br>
+                                        {{ $order->street_address }},
+                                        P.{{ $order->ward }}<br>
+                                        Q. {{ $order->district }}, TP.
+                                        {{ $order->city }}, Việt Nam<br>
+                                        Phone: {{ $order->phone_number }}<br>
+                                        Email: {{ $order->email }}
                                     </address>
                                 </div>
                             </div>
@@ -179,10 +200,10 @@
                                         'completed' => 'badge bg-success', // Màu xanh lá cho trạng thái hoàn thành
                                         'cancelled' => 'badge bg-danger', // Màu đỏ cho trạng thái đã hủy
                                     ];
-                
+
                                     return $statusColors[$status] ?? 'bg-secondary'; // Mặc định màu xám nếu không có trạng thái nào khớp
                                 }
-                
+
                                 function translateStatus($status)
                                 {
                                     $statusTranslations = [
@@ -192,12 +213,12 @@
                                         'completed' => 'Hoàn thành',
                                         'cancelled' => 'Đã hủy',
                                     ];
-                
+
                                     return $statusTranslations[$status] ?? $status; // Trả về trạng thái gốc nếu không có bản dịch
                                 }
                             }
                         @endphp
-                
+
                         <div class="card-body">
                             <div class="list-group">
                                 @foreach ($statusHistories as $history)
@@ -255,10 +276,28 @@
                                         <tr>
                                             <td class="align-middle">{{ $item->id }}</td>
                                             <td class="align-middle">
-                                                <img src="{{ Storage::url($item->productVariant->product->avatar ?? 'default-avatar.png') }}"
-                                                    alt="product Avatar" class="me-2" width="40" height="40">
-                                                {{ $item->productVariant->product->name }}
+                                                <div class="d-flex align-items-center">
+                                                    {{-- Ảnh sản phẩm --}}
+                                                    <img src="{{ Storage::url($item->image ?? 'default-avatar.png') }}"
+                                                        width="88" height="88" alt="product image">
+
+                                                    {{-- Phần thông tin sản phẩm --}}
+                                                    <div class="ms-2 ml-2">
+                                                        {{-- Tên sản phẩm --}}
+                                                        <div><strong>{{ $item->product_name }}</strong></div>
+
+                                                        {{-- Hiển thị thuộc tính và giá trị --}}
+                                                        <ul class="mb-0">
+                                                            @foreach ($item->value_attribute_objects as $attrVal)
+                                                                <li>{{ $attrVal->attribute->attribute_name }}:
+                                                                    {{ $attrVal->value_name }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </td>
+
+
                                             <td class="align-middle">{{ $item->quantity }}</td>
                                             <td class="align-middle">
                                                 {{ number_format($item->unit_price, 0, ',', '.') }} đ
@@ -343,6 +382,8 @@
 @endsection
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
+
     @if (session('success'))
         <script>
             Swal.fire({
@@ -369,6 +410,18 @@
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('status');
+            const options = select.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].disabled) {
+                    options[i].style.color = '#aaa'; // nhạt hơn
+                }
+            }
+        });
+    </script>
 @endsection
 @section('style')
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"

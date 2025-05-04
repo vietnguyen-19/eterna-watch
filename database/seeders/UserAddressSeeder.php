@@ -371,7 +371,7 @@ class UserAddressSeeder extends Seeder
                 'ward' => $addr['ward'],
                 'district' => $addr['district'],
                 'city' => $addr['city'],
-                'country' => 'Vietnam',
+                'country' => 'Việt Nam',
                 'is_default' => true,
                 'note' => 'Địa chỉ mặc định của người dùng.'
             ]);
@@ -386,7 +386,7 @@ class UserAddressSeeder extends Seeder
                 'ward' => 'Phường ' . rand(1, 20),
                 'district' => $addr['district'],
                 'city' => $addr['city'],
-                'country' => 'Vietnam',
+                'country' => 'Việt Nam',
                 'is_default' => false,
                 'note' => 'Địa chỉ phụ của người dùng.'
             ]);

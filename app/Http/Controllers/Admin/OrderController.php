@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\OrderStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -12,8 +13,10 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Stringable;
 use Illuminate\Support\Str;
 
@@ -45,7 +48,7 @@ class OrderController extends Controller
 
         // Xây dựng query lấy danh sách đơn hàng
         $query = Order::with(['orderItems', 'payment']);
-      
+
         // Áp dụng bộ lọc trạng thái đơn hàng
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -87,12 +90,15 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::with(['orderItems.productVariant.product', 'address', 'entity', 'payment', 'voucher'])->findOrFail($id);
-       
+
         $statusHistories = StatusHistory::where('entity_id', $order->id)
             ->where('entity_type', 'order')
             ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
             ->get();
-        return view('admin.orders.edit', compact('order', 'statusHistories'));
+
+        // Lấy các trạng thái hợp lệ từ model
+        $allowedTransitions = $order->allowedStatusTransitions();
+        return view('admin.orders.edit', compact('order', 'statusHistories', 'allowedTransitions'));
     }
     public function store(Request $request)
     {
@@ -260,7 +266,20 @@ class OrderController extends Controller
         $order->status = $newStatus;
         $order->save();
 
+     
+
         return redirect()->route('admin.orders.edit', $order->id)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
+    }
+
+    public function showRealtime($id)
+    {
+        $order = Order::findOrFail($id);
+        $updatedAt = Cache::get("order_{$id}_updated_at", $order->updated_at->timestamp);
+
+        return response()->json([
+            'status' => $order->status,
+            'updated_at' => $updatedAt,
+        ]);
     }
 
 

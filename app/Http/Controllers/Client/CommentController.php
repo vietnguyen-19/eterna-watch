@@ -14,7 +14,7 @@ class CommentController extends Controller
 {
     public function store(Request $request, $id)
     {
-        
+
         // 1. Kiểm tra đăng nhập
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Bạn cần đăng nhập để gửi bình luận.');
@@ -32,15 +32,6 @@ class CommentController extends Controller
         if ($request->entity_type === 'product') {
             $rules['rating'] = 'required|integer|between:1,5';
 
-            // Kiểm tra đã từng đánh giá sản phẩm chưa
-            $alreadyComment = Comment::where('user_id', $user->id)
-                ->where('entity_type', 'product')
-                ->where('entity_id', $id)
-                ->exists();
-
-            if ($alreadyComment) {
-                return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi.');
-            }
 
             // Lấy tất cả variant_id của sản phẩm
             $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
@@ -75,6 +66,7 @@ class CommentController extends Controller
         $comment->user_id = $user->id;
         $comment->entity_type = $request->entity_type;
         $comment->entity_id = $id;
+        $comment->order_id = $request->input('order_id') ?? null;
         $comment->content = $request->content;
         $comment->rating = $request->entity_type === 'product' ? $request->rating : null;
         $comment->status = 'pending';

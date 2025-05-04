@@ -8,7 +8,7 @@
                 <div class="tab-menu">
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item">Doanh thu</a>
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item tab-active">Khách hàng</a>
-                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Sản phẩm săp hết</a>
+                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Hết hàng</a>
                 </div>
             </div>
 
@@ -46,10 +46,10 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-start flex-wrap mb-4">
-                            <a href="{{ route('admin.dashboard.customer', ['filter' => 'all']) }}"
-                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'all' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
+                            <a href="{{ route('admin.dashboard.customer', ['filter' => 'month']) }}"
+                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'month' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
                                 style="border-radius: 0; height: 2.5rem;">
-                                Tất cả
+                                Tháng này
                             </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'today']) }}"
                                 class="btn btn-outline-secondary {{ $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : '' }}"
@@ -61,19 +61,20 @@
                                 style="border-radius: 0; height: 2.5rem;">
                                 Tuần này
                             </a>
-                            <a href="{{ route('admin.dashboard.customer', ['filter' => 'month']) }}"
-                                class="btn btn-outline-secondary {{ $currentFilter == 'month' ? 'active bg-primary text-white border-primary' : '' }}"
-                                style="border-radius: 0; height: 2.5rem;">
-                                Tháng này
-                            </a>
                             <a href="{{ route('admin.dashboard.customer', ['filter' => 'year']) }}"
-                                class="btn btn-outline-secondary mr-5 {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
+                                class="btn btn-outline-secondary {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
                                 style="border-radius: 0; height: 2.5rem;">
                                 Năm
                             </a>
+                            <a href="{{ route('admin.dashboard.customer', ['filter' => 'all']) }}"
+                                class="btn btn-outline-secondary mr-5 {{ $currentFilter == 'all' ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
+                                Tất cả
+                            </a>
                             <form action="{{ route('admin.dashboard.customer') }}" method="GET"
                                 class="d-flex align-items-center gap-2">
-                              
+                                <input type="hidden" name="filter" value="custom">
+                                <span class="text-muted px-2">Từ </span>
                                 <input class="form-control form-control-sm" type="date" name="from_date"
                                     value="{{ $fromDate }}" style="max-width: 150px; height: 2.5rem;">
                                 <span class="text-muted px-2">đến</span>
