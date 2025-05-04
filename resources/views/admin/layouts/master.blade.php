@@ -44,8 +44,6 @@
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
 
-        <!-- Preloader -->
-
         <!-- Navbar -->
         @include('admin.layouts.header')
         <!-- /.navbar -->
