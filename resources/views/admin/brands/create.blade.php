@@ -40,7 +40,7 @@
 
                         <div class="mb-3 col-12">
                             <select name="parent_id" class="form-control">
-                                <option value="">Chọn danh mục cha</option>
+                                <option value="">Chọn thương hiệu cha</option>
                                 @foreach ($brands as $brand)
                                     <option value="{{ $brand->id }}"
                                         {{ old('parent_id') == $brand->id ? 'selected' : '' }}>
