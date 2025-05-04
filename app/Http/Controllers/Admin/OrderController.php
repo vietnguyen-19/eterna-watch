@@ -95,7 +95,10 @@ class OrderController extends Controller
             ->where('entity_type', 'order')
             ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
             ->get();
-        return view('admin.orders.edit', compact('order', 'statusHistories'));
+
+        // Lấy các trạng thái hợp lệ từ model
+        $allowedTransitions = $order->allowedStatusTransitions();
+        return view('admin.orders.edit', compact('order', 'statusHistories', 'allowedTransitions'));
     }
     public function store(Request $request)
     {

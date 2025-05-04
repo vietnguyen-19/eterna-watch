@@ -8,8 +8,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="author" content="flexkit">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <link rel="shortcut icon" href="https://uomo-html.flexkitux.com/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('storage\images\favicon-eterna-removebg-preview.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.gstatic.com/">
 
     <!-- Fonts -->

@@ -119,4 +119,15 @@ class Order extends Model
             ->where('entity_type', 'order')  // Nếu bạn lưu nhiều loại entity_type, nên filter đúng loại
             ->orderBy('changed_at', 'asc');  // Sắp xếp theo thời gian thay đổi
     }
+
+    public function allowedStatusTransitions()
+    {
+        return match ($this->status) {
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['processing', 'cancelled'],
+            'processing' => ['completed', 'cancelled'],
+            'completed' => [],
+            'cancelled' => []
+        };
+    }
 }
