@@ -20,9 +20,6 @@
                             </div>
                         </div>
 
-
-
-                        
                         <div class="card-body">
                             <div class="list-group">
                                 <!-- Hiển thị thông tin liên hệ -->
