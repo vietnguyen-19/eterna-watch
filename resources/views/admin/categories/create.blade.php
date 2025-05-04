@@ -31,7 +31,7 @@
                                     </div>
 
                                     <!-- Ảnh danh mục (chỉ hiển thị khi type == child) -->
-                                    
+
                                     <!-- Chọn danh mục cha (chỉ hiển thị khi type == parent) -->
                                     @if ($type == 'parent')
                                         <input type="hidden" name="parent_id" value="">
@@ -54,8 +54,8 @@
                                     <div class="mb-3 col-12">
                                         <label for="status">Trạng thái</label>
                                         <select name="status" class="form-control" required>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
+                                            <option value="active">Hiển thị</option>
+                                            <option value="inactive">Tạm ẩn</option>
                                         </select>
                                         @error('status')
                                             <div class="text-danger">{{ $message }}</div>
@@ -137,21 +137,21 @@
     function previewImage(input) {
         const previewContainer = document.getElementById('previewContainer');
         const previewImageTag = document.getElementById('previewImageTag');
-        
+
         const file = input.files[0];
-        
+
         // Kiểm tra nếu có ảnh được chọn
         if (file) {
             const reader = new FileReader();
-            
+
             reader.onload = function(e) {
                 // Đặt đường dẫn ảnh vào thẻ img
                 previewImageTag.src = e.target.result;
-                
+
                 // Hiển thị ảnh xem trước
                 previewContainer.classList.remove('d-none');
             };
-            
+
             // Đọc ảnh dưới dạng Data URL
             reader.readAsDataURL(file);
         } else {
@@ -160,7 +160,7 @@
         }
     }
 </script>
-    
+
 @endsection
 @section('style')
     <link href="{{ asset('theme/velzon/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet"

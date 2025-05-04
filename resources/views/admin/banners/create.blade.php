@@ -13,18 +13,18 @@
                             </a>
                         </div>
                     </div>
-            
+
                     <div class="card-body">
                         <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-            
+
                             {{-- Tiêu đề --}}
                             <div class="mb-3">
                                 <label for="title" class="form-label">Tiêu đề</label>
                                 <input type="text" name="title" id="title" class="form-control"
                                     value="{{ old('title') }}" required>
                             </div>
-            
+
                             {{-- Vị trí --}}
                             <div class="mb-3">
                                 <label for="position" class="form-label">Vị trí hiển thị</label>
@@ -44,26 +44,26 @@
                                     @endforeach
                                 </select>
                             </div>
-            
+
                             {{-- Hình ảnh --}}
                             <div class="mb-3">
                                 <label for="image" class="form-label">Chọn ảnh</label>
                                 <input type="file" name="image" id="image" class="form-control" required>
                             </div>
-            
+
                             {{-- Liên kết --}}
                             <div class="mb-3">
                                 <label for="link" class="form-label">Liên kết</label>
                                 <input type="text" name="link" id="link" class="form-control"
                                     value="{{ old('link') }}">
                             </div>
-            
+
                             {{-- Mô tả --}}
                             <div class="mb-3">
                                 <label for="description" class="form-label">Mô tả</label>
                                 <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
                             </div>
-            
+
                             {{-- Trạng thái --}}
                             <div class="mb-3">
                                 <label class="form-label d-block">Trạng thái</label>
@@ -77,9 +77,9 @@
                                         {{ old('is_active', '0') == '1' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="active">Hiển thị</label>
                                 </div>
-                                
+
                             </div>
-            
+
                             {{-- Nút lưu --}}
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-success">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </section>
