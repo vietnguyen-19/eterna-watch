@@ -25,8 +25,6 @@
                                 </div>
                                 <div class="mb-3">
 
-
-
                                 </div>
                                 <div class="mb-3">
                                     <div>
@@ -48,8 +46,6 @@
         </form>
     </div>
 @endsection
-
-
 @section('script-lib')
     <script src="{{ asset('theme/velzon/theme/velzon/assets/libs/list.js/list.min.js') }}"></script>
     <script src="{{ asset('theme/velzon/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
