@@ -26,7 +26,7 @@ class Comment extends Model
     // Liên kết với User
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     // Liên kết Polymorphic: Post hoặc Product
