@@ -27,7 +27,7 @@
                         </div>
                         <div class="mb-3 col-12">
                             <label for="value" class="form-label">Nội dung cài đặt</label>
-                            <input name="value" value="{{ old('value') }}" value="value" type="text" id="value"
+                            <input name="value" value="{{ old('value') }}" type="text" id="value"
                                 class="form-control" placeholder="Nhập nội dung">
                             @error('value')
                                 <div class="text-danger">{{ $message }}</div>
@@ -39,15 +39,10 @@
                     <div class="hstack gap-2 justify-content-left">
                         <button type="submit" class="btn btn-success" id="add-btn">Thêm cài đặt</button>
                         <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
-                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                     </div>
                 </div>
             </form>
         </div>
-
-
-    </div>
-
     </div>
 @endsection
 @section('script-lib')

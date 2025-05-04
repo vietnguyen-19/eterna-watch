@@ -3,7 +3,6 @@
     <div class="col-lg-12">
         <div class="card" id="customerList">
             <div class="card-header border-bottom-dashed">
-
                 <div class="row g-4 align-items-center">
                     <div class="col-sm">
                         <div>
@@ -16,7 +15,7 @@
             <form action="{{ route('admin.settings.update', $setting->id) }}" autocomplete="off" method="POST"
                 enctype="multipart/form-data">
                 @csrf
-                @method('PUT') <!-- Đảm bảo sử dụng phương thức PUT để cập nhật -->
+                @method('PUT')
                 <div class="card-body">
                     <div class="body row">
                         <div class="mb-3 col-12">
@@ -29,28 +28,22 @@
                         </div>
                         <div class="mb-3 col-12">
                             <label for="value" class="form-label">Nội dung</label>
-                            <input name="value" value="{{ old('value', $setting->value) }}" value="value" type="text" id="value"
+                            <input name="value" value="{{ old('value', $setting->value) }}" type="text" id="value"
                                 class="form-control" placeholder="Nhập nội dung">
                             @error('value')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
                 </div>
                 <div class="card-footer">
                     <div class="hstack gap-2 justify-content-left">
-                        <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh mục</button>
+                        <button type="submit" class="btn btn-success" id="add-btn">Cập nhật danh sách cài đặt</button>
                         <a href="{{ route('admin.settings.index') }}" class="btn btn-light">Đóng</a>
                     </div>
                 </div>
             </form>
-
         </div>
-
-
-    </div>
-
     </div>
 @endsection
 @section('script-lib')
