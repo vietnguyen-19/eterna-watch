@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    
     public function run(): void
     {
         $users = [
@@ -85,7 +83,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Lê Vân',
-                'email' => 'lethivan@gmail.com',
+                'email' => 'lethivan0302@gmail.com',
                 'phone' => '0966112783',
                 'password' => Hash::make('password'),
                 'gender' => 'male',

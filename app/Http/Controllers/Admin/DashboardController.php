@@ -15,35 +15,36 @@ class DashboardController extends Controller
 {
     public function revenue(Request $request)
     {
-        $filter = $request->input('filter', 'all');
+        $filter = $request->input('filter', 'today');
         $fromDate = null;
         $toDate = Carbon::now();
-        $top10Users = [];
+
+        // Top 10 users with net revenue (total_amount - total_refund_amount from refunds table)
         $top10Users = DB::select(
             'SELECT
-                `users`.`id`,
-                `users`.`name`,
-                SUM(orders.total_amount) AS total_revenue
+                orders.order_user_id,
+                orders.name,
+                SUM(orders.total_amount - COALESCE(refunds.total_refund_amount, 0)) AS total_revenue
             FROM
-                `users`
-                INNER JOIN `orders` ON `users`.`id` = `orders`.`user_id`
+                orders
+                LEFT JOIN refunds ON orders.id = refunds.order_id
             WHERE
-                `orders`.`status` = ?
-                AND `users`.`deleted_at` IS NULL
+                orders.status = ?
             GROUP BY
-                `users`.`id`,
-                `users`.`name`
+                orders.order_user_id,
+                orders.name
             ORDER BY
-                `total_revenue` DESC,
-                `users`.`created_at` DESC
-            LIMIT
-                10',
+                total_revenue DESC
+            LIMIT 10
+            ',
             ['completed']
         );
+
+        // Set date range based on filter
         switch ($filter) {
             case 'today':
                 $fromDate = Carbon::today();
-                $toDate = Carbon::today();
+                $toDate = Carbon::today()->endOfDay();
                 $statRange = Carbon::now()->copy()->subDays(6);
                 break;
             case 'custom':
@@ -66,14 +67,9 @@ class DashboardController extends Controller
                 $toDate = Carbon::now()->endOfYear();
                 $statRange = Carbon::now()->startOfYear();
                 break;
-            case 'all': //  Xử lý lọc toàn bộ dữ liệu từ đơn hàng đầu tiên
+            case 'all':
                 $firstOrder = Order::orderBy('created_at', 'asc')->first();
-                if ($firstOrder) {
-                    $fromDate = Carbon::parse($firstOrder->created_at)->startOfYear(); // Năm đầu tiên có đơn
-                } else {
-                    $fromDate = Carbon::now()->startOfYear(); // Nếu không có đơn hàng nào
-                }
-
+                $fromDate = $firstOrder ? Carbon::parse($firstOrder->created_at)->startOfYear() : Carbon::now()->startOfYear();
                 break;
             default:
                 return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
@@ -81,6 +77,7 @@ class DashboardController extends Controller
 
         $orders = Order::whereBetween('created_at', [$fromDate, $toDate])->get();
 
+        // Return empty data if no orders
         if ($orders->isEmpty()) {
             return view('admin.dashboard.revenue', [
                 'totalOrders' => 0,
@@ -93,34 +90,49 @@ class DashboardController extends Controller
                 'labels' => [],
                 'dataDoanhThu' => [],
                 'topProducts' => [],
-                'products' => [], // Thêm mảng products
-                'top10Users' => $top10Users ?? [], // Thêm mảng top10Users
+                'products' => [],
+                'top10Users' => $top10Users ?? [],
             ]);
         }
 
+        // Calculate order metrics
         $totalOrders = $orders->count();
         $successfulOrders = $orders->where('status', 'completed')->count();
         $failedOrders = $orders->whereIn('status', ['cancelled'])->count();
         $pendingOrders = $totalOrders - $successfulOrders - $failedOrders;
-        $totalRevenue = $orders->where('status', 'completed')->sum('total_amount');
+
+        // Calculate total revenue using DB query
+        $totalRevenue = DB::table('orders')
+            ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
+            ->where('orders.status', 'completed')
+            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
 
         $revenueStats = [];
-        $products = []; // Khởi tạo mảng $products
+        $products = [];
 
+        // Calculate revenue stats based on filter
         if (in_array($filter, ['today', 'custom', 'week'])) {
             for ($i = 0; $i < 7; $i++) {
                 $date = $statRange->copy()->addDays($i)->startOfDay();
-                $dailyRevenue = Order::whereBetween('created_at', [$date, $date->copy()->endOfDay()])
-                    ->where('status', 'completed')
-                    ->sum('total_amount');
+                $dailyRevenue = Order::whereBetween('orders.created_at', [$date, $date->copy()->endOfDay()])
+                    ->where('orders.status', 'completed')
+                    ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
+                    ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$date->format('d-m')] = $dailyRevenue;
 
-                // Lấy thông tin sản phẩm trong khoảng thời gian này
+                // Product stats
                 $dailyOrders = Order::whereBetween('created_at', [$date, $date->copy()->endOfDay()])->get();
                 foreach ($dailyOrders as $order) {
                     foreach ($order->orderItems as $item) {
-                        $productId = $item->productVariant->product->id; // Lấy ID sản phẩm
-                        $productName = $item->productVariant->product->name;
+                        $product = optional(optional($item->productVariant)->product);
+                        $productId = $product->id ?? 'deleted_' . $item->productVariant->id;
+                        if ($product && $product->name) {
+                            $productName = $product->name;
+                        } else {
+                            $productName = $item->product_name . ' <small class="text-danger">(Đã xóa)</small>';
+                        }
+
                         if (isset($products[$productId])) {
                             $products[$productId]['quantity'] += $item->quantity;
                             $products[$productId]['total_price'] += $item->total_price;
@@ -137,20 +149,23 @@ class DashboardController extends Controller
             $monthEnd = Carbon::now()->endOfMonth();
 
             for ($date = $monthStart->copy(); $date->lte($monthEnd); $date->addDay()->startOfDay()) {
-                $dailyRevenue = Order::whereBetween('created_at', [
+                $dailyRevenue = Order::whereBetween('orders.created_at', [
                     $date->timezone('UTC'),
                     $date->copy()->endOfDay()->timezone('UTC')
                 ])
-                    ->where('status', 'completed')
-                    ->sum('total_amount');
+                    ->where('orders.status', 'completed')
+                    ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
+                    ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$date->format('d-m')] = $dailyRevenue;
+
+                // Product stats
                 $dailyOrders = Order::whereBetween('created_at', [
                     $date->timezone('UTC'),
                     $date->copy()->endOfDay()->timezone('UTC')
                 ])->get();
                 foreach ($dailyOrders as $order) {
                     foreach ($order->orderItems as $item) {
-                        $productId = $item->productVariant->product->id; // Lấy ID sản phẩm
+                        $productId = $item->productVariant->product->id;
                         $productName = $item->productVariant->product->name;
                         if (isset($products[$productId])) {
                             $products[$productId]['quantity'] += $item->quantity;
@@ -168,14 +183,17 @@ class DashboardController extends Controller
             for ($i = 1; $i <= Carbon::now()->month; $i++) {
                 $monthStart = Carbon::create($currentYear, $i, 1)->startOfMonth();
                 $monthEnd = Carbon::create($currentYear, $i, 1)->endOfMonth();
-                $monthlyRevenue = Order::whereBetween('created_at', [$monthStart, $monthEnd])
-                    ->where('status', 'completed')
-                    ->sum('total_amount');
+                $monthlyRevenue = Order::whereBetween('orders.created_at', [$monthStart, $monthEnd])
+                    ->where('orders.status', 'completed')
+                    ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
+                    ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$monthStart->format('m-Y')] = $monthlyRevenue;
+
+                // Product stats
                 $monthlyOrders = Order::whereBetween('created_at', [$monthStart, $monthEnd])->get();
                 foreach ($monthlyOrders as $order) {
                     foreach ($order->orderItems as $item) {
-                        $productId = $item->productVariant->product->id; // Lấy ID sản phẩm
+                        $productId = $item->productVariant->product->id;
                         $productName = $item->productVariant->product->name;
                         if (isset($products[$productId])) {
                             $products[$productId]['quantity'] += $item->quantity;
@@ -188,21 +206,24 @@ class DashboardController extends Controller
                     }
                 }
             }
-        } elseif ($filter === 'all') { //  Thống kê theo từng năm
+        } elseif ($filter === 'all') {
             $firstYear = Carbon::parse($fromDate)->year;
             $currentYear = Carbon::now()->year;
 
             for ($year = $firstYear; $year <= $currentYear; $year++) {
                 $yearStart = Carbon::create($year, 1, 1)->startOfYear();
                 $yearEnd = Carbon::create($year, 12, 31)->endOfYear();
-                $yearlyRevenue = Order::whereBetween('created_at', [$yearStart, $yearEnd])
-                    ->where('status', 'completed')
-                    ->sum('total_amount');
+                $yearlyRevenue = Order::whereBetween('orders.created_at', [$yearStart, $yearEnd])
+                    ->where('orders.status', 'completed')
+                    ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
+                    ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$year] = $yearlyRevenue;
+
+                // Product stats
                 $yearlyOrders = Order::whereBetween('created_at', [$yearStart, $yearEnd])->get();
                 foreach ($yearlyOrders as $order) {
                     foreach ($order->orderItems as $item) {
-                        $productId = $item->productVariant->product->id; // Lấy ID sản phẩm
+                        $productId = $item->productVariant->product->id;
                         $productName = $item->productVariant->product->name;
                         if (isset($products[$productId])) {
                             $products[$productId]['quantity'] += $item->quantity;
@@ -231,11 +252,10 @@ class DashboardController extends Controller
             'labels',
             'dataDoanhThu',
             'orders',
-            'products', // Pass $products to the view
-            'top10Users' // Pass $top10Users to the view
+            'products',
+            'top10Users'
         ));
     }
-
     public function stock()
     {
         $variants = ProductVariant::with('product', 'attributeValues.nameValue.attribute')

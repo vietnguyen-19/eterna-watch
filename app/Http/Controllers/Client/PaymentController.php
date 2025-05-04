@@ -38,7 +38,7 @@ class PaymentController extends Controller
 
     public function checkout(Request $request)
     {
-      
+
         $validatedData = $request->validate([
             'full_name'       => 'required|string|max:255',
             'phone_number'    => 'required|string|max:20',
@@ -60,79 +60,94 @@ class PaymentController extends Controller
         ]);
 
         DB::beginTransaction();
-        
-            if ($request->input('type_address') == 'new') {
-                $address = UserAddress::create([
-                    'user_id'        => Auth::user()->id,
-                    'full_name'      => $validatedData['full_name'],
-                    'phone_number'   => $validatedData['phone_number'],
-                    'email'          => $validatedData['email'],
-                    'street_address' => $validatedData['street_address'],
-                    'ward'           => $validatedData['ward'],
-                    'district'       => $validatedData['district'],
-                    'city'           => $validatedData['city'],
-                    'country'        => 'Việt Nam',
-                    'is_default'     => 0,
-                    'note'           => $validatedData['note'] ?? null,
-                ]);
-            } else {
-                $address = Auth::user()->defaultAddress;
-            }
+
+        if ($request->input('type_address') == 'new') {
+            $address = UserAddress::create([
+                'user_id'        => Auth::user()->id,
+                'full_name'      => $validatedData['full_name'],
+                'phone_number'   => $validatedData['phone_number'],
+                'email'          => $validatedData['email'],
+                'street_address' => $validatedData['street_address'],
+                'ward'           => $validatedData['ward'],
+                'district'       => $validatedData['district'],
+                'city'           => $validatedData['city'],
+                'country'        => 'Việt Nam',
+                'is_default'     => 0,
+                'note'           => $validatedData['note'] ?? null,
+            ]);
+        } else {
+            $address = Auth::user()->defaultAddress;
+        }
+
+        $order = Order::create([
+            'user_id'      => Auth::id(),
+            'voucher_id'   => $validatedData['voucher_id'] ?? null,
+            'address_id'   => $address->id,
+
+            'name' => Auth::user()->name,
+            'order_user_id' => Auth::user()->id,
+            'full_name' => $address->full_name ?? 'Người nhận không tên',
+            'phone_number' => $address->phone_number ?? '0000000000',
+            'email' => $address->email ?? 'example@example.com',
+            'street_address' => $address->street_address ?? null,
+            'ward' => $address->ward ?? 'Phường X',
+            'district' => $address->district ?? 'Quận Y',
+            'city' => $address->city ?? 'Hà Nội',
+
+            'total_amount' => $validatedData['total_amount'],
+            'status'       => 'pending',
+            'order_code'   => 'ORD-' . time() . '-' . Str::upper(Str::random(4)),
+        ]);
+
+        $shipment = Shipment::create([
+            'order_id'        => $order->id,
+            'shipping_method' => $validatedData['shipping_method'],
+            'shipping_cost'   => match ($validatedData['shipping_method']) {
+                'fixed' => 100000,
+                'store', 'free' => 0,
+                default => 0,
+            },
+            'shipped_date'    => now(),
+            'delivered_date'  => null,
+        ]);
+
+        foreach ($validatedData['cart_items'] as $item) {
+            $variant = ProductVariant::with('product','attributeValues')->find($item['variant_id']);
            
-            $order = Order::create([
-                'user_id'      => Auth::id(),
-                'voucher_id'   => $validatedData['voucher_id'] ?? null,
-                'address_id'   => $address->id,
-                'total_amount' => $validatedData['total_amount'],
-                'status'       => 'pending',
-                'order_code'   => 'ORD-' . time() . '-' . Str::upper(Str::random(4)),
-            ]);
-         
-            $shipment = Shipment::create([
-                'order_id'        => $order->id,
-                'shipping_method' => $validatedData['shipping_method'],
-                'shipping_cost'   => match ($validatedData['shipping_method']) {
-                    'fixed' => 100000,
-                    'store', 'free' => 0,
-                    default => 0,
-                },
-                'shipped_date'    => now(),
-                'delivered_date'  => null,
-            ]);
-
-            foreach ($validatedData['cart_items'] as $item) {
-                $variant = ProductVariant::with('product')->find($item['variant_id']);
-                if (!$variant || $variant->stock < $item['quantity']) {
-                    throw new \Exception('Sản phẩm không đủ hàng: ' . ($variant ? $variant->id : 'Không tìm thấy'));
-                }
-
-                OrderItem::create([
-                    'order_id'    => $order->id,
-                    'variant_id'  => $variant->id,
-                    'quantity'    => $item['quantity'],
-                    'unit_price'  => $variant->price,
-                    'total_price' => $variant->price * $item['quantity'],
-                ]);
-
-                $variant->decrement('stock', $item['quantity']);
-                if ($variant->product->type == 'simple') {
-                    $variant->product->decrement('stock', $item['quantity']);
-                }
-                if ($variant->stock <= 0) {
-                    $variant->update(['status' => 'out_of_stock']);
-                }
+            if (!$variant || $variant->stock < $item['quantity']) {
+                throw new \Exception('Sản phẩm không đủ hàng: ' . ($variant ? $variant->id : 'Không tìm thấy'));
             }
 
-            if (!empty($validatedData['voucher_id'])) {
-                Voucher::where('id', $validatedData['voucher_id'])->increment('used_count');
+            OrderItem::create([
+                'order_id'         => $order->id,
+                'variant_id'       => $variant->id,
+                'product_name'     => $variant->product->name,
+                'image'     => $variant->image,
+                'value_attributes' => $variant->attributeValues->pluck('attribute_value_id')->toJson(),
+                'quantity'         => $item['quantity'],
+                'unit_price'       => $variant->price,
+                'total_price'      => $variant->price * $item['quantity'],
+            ]);
+
+
+            $variant->decrement('stock', $item['quantity']);
+            if ($variant->product->type == 'simple') {
+                $variant->product->decrement('stock', $item['quantity']);
             }
+            if ($variant->stock <= 0) {
+                $variant->update(['status' => 'out_of_stock']);
+            }
+        }
 
-            DB::commit();
+        if (!empty($validatedData['voucher_id'])) {
+            Voucher::where('id', $validatedData['voucher_id'])->increment('used_count');
+        }
 
-            return $validatedData['payment_method'] === 'cash'
-                ? $this->payWithCash($order->id)
-                : $this->payWithVNPay($order->id);
-      
+        DB::commit();
+
+        return $validatedData['payment_method'] === 'cash'
+            ? $this->payWithCash($order->id)
+            : $this->payWithVNPay($order->id);
     }
 
     public function payWithVNPay($orderId)
@@ -272,10 +287,9 @@ class PaymentController extends Controller
 
             // Xóa giỏ hàng
             session()->forget('cart');
-            $cart = Cart::where('user_id', Auth::id())->first();
-            if ($cart) {
-                CartDetail::where('cart_id', $cart->id)->delete();
-                $cart->delete();
+            if ($order) {
+                $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
+                CartDetail::whereIn('variant_id', $variantIds)->delete();
             }
 
             Log::info('Thanh toán VNPay thành công (môi trường thử nghiệm)', [

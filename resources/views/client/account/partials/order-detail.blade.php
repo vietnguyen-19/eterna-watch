@@ -3,18 +3,12 @@
     <div class="checkout__totals-wrapper">
         <div style="width: 100%" class="checkout__totals">
             <div class="d-flex justify-content-between align-items-center mb-3">
-             
-
-                <h4 class="mb-0 d-flex align-items-center gap-2">
-                    Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong> 
-                </h4>
-
-
-
-
+                <div class="text-center">
+                    <h4 class="mb-0">
+                        Chi tiết đơn hàng | <strong>{{ $order->order_code }}</strong>
+                    </h4>
+                </div>
             </div>
-
-
             <div class="card mb-3">
                 @php
                     switch ($order->payment->payment_status) {
@@ -49,6 +43,10 @@
                             Tiền mặt
                         @else
                             Thanh toán online VNPay
+                            @if (!empty($order->payment?->txn_ref))
+                                <br>
+                                <strong>Mã giao dịch VNPay:</strong> {{ $order->payment->txn_ref }}
+                            @endif
                         @endif
                         <br>
                         <strong>Trạng thái thanh toán:</strong>
@@ -57,6 +55,7 @@
                             {{ $tenTrangThaiTT }}
                         </span>
                     </p>
+
                 </div>
             </div>
             @php
@@ -219,27 +218,48 @@
                 <tbody>
                     @foreach ($order->orderItems as $item)
                         <tr>
-                            <td>
-                                <div class="shopping-cart__product-item">
-                                    <a href="{{ route('client.shop.show', $item->productVariant->product->id) }}">
-                                        <img style="border: 1px solid #c4bebe;width:88px"
-                                            src="{{ Storage::url($item->productVariant->image) }}" alt="">
-                                    </a>
+                            <td colspan="2">
+                                <div class="d-flex align-items-center">
+                                    {{-- Ảnh sản phẩm --}}
+                                    @if ($item->productVariant?->product)
+                                        <a href="{{ route('client.shop.show', $item->productVariant->product->id) }}">
+                                            <img src="{{ Storage::url($item->image ?? 'default-avatar.png') }}"
+                                                alt="product image" width="88" height="88"
+                                                style="object-fit: cover; border: 1px solid #c4bebe;">
+                                        </a>
+                                    @else
+                                        <img src="{{ Storage::url($item->image ?? 'default-avatar.png') }}"
+                                            alt="product image" width="88" height="88"
+                                            style="object-fit: cover; border: 1px solid #c4bebe;">
+                                    @endif
+
+                                    {{-- Phần thông tin sản phẩm --}}
+                                    <div class="ms-3">
+                                        {{-- Tên sản phẩm --}}
+                                        <div>
+                                            @if ($item->productVariant?->product)
+                                                <a href="{{ route('client.shop.show', $item->productVariant->product->id) }}"
+                                                    class="text-dark text-decoration-none">
+                                                    <strong>{{ $item->product_name }}</strong>
+                                                </a>
+                                            @else
+                                                <strong
+                                                    onclick="alert('Sản phẩm này đã bị xóa')">{{ $item->product_name }}</strong>
+                                            @endif
+
+                                        </div>
+
+                                        {{-- Hiển thị thuộc tính và giá trị --}}
+                                        <ul class="mb-0 small text-muted">
+                                            @foreach ($item->value_attribute_objects as $attrVal)
+                                                <li>{{ $attrVal->attribute->attribute_name }}: {{ $attrVal->value_name }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="shopping-cart__product-item__detail">
-                                    <h4><a href="{{ route('client.shop.show', $item->productVariant->product->id) }}">
-                                            <strong>{{ $item->productVariant->product->name ?? 'Sản phẩm không tồn tại' }}</strong></a>
-                                    </h4>
-                                    <ul class="shopping-cart__product-item__options">
-                                        @foreach ($item->productVariant->attributeValues as $value)
-                                            <li>{{ $value->nameValue->attribute->attribute_name ?? 'Thuộc tính' }}:
-                                                {{ $value->nameValue->value_name ?? 'Không xác định' }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </td>
+
                             <td class="text-center">
                                 <span class="shopping-cart__product-price">
                                     {{ number_format($item->unit_price, 0, ',', '.') }}đ
@@ -257,10 +277,15 @@
                             @if ($order->status == 'completed')
                                 <td class="text-end">
                                     @php
-                                        $daDanhGia = \App\Models\Comment::where('user_id', auth()->id())
-                                            ->where('entity_type', 'product')
-                                            ->where('entity_id', $item->productVariant->product->id)
-                                            ->exists();
+                                        // Kiểm tra xem sản phẩm có tồn tại hay không
+                                        $product = $item->productVariant->product;
+                                        $daDanhGia = $product
+                                            ? \App\Models\Comment::where('user_id', auth()->id())
+                                                ->where('entity_type', 'product')
+                                                ->where('entity_id', $product->id)
+                                                ->exists()
+                                            : false;
+
                                         $modalId = 'reviewModal_' . $item->id; // mỗi modal là duy nhất
                                     @endphp
 
@@ -269,78 +294,85 @@
                                             'width: 110px; padding: 6px 14px; font-weight: 500; font-size: 0.9rem; border: none; border-radius: 3px;';
                                     @endphp
 
-                                    @if ($daDanhGia)
-                                        <button class="btn btn-sm"
-                                            style="{{ $buttonStyle }} background-color: #22c55e; color: #ffffff;">
-                                            Đã đánh giá
-                                        </button>
-                                    @else
-                                        <button class="btn btn-sm"
-                                            style="{{ $buttonStyle }} background-color: #f97316; color: #ffffff;"
-                                            data-bs-toggle="modal" data-bs-target="#{{ $modalId }}"
-                                            onmouseover="this.style.backgroundColor='#ea580c';"
-                                            onmouseout="this.style.backgroundColor='#f97316';">
-                                            Đánh giá
-                                        </button>
-                                    @endif
+                                    @if ($product)
+                                        <!-- Kiểm tra nếu sản phẩm tồn tại -->
+                                        @if ($daDanhGia)
+                                            <button class="btn btn-sm"
+                                                style="{{ $buttonStyle }} background-color: #22c55e; color: #ffffff;">
+                                                Đã đánh giá
+                                            </button>
+                                        @else
+                                            <button class="btn btn-sm"
+                                                style="{{ $buttonStyle }} background-color: #f97316; color: #ffffff;"
+                                                data-bs-toggle="modal" data-bs-target="#{{ $modalId }}"
+                                                onmouseover="this.style.backgroundColor='#ea580c';"
+                                                onmouseout="this.style.backgroundColor='#f97316';">
+                                                Đánh giá
+                                            </button>
+                                        @endif
 
-                                    {{-- Modal đánh giá --}}
-                                    <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
-                                        aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content" style="border-radius: 2px;">
-                                                <div class="modal-header"
-                                                    style="background-color: #d0d0d0; color: #ffffff; border-radius: 2px 2px 0 0;">
-                                                    <h5 class="modal-title" id="{{ $modalId }}Label">
-                                                        <strong>Đánh giá sản phẩm
-                                                            "{{ $item->productVariant->product->name }}"</strong>
-                                                    </h5>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body p-4">
-                                                    <div class="product-single__review-form">
-                                                        <form method="POST"
-                                                            action="{{ route('comments.store', $item->productVariant->product->id) }}">
-                                                            @csrf
+                                        {{-- Modal đánh giá --}}
+                                        <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
+                                            aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content" style="border-radius: 2px;">
+                                                    <div class="modal-header"
+                                                        style="background-color: #d0d0d0; color: #ffffff; border-radius: 2px 2px 0 0;">
+                                                        <h5 class="modal-title" id="{{ $modalId }}Label">
+                                                            <strong>Đánh giá sản phẩm
+                                                                "{{ $product->name }}"</strong>
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4">
+                                                        <div class="product-single__review-form">
+                                                            <form method="POST"
+                                                                action="{{ route('comments.store', $product->id) }}">
+                                                                @csrf
 
-                                                            <div class="select-star-rating mb-4">
-                                                                <span class="star-rating d-flex gap-1">
-                                                                    @for ($i = 1; $i <= 5; $i++)
-                                                                        <svg class="star-rating__star-icon" width="16"
-                                                                            height="16" fill="#ccc"
-                                                                            viewBox="0 0 12 12"
-                                                                            xmlns="http://www.w3.org/2000/svg">
-                                                                            <path
-                                                                                d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
-                                                                        </svg>
-                                                                    @endfor
-                                                                </span>
-                                                                <input name="rating" type="hidden"
-                                                                    id="form-input-rating-{{ $item->id }}"
-                                                                    value="">
-                                                            </div>
+                                                                <div class="select-star-rating mb-4">
+                                                                    <span class="star-rating d-flex gap-1">
+                                                                        @for ($i = 1; $i <= 5; $i++)
+                                                                            <svg class="star-rating__star-icon"
+                                                                                width="16" height="16"
+                                                                                fill="#ccc" viewBox="0 0 12 12"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M11.1429 5.04687C11.1429 4.84598 10.9286 4.76562 10.7679 4.73884L7.40625 4.25L5.89955 1.20312C5.83929 1.07589 5.72545 0.928571 5.57143 0.928571C5.41741 0.928571 5.30357 1.07589 5.2433 1.20312L3.73661 4.25L0.375 4.73884C0.207589 4.76562 0 4.84598 0 5.04687C0 5.16741 0.0870536 5.28125 0.167411 5.3683L2.60491 7.73884L2.02902 11.0871C2.02232 11.1339 2.01563 11.1741 2.01563 11.221C2.01563 11.3951 2.10268 11.5558 2.29688 11.5558C2.39063 11.5558 2.47768 11.5223 2.56473 11.4754L5.57143 9.89509L8.57813 11.4754C8.65848 11.5223 8.75223 11.5558 8.84598 11.5558C9.04018 11.5558 9.12054 11.3951 9.12054 11.221C9.12054 11.1741 9.12054 11.1339 9.11384 11.0871L8.53795 7.73884L10.9688 5.3683C11.0558 5.28125 11.1429 5.16741 11.1429 5.04687Z" />
+                                                                            </svg>
+                                                                        @endfor
+                                                                    </span>
+                                                                    <input name="rating" type="hidden"
+                                                                        id="form-input-rating-{{ $item->id }}"
+                                                                        value="">
+                                                                </div>
 
-                                                            <input type="hidden" name="entity_type" value="product">
-                                                            <div class="mb-4">
-                                                                <textarea name="content" class="form-control" rows="6" placeholder="Nội dung đánh giá của bạn"></textarea>
-                                                            </div>
+                                                                <input type="hidden" name="entity_type" value="product">
+                                                                <div class="mb-4">
+                                                                    <textarea name="content" class="form-control" rows="6" placeholder="Nội dung đánh giá của bạn"></textarea>
+                                                                </div>
 
-                                                            <div class="text-end">
-                                                                <button type="submit" class="btn"
-                                                                    style="background-color: #f97316; color: #ffffff;">
-                                                                    Gửi đánh giá
-                                                                </button>
-                                                            </div>
-                                                        </form>
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn"
+                                                                        style="background-color: #f97316; color: #ffffff;">
+                                                                        Gửi đánh giá
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    {{-- End Modal --}}
+                                        {{-- End Modal --}}
+                                    @else
+                                        {{-- Sản phẩm đã bị xóa --}}
+                                        <strong style="color:red" class="">Sản phẩm đã bị xóa</strong>
+                                    @endif
                                 </td>
                             @endif
+
                         </tr>
                     @endforeach
 
@@ -434,81 +466,118 @@
 
             <!-- Simplified Refund Card Layout -->
             <div
-                style="background-color:#ffffff; border:1px solid #131313; padding:15px; font-family: sans-serif;">
-                <h3 style="font-size:1.5em; color:#343a40; margin-bottom:15px;">Hoàn trả đơn hàng</h3>
+                style="margin:0 auto; background:#f4f4f4; border:1px solid #000000;  padding:24px; font-family:Arial, sans-serif;">
+                <h3 style="text-align:center; font-size:1.8em; margin-bottom:24px; color:#333;">Hoàn trả đơn hàng</h3>
 
-                <div style="display:flex; gap:10px; margin-bottom:10px;">
-                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px; flex:1;">
-                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px;">Ngày yêu cầu:</p>
-                        <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                {{-- Thông tin ngày yêu cầu & trạng thái --}}
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+                    <div style="background:#fff; padding:16px; border-radius:6px; text-align:center;">
+                        <p style="margin:0 0 6px; font-size:0.9em; color:#6c757d; font-weight:500;">Ngày yêu cầu</p>
+                        <p style="margin:0; font-size:1.1em; font-weight:600; color:#212529;">
                             {{ $order->refund->created_at->format('d/m/Y H:i') }}
                         </p>
                     </div>
-                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px; flex:1;">
-                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px;">Trạng thái:</p>
-                        <div>
-                            @if ($status == 'pending')
-                                <span
-                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#664d03; background-color:#fff3cd; border-radius:5px;"><i
-                                        class="bi bi-hourglass-split me-1"></i>Chờ duyệt</span>
-                            @elseif ($status == 'approved')
-                                <span
-                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#155724; background-color:#d4edda; border-radius:5px;"><i
-                                        class="bi bi-check-circle-fill me-1"></i>Đã duyệt</span>
-                            @else
-                                <span
-                                    style="display:inline-block; padding:8px 12px; font-size:1.1em; font-weight:bold; color:#721c24; background-color:#f8d7da; border-radius:5px;"><i
-                                        class="bi bi-x-circle-fill me-1"></i>Từ chối</span>
-                            @endif
-                        </div>
+                    <div style="background:#fff; padding:16px; border-radius:6px; text-align:center;">
+                        <p style="margin:0 0 6px; font-size:0.9em; color:#6c757d; font-weight:500;">Trạng thái</p>
+                        @if ($status == 'pending')
+                            <span
+                                style="display:inline-block; padding:6px 12px; font-weight:600; color:#856404; background:#fff3cd; border-radius:4px;">
+                                <i class="bi bi-hourglass-split" style="margin-right:5px;"></i>Chờ duyệt
+                            </span>
+                        @elseif ($status == 'approved')
+                            <span
+                                style="display:inline-block; padding:6px 12px; font-weight:600; color:#155724; background:#d4edda; border-radius:4px;">
+                                <i class="bi bi-check-circle-fill" style="margin-right:5px;"></i>Đã duyệt
+                            </span>
+                        @else
+                            <span
+                                style="display:inline-block; padding:6px 12px; font-weight:600; color:#721c24; background:#f8d7da; border-radius:4px;">
+                                <i class="bi bi-x-circle-fill" style="margin-right:5px;"></i>Từ chối
+                            </span>
+                        @endif
                     </div>
                 </div>
 
-                <div style="margin-bottom:15px;">
-                    <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Lý do hoàn:</p>
-                    <div style="background-color:#e9ecef; padding:10px; border-radius:5px;">
-                        <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                {{-- Thông tin hoàn tiền VNPay --}}
+                @if ($status == 'approved' && $order->refund->vnp_transaction_no && $order->refund->refunded_at)
+                    <div style="margin-bottom:24px;">
+                        <p style="margin:0 0 6px; font-size:0.9em; color:#6c757d; font-weight:500;">Thông tin hoàn tiền
+                            VNPay</p>
+                        <div style="background:#fff; padding:16px; border-radius:6px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                                <div>
+                                    <p style="margin:0 0 5px; font-size:0.9em; color:#6c757d; font-weight:500;">Mã giao
+                                        dịch VNPay</p>
+                                    <p style="margin:0; font-size:1.1em; font-weight:600; color:#212529;">
+                                        {{ $order->refund->vnp_transaction_no }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p style="margin:0 0 5px; font-size:0.9em; color:#6c757d; font-weight:500;">Thời gian
+                                        hoàn tiền</p>
+                                    <p style="margin:0; font-size:1.1em; font-weight:600; color:#212529;">
+                                        {{ $order->refund->refunded_at->format('d/m/Y H:i') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Lý do hoàn --}}
+                <div style="margin-bottom:24px;">
+                    <p style="margin:0 0 6px; font-size:0.9em; color:#6c757d; font-weight:500;">Lý do hoàn</p>
+                    <div style="background:#fff; padding:16px; border-radius:6px;">
+                        <p style="margin:0; font-size:1.1em; color:#212529;">
                             {{ $order->refund->refund_reason }}
                         </p>
                     </div>
                 </div>
+
+                {{-- Lý do từ chối --}}
                 @if ($status == 'rejected' && $order->refund->rejected_reason)
-                    <div style="margin-bottom:15px;">
-                        <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Lý do từ chối:</p>
-                        <div style="background-color:#e9ecef; padding:10px; border-radius:5px;">
-                            <p style="font-size:1.2em; color:#212529; margin-bottom:0;">
+                    <div style="margin-bottom:24px;">
+                        <p style="margin:0 0 6px; font-size:0.9em; color:#6c757d; font-weight:500;">Lý do từ chối</p>
+                        <div style="background:#fff; padding:16px; border-radius:6px;">
+                            <p style="margin:0; font-size:1.1em; color:#212529;">
                                 {{ $order->refund->rejected_reason }}
                             </p>
                         </div>
                     </div>
                 @endif
 
-                <div>
-                    <p style="font-size:1.1em; color:#495057; margin-bottom:5px; font-weight:bold;">Sản phẩm hoàn:</p>
-                    <ul style="list-style:none; padding:0;">
+                {{-- Sản phẩm hoàn --}}
+                <div style="margin-bottom:24px;">
+                    <p style="margin:0 0 10px; font-size:0.9em; color:#6c757d; font-weight:500;">Sản phẩm hoàn</p>
+                    <div style="background:#fff; border-radius:6px; padding:12px;">
                         @foreach ($order->refund->refundItems as $item)
-                            <li
-                                style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #ced4da;">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #e9ecef;">
                                 <div>
-                                    <p style="font-size:1.2em; color:#212529; margin-bottom:5px;">
-                                        {{ $item->orderItem->productVariant->product->name }}</p>
-                                    <p style="font-size:1.1em; color:#6c757d; margin-bottom:0;">Số lượng:
-                                        {{ $item->quantity }}</p>
+                                    <p style="margin:0 0 4px; font-size:1.1em; font-weight:500; color:#212529;">
+                                        {{ $item->orderItem->product_name }}
+                                    </p>
+                                    <p style="margin:0; font-size:0.9em; color:#6c757d;">Số lượng: {{ $item->quantity }}
+                                    </p>
                                 </div>
-                                <p style="font-size:1.2em; color:#212529; font-weight:bold;">
-                                    {{ number_format($item->unit_price) }}₫</p>
-                            </li>
+                                <p style="margin:0; font-size:1.1em; font-weight:600; color:#212529;">
+                                    {{ number_format($item->unit_price) }}₫
+                                </p>
+                            </div>
                         @endforeach
-                    </ul>
+                    </div>
                 </div>
 
+                {{-- Tổng tiền hoàn --}}
                 <div
-                    style="background-color:#e9ecef; padding:15px; border-radius:5px; margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
-                    <p style="font-size:1.2em; color:#212529; font-weight:bold; margin-bottom:0;">Tổng tiền hoàn:</p>
-                    <p style="font-size:1.4em; color:#28a745; font-weight:bold; margin-bottom:0;">
-                        {{ number_format($order->refund->total_refund_amount) }}₫</p>
+                    style="background:#fff; padding:16px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <p style="margin:0; font-size:1.1em; font-weight:600; color:#212529;">Tổng tiền hoàn</p>
+                    <p style="margin:0; font-size:1.3em; font-weight:700; color:#28a745;">
+                        {{ number_format($order->refund->total_refund_amount) }}₫
+                    </p>
                 </div>
             </div>
+
             <!-- Bootstrap JS Bundle CDN -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">

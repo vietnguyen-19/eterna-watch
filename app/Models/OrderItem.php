@@ -16,6 +16,9 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'variant_id',
+        'product_name',
+        'image',
+        'value_attributes',
         'quantity',
         'unit_price',
         'total_price',
@@ -29,5 +32,15 @@ class OrderItem extends Model
     public function productVariant()
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id', 'id');
+    }
+    // OrderItem.php
+    public function getValueAttributeObjectsAttribute()
+    {
+        $ids = is_array($this->value_attributes)
+            ? $this->value_attributes
+            : json_decode($this->value_attributes ?? '[]');
+
+        return \App\Models\AttributeValue::with('attribute')
+            ->whereIn('id', $ids)->get();
     }
 }

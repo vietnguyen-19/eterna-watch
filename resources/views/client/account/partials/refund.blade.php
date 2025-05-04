@@ -10,7 +10,6 @@
                     </h4>
                 </div>
 
-
                 <table class="checkout-cart-items">
                     <thead class="table-dark">
                         <tr>
@@ -57,14 +56,12 @@
                                         max="{{ $item->quantity }}" value="{{ old('refund_quantity.' . $item->id, 0) }}"
                                         data-price="{{ $item->unit_price }}">
 
-
                                     @error('refund_quantity.' . $item->id)
                                         <div style="color: #e84040" class="mt-1">
                                             {{ $message }}
                                         </div>
                                     @enderror
                                 </td>
-
                                 <td class="text-end">
                                     <span class="refund-total" data-id="{{ $item->id }}">0đ</span>
                                 </td>
@@ -88,7 +85,6 @@
                                         {{ number_format($order->total_amount, 0, ',', '.') }}đ</strong>
                                 </span></td>
                         </tr>
-
                     </tbody>
                 </table>
                 <!-- Lưu ý với khách hàng -->
@@ -134,7 +130,6 @@
                     @enderror
                 </div>
 
-
                 <button type="submit" class="btn btn-primary mt-3">Gửi yêu cầu</button>
             </div>
         </div>
@@ -176,7 +171,6 @@
             });
         });
     </script>
-
 
     <script>
         document.querySelectorAll('.refund-quantity').forEach(input => {
@@ -230,12 +224,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             const refundInputs = document.querySelectorAll('.refund-quantity');
             const tongHoanEl = document.getElementById('tongHoan');
-            const hiddenInput = document.getElementById('total_refund_amount'); // Thêm dòng này
+            const hiddenInput = document.getElementById('total_refund_amount');
             const discount = {{ $order->getDiscountAmount() ?? 0 }};
+            const shippingFee = {{ $order->shipping_fee ?? 100000 }}; // Giả định phí giao hàng
 
             // Hàm định dạng tiền
             function formatCurrency(value) {
                 return value.toLocaleString('vi-VN') + 'đ';
+            }
+
+            // Hàm kiểm tra xem có hoàn toàn bộ đơn hàng không
+            function isFullRefund() {
+                let isFull = true;
+                refundInputs.forEach(input => {
+                    const quantity = parseInt(input.value) || 0;
+                    const maxQuantity = parseInt(input.max) || 0;
+                    if (quantity < maxQuantity) {
+                        isFull = false;
+                    }
+                });
+                return isFull;
             }
 
             // Hàm cập nhật tổng tiền hoàn
@@ -257,13 +265,18 @@
                     totalRefund += itemTotal;
                 });
 
+                // Nếu hoàn toàn bộ đơn hàng, cộng thêm phí giao hàng
+                if (isFullRefund()) {
+                    totalRefund += shippingFee;
+                }
+
                 // Tính tổng tiền hoàn trừ đi giảm giá
                 let finalRefund = totalRefund - discount;
                 if (finalRefund < 0) finalRefund = 0;
 
                 tongHoanEl.textContent = formatCurrency(finalRefund);
 
-                // ✅ Cập nhật giá trị input hidden
+                // Cập nhật giá trị input hidden
                 if (hiddenInput) {
                     hiddenInput.value = finalRefund;
                 }

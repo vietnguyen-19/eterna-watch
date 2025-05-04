@@ -11,6 +11,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('variant_id')->nullable()->constrained('product_variants')->onDelete('cascade');
+            $table->string('product_name');
+            $table->string('image')->nullable();
+            $table->json('value_attributes')->nullable(); // Lưu mảng các attribute_value_id
             $table->integer('quantity');
             $table->decimal('unit_price', 15, 2);
             $table->decimal('total_price', 15, 2);
