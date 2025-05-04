@@ -216,9 +216,6 @@
                             }
                         @endphp
 
-
-
-
                         <div class="card-body">
                             <div class="list-group">
                                 @foreach ($statusHistories as $history)
