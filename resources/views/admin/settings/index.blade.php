@@ -228,6 +228,264 @@
     </article>
   @endforeach
 </div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
+{{-- Breadcrumb --}}
+<!-- <nav aria-label="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Trang chủ</span></a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <span itemprop="name">Dịch vụ</span>
+      <meta itemprop="position" content="2" />
+    </li>
+  </ol>
+</nav> -->
+
+{{-- Danh sách dịch vụ --}}
+<!-- <div itemscope itemtype="https://schema.org/ItemList">
+  <meta itemprop="name" content="Danh sách dịch vụ" />
+  <meta itemprop="itemListOrder" content="http://schema.org/ItemListOrderAscending" />
+  <meta itemprop="numberOfItems" content="{{ count($services) }}" />
+
+  @foreach ($services as $index => $service)
+    <article itemprop="itemListElement" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="position" content="{{ $index + 1 }}" />
+
+      <h2 itemprop="name">{{ $service->name }}</h2>
+      <p itemprop="description">{{ $service->description }}</p>
+
+      @if ($service->image)
+        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+      @endif -->
+
+      {{-- Action buttons (edit/delete) --}}
+      <!-- <div>
+        <a href="{{ route('services.edit', $service->id) }}">Chỉnh sửa</a>
+        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit">Xoá</button>
+        </form>
+      </div>
+    </article>
+  @endforeach
+</div> -->
 
 @section('script')
     <!-- jQuery -->
