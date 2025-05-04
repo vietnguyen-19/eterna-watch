@@ -12,8 +12,8 @@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-     <!-- Font Awesome -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -43,7 +43,11 @@
 
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
-
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="{{ asset('theme/admin/dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
+                height="60" width="60">
+        </div>
         <!-- Navbar -->
         @include('admin.layouts.header')
         <!-- /.navbar -->
@@ -72,19 +76,19 @@
     </div>
     <!-- ./wrapper -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".nav-item > .nav-link").forEach(function (menu) {
-                menu.addEventListener("click", function (e) {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".nav-item > .nav-link").forEach(function(menu) {
+                menu.addEventListener("click", function(e) {
                     // Chỉ chặn khi href là "#"
                     if (this.getAttribute("href") === "#") {
                         e.preventDefault();
                     }
-    
+
                     let parentLi = this.parentElement; // Lấy thẻ <li> cha
-    
+
                     // Toggle class 'menu-open' cho chính nó
                     parentLi.classList.toggle("menu-open");
-    
+
                     // Toggle icon fa-angle-left để đổi hướng
                     let icon = this.querySelector(".fa-angle-left");
                     if (icon) {
@@ -94,7 +98,7 @@
             });
         });
     </script>
-    
+
     <!-- jQuery -->
     <script src="{{ asset('theme/admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
