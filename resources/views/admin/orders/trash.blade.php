@@ -33,6 +33,8 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="card-body">
                             <div class="tab-content">
                                 <div>
@@ -56,6 +58,7 @@
                                                             <th style="width: 15%;">Hành động</th>
                                                         </tr>
                                                     </thead>
+
                                                     <tbody>
                                                         @forelse($orders as $order)
                                                             <tr>
@@ -131,7 +134,6 @@
                                                                 </tr>
                                                             @endforelse
                                                         </tbody>
-
                                                     </table>
                                                 </div>
                                             </div>
