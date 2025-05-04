@@ -252,6 +252,84 @@
     <button type="submit">Tạo</button>
   </form>
 </section> -->
+<!-- <section itemscope itemtype="https://schema.org/CreateAction">
+  <meta itemprop="name" content="Tạo dịch vụ mới">
+  <meta itemprop="object" content="https://schema.org/Service" />
+
+  <h1>Tạo dịch vụ mới</h1>
+
+  <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div>
+      <label for="name">Tên dịch vụ</label>
+      <input type="text" name="name" id="name" itemprop="name">
+    </div>
+
+    <div>
+      <label for="description">Mô tả</label>
+      <textarea name="description" id="description" itemprop="description"></textarea>
+    </div>
+
+    <div>
+      <label for="image">Ảnh</label>
+      <input type="file" name="image" id="image">
+    </div>
+
+    <button type="submit">Tạo</button>
+  </form>
+</section> -->
+<!-- <section itemscope itemtype="https://schema.org/CreateAction">
+  <meta itemprop="name" content="Tạo dịch vụ mới">
+  <meta itemprop="object" content="https://schema.org/Service" />
+
+  <h1>Tạo dịch vụ mới</h1>
+
+  <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div>
+      <label for="name">Tên dịch vụ</label>
+      <input type="text" name="name" id="name" itemprop="name">
+    </div>
+
+    <div>
+      <label for="description">Mô tả</label>
+      <textarea name="description" id="description" itemprop="description"></textarea>
+    </div>
+
+    <div>
+      <label for="image">Ảnh</label>
+      <input type="file" name="image" id="image">
+    </div>
+
+    <button type="submit">Tạo</button>
+  </form>
+</section> -->
+<!-- <section itemscope itemtype="https://schema.org/CreateAction">
+  <meta itemprop="name" content="Tạo dịch vụ mới">
+  <meta itemprop="object" content="https://schema.org/Service" />
+
+  <h1>Tạo dịch vụ mới</h1>
+
+  <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div>
+      <label for="name">Tên dịch vụ</label>
+      <input type="text" name="name" id="name" itemprop="name">
+    </div>
+
+    <div>
+      <label for="description">Mô tả</label>
+      <textarea name="description" id="description" itemprop="description"></textarea>
+    </div>
+
+    <div>
+      <label for="image">Ảnh</label>
+      <input type="file" name="image" id="image">
+    </div>
+
+    <button type="submit">Tạo</button>
+  </form>
+</section> -->
 
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
