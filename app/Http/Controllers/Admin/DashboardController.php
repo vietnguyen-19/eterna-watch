@@ -15,7 +15,8 @@ class DashboardController extends Controller
 {
     public function revenue(Request $request)
     {
-        $filter = $request->input('filter', 'today');
+
+        $filter = $request->input('filter', 'month');
         $fromDate = null;
         $toDate = Carbon::now();
 
@@ -269,7 +270,7 @@ class DashboardController extends Controller
     }
     public function customer(Request $request)
     {
-        $filter = $request->input('filter', 'all');
+        $filter = $request->input('filter', 'month');
         $fromDate = null;
         $toDate = Carbon::now();
 

@@ -45,8 +45,13 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <div class="d-flex justify-content-start gap-2 flex-wrap mb-4">
+                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'month']) }}"
+                                class="btn btn-outline-secondary {{ !$isDateRangeSelected && ($currentFilter == 'month' || $currentFilter == '') ? 'active bg-primary text-white border-primary' : '' }}"
+                                style="border-radius: 0; height: 2.5rem;">
+                                Tháng này
+                            </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'today']) }}"
-                                class="btn btn-outline-secondary {{ $currentFilter == 'today' || (empty($currentFilter) && request()->routeIs('admin.dashboard.revenue')) ? 'active bg-primary text-white border-primary' : '' }}"
+                                class="btn btn-outline-secondary {{  $currentFilter == 'today' ? 'active bg-primary text-white border-primary' : ''  }}"
                                 style="border-radius: 0; height: 2.5rem;">
                                 Hôm nay
                             </a>
@@ -54,11 +59,6 @@
                                 class="btn btn-outline-secondary {{ $currentFilter == 'week' ? 'active bg-primary text-white border-primary' : '' }}"
                                 style="border-radius: 0; height: 2.5rem;">
                                 Tuần này
-                            </a>
-                            <a href="{{ route('admin.dashboard.revenue', ['filter' => 'month']) }}"
-                                class="btn btn-outline-secondary {{ $currentFilter == 'month' ? 'active bg-primary text-white border-primary' : '' }}"
-                                style="border-radius: 0; height: 2.5rem;">
-                                Tháng này
                             </a>
                             <a href="{{ route('admin.dashboard.revenue', ['filter' => 'year']) }}"
                                 class="btn btn-outline-secondary {{ $currentFilter == 'year' ? 'active bg-primary text-white border-primary' : '' }}"
@@ -70,19 +70,23 @@
                                 style="border-radius: 0; height: 2.5rem;">
                                 Tất cả
                             </a>
-                            <form action="{{ route('admin.dashboard.revenue') }}" method="GET" class="d-flex align-items-center gap-2">
+                            <form action="{{ route('admin.dashboard.revenue') }}" method="GET"
+                                class="d-flex align-items-center gap-2">
                                 @csrf
                                 <input type="hidden" name="filter" value="custom">
                                 <span class="text-muted px-2">Từ </span>
                                 <input class="form-control form-control-sm" type="date" name="from_date"
-                                    value="{{ $fromDate ?? now()->toDateString() }}" style="max-width: 150px; height: 2.5rem;">
+                                    value="{{ $fromDate ?? now()->toDateString() }}"
+                                    style="max-width: 150px; height: 2.5rem;">
                                 <span class="text-muted px-2">đến </span>
                                 <input class="form-control form-control-sm" type="date" name="to_date"
-                                    value="{{ $toDate ?? now()->toDateString() }}" style="max-width: 150px; height: 2.5rem;">
-                                <button type="submit" class="btn btn-primary btn-sm" style="height: 2.5rem; border-radius: 0;">Xem</button>
+                                    value="{{ $toDate ?? now()->toDateString() }}"
+                                    style="max-width: 150px; height: 2.5rem;">
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                    style="height: 2.5rem; border-radius: 0;">Xem</button>
                             </form>
                         </div>
-                        
+
                         <div class="bg-light rounded-md p-3">
                             <h5 class="mb-0 text-dark">Thống kê doanh thu: <span
                                     class="fw-semibold">{{ $title }}</span></h5>
@@ -323,7 +327,7 @@
                                                 @endphp
                                                 <tr class="text-center {{ $topClass }}">
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td class="text-left">{!!$product['product_name'] ?? 'N/A' !!}</td>
+                                                    <td class="text-left">{!! $product['product_name'] ?? 'N/A' !!}</td>
                                                     <td>{{ $product['quantity'] }}</td>
                                                     <td class="text-right">
                                                         {{ number_format($product['total_price'], 0, ',', '.') }} đ</td>

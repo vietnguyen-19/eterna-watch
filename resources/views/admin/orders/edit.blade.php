@@ -26,26 +26,24 @@
                                                         'completed' => 'Hoàn thành',
                                                         'cancelled' => 'Đã hủy',
                                                     ];
-
-                                                    $statusOrder = array_keys($statuses);
-                                                    $currentStatusIndex = array_search($order->status, $statusOrder);
+                                                    $currentStatus = $order->status;
                                                 @endphp
+                                                <option value="{{ $currentStatus }}" selected hidden>
+                                                    {{ $statuses[$currentStatus] }}
+                                                </option>
 
-                                                @foreach ($statuses as $key => $label)
-                                                    @php
-                                                        $optionIndex = array_search($key, $statusOrder);
-                                                        $disabled =
-                                                            $optionIndex <= $currentStatusIndex ? 'disabled' : '';
-                                                        $selected =
-                                                            old('status', $order->status) == $key ? 'selected' : '';
-                                                    @endphp
-                                                    <option value="{{ $key }}" {{ $selected }}
-                                                        {{ $disabled }}>
-                                                        {{ $label }}
-                                                    </option>
-                                                @endforeach
-
-
+                                                @if (empty($allowedTransitions))
+                                                    <option disabled>Không thể tiếp tục</option>
+                                                @else
+                                                    @foreach ($statuses as $key => $label)
+                                                        @if (in_array($key, $allowedTransitions))
+                                                            <option value="{{ $key }}"
+                                                                {{ old('status', $order->status) == $key ? 'selected' : '' }}>
+                                                                {{ $label }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </select>
                                             <button type="submit" class="btn btn-info ml-2">Cập nhật trạng thái</button>
                                         </div>
