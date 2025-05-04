@@ -159,6 +159,7 @@
                                                             class="badge rounded-pill bg-dark">{{ $statusCounts['all'] }}</span>
                                                     </a>
                                                 </li>
+
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'pending']) }}">

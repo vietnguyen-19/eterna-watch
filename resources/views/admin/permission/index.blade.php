@@ -24,6 +24,8 @@
                                         <h5 class="card-title mb-0">Danh sách </h5>
                                     </div>
                                 </div>
+
+
                                 <div class="col-sm-auto">
                                     <div class="d-flex flex-wrap align-items-start gap-2">
                                         <a href="{{ route('admin.permissions.create') }}"
