@@ -137,6 +137,8 @@
                                                     transition: all 0.3s ease;
                                                 }
 
+
+
                                                 .nav-tabs-custom .nav-link.active {
                                                     background-color: #f0f0f0;
                                                     border-bottom: 3px solid #0d6efd;
@@ -159,6 +161,8 @@
                                                             class="badge rounded-pill bg-dark">{{ $statusCounts['all'] }}</span>
                                                     </a>
                                                 </li>
+
+                                                
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}"
                                                         href="{{ route('admin.orders.index', ['status' => 'pending']) }}">
