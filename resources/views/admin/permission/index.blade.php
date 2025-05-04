@@ -36,6 +36,7 @@
                             </div>
                         </div>
 
+                        {{-- sadfbjhdfvkdfbsd --}}
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap4">
