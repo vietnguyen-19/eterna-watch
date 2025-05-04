@@ -102,16 +102,16 @@
                                                         </a>
 
                                                         @if ($user->role && $user->role->name !== 'admin')
-    <form action="{{ route('admin.users.destroy', $user->id) }}"
-        method="POST" class="d-inline"
-        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger">
-            <i class="fas fa-trash"></i>
-        </button>
-    </form>
-@endif
+                                                            <form action="{{ route('admin.users.destroy', $user->id) }}"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
 
                                                     </div>
                                                 </td>
