@@ -25,10 +25,11 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductVariantSeeder::class);
         $this->call(TagSeeder::class);
         $this->call(PostSeeder::class);
-        $this->call(CommentSeeder::class);
+       
         $this->call(VoucherSeeder::class);
         $this->call(OrderSeeder::class);
         $this->call(RecentOrderSeeder::class);
+        $this->call(CommentSeeder::class);
         $this->call(StatusHistorySeeder::class);
         $this->call(ShipmentSeeder::class);
         $this->call(SettingsSeeder::class);

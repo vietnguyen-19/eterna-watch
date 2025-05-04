@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\OrderStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -12,8 +13,10 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Stringable;
 use Illuminate\Support\Str;
 
@@ -263,7 +266,20 @@ class OrderController extends Controller
         $order->status = $newStatus;
         $order->save();
 
+     
+
         return redirect()->route('admin.orders.edit', $order->id)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
+    }
+
+    public function showRealtime($id)
+    {
+        $order = Order::findOrFail($id);
+        $updatedAt = Cache::get("order_{$id}_updated_at", $order->updated_at->timestamp);
+
+        return response()->json([
+            'status' => $order->status,
+            'updated_at' => $updatedAt,
+        ]);
     }
 
 

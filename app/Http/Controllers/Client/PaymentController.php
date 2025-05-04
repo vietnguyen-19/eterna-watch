@@ -112,32 +112,58 @@ class PaymentController extends Controller
         ]);
 
         foreach ($validatedData['cart_items'] as $item) {
-            $variant = ProductVariant::with('product','attributeValues')->find($item['variant_id']);
-           
-            if (!$variant || $variant->stock < $item['quantity']) {
-                throw new \Exception('Sản phẩm không đủ hàng: ' . ($variant ? $variant->id : 'Không tìm thấy'));
+            $variant = ProductVariant::with('product', 'attributeValues')->find($item['variant_id']);
+
+            if (!$variant) {
+                throw new \Exception('Không tìm thấy sản phẩm: ' . $item['variant_id']);
             }
 
+            if ($variant->stock < $item['quantity']) {
+                throw new \Exception('Sản phẩm không đủ hàng: ' . $variant->id);
+            }
+
+            // Tạo OrderItem
             OrderItem::create([
                 'order_id'         => $order->id,
                 'variant_id'       => $variant->id,
                 'product_name'     => $variant->product->name,
-                'image'     => $variant->image,
+                'image'            => $variant->image,
                 'value_attributes' => $variant->attributeValues->pluck('attribute_value_id')->toJson(),
                 'quantity'         => $item['quantity'],
                 'unit_price'       => $variant->price,
                 'total_price'      => $variant->price * $item['quantity'],
             ]);
 
-
+            // Giảm tồn kho
             $variant->decrement('stock', $item['quantity']);
             if ($variant->product->type == 'simple') {
                 $variant->product->decrement('stock', $item['quantity']);
             }
+
+            // Nếu hết hàng, cập nhật trạng thái
             if ($variant->stock <= 0) {
                 $variant->update(['status' => 'out_of_stock']);
             }
+            $userId = $order->user_id;
+            // Cập nhật lại các cart_detail liên quan (trừ người vừa đặt hàng)
+            CartDetail::where('variant_id', $variant->id)
+                ->whereHas('cart', function ($query) use ($userId) {
+                    $query->where('user_id', '!=', $userId); // Loại trừ người vừa đặt
+                })
+                ->chunk(100, function ($cartDetails) use ($variant) {
+                    foreach ($cartDetails as $cartDetail) {
+                        if ($variant->stock <= 0) {
+                            // Nếu hết hàng thì có thể xóa hoặc đánh dấu
+                            $cartDetail->delete();
+                            // Hoặc: $cartDetail->update(['is_available' => false]);
+                        } elseif ($cartDetail->quantity > $variant->stock) {
+                            // Cập nhật số lượng phù hợp với tồn kho
+                            $cartDetail->update(['quantity' => $variant->stock]);
+                        }
+                    }
+                });
         }
+
 
         if (!empty($validatedData['voucher_id'])) {
             Voucher::where('id', $validatedData['voucher_id'])->increment('used_count');
@@ -289,9 +315,10 @@ class PaymentController extends Controller
             session()->forget('cart');
             if ($order) {
                 $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
-                CartDetail::whereIn('variant_id', $variantIds)->delete();
+                CartDetail::whereIn('variant_id', $variantIds)
+                    ->where('cart_id', Auth::user()->cart->id) // Thêm điều kiện cart_id để chỉ xóa trong giỏ của user hiện tại
+                    ->delete();
             }
-
             Log::info('Thanh toán VNPay thành công (môi trường thử nghiệm)', [
                 'order_id' => $order->id,
                 'payment_id' => $payment->id,
@@ -382,7 +409,9 @@ class PaymentController extends Controller
         session()->forget('cart');
         if ($order) {
             $variantIds = OrderItem::where('order_id', $order->id)->pluck('variant_id')->toArray();
-            CartDetail::whereIn('variant_id', $variantIds)->delete();
+            CartDetail::whereIn('variant_id', $variantIds)
+                ->where('cart_id', Auth::user()->cart->id) // Thêm điều kiện cart_id để chỉ xóa trong giỏ của user hiện tại
+                ->delete();
         }
         // Gửi email sau khi tạo đơn thành công
         Mail::to($order->user->email)->send(new OrderPlacedMail($order));

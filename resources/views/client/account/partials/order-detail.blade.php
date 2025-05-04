@@ -142,6 +142,12 @@
 
             <div class="card p-3">
                 <h5 class="mb-4">Lịch sử trạng thái đơn hàng</h5>
+                <input type="hidden" id="order-id" value="{{ $order->id }}">
+                <span id="order-status">{{ $order->status }}</span>
+
+              
+                
+
                 <div class="d-flex flex-wrap justify-content-between align-items-start position-relative"
                     style="gap: 1.5rem;">
                     <!-- Connecting line background -->
@@ -197,6 +203,7 @@
                         $index++;
                     endforeach;
                     ?>
+
                 </div>
 
 
@@ -283,6 +290,7 @@
                                             ? \App\Models\Comment::where('user_id', auth()->id())
                                                 ->where('entity_type', 'product')
                                                 ->where('entity_id', $product->id)
+                                                ->where('order_id', $order->id)
                                                 ->exists()
                                             : false;
 
@@ -330,7 +338,8 @@
                                                             <form method="POST"
                                                                 action="{{ route('comments.store', $product->id) }}">
                                                                 @csrf
-
+                                                                <input type="hidden" name="order_id"
+                                                                    value="{{ $order->id }}">
                                                                 <div class="select-star-rating mb-4">
                                                                     <span class="star-rating d-flex gap-1">
                                                                         @for ($i = 1; $i <= 5; $i++)
@@ -584,6 +593,7 @@
             </script>
         @endif
     </div>
+
 @endsection
 
 
@@ -674,6 +684,15 @@
 @endsection
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const orderId = document.getElementById('order-id').value;
+    
+        window.Echo.private(`order.status.${orderId}`)
+            .listen('OrderStatusUpdated', (e) => {
+                console.log('✅ Cập nhật trạng thái:', e.status);
+                alert(`Trạng thái đơn hàng mới: ${e.status}`);
+            });
+    </script>
     @if (session('success'))
         <script>
             Swal.fire({
@@ -820,5 +839,8 @@
                 });
             });
         });
+    </script>
+    <script>
+        localStorage.setItem("order_updated", Date.now());
     </script>
 @endsection
