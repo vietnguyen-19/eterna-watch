@@ -153,8 +153,6 @@
                                             class="text-info fw-bold">{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y H:i') }}</span></b><br>
                                 </div>
 
-
-
                                 <div class="col-sm-3 invoice-col">
                                     Gửi từ
                                     <address>
