@@ -46,6 +46,43 @@
         </div>
     </div>
 @endsection
+<!-- <section itemscope itemtype="https://schema.org/UpdateAction">
+  <meta itemprop="name" content="Chỉnh sửa dịch vụ {{ $service->name }}">
+  <div itemprop="object" itemscope itemtype="https://schema.org/Service">
+    <meta itemprop="identifier" content="{{ $service->id }}" />
+
+    <h1>Chỉnh sửa dịch vụ: <span itemprop="name">{{ $service->name }}</span></h1>
+
+    <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data">
+      @csrf
+      @method('PUT')
+
+      <div>
+        <label for="name">Tên dịch vụ</label>
+        <input type="text" name="name" id="name" value="{{ $service->name }}" itemprop="name">
+      </div>
+
+      <div>
+        <label for="description">Mô tả</label>
+        <textarea name="description" id="description" itemprop="description">{{ $service->description }}</textarea>
+      </div>
+
+      @if ($service->image)
+        <div>
+          <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" itemprop="image">
+        </div>
+      @endif
+
+      <div>
+        <label for="image">Cập nhật ảnh (nếu cần)</label>
+        <input type="file" name="image" id="image">
+      </div>
+
+      <button type="submit">Cập nhật</button>
+    </form>
+  </div>
+</section> -->
+
 @section('script-lib')
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.js/list.min.js"></script>
     <script src="http://chiccorner-project.test/theme/velzon/assets/libs/list.pagination.js/list.pagination.min.js">
