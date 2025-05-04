@@ -33,7 +33,7 @@
                 <div class="checkout-form">
                     <div class="billing-info__wrapper col-xl-4">
                         <h4 class="mb-3"><strong>THÔNG TIN GIAO HÀNG</strong></h4>
-                    
+
                         <div class="row">
                             <!-- Chọn kiểu thông tin -->
                             <div class="col-md-12">
@@ -145,7 +145,7 @@
 
                                 <!-- Địa chỉ -->
                                 <div class="col-md-12">
-                                  
+
                                     <div class="form-floating my-2">
                                         <select id="city" name="city"
                                             class="form-select @error('city') is-invalid @enderror" required>
@@ -200,7 +200,8 @@
                             <div class="col-md-12">
                                 <div class="form-floating my-2">
                                     <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note"
-                                        placeholder="Ghi chú đơn hàng (nếu có)" rows="4">{{ old('note', Auth::check() ? Auth::user()->note ?? '' : '') }}</textarea>
+                                        placeholder="Ghi chú đơn hàng (nếu có)" rows="4">{{ old('note') }}
+                                    </textarea>
                                     <label for="note">Ghi chú đơn hàng (tùy chọn)</label>
                                     @error('note')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -311,7 +312,7 @@
                                 fetchCities();
                             });
                         </script>
-                        
+
 
                     </div>
                     <div class="checkout__totals-wrapper">
