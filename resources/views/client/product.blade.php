@@ -188,7 +188,7 @@
                                 <button type="submit" class="btn btn-primary btn-addtocart simple">Thêm vào giỏ
                                     hàng</button>
                             @else
-                                <button type="submit" class="btn btn-primary btn-addtocart">Thêm vào giỏ hàng</button>
+                                <button type="submit" class="btn btn-primary btn-addtocarts">Thêm vào giỏ hàng</button>
                             @endif
 
                             <a id="view_cart" style="padding: 1.2rem; background:rgb(50, 152, 159)"
@@ -727,7 +727,7 @@
             const viewCartButton = document.getElementById("view_cart");
 
             const btnSimple = document.querySelector(".btn.btn-primary.btn-addtocart.simple");
-            const btnVariable = document.querySelector(".btn-addtocart");
+            const btnVariable = document.querySelector(".btn-addtocarts");
 
             // Kiểm tra người dùng đã đăng nhập chưa
             const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
@@ -772,8 +772,8 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Đã thêm vào giỏ hàng!',
-                                timer: 3000,
-                                showConfirmButton: false
+                                // timer: 3000,
+                                // showConfirmButton: false
                             });
                             viewCartButton.classList.remove("d-none");
                         } else {
