@@ -26,4 +26,5 @@ class AttributeSeeder extends Seeder
         ];
 
         DB::table('attributes')->insert($attributes);
+        
      }}

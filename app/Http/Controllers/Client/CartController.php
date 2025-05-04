@@ -363,6 +363,7 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        
         $selectedItems = json_decode($request->order_items, true);
 
         if (empty($selectedItems)) {

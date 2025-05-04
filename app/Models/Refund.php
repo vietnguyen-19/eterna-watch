@@ -14,8 +14,15 @@ class Refund extends Model
         'refund_reason',
         'rejected_reason',
         'status',
+        'vnp_transaction_no',
+        'vnp_response_code',
+        'refunded_at',
     ];
-
+    protected $casts = [
+        'refunded_at' => 'datetime', // Cast refunded_at thành Carbon
+        'total_refund_amount' => 'decimal:2',
+        'vnp_amount' => 'decimal:2',
+    ];
     public function order()
     {
         return $this->belongsTo(Order::class);

@@ -636,6 +636,9 @@
             const variantIdInput = document.getElementById("variant_id"); // Lấy input hidden
 
             function updatePrice() {
+
+
+                
                 let selectedAttributes = [...document.querySelectorAll("input[type='radio']:checked")]
                     .map(input => parseInt(input.value))
                     .filter(value => !isNaN(value));

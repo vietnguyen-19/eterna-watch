@@ -120,9 +120,12 @@
                                                 </div>
                                                 <div class="col-sm-auto">
                                                     <div class="d-flex flex-wrap align-items-center gap-2">
-                                                        <a href="{{ route('admin.users.show',$refund->order->user->id) }}" class="btn btn-sm btn-info">
-                                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Chi tiết
+                                                        <a href="{{ route('admin.users.show', $refund->order->user->id) }}"
+                                                            class="btn btn-sm btn-info" data-bs-toggle="tooltip"
+                                                            title="Xem người dùng">
+                                                            <i class="fas fa-eye"></i>
                                                         </a>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -161,8 +164,9 @@
                                                 </div>
                                                 <div class="col-sm-auto">
                                                     <div class="d-flex flex-wrap align-items-center gap-2">
-                                                        <a href="{{ route('admin.orders.edit',$refund->order->id) }}" class="btn btn-sm btn-info">
-                                                            <i class="ri-delete-bin-line align-bottom me-1"></i> Chi tiết
+                                                        <a href="{{ route('admin.orders.edit', $refund->order->id) }}"
+                                                            class="btn btn-sm btn-info" title="Xem đơn hàng">
+                                                            <i class="fas fa-eye"></i>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -186,7 +190,6 @@
                                                                 'completed' => 'Thành công',
                                                                 'pending' => 'Đang xử lý',
                                                                 'failed' => 'Thất bại',
-                                                                
                                                             ];
                                                             $paymentStatusColors = [
                                                                 'completed' => 'success',
@@ -352,22 +355,44 @@
                                                                 $subtotal += $item->total_price;
                                                             @endphp
                                                             <tr>
-                                                                <td>{{ $product->id }}</td>
-                                                                <td>
-                                                                    <img src="{{ Storage::url($product->avatar ?? 'default-avatar.png') }}"
-                                                                        alt="Avatar" width="40" height="40"
-                                                                        class="me-2 rounded">
-                                                                    {{ $product->name }}
+                                                                <td class="align-middle">{{ $product->id }}</td>
+                                                                <td class="align-middle">
+                                                                    <div class="d-flex align-items-center">
+                                                                        {{-- Ảnh sản phẩm --}}
+                                                                        <img src="{{ Storage::url($item->image ?? 'default-avatar.png') }}"
+                                                                            width="88" height="88"
+                                                                            class="rounded border" alt="product image">
+
+                                                                        {{-- Thông tin sản phẩm --}}
+                                                                        <div class="ms-3 ml-2">
+                                                                            {{-- Tên sản phẩm --}}
+                                                                            <div><strong>{{ $item->product_name }}</strong>
+                                                                            </div>
+
+                                                                            {{-- Danh sách thuộc tính --}}
+                                                                            <ul class="mb-0 ps-3">
+                                                                                @foreach ($item->value_attribute_objects as $attrVal)
+                                                                                    <li class="small text-muted">
+                                                                                        {{ $attrVal->attribute->attribute_name }}:
+                                                                                        {{ $attrVal->value_name }}
+                                                                                    </li>
+                                                                                @endforeach
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
                                                                 </td>
-                                                                <td>{{ $refundItem->orderItem->quantity }}</td>
-                                                                <td>{{ $refundItem->quantity }}</td>
-                                                                <td>{{ number_format($refundItem->unit_price, 0, ',', '.') }}
-                                                                  đ
-                                                                </td>
-                                                                <td>{{ number_format($refundItem->quantity * $refundItem->unit_price, 0, ',', '.') }}
-                                                                  đ</td>
+                                                                <td class="align-middle">
+                                                                    {{ $refundItem->orderItem->quantity }}</td>
+                                                                <td class="align-middle">{{ $refundItem->quantity }}</td>
+                                                                <td class="align-middle">
+                                                                    {{ number_format($refundItem->unit_price, 0, ',', '.') }}
+                                                                    đ</td>
+                                                                <td class="align-middle">
+                                                                    {{ number_format($refundItem->quantity * $refundItem->unit_price, 0, ',', '.') }}
+                                                                    đ</td>
                                                             </tr>
                                                         @endforeach
+
 
                                                         @php
                                                             $order = $refund->order;
@@ -394,7 +419,7 @@
                                                                 <th colspan="5" class="text-end">Giảm giá</th>
                                                                 <td class="text-end">
                                                                     -{{ number_format($order->getDiscountAmount(), 0, ',', '.') }}
-                                                                  đ
+                                                                    đ
                                                                 </td>
                                                             </tr>
                                                         @endif
@@ -404,7 +429,7 @@
                                                                     trả</strong></th>
                                                             <td class="text-end">
                                                                 <strong>{{ number_format($refund->total_refund_amount, 0, ',', '.') }}
-                                                                  đ</strong>
+                                                                    đ</strong>
                                                             </td>
                                                         </tr>
                                                     </tbody>
