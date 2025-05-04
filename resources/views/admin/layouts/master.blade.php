@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <link rel="shortcut icon" href="{{ asset('storage\images\favicon-eterna-removebg-preview.png') }}" type="image/x-icon">
     <title>EternaWatch | Manage</title>
     @yield('style')
 
@@ -45,10 +45,6 @@
     <div class="wrapper">
 
         <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="{{ asset('theme/admin/dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
-                height="60" width="60">
-        </div>
 
         <!-- Navbar -->
         @include('admin.layouts.header')
