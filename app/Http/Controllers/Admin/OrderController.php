@@ -45,7 +45,7 @@ class OrderController extends Controller
 
         // Xây dựng query lấy danh sách đơn hàng
         $query = Order::with(['orderItems', 'payment']);
-      
+
         // Áp dụng bộ lọc trạng thái đơn hàng
         if ($status !== 'all') {
             $query->where('status', $status);
@@ -87,12 +87,15 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::with(['orderItems.productVariant.product', 'address', 'entity', 'payment', 'voucher'])->findOrFail($id);
-       
+
         $statusHistories = StatusHistory::where('entity_id', $order->id)
             ->where('entity_type', 'order')
             ->orderBy('changed_at', 'desc')  // Sắp xếp theo thời gian thay đổi
             ->get();
-        return view('admin.orders.edit', compact('order', 'statusHistories'));
+
+        // Lấy các trạng thái hợp lệ từ model
+        $allowedTransitions = $order->allowedStatusTransitions();
+        return view('admin.orders.edit', compact('order', 'statusHistories', 'allowedTransitions'));
     }
     public function store(Request $request)
     {
