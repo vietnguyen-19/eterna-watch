@@ -99,7 +99,7 @@
 
     <!-- External JavaScripts -->
     <script src="{{ asset('theme/client/js/plugins/jquery.min.js') }}"></script>
-    <script src="{{ mix('js/app.js') }}"></script>
+    {{-- <script src="{{ mix('js/app.js') }}"></script> --}}
 
     @yield('script')
     <script src="{{ asset('theme/client/js/plugins/bootstrap.bundle.min.js') }}"></script>
