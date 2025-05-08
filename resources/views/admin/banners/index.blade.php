@@ -9,7 +9,6 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h5 class="card-title mb-0"><strong>Danh sách banner</strong></h5>
-                                
                                 <div class="d-flex ms-auto">
                                     <a href="{{ route('admin.banners.trash') }}" class="btn btn-sm btn-warning mr-2">
                                         <i class="ri-delete-bin-line align-bottom me-1"></i> Thùng rác
