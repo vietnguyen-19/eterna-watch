@@ -10,9 +10,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-     body {
+        body {
             font-family: 'Roboto', sans-serif;
-            background: url('{{ Storage::url($banners["login"]->image ?? "avatar/default.jpeg") }}') no-repeat center/cover fixed;
+            background: url('{{ Storage::url($banners['login']->image ?? 'avatar/default.jpeg') }}') no-repeat center/cover fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -29,9 +29,12 @@
         }
 
         .login-form {
-            width: 25vw; /* Occupy 1/4 of the screen width */
-            max-width: 600px; /* Prevent form from becoming too wide on large screens */
-            min-width: 400px; /* Ensure usability on smaller desktop screens */
+            width: 25vw;
+            /* Occupy 1/4 of the screen width */
+            max-width: 600px;
+            /* Prevent form from becoming too wide on large screens */
+            min-width: 400px;
+            /* Ensure usability on smaller desktop screens */
             background: #fff;
             border-radius: 3px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
@@ -103,8 +106,10 @@
 
         @media (max-width: 768px) {
             .login-form {
-                width: 90%; /* Use more width on smaller screens */
-                min-width: 300px; /* Adjust for smaller screens */
+                width: 90%;
+                /* Use more width on smaller screens */
+                min-width: 300px;
+                /* Adjust for smaller screens */
                 margin: 1rem;
             }
 
@@ -125,7 +130,8 @@
         <div class="card login-form">
             <div class="card-header">
                 <div class="logo-container">
-                    <img src="{{ Storage::url($settings['logo_url'] ?? 'avatar/default.jpeg') }}" alt="EternaWatch Logo">
+                    <img src="{{ Storage::url($settings['logo_url'] ?? 'avatar/default.jpeg') }}"
+                        alt="EternaWatch Logo">
                 </div>
             </div>
             <div class="card-body">
@@ -133,11 +139,22 @@
                 @if (session('status'))
                     <div class="alert alert-success small mb-3">{{ session('status') }}</div>
                 @endif
+               @if (session('account_disabled'))
+    <div class="alert alert-danger small mb-3">
+        Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.
+    </div>
+    @php
+        Session::forget('account_disabled'); // XÓA session sau khi hiển thị
+    @endphp
+@endif
+
+
 
                 <form method="POST" action="{{ route('client.login') }}">
                     @csrf
                     <div class="form-floating mb-3">
-                        <input type="email" name="email" class="form-control" placeholder="name@example.com" value="{{ old('email') }}">
+                        <input type="email" name="email" class="form-control" placeholder="name@example.com"
+                            value="{{ old('email') }}">
                         <label for="email">Email *</label>
                         @error('email')
                             <div class="text-danger small mt-1">{{ $message }}</div>
@@ -157,14 +174,16 @@
                             <input type="checkbox" class="form-check-input" name="remember" id="remember">
                             <label class="form-check-label small" for="remember">Nhớ mật khẩu</label>
                         </div>
-                        <a href="{{ route('password.request') }}" class="small text-muted text-decoration-none">Quên mật khẩu?</a>
+                        <a href="{{ route('password.request') }}" class="small text-muted text-decoration-none">Quên mật
+                            khẩu?</a>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
 
                     <div class="text-center mt-3">
                         <small class="text-muted">Bạn chưa có tài khoản?</small>
-                        <a href="{{ route('client.register') }}" class="text-primary text-decoration-none small">Tạo tài khoản mới</a>
+                        <a href="{{ route('client.register') }}" class="text-primary text-decoration-none small">Tạo tài
+                            khoản mới</a>
                     </div>
                 </form>
             </div>

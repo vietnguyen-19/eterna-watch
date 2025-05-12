@@ -36,6 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CheckUserStatus::class,
         ],
 
         'api' => [
@@ -57,6 +58,7 @@ class Kernel extends HttpKernel
         'customer' => \App\Http\Middleware\CheckCustomerRole::class, // Đăng ký middleware
         'admin' => \App\Http\Middleware\CheckAdmin::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
+        'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
 
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
