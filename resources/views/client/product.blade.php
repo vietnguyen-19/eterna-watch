@@ -343,7 +343,7 @@
 
 
                                                         <!-- Nút trả lời -->
-                                                        <div class="review-actions"
+                                                        {{-- <div class="review-actions"
                                                             style="display: flex; gap: 15px; margin-top: 8px;">
                                                             <!-- Nút Trả lời -->
                                                             @if ($comment->user_id !== Auth::id())
@@ -378,7 +378,7 @@
 
                                                                 <!-- Nút Sửa -->
                                                             @endif
-                                                        </div>
+                                                        </div> --}}
 
                                                         <!-- Form Trả lời (ẩn mặc định) -->
                                                         <div class="reply-form" id="reply-form-{{ $comment->id }}"
@@ -484,7 +484,7 @@
                             </div>
                         </div>
                         <div class="product-single__review-form mt-4">
-                            <form class="" method="POST" action="{{ route('comments.store', $product->id) }}">
+                            {{-- <form class="" method="POST" action="{{ route('comments.store', $product->id) }}">
                                 @csrf
                                 <h5><strong>Đánh giá sản phẩm "{{ $product->name }}"</strong></h5>
                                 <p>Bạn cần đăng nhập và mua sản phẩm để đánh giá khách quan *</p>
@@ -540,7 +540,7 @@
                                 <div class="form-label-fixed mb-4">
                                     <button type="submit" class="btn btn-primary">Gửi bình luận và đánh giá</button>
                                 </div>
-                            </form>
+                            </form> --}}
                         </div>
 
                     </div>
