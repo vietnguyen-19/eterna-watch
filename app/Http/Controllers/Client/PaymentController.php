@@ -134,16 +134,6 @@ class PaymentController extends Controller
                 'total_price'      => $variant->price * $item['quantity'],
             ]);
 
-            // Giảm tồn kho
-            $variant->decrement('stock', $item['quantity']);
-            if ($variant->product->type == 'simple') {
-                $variant->product->decrement('stock', $item['quantity']);
-            }
-
-            // Nếu hết hàng, cập nhật trạng thái
-            if ($variant->stock <= 0) {
-                $variant->update(['status' => 'out_of_stock']);
-            }
             $userId = $order->user_id;
             // Cập nhật lại các cart_detail liên quan (trừ người vừa đặt hàng)
             CartDetail::where('variant_id', $variant->id)
@@ -286,6 +276,21 @@ class PaymentController extends Controller
             $order->status = 'pending'; // Chờ xử lý đơn hàng
             $order->save();
 
+            // Giảm tồn kho khi thanh toán thành công
+            foreach ($order->orderItems as $orderItem) {
+                $variant = ProductVariant::find($orderItem->variant_id);
+                if ($variant) {
+                    $variant->decrement('stock', $orderItem->quantity);
+                    if ($variant->product->type == 'simple') {
+                        $variant->product->decrement('stock', $orderItem->quantity);
+                    }
+                    // Nếu hết hàng, cập nhật trạng thái
+                    if ($variant->stock <= 0) {
+                        $variant->update(['status' => 'out_of_stock']);
+                    }
+                }
+            }
+
             $payment->update([
                 'payment_status' => 'completed',
                 'transaction_id' => $vnp_TxnRef, // Lưu vnp_TxnRef làm transaction_id
@@ -389,6 +394,21 @@ class PaymentController extends Controller
         $order->payment_method = 'cash';
         $order->status = 'pending';
         $order->save();
+
+        // Giảm tồn kho khi thanh toán thành công
+        foreach ($order->orderItems as $orderItem) {
+            $variant = ProductVariant::find($orderItem->variant_id);
+            if ($variant) {
+                $variant->decrement('stock', $orderItem->quantity);
+                if ($variant->product->type == 'simple') {
+                    $variant->product->decrement('stock', $orderItem->quantity);
+                }
+                // Nếu hết hàng, cập nhật trạng thái
+                if ($variant->stock <= 0) {
+                    $variant->update(['status' => 'out_of_stock']);
+                }
+            }
+        }
 
         Payment::create([
             'order_id' => $order->id,
