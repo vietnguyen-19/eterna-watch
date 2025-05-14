@@ -598,7 +598,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const fixedBar = document.getElementById("fixedBar");
             const footer = document.querySelector("footer");
@@ -623,7 +623,7 @@
 
             observer.observe(footer);
         });
-    </script>
+    </script> --}}
 
     <!-- Script JavaScript -->
     <!-- SweetAlert2 CDN -->
