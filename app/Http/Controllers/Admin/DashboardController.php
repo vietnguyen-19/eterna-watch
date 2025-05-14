@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $fromDate = null;
         $toDate = Carbon::now();
 
-        // Set date range based on filter
+        // Xác định khoảng thời gian theo bộ lọc
         switch ($filter) {
             case 'today':
                 $fromDate = Carbon::today();
@@ -55,7 +55,7 @@ class DashboardController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
         }
 
-        // Top 10 users with net revenue
+        // Lấy top 10 người dùng doanh thu cao nhất
         $top10Users = DB::select(
             'SELECT
                 orders.order_user_id,
@@ -109,6 +109,7 @@ class DashboardController extends Controller
         $revenueStats = [];
         $products = [];
 
+        // Thống kê doanh thu theo từng ngày, tháng hoặc năm
         if (in_array($filter, ['today', 'custom', 'week'])) {
             for ($i = 0; $i < 7; $i++) {
                 $date = $statRange->copy()->addDays($i)->startOfDay();
@@ -119,30 +120,6 @@ class DashboardController extends Controller
                     ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
                     ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$date->format('d-m')] = $dailyRevenue;
-
-                $dailyOrders = Order::whereBetween('created_at', [$date, $endDate])
-                    ->where('status', 'completed')
-                    ->get();
-
-                foreach ($dailyOrders as $order) {
-                    foreach ($order->orderItems as $item) {
-                        $variant = $item->productVariant;
-                        $product = optional($variant)->product;
-                        $productId = $product->id ?? 'deleted_' . optional($variant)->id;
-                        $productName = $product->name ?? ($item->product_name . ' <small class="text-danger">(Đã xóa)</small>');
-
-                        if (isset($products[$productId])) {
-                            $products[$productId]['quantity'] += $item->quantity;
-                            $products[$productId]['total_price'] += $item->total_price;
-                        } else {
-                            $products[$productId] = [
-                                'quantity' => $item->quantity,
-                                'total_price' => $item->total_price,
-                                'product_name' => $productName,
-                            ];
-                        }
-                    }
-                }
             }
         } elseif ($filter === 'month') {
             $date = $fromDate->copy();
@@ -155,29 +132,6 @@ class DashboardController extends Controller
                     ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
                     ->sum(DB::raw('orders.total_amount - COALESCE(refunds.total_refund_amount, 0)'));
                 $revenueStats[$date->format('d-m')] = $dailyRevenue;
-
-                $dailyOrders = Order::whereBetween('created_at', [$startDay, $endDay])
-                    ->where('status', 'completed')
-                    ->get();
-
-                foreach ($dailyOrders as $order) {
-                    foreach ($order->orderItems as $item) {
-                        $product = optional(optional($item->productVariant)->product);
-                        $productId = $product->id ?? 'deleted_' . $item->productVariant->id;
-                        $productName = $product->name ?? ($item->product_name . ' <small class="text-danger">(Đã xóa)</small>');
-
-                        if (isset($products[$productId])) {
-                            $products[$productId]['quantity'] += $item->quantity;
-                            $products[$productId]['total_price'] += $item->total_price;
-                        } else {
-                            $products[$productId] = [
-                                'quantity' => $item->quantity,
-                                'total_price' => $item->total_price,
-                                'product_name' => $productName,
-                            ];
-                        }
-                    }
-                }
 
                 $date->addDay();
             }
@@ -210,6 +164,35 @@ class DashboardController extends Controller
             }
         }
 
+        // Thống kê top sản phẩm bán chạy
+        $completedOrders = Order::where('status', 'completed')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->with('orderItems.productVariant.product')
+            ->get();
+
+        foreach ($completedOrders as $order) {
+            foreach ($order->orderItems as $item) {
+                $variant = $item->productVariant;
+                $product = optional($variant)->product;
+                $productId = $product->id ?? 'deleted_' . optional($variant)->id;
+                $productName = $product->name ?? ($item->product_name . ' <small class="text-danger">(Đã xóa)</small>');
+
+                if (isset($products[$productId])) {
+                    $products[$productId]['quantity'] += $item->quantity;
+                    $products[$productId]['total_price'] += $item->total_price;
+                } else {
+                    $products[$productId] = [
+                        'quantity' => $item->quantity,
+                        'total_price' => $item->total_price,
+                        'product_name' => $productName,
+                    ];
+                }
+            }
+        }
+
+        // Sắp xếp sản phẩm theo số lượng bán được (giảm dần)
+        $topProducts = collect($products)->sortByDesc('quantity')->take(10)->values()->all();
+
         $labels = array_keys($revenueStats);
         $dataDoanhThu = array_values($revenueStats);
         $revenueStats = json_encode($revenueStats);
@@ -225,6 +208,7 @@ class DashboardController extends Controller
             'dataDoanhThu',
             'orders',
             'products',
+            'topProducts',
             'top10Users'
         ));
     }
