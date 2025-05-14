@@ -39,13 +39,17 @@ use App\Http\Controllers\Admin\RefundController;
 |
 */
 
+// Route cho trang thông báo tài khoản bị vô hiệu hóa
+Route::get('/account-disabled', function () {
+    return view('auth.account-disabled');
+})->name('account.disabled');
+
 // phần AdminAdmin
 // đăng nhập admin
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'loginForm'])->name('admin.login');
     Route::post('/login', [LoginController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
-
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.forgot');
     Route::post('forgot-password', [ForgotPasswordController::class, 'admin.ForgotPassword'])->name('admin.password.email');
 
@@ -62,7 +66,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // ADMIN CHỨC NĂNG (middleware auth + admin)
-Route::prefix('admin')->middleware(['auth:admin', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin', 'admin', 'check.user.status'])->group(function () {
 
     // DASHBOARD
     Route::get('/', [DashboardController::class, 'revenue'])->name('admin.dashboard.revenue');
