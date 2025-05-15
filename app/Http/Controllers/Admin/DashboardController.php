@@ -165,30 +165,42 @@ class DashboardController extends Controller
         }
 
         // Thống kê top sản phẩm bán chạy
-        $completedOrders = Order::where('status', 'completed')
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->with('orderItems.productVariant.product')
-            ->get();
+     $completedOrders = Order::where('status', 'completed')
+    ->whereBetween('created_at', [$fromDate, $toDate])
+    ->with('orderItems.productVariant.product')
+    ->get();
 
-        foreach ($completedOrders as $order) {
-            foreach ($order->orderItems as $item) {
-                $variant = $item->productVariant;
-                $product = optional($variant)->product;
-                $productId = $product->id ?? 'deleted_' . optional($variant)->id;
-                $productName = $product->name ?? ($item->product_name . ' <small class="text-danger">(Đã xóa)</small>');
+$products = [];
 
-                if (isset($products[$productId])) {
-                    $products[$productId]['quantity'] += $item->quantity;
-                    $products[$productId]['total_price'] += $item->total_price;
-                } else {
-                    $products[$productId] = [
-                        'quantity' => $item->quantity,
-                        'total_price' => $item->total_price,
-                        'product_name' => $productName,
-                    ];
-                }
-            }
+foreach ($completedOrders as $order) {
+    foreach ($order->orderItems as $item) {
+        // Dùng thông tin lưu trong order_items để hiển thị
+        $productName = $item->product_name;
+        $productKey = $item->product_name; // Dùng tên sản phẩm làm key để gom nhóm
+
+        // Nếu sản phẩm đã bị xóa, thêm tag cảnh báo
+        if (empty(optional($item->productVariant->product)->id)) {
+            $productName .= ' <small class="text-danger">(Đã xóa)</small>';
         }
+
+        if (!isset($products[$productKey])) {
+            $products[$productKey] = [
+                'product_name' => $productName,
+                'quantity' => 0,
+                'total_price' => 0
+            ];
+        }
+
+        $products[$productKey]['quantity'] += $item->quantity;
+        $products[$productKey]['total_price'] += $item->total_price;
+    }
+}
+
+$topProducts = collect($products)
+    ->sortByDesc('quantity')
+    ->take(10)
+    ->values()
+    ->all();
 
         // Sắp xếp sản phẩm theo số lượng bán được (giảm dần)
         $topProducts = collect($products)->sortByDesc('quantity')->take(10)->values()->all();
@@ -224,144 +236,85 @@ class DashboardController extends Controller
             'variants' => $variants
         ]);
     }
-    public function customer(Request $request)
-    {
-        $filter = $request->input('filter', 'month');
-        $fromDate = null;
-        $toDate = Carbon::now();
+  public function customer(Request $request)
+{
+    $filter = $request->input('filter', 'month');
+    $fromDate = null;
+    $toDate = Carbon::now();
 
+    // --- xác định khoảng thời gian giống trước ---
+    switch ($filter) {
+        case 'all':
+            $firstCustomer = User::where('role_id', 3)->orderBy('created_at')->first();
+            $fromDate = $firstCustomer
+                ? Carbon::parse($firstCustomer->created_at)->startOfYear()
+                : Carbon::now()->startOfYear();
+            $statRange = $fromDate->copy();
+            break;
+        case 'today':
+        case 'custom':
+            $fromDate = Carbon::parse($request->input('from_date', Carbon::now()))->startOfDay();
+            $toDate   = Carbon::parse($request->input('to_date',   Carbon::now()))->endOfDay();
+            $statRange = Carbon::now()->copy()->subDays(6);
+            break;
+        case 'week':
+            $fromDate = Carbon::now()->startOfWeek();
+            $statRange = Carbon::now()->copy()->subDays(6);
+            break;
+        case 'month':
+            $fromDate = Carbon::now()->startOfMonth();
+            $statRange = Carbon::now()->startOfMonth();
+            break;
+        case 'year':
+            $fromDate = Carbon::now()->startOfYear();
+            $statRange = Carbon::now()->startOfYear();
+            break;
+        default:
+            return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
+    }
 
-        switch ($filter) {
-            case 'all':
-                $firstCustomer = User::where('role_id', 3)->orderBy('created_at')->first();
-                if ($firstCustomer) {
-                    $fromDate = Carbon::parse($firstCustomer->created_at)->startOfYear();
-                } else {
-                    $fromDate = Carbon::now()->startOfYear();
-                }
-                $statRange = $fromDate->copy();
-                break;
-            case 'today':
-            case 'custom':
-                $fromDate = Carbon::parse($request->input('from_date', Carbon::now()))->startOfDay();
-                $toDate = Carbon::parse($request->input('to_date', Carbon::now()))->endOfDay();
-                $statRange = Carbon::now()->copy()->subDays(6);
-                break;
-            case 'week':
-                $fromDate = Carbon::now()->startOfWeek();
-                $statRange = Carbon::now()->copy()->subDays(6);
-                break;
-            case 'month':
-                $fromDate = Carbon::now()->startOfMonth();
-                $statRange = Carbon::now()->startOfMonth();
-                break;
-            case 'year':
-                $fromDate = Carbon::now()->startOfYear();
-                $statRange = Carbon::now()->startOfYear();
-                break;
-            default:
-                return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
-        }
+    // --- các thống kê cơ bản về khách hàng mới ---
+    $customers = User::with('orders')->where('role_id', 3)
+        ->whereBetween('created_at', [$fromDate, $toDate])
+        ->get();
+    // ... (thống kê số đơn, doanh thu của từng khách mới như cũ)
 
-        // Lấy danh sách khách hàng đăng ký trong khoảng thời gian
-        $customers = User::with('orders')->where('role_id', 3)
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->get();
-
-        if ($customers->isEmpty()) {
-            return view('admin.dashboard.customer', [
-                'totalCustomers' => 0,
-                'totalRevenue' => 0,
-                'successfulOrders' => 0,
-                'customerStats' => json_encode([]),
-                'labels' => [],
-                'dataCustomers' => [],
-                'customers' => [],
-            ]);
-        }
-
-        // Thêm thông tin số đơn hàng và tổng tiền đã chi của từng khách hàng
-        $customers->map(function ($customer) use ($fromDate, $toDate) {
-            $customer->total_orders = Order::where('user_id', $customer->id)
-                ->whereBetween('created_at', [$fromDate, $toDate])
-                ->count();
-            $customer->total_completed_orders = Order::where('user_id', $customer->id)
-                ->where('status', 'completed')
-                ->whereBetween('created_at', [$fromDate, $toDate])
-                ->count();
-            $customer->total_spent = Order::where('user_id', $customer->id)
-                ->where('status', 'completed')
-                ->whereBetween('created_at', [$fromDate, $toDate])
-                ->sum('total_amount');
-
-            return $customer;
+    // --- BỔ SUNG: Lấy Top 10 khách hàng (theo số đơn) từ bảng orders ---
+    $topCustomers = DB::table('orders')
+        ->select([
+            'orders.order_user_id as user_id',
+            'orders.name as customer_name',
+            DB::raw('COUNT(*) as total_orders'),
+            DB::raw('SUM(total_amount) as total_spent'),
+        ])
+        ->where('orders.status', 'completed')
+        ->whereBetween('orders.created_at', [$fromDate, $toDate])
+        ->groupBy('orders.order_user_id', 'orders.name')
+        ->orderByDesc('total_orders')
+        ->limit(10)
+        ->get()
+        ->map(function($row) {
+            // đánh dấu (Đã xóa) nếu user record thật sự đã không còn
+            $exists = \App\Models\User::where('id', $row->user_id)->exists();
+            if (!$exists) {
+                $row->customer_name .= ' <small class="text-danger">(Đã xóa)</small>';
+            }
+            return $row;
         });
 
-        $totalCustomers = $customers->count();
-        $customerIds = $customers->pluck('id');
+    // --- Chuẩn bị gửi về view ---
+    $labels       = array_keys($customerStats ?? []);
+    $dataCustomers= array_values($customerStats ?? []);
 
-        // Tính số đơn hàng của tài khoản mới
-        $successfulOrders = Order::whereIn('user_id', $customerIds)
-            ->where('status', 'completed')
-            ->count();
-        $cancelledOrders = Order::whereIn('user_id', $customerIds)
-            ->where('status', 'cancelled')
-            ->count();
-
-        // Tính doanh thu từ tài khoản mới
-        $totalRevenue = Order::whereIn('user_id', $customerIds)
-            ->where('status', 'completed')
-            ->sum('total_amount');
-        $customerStats = [];
-
-        // Xử lý thống kê theo từng khoảng thời gian
-        if (in_array($filter, ['today', 'custom', 'week', 'month'])) {
-            $endRange = ($filter === 'month') ? $toDate->copy() : $statRange->copy()->addDays(6);
-            while ($statRange->lte($endRange)) {
-                $count = User::where('role_id', 3)
-                    ->whereBetween('created_at', [$statRange->copy()->startOfDay(), $statRange->copy()->endOfDay()])
-                    ->count();
-                $customerStats[$statRange->format('d-m')] = $count;
-                $statRange->addDay();
-            }
-        } elseif ($filter === 'year') {
-            for ($i = 1; $i <= 12; $i++) {
-                $monthStart = Carbon::create(null, $i, 1)->startOfMonth();
-                $monthEnd = Carbon::create(null, $i, 1)->endOfMonth();
-
-                $count = User::where('role_id', 3)
-                    ->whereBetween('created_at', [$monthStart, $monthEnd])
-                    ->count();
-
-                $customerStats[$monthStart->format('m-Y')] = $count;
-            }
-        } elseif ($filter === 'all') {
-            $currentYear = Carbon::now()->year;
-            while ($statRange->year <= $currentYear) {
-                $yearStart = $statRange->copy()->startOfYear();
-                $yearEnd = $statRange->copy()->endOfYear();
-
-                $count = User::where('role_id', 3)
-                    ->whereBetween('created_at', [$yearStart, $yearEnd])
-                    ->count();
-
-                $customerStats[$yearStart->format('Y')] = $count;
-                $statRange->addYear();
-            }
-        }
-
-        $labels = array_keys($customerStats);
-        $dataCustomers = array_values($customerStats);
-        $customerStats = json_encode($customerStats);
-
-        return view('admin.dashboard.customer', compact(
-            'totalCustomers',
-            'totalRevenue',
-            'successfulOrders',
-            'customerStats',
-            'labels',
-            'dataCustomers',
-            'customers'
-        ));
-    }
+    return view('admin.dashboard.customer', compact(
+        'totalCustomers',
+        'totalRevenue',
+        'successfulOrders',
+        'customerStats',
+        'labels',
+        'dataCustomers',
+        'customers',
+        'topCustomers'   // đừng quên truyền thêm biến này
+    ));
+}
 }
