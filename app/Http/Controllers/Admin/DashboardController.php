@@ -277,6 +277,9 @@ $topProducts = collect($products)
     $customers = User::with('orders')->where('role_id', 3)
         ->whereBetween('created_at', [$fromDate, $toDate])
         ->get();
+
+        $totalCustomers = $customers->count(); // <- thêm dòng này
+
     // ... (thống kê số đơn, doanh thu của từng khách mới như cũ)
 
     // --- BỔ SUNG: Lấy Top 10 khách hàng (theo số đơn) từ bảng orders ---
