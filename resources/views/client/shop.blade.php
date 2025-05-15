@@ -157,7 +157,7 @@
                                 <!-- Thêm thanh trượt giá -->
                                 <div id="price-slider" class="mb-3"></div>
                                 <div id="price-display" class="mb-3 text-center"></div>
-                                <button type="submit" class="w-100 btn btn-primary" id="filterButton">Lọc theo giá</button>
+                                <button type="submit" class="w-100 btn btn-primary" id="filterButton">Lọc sản phẩm</button>
                                 <a href="{{ route('client.shop') }}" class="btn btn-secondary w-100 mt-2">Xóa bộ lọc</a>
                             </div>
                         </div>
