@@ -102,7 +102,7 @@
                             <a href="{{ route('admin.contacts.destroy', $contact->id) }}" class="btn btn-danger">
                                 <i class="ri-delete-bin-line align-bottom me-1"></i> Xóa liên hệ
                             </a>
-                            <a href="{{ route('admin.contacts.destroy', $contact->id) }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.contacts.index', $contact->id) }}" class="btn btn-secondary">
                                 <i class="ri-delete-bin-line align-bottom me-1"></i> Quay lại
                             </a>
                         </div>
