@@ -422,7 +422,7 @@ class DashboardController extends Controller
             'labels',
             'dataCustomers',
             'customers',
-            'topCustomers'   // đừng quên truyền thêm biến này
+            'topCustomers'  
         ));
     }
 }
