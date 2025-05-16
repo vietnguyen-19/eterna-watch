@@ -343,7 +343,7 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->count();
         $cancelledOrders = Order::whereIn('user_id', $customerIds)
-            ->where('status', 'cancalled')
+            ->where('status', 'cancelled')
             ->count();
 
         // Tính doanh thu từ tài khoản mới
