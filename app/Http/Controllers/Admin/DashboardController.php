@@ -42,7 +42,7 @@ class DashboardController extends Controller
         );
 
         // Set date range based on filter
-          switch ($filter) {
+        switch ($filter) {
             case 'today':
                 $fromDate = Carbon::today();
                 $toDate = Carbon::today()->endOfDay();
@@ -192,42 +192,42 @@ class DashboardController extends Controller
         }
 
         // Thống kê top sản phẩm bán chạy
-     $completedOrders = Order::where('status', 'completed')
-    ->whereBetween('created_at', [$fromDate, $toDate])
-    ->with('orderItems.productVariant.product')
-    ->get();
+        $completedOrders = Order::where('status', 'completed')
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->with('orderItems.productVariant.product')
+            ->get();
 
-$products = [];
+        $products = [];
 
-foreach ($completedOrders as $order) {
-    foreach ($order->orderItems as $item) {
-        // Dùng thông tin lưu trong order_items để hiển thị
-        $productName = $item->product_name;
-        $productKey = $item->product_name; // Dùng tên sản phẩm làm key để gom nhóm
+        foreach ($completedOrders as $order) {
+            foreach ($order->orderItems as $item) {
+                // Dùng thông tin lưu trong order_items để hiển thị
+                $productName = $item->product_name;
+                $productKey = $item->product_name; // Dùng tên sản phẩm làm key để gom nhóm
 
-        // Nếu sản phẩm đã bị xóa, thêm tag cảnh báo
-        if (empty(optional($item->productVariant->product)->id)) {
-            $productName .= ' <small class="text-danger">(Đã xóa)</small>';
+                // Nếu sản phẩm đã bị xóa, thêm tag cảnh báo
+                if (empty(optional($item->productVariant->product)->id)) {
+                    $productName .= ' <small class="text-danger">(Đã xóa)</small>';
+                }
+
+                if (!isset($products[$productKey])) {
+                    $products[$productKey] = [
+                        'product_name' => $productName,
+                        'quantity' => 0,
+                        'total_price' => 0
+                    ];
+                }
+
+                $products[$productKey]['quantity'] += $item->quantity;
+                $products[$productKey]['total_price'] += $item->total_price;
+            }
         }
 
-        if (!isset($products[$productKey])) {
-            $products[$productKey] = [
-                'product_name' => $productName,
-                'quantity' => 0,
-                'total_price' => 0
-            ];
-        }
-
-        $products[$productKey]['quantity'] += $item->quantity;
-        $products[$productKey]['total_price'] += $item->total_price;
-    }
-}
-
-$topProducts = collect($products)
-    ->sortByDesc('quantity')
-    ->take(10)
-    ->values()
-    ->all();
+        $topProducts = collect($products)
+            ->sortByDesc('quantity')
+            ->take(10)
+            ->values()
+            ->all();
 
         // Sắp xếp sản phẩm theo số lượng bán được (giảm dần)
         $topProducts = collect($products)->sortByDesc('quantity')->take(10)->values()->all();
@@ -389,40 +389,40 @@ $topProducts = collect($products)
         }
 
         $topCustomers = DB::table('orders')
-        ->select([
-            'orders.order_user_id as user_id',
-            'orders.name as customer_name',
-            DB::raw('COUNT(*) as total_orders'),
-            DB::raw('SUM(total_amount) as total_spent'),
-        ])
-        ->where('orders.status', 'completed')
-        ->whereBetween('orders.created_at', [$fromDate, $toDate])
-        ->groupBy('orders.order_user_id', 'orders.name')
-        ->orderByDesc('total_orders')
-        ->limit(10)
-        ->get()
-        ->map(function($row) {
-            // đánh dấu (Đã xóa) nếu user record thật sự đã không còn
-            $exists = \App\Models\User::where('id', $row->user_id)->exists();
-            if (!$exists) {
-                $row->customer_name .= ' <small class="text-danger">(Đã xóa)</small>';
-            }
-            return $row;
-        });
+            ->select([
+                'orders.order_user_id as user_id',
+                'orders.name as customer_name',
+                DB::raw('COUNT(*) as total_orders'),
+                DB::raw('SUM(total_amount) as total_spent'),
+            ])
+            ->where('orders.status', 'completed')
+            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->groupBy('orders.order_user_id', 'orders.name')
+            ->orderByDesc('total_orders')
+            ->limit(10)
+            ->get()
+            ->map(function ($row) {
+                // đánh dấu (Đã xóa) nếu user record thật sự đã không còn
+                $exists = \App\Models\User::where('id', $row->user_id)->exists();
+                if (!$exists) {
+                    $row->customer_name .= ' <small class="text-danger">(Đã xóa)</small>';
+                }
+                return $row;
+            });
 
-    // --- Chuẩn bị gửi về view ---
-    $labels       = array_keys($customerStats ?? []);
-    $dataCustomers= array_values($customerStats ?? []);
+        // --- Chuẩn bị gửi về view ---
+        $labels       = array_keys($customerStats ?? []);
+        $dataCustomers = array_values($customerStats ?? []);
 
-    return view('admin.dashboard.customer', compact(
-        'totalCustomers',
-        'totalRevenue',
-        'successfulOrders',
-        'customerStats',
-        'labels',
-        'dataCustomers',
-        'customers',
-        'topCustomers'   // đừng quên truyền thêm biến này
-    ));
-}
+        return view('admin.dashboard.customer', compact(
+            'totalCustomers',
+            'totalRevenue',
+            'successfulOrders',
+            'customerStats',
+            'labels',
+            'dataCustomers',
+            'customers',
+            'topCustomers'   // đừng quên truyền thêm biến này
+        ));
+    }
 }
