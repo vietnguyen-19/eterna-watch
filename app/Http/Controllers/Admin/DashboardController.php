@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Carbon\Carbon;
@@ -14,12 +15,34 @@ class DashboardController extends Controller
 {
     public function revenue(Request $request)
     {
+
         $filter = $request->input('filter', 'month');
         $fromDate = null;
         $toDate = Carbon::now();
 
-        // Xác định khoảng thời gian theo bộ lọc
-        switch ($filter) {
+        // Top 10 users with net revenue (total_amount - total_refund_amount from refunds table)
+        $top10Users = DB::select(
+            'SELECT
+                orders.order_user_id,
+                orders.name,
+                SUM(orders.total_amount - COALESCE(refunds.total_refund_amount, 0)) AS total_revenue
+            FROM
+                orders
+                LEFT JOIN refunds ON orders.id = refunds.order_id
+            WHERE
+                orders.status = ?
+            GROUP BY
+                orders.order_user_id,
+                orders.name
+            ORDER BY
+                total_revenue DESC
+            LIMIT 10
+            ',
+            ['completed']
+        );
+
+        // Set date range based on filter
+          switch ($filter) {
             case 'today':
                 $fromDate = Carbon::today();
                 $toDate = Carbon::today()->endOfDay();
@@ -78,6 +101,8 @@ class DashboardController extends Controller
 
         $orders = Order::whereBetween('created_at', [$fromDate, $toDate])->get();
 
+
+        // Return empty data if no orders
         if ($orders->isEmpty()) {
             return view('admin.dashboard.revenue', [
                 'totalOrders' => 0,
@@ -95,11 +120,13 @@ class DashboardController extends Controller
             ]);
         }
 
+        // Calculate order metrics
         $totalOrders = $orders->count();
         $successfulOrders = $orders->where('status', 'completed')->count();
-        $failedOrders = $orders->where('status', 'cancelled')->count();
+        $failedOrders = $orders->whereIn('status', ['cancelled'])->count();
         $pendingOrders = $totalOrders - $successfulOrders - $failedOrders;
 
+        // Calculate total revenue using DB query
         $totalRevenue = DB::table('orders')
             ->leftJoin('refunds', 'orders.id', '=', 'refunds.order_id')
             ->where('orders.status', 'completed')
@@ -109,7 +136,7 @@ class DashboardController extends Controller
         $revenueStats = [];
         $products = [];
 
-        // Thống kê doanh thu theo từng ngày, tháng hoặc năm
+        // Calculate revenue stats based on filter
         if (in_array($filter, ['today', 'custom', 'week'])) {
             for ($i = 0; $i < 7; $i++) {
                 $date = $statRange->copy()->addDays($i)->startOfDay();
@@ -224,7 +251,6 @@ $topProducts = collect($products)
             'top10Users'
         ));
     }
-
     public function stock()
     {
         $variants = ProductVariant::with('product', 'attributeValues.nameValue.attribute')
@@ -236,51 +262,133 @@ $topProducts = collect($products)
             'variants' => $variants
         ]);
     }
-  public function customer(Request $request)
-{
-    $filter = $request->input('filter', 'month');
-    $fromDate = null;
-    $toDate = Carbon::now();
+    public function customer(Request $request)
+    {
+        $filter = $request->input('filter', 'month');
+        $fromDate = null;
+        $toDate = Carbon::now();
 
-    // --- xác định khoảng thời gian giống trước ---
-    switch ($filter) {
-        case 'all':
-            $firstCustomer = User::where('role_id', 3)->orderBy('created_at')->first();
-            $fromDate = $firstCustomer
-                ? Carbon::parse($firstCustomer->created_at)->startOfYear()
-                : Carbon::now()->startOfYear();
-            $statRange = $fromDate->copy();
-            break;
-        case 'today':
-        case 'custom':
-            $fromDate = Carbon::parse($request->input('from_date', Carbon::now()))->startOfDay();
-            $toDate   = Carbon::parse($request->input('to_date',   Carbon::now()))->endOfDay();
-            $statRange = Carbon::now()->copy()->subDays(6);
-            break;
-        case 'week':
-            $fromDate = Carbon::now()->startOfWeek();
-            $statRange = Carbon::now()->copy()->subDays(6);
-            break;
-        case 'month':
-            $fromDate = Carbon::now()->startOfMonth();
-            $statRange = Carbon::now()->startOfMonth();
-            break;
-        case 'year':
-            $fromDate = Carbon::now()->startOfYear();
-            $statRange = Carbon::now()->startOfYear();
-            break;
-        default:
-            return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
-    }
 
-    // --- các thống kê cơ bản về khách hàng mới ---
-    $customers = User::with('orders')->where('role_id', 3)
-        ->whereBetween('created_at', [$fromDate, $toDate])
-        ->get();
-    // ... (thống kê số đơn, doanh thu của từng khách mới như cũ)
+        switch ($filter) {
+            case 'all':
+                $firstCustomer = User::where('role_id', 3)->orderBy('created_at')->first();
+                if ($firstCustomer) {
+                    $fromDate = Carbon::parse($firstCustomer->created_at)->startOfYear();
+                } else {
+                    $fromDate = Carbon::now()->startOfYear();
+                }
+                $statRange = $fromDate->copy();
+                break;
+            case 'today':
+            case 'custom':
+                $fromDate = Carbon::parse($request->input('from_date', Carbon::now()))->startOfDay();
+                $toDate = Carbon::parse($request->input('to_date', Carbon::now()))->endOfDay();
+                $statRange = Carbon::now()->copy()->subDays(6);
+                break;
+            case 'week':
+                $fromDate = Carbon::now()->startOfWeek();
+                $statRange = Carbon::now()->copy()->subDays(6);
+                break;
+            case 'month':
+                $fromDate = Carbon::now()->startOfMonth();
+                $statRange = Carbon::now()->startOfMonth();
+                break;
+            case 'year':
+                $fromDate = Carbon::now()->startOfYear();
+                $statRange = Carbon::now()->startOfYear();
+                break;
+            default:
+                return response()->json(['status' => 'error', 'message' => 'Bộ lọc không hợp lệ'], 400);
+        }
 
-    // --- BỔ SUNG: Lấy Top 10 khách hàng (theo số đơn) từ bảng orders ---
-    $topCustomers = DB::table('orders')
+        // Lấy danh sách khách hàng đăng ký trong khoảng thời gian
+        $customers = User::with('orders')->where('role_id', 3)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->get();
+
+        if ($customers->isEmpty()) {
+            return view('admin.dashboard.customer', [
+                'totalCustomers' => 0,
+                'totalRevenue' => 0,
+                'successfulOrders' => 0,
+                'customerStats' => json_encode([]),
+                'labels' => [],
+                'dataCustomers' => [],
+                'customers' => [],
+            ]);
+        }
+
+        // Thêm thông tin số đơn hàng và tổng tiền đã chi của từng khách hàng
+        $customers->map(function ($customer) use ($fromDate, $toDate) {
+            $customer->total_orders = Order::where('user_id', $customer->id)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->count();
+            $customer->total_completed_orders = Order::where('user_id', $customer->id)
+                ->where('status', 'completed')
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->count();
+            $customer->total_spent = Order::where('user_id', $customer->id)
+                ->where('status', 'completed')
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('total_amount');
+
+            return $customer;
+        });
+
+        $totalCustomers = $customers->count();
+        $customerIds = $customers->pluck('id');
+
+        // Tính số đơn hàng của tài khoản mới
+        $successfulOrders = Order::whereIn('user_id', $customerIds)
+            ->where('status', 'completed')
+            ->count();
+        $cancelledOrders = Order::whereIn('user_id', $customerIds)
+            ->where('status', 'cancalled')
+            ->count();
+
+        // Tính doanh thu từ tài khoản mới
+        $totalRevenue = Order::whereIn('user_id', $customerIds)
+            ->where('status', 'completed')
+            ->sum('total_amount');
+        $customerStats = [];
+
+        // Xử lý thống kê theo từng khoảng thời gian
+        if (in_array($filter, ['today', 'custom', 'week', 'month'])) {
+            $endRange = ($filter === 'month') ? $toDate->copy() : $statRange->copy()->addDays(6);
+            while ($statRange->lte($endRange)) {
+                $count = User::where('role_id', 3)
+                    ->whereBetween('created_at', [$statRange->copy()->startOfDay(), $statRange->copy()->endOfDay()])
+                    ->count();
+                $customerStats[$statRange->format('d-m')] = $count;
+                $statRange->addDay();
+            }
+        } elseif ($filter === 'year') {
+            for ($i = 1; $i <= 12; $i++) {
+                $monthStart = Carbon::create(null, $i, 1)->startOfMonth();
+                $monthEnd = Carbon::create(null, $i, 1)->endOfMonth();
+
+                $count = User::where('role_id', 3)
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->count();
+
+                $customerStats[$monthStart->format('m-Y')] = $count;
+            }
+        } elseif ($filter === 'all') {
+            $currentYear = Carbon::now()->year;
+            while ($statRange->year <= $currentYear) {
+                $yearStart = $statRange->copy()->startOfYear();
+                $yearEnd = $statRange->copy()->endOfYear();
+
+                $count = User::where('role_id', 3)
+                    ->whereBetween('created_at', [$yearStart, $yearEnd])
+                    ->count();
+
+                $customerStats[$yearStart->format('Y')] = $count;
+                $statRange->addYear();
+            }
+        }
+
+        $topCustomers = DB::table('orders')
         ->select([
             'orders.order_user_id as user_id',
             'orders.name as customer_name',
