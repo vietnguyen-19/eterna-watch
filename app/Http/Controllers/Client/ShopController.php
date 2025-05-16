@@ -10,111 +10,172 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $productsQuery = Product::with(['brand', 'category', 'variants']);
-        // Lọc theo danh mục cha + con
-        if ($request->has('category_id')) {
-            $categoryId = $request->input('category_id');
+        // Validation cho min_price và max_price
+        $validator = Validator::make($request->all(), [
+            'min_price' => 'nullable|numeric|min:0|max:1000000000',
+            'max_price' => 'nullable|numeric|min:0|max:1000000000',
+            'query' => 'nullable|string|max:255', // Validation cho query
 
-            // Tìm danh mục hiện tại
-            $category = Category::find($categoryId);
+        ], [
+            'min_price.numeric' => 'Giá tối thiểu phải là số.',
+            'min_price.min' => 'Giá tối thiểu không được nhỏ hơn 0 ₫.',
+            'min_price.max' => 'Giá tối thiểu không được lớn hơn 1,000,000,000 ₫.',
+            'max_price.numeric' => 'Giá tối đa phải là số.',
+            'max_price.min' => 'Giá tối đa không được nhỏ hơn 0 ₫.',
+            'max_price.max' => 'Giá tối đa không được lớn hơn 1,000,000,000 ₫.',
+        ]);
 
-            if ($category) {
-                if ($category->parent_id === null) { // Nếu là danh mục cha
-                    // Lấy toàn bộ ID của danh mục con và con cháu
-                    $categoryIds = Category::where('parent_id', $category->id)
-                        ->orWhereHas('parent', function ($query) use ($category) {
-                            $query->where('parent_id', $category->id);
-                        })
-                        ->pluck('id')
-                        ->toArray();
-
-                    // Thêm danh mục cha vào danh sách ID
-                    $categoryIds[] = $category->id;
-                } else {
-                    // Nếu là danh mục con, chỉ lấy sản phẩm thuộc danh mục đó
-                    $categoryIds = [$category->id];
-                }
-
-                $productsQuery->whereIn('category_id', $categoryIds);
+        // Kiểm tra min_price <= max_price
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $minPrice = $request->input('min_price');
+            $maxPrice = $request->input('max_price');
+            if (is_numeric($minPrice) && is_numeric($maxPrice) && $minPrice > $maxPrice) {
+                $validator->errors()->add('min_price', 'Giá tối thiểu không được lớn hơn giá tối đa.');
             }
         }
-        // Lọc theo thương hiệu cha + con
-        if ($request->has('brand')) {
-            $brandName = $request->input('brand');
 
-            // Lấy ID của thương hiệu cha và tất cả thương hiệu con
-            $brandIds = Brand::where('name', $brandName)
-                ->orWhereHas('parent', function ($query) use ($brandName) {
-                    $query->where('name', $brandName);
-                })
-                ->pluck('id')
-                ->toArray();
-
-            $productsQuery->whereIn('brand_id', $brandIds);
+        // Nếu validation thất bại, trả về với lỗi
+        if ($validator->fails()) {
+            return redirect()->route('client.shop')
+                ->withErrors($validator)
+                ->withInput($request->all());
         }
-        if ($request->has('filter')) {
-            $filter = $request->input('filter');
+        $productsQuery = Product::with(['brand', 'category', 'variants']);
 
+        // Ghi log yêu cầu để kiểm tra
+        Log::info('Filter Request:', $request->all());
+
+        // Lọc theo từ khóa tìm kiếm
+        if ($request->has('query') && $request->input('type') === 'product') {
+            $query = trim($request->input('query'));
+            if (!empty($query)) {
+                $productsQuery->where(function ($q) use ($query) {
+                    $q->where('name', 'like', "%{$query}%")
+                      ->orWhere('short_description', 'like', "%{$query}%")
+                      ->orWhere('full_description', 'like', "%{$query}%");
+                });
+            }
+        }
+
+        // Lọc theo danh mục
+        if ($request->has('category_ids') && !empty($request->input('category_ids'))) {
+            $categoryIds = $request->input('category_ids', []);
+            $allCategoryIds = [];
+
+            foreach ($categoryIds as $categoryId) {
+                $category = Category::find($categoryId);
+                if ($category) {
+                    if ($category->parent_id === null) {
+                        // Lấy danh mục con và con cháu
+                        $subCategoryIds = Category::where('parent_id', $category->id)
+                            ->orWhereHas('parent', function ($query) use ($category) {
+                                $query->where('parent_id', $category->id);
+                            })
+                            ->pluck('id')
+                            ->toArray();
+                        $allCategoryIds = array_merge($allCategoryIds, [$category->id], $subCategoryIds);
+                    } else {
+                        $allCategoryIds[] = $category->id;
+                    }
+                }
+            }
+
+            if (!empty($allCategoryIds)) {
+                $productsQuery->whereIn('category_id', array_unique($allCategoryIds));
+            }
+        }
+
+        // Lọc theo thương hiệu
+        if ($request->has('brand_ids') && !empty($request->input('brand_ids'))) {
+            $brandIds = $request->input('brand_ids', []);
+            $allBrandIds = [];
+
+            foreach ($brandIds as $brandId) {
+                $allBrandIds[] = $brandId;
+                // Lấy thương hiệu con
+                $subBrandIds = Brand::where('parent_id', $brandId)->pluck('id')->toArray();
+                $allBrandIds = array_merge($allBrandIds, $subBrandIds);
+            }
+
+            if (!empty($allBrandIds)) {
+                $productsQuery->whereIn('brand_id', array_unique($allBrandIds));
+            }
+        }
+
+        // Lọc theo giá
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $minPrice = $request->input('min_price', 0);
+            $maxPrice = $request->input('max_price', 1000000000);
+            if (is_numeric($minPrice) && is_numeric($maxPrice) && $minPrice <= $maxPrice) {
+                $productsQuery->whereBetween('price_default', [$minPrice, $maxPrice]);
+            }else {
+                Log::warning('Invalid price filter:', ['min_price' => $minPrice, 'max_price' => $maxPrice]);
+            }
+        }
+
+        // Sắp xếp sản phẩm
+        if ($request->has('filter') && !empty($request->input('filter'))) {
+            $filter = $request->input('filter');
             switch ($filter) {
                 case 'best_selling':
-                    $bestSellingProducts = Product::select('products.*')
+                    $productsQuery->select('products.*')
                         ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
                         ->join('order_items', 'product_variants.id', '=', 'order_items.variant_id')
                         ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                        ->where('orders.status', 'completed') // Chỉ tính đơn đã hoàn thành
+                        ->where('orders.status', 'completed')
                         ->groupBy('products.id')
-                        ->orderByRaw('SUM(order_items.quantity) DESC')
-                        ->limit(8)
-                        ->get();
-
+                        ->orderByRaw('SUM(order_items.quantity) DESC');
                     break;
                 case 'az':
-                    $productsQuery->orderBy('name', 'asc'); // A-Z
+                    $productsQuery->orderBy('name', 'asc');
                     break;
                 case 'za':
-                    $productsQuery->orderBy('name', 'desc'); // Z-A
+                    $productsQuery->orderBy('name', 'desc');
                     break;
                 case 'price_asc':
-                    $productsQuery->orderBy('price_default', 'asc'); // Giá thấp đến cao
+                    $productsQuery->orderBy('price_default', 'asc');
                     break;
                 case 'price_desc':
-                    $productsQuery->orderBy('price_default', 'desc'); // Giá cao đến thấp
+                    $productsQuery->orderBy('price_default', 'desc');
                     break;
                 case 'date_old':
-                    $productsQuery->orderBy('created_at', 'asc'); // Cũ đến mới
+                    $productsQuery->orderBy('created_at', 'asc');
                     break;
                 case 'date_new':
-                    $productsQuery->orderBy('created_at', 'desc'); // Mới đến cũ
+                    $productsQuery->orderBy('created_at', 'desc');
                     break;
                 default:
-                    $productsQuery->latest('id'); // Mặc định theo ID mới nhất
+                    $productsQuery->latest('id');
                     break;
             }
         } else {
-            $productsQuery->latest('id'); // Mặc định nếu không có filter
+            $productsQuery->latest('id');
         }
 
+        // Lấy danh sách danh mục và thương hiệu
+        $categories = Category::withCount('products')->get();
+        $brands = Brand::get();
+
+        // Ghi log truy vấn để kiểm tra
+        Log::info('SQL Query:', ['query' => $productsQuery->toSql(), 'bindings' => $productsQuery->getBindings()]);
+
         // Phân trang sản phẩm
-        $products = $productsQuery->latest('id')->paginate(12);
-        return view('client.shop', compact('products'));
-    }
-    public function filterProducts(Request $request)
-    {
+        $products = $productsQuery->paginate(12);
 
-        $minPrice = $request->input('min_price', 0);
-        $maxPrice = $request->input('max_price', 1000000);
+        // Ghi log số lượng sản phẩm
+        Log::info('Products Count:', ['count' => $products->total()]);
 
-        $products = Product::with(['brand', 'category'])
-
-            ->whereBetween('price_default', [$minPrice, $maxPrice])->latest('id')->paginate(12);
-        return view('client.shop', compact('products'));
+        return view('client.shop', compact('products', 'categories', 'brands'));
     }
 
+    // Các phương thức khác giữ nguyên
     public function show($id)
     {
         $product = Product::with([
@@ -134,19 +195,17 @@ class ShopController extends Controller
             ->limit(8)
             ->get();
 
-        // Xử lý dữ liệu biến thể để đảm bảo định dạng đúng
         $variants = $product->variants->map(function ($variant) {
             return [
                 'id' => $variant->id,
                 'price' => $variant->price,
                 'quantity' => $variant->stock,
-                'attributes' => $variant->attributeValues->pluck('attribute_value_id')->toArray(), // Lấy danh sách ID thuộc tính
+                'attributes' => $variant->attributeValues->pluck('attribute_value_id')->toArray(),
             ];
         });
-        // Gọi logic cũ để lấy danh sách bình luận có replies
+
         $comments = $this->getCommentsWithReplies($product->id);
 
-        // Thống kê đánh giá sao
         $allRatings = \App\Models\Comment::where('entity_id', $product->id)
             ->where('entity_type', 'product')
             ->where('status', '!=', 'rejected')
@@ -166,60 +225,51 @@ class ShopController extends Controller
             ]
         ];
 
-      
-
-
         return view('client.product', [
             'product' => $product,
             'attributes' => $attributes,
             'productRelated' => $productRelated,
-            'variants' => $variants, // Gửi biến thể xuống view
+            'variants' => $variants,
             'comments' => $comments,
-            'ratingSummary'=>$ratingSummary // Gửi biến thể xuống view
+            'ratingSummary' => $ratingSummary
         ]);
     }
+
     public function getCommentsWithReplies($productId, $parentId = null)
     {
         $comments = Comment::where('entity_id', $productId)
             ->where('entity_type', 'product')
-            ->where('status', '!=', 'rejected') // Lấy tất cả trạng thái trừ rejected
+            ->where('status', '!=', 'rejected')
             ->where('parent_id', $parentId)
-            ->with('replies') // Để lấy các bình luận con
+            ->with('replies')
             ->get();
 
         foreach ($comments as $comment) {
-            // Lấy các bình luận con của mỗi bình luận
             $comment->replies = $this->getCommentsWithReplies($productId, $comment->id);
         }
 
         return $comments;
     }
 
-
     public function getVariantPrice(Request $request)
     {
-        // Lấy dữ liệu từ request
         $productId = $request->input('product_id');
         $attributeValues = $request->input('values', []);
 
-        // Kiểm tra dữ liệu đầu vào
         if (!$productId || empty($attributeValues)) {
             return response()->json(['error' => 'Thiếu thông tin sản phẩm hoặc thuộc tính'], 400);
         }
 
-        // Tìm ProductVariant phù hợp
         $productVariant = ProductVariant::where('product_id', $productId)
             ->whereHas('attributes', function ($query) use ($attributeValues) {
                 $query->whereIn('idvalueattribute', $attributeValues);
             }, '=', count($attributeValues))
             ->first();
 
-        // Kiểm tra nếu không tìm thấy
         if (!$productVariant) {
             return response()->json(['error' => 'Không tìm thấy biến thể sản phẩm'], 404);
         }
 
-        // Trả về giá của biến thể sản phẩm
         return response()->json([
             'variant_id' => number_format($productVariant->price, 0, ',', '.'),
             'price' => $productVariant->price
