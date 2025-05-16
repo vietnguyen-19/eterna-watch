@@ -53,13 +53,18 @@
                                                         alt="product Avatar" class="me-3 rounded" width="50"
                                                         height="50">
                                                     <div class="ml-3">
-                                                        <a href="{{ route('admin.products.show', $variant->product->id) }}"
-                                                            class="text-decoration-none fw-bold">
-                                                            {{ $variant->product->name ?? 'Không xác định' }}
-                                                        </a><br>
-                                                        <small class="text-muted mb-0">Danh mục |
-                                                            <b>{{ $variant->product->category->name ?? 'Không có' }}</b>
-                                                        </small>
+                                                        {{-- Sản phẩm gốc --}}
+                                                        @if ($variant->product)
+                                                            <a href="{{ route('admin.products.show', $variant->product->id) }}"
+                                                                class="text-decoration-none fw-bold">
+                                                                {{ $variant->product->name }}
+                                                            </a><br>
+                                                            <small class="text-muted mb-0">Danh mục |
+                                                                <b>{{ $variant->product->category->name ?? 'Không có' }}</b>
+                                                            </small>
+                                                        @else
+                                                            <span class="text-danger">Sản phẩm đã xóa</span>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
@@ -68,7 +73,8 @@
                                             <td class="align-middle">
                                                 @if ($variant->attributeValues->isNotEmpty())
                                                     @foreach ($variant->attributeValues as $attr)
-                                                        <span>{{ $attr->nameValue->attribute->attribute_name }}</span>: <span>{{ $attr->nameValue->value_name }}</span><br>
+                                                        <span>{{ $attr->nameValue->attribute->attribute_name }}</span>:
+                                                        <span>{{ $attr->nameValue->value_name }}</span><br>
                                                     @endforeach
                                                 @else
                                                     <span class="text-muted">Không có</span>
@@ -96,10 +102,15 @@
                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                     <!-- Xem chi tiết -->
                                                     <li class="list-inline-item edit" title="Xem chi tiết biến thể">
-                                                        <a href="{{ route('admin.products.show', $variant->product->id) }}"
-                                                            class="btn btn-info btn-icon waves-effect waves-light btn-sm">
-                                                            <i class="fa-solid fa-circle-info"></i>
-                                                        </a>
+                                                        {{-- Hành động --}}
+                                                        @if ($variant->product)
+                                                            <a href="{{ route('admin.products.show', $variant->product->id) }}"
+                                                                class="btn btn-info btn-icon waves-effect waves-light btn-sm">
+                                                                <i class="fa-solid fa-circle-info"></i>
+                                                            </a>
+                                                        @else
+                                                            <span class="text-danger">Không khả dụng</span>
+                                                        @endif
                                                     </li>
                                                     <!-- Xóa -->
                                                 </ul>
@@ -217,5 +228,4 @@
             }
         }, 5000);
     </script>
-    
 @endsection
