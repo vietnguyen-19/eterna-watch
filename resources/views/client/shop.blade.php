@@ -238,24 +238,22 @@
                     </p>
                 @endif
                 @if (request('category_ids'))
-                    <div
-                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #0d6efd;">
-                        <span style="">Đang lọc theo danh mục:</span>
-                        <span style="font-weight: 600;">
+                    <div>
+                        <!-- <span style="">Đang lọc theo danh mục:</span> -->
+                        <!-- <span style="font-weight: 600;">
                             @foreach (old('category_ids', request('category_ids', [])) as $catId)
                                 {{ optional(\App\Models\Category::find($catId))->name ?? 'Không xác định' }}{{ !$loop->last ? ', ' : '' }}
                             @endforeach
-                        </span>
+                        </span> -->
                     </div>
                 @endif
                 @if (request('brand_ids'))
-                    <div
-                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #198754;">
-                        <span style="">Đang lọc theo thương hiệu:</span>
-                        <span style="font-weight: 600;">
+                    <div>
+                        <!-- <span style="">Đang lọc theo thương hiệu:</span> -->
+                        <!-- <span style="font-weight: 600;">
                             @foreach (old('brand_ids', request('brand_ids', [])) as $brandId)
                                 {{ optional(\App\Models\Brand::find($brandId))->name ?? 'Không xác định' }}{{ !$loop->last ? ', ' : '' }}
-                            @endforeach
+                            @endforeach -->
                         </span>
                     </div>
                 @endif
@@ -271,20 +269,18 @@
                     ];
                 @endphp
                 @if (request('filter') && isset($filterMessages[request('filter')]))
-                    <div
-                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #ffc107;">
-                        <span style="">Đang sắp xếp theo:</span>
+                    <div>
+                        <!-- <span style="">Đang sắp xếp theo:</span> -->
                         <span style="font-weight: 600;">{{ $filterMessages[old('filter', request('filter'))] }}</span>
                     </div>
                 @endif
                 @if (request('min_price') && request('max_price'))
-                    <div
-                        style="padding: 12px; margin-bottom: 10px; background-color: #f8f9fa; border-left: 6px solid #0dcaf0;">
-                        <span style="">Đang lọc theo khoảng giá:</span>
-                        <span style="font-weight: 600;">
+                    <div>
+                        <!-- <span style="">Đang lọc theo khoảng giá:</span> -->
+                        <!-- <span style="font-weight: 600;">
                             từ {{ number_format(old('min_price', request('min_price')), 0, ',', '.') }}₫
                             đến {{ number_format(old('max_price', request('max_price')), 0, ',', '.') }}₫
-                        </span>
+                        </span> -->
                     </div>
                 @endif
                 @if ($products->isEmpty())
