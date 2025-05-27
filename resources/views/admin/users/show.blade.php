@@ -14,18 +14,22 @@
                                         <i class="ri-arrow-left-line align-middle"></i> Quay lại
                                     </a>
 
-                                    <a href="{{ route('admin.users.toggle-status', $user->id) }}"
-                                        class="btn btn-sm btn-{{ $user->status === 'active' ? 'warning' : 'success' }}">
-                                        {{ $user->status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt' }}
-                                    </a>
+                                    {{-- Chỉ hiển thị nút nếu KHÔNG phải tài khoản admin --}}
+                                    @if ($user->role_id !== 1)
+                                        <a href="{{ route('admin.users.toggle-status', $user->id) }}"
+                                            class="btn btn-sm btn-{{ $user->status === 'active' ? 'warning' : 'success' }}">
+                                            {{ $user->status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt' }}
+                                        </a>
+                                    @endif
+
                                     @if (Auth::check() && Auth::id() === $user->id)
                                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary btn-sm">
                                             <i class="ri-pencil-line align-middle"></i> Chỉnh sửa
                                         </a>
                                     @endif
-
                                 </div>
                             </div>
+
                         </div>
                         <div class="card-body bg-light">
                             <div class="row d-flex align-items-stretch">
@@ -39,8 +43,8 @@
                                                         <img src="{{ Storage::url($user->avatar) }}" alt="Avatar"
                                                             class="rounded-circle avatar-xl">
                                                     @else
-                                                        <img src="{{ Storage::url('avatar/default.jpeg') }}"
-                                                            alt="Avatar" class="rounded-circle avatar-xl">
+                                                        <img src="{{ Storage::url('avatar/default.jpeg') }}" alt="Avatar"
+                                                            class="rounded-circle avatar-xl">
                                                     @endif
 
                                                 </div>

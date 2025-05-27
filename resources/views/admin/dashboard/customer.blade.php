@@ -8,7 +8,7 @@
                 <div class="tab-menu">
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item">Doanh thu</a>
                     <a href="{{ route('admin.dashboard.revenue') }}" class="tab-item tab-active">Khách hàng</a>
-                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Hết hàng</a>
+                    <a href="{{ route('admin.dashboard.stock') }}" class="tab-item">Hàng sắp hết</a>
                 </div>
             </div>
 

@@ -95,26 +95,23 @@
                                                     @endif
                                                 </td>
                                                 <td class="align-middle">
-                                                    <div class="d-flex gap-2">
-                                                        <a href="{{ route('admin.users.show', $user->id) }}"
-                                                            class="btn btn-sm btn-info mr-1">
-                                                            <i class="fas fa-info-circle"></i>
-                                                        </a>
+    <div class="d-flex gap-2">
+        {{-- Nút xem chi tiết --}}
+        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info mr-1">
+            <i class="fas fa-info-circle"></i>
+        </a>
 
-                                                        @if ($user->role && $user->role->name !== 'admin')
-                                                            <form action="{{ route('admin.users.destroy', $user->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        @endif
+        {{-- Nếu KHÔNG phải admin, hiển thị nút Vô hiệu hóa / Kích hoạt --}}
+        @if ($user->role && $user->role->name !== 'admin')
+            <a href="{{ route('admin.users.toggle-status', $user->id) }}"
+                class="btn btn-sm btn-{{ $user->status === 'active' ? 'warning' : 'success' }}"
+                onclick="return confirm('Bạn có chắc muốn {{ $user->status === 'active' ? 'vô hiệu hóa' : 'kích hoạt' }} tài khoản này?');">
+                <i class="fas {{ $user->status === 'active' ? 'fa-user-slash' : 'fa-user-check' }}"></i>
+            </a>
+        @endif
+    </div>
+</td>
 
-                                                    </div>
-                                                </td>
                                             </tr>
                                             @empty
                                                 <tr>
