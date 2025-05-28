@@ -261,7 +261,7 @@ class ProductVariantController extends Controller
                     'price' => $variant['price'],
                     'stock' => $variant['stock'],
                     'image' => $imagePath ,
-                    'status' => 'in_stock',
+                    'status' => 1,
                 ]);
 
                 foreach ($variant['name_value_ids'] as $attribute) {

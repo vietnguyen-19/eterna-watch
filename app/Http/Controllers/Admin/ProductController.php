@@ -281,7 +281,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.productvariants.trash')->with('success', 'Sản phẩm đã được xóa vĩnh viễn.');
+            return redirect()->route('admin.products.trash')->with('success', 'Sản phẩm đã được xóa vĩnh viễn.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
